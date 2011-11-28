@@ -61,6 +61,7 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 	Img original;
 	int SliceNumber=1;
 	boolean buisy=false;
+	double xyToZ=3.5;
 
 	
 
@@ -100,17 +101,6 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
        RandomAccessibleInterval<T> imgz = projection(img,2);
        RandomAccessibleInterval<T> imgx = Views.zeroMin(Views.rotate(projection(img,0), 0,1) );
        RandomAccessibleInterval<T> imgxt= Views.zeroMin(Views.rotate(projection(imgx,0),0,1) );
-       long[] dims = new long[imgx.numDimensions()];
-    	for(int i=0;i<imgx.numDimensions();i++)
-    		dims[i]=imgx.dimension(i);
-    		   
-       ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
-    	        
-       dims[0]=dims[0]*5+3;
-       Img <T> imgxs= imgFactory.create(dims, imgx.randomAccess().get().copy());      
-       resize(imgx,imgxs);   
-       
-       
        RandomAccessibleInterval<T> imgy = projection(img,1);
        RandomAccessibleInterval<T> imgyt= projection(imgy,1);
        IntervalView<T> imgmain=Views.hyperSlice(img, 3, 0);
@@ -119,9 +109,34 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
        rot=Views.zeroMin(rot);
        
        
+    		   
+       ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
+       
+       long[] dims = new long[imgx.numDimensions()];
+   		for(int i=0;i<imgx.numDimensions();i++)
+   			dims[i]=imgx.dimension(i);
+    	        
+       dims[0]=(long)((double)dims[0]*this.xyToZ);
+       Img <T> imgxs= imgFactory.create(dims, imgx.randomAccess().get().copy());      
+       resize(imgx,imgxs);  
+       
+       
+       
+       
+       for(int i=0;i<imgy.numDimensions();i++)
+  			dims[i]=imgy.dimension(i);
+       
+       dims[1]=(long)((double)dims[1]*this.xyToZ);
+       Img <T> imgys= imgFactory.create(dims, imgy.randomAccess().get().copy());      
+       resize(imgy,imgys);  
+       
+       imgx=imgxs;
+       imgy=imgys;
+      
+       
        
        impZ=ImageJFunctions.show(imgz,"z");
-       impX=ImageJFunctions.show(imgxs,"x");
+       impX=ImageJFunctions.show(imgx,"x");
        impY=ImageJFunctions.show(imgy,"y");
        impXT=ImageJFunctions.show(imgxt,"xt");
        impYT=ImageJFunctions.show(imgyt,"yt");
