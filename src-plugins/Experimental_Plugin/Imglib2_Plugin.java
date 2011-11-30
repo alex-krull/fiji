@@ -491,23 +491,23 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 		       
 		   Overlay ovLineYT=new Overlay();
 		   
-		   ovLineYT.add(new Line(0,SliceNumber-0.5,this.original.dimension(1) ,SliceNumber-0.5));
+		   ovLineYT.add(new Line(0,SliceNumber-0.5,this.original.dimension(0) ,SliceNumber-0.5));
 		   ovLineYT.setStrokeColor(Color.yellow);
 		   this.impYT.setOverlay(ovLineYT);
 		   
 		   Overlay ovLineXT=new Overlay();
-		   ovLineXT.add(new Line(SliceNumber-0.5,0, SliceNumber-0.5, this.original.dimension(0) ));
+		   ovLineXT.add(new Line(SliceNumber-0.5,0, SliceNumber-0.5, this.original.dimension(1) ));
 		   ovLineXT.setStrokeColor(Color.yellow);
 		   this.impXT.setOverlay(ovLineXT);
 		   
 		   Overlay ovLineY=new Overlay();
-		   ovLineY.add(new Line(0,(zSliceNumber+1-0.5)*this.xyToZ,this.original.dimension(1) ,(zSliceNumber+1-0.5)*this.xyToZ));
+		   ovLineY.add(new Line(0,(zSliceNumber+1-0.5)*this.xyToZ,this.original.dimension(0) ,(zSliceNumber+1-0.5)*this.xyToZ));
 		   ovLineY.setStrokeColor(Color.green);
 		   this.impY.setOverlay(ovLineY);
 		   
 		   Overlay ovLineX=new Overlay();
-		   ovLineX.add(new Line((zSliceNumber+1-0.5)*this.xyToZ,0, (zSliceNumber+1-0.5)*this.xyToZ, this.original.dimension(0) ));
-		   ovLineY.setStrokeColor(Color.green);
+		   ovLineX.add(new Line((zSliceNumber+1-0.5)*this.xyToZ,0, (zSliceNumber+1-0.5)*this.xyToZ, this.original.dimension(1) ));
+		   ovLineX.setStrokeColor(Color.green);
 		   this.impX.setOverlay(ovLineX);
 			
 		}
