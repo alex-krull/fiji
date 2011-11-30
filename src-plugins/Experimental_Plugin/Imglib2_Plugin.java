@@ -60,6 +60,7 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 	
 	Img original;
 	int SliceNumber=1;
+	int sliceNumberZ=1;
 	boolean buisy=false;
 	double xyToZ=3.5;
 
@@ -132,14 +133,22 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
        
        imgx=imgxs;
        imgy=imgys;
-      
+       
+       int maxZx=500;      
+       int maxZy=500;  
+       
+       int mainX=mainImage.getWindow().getX();      
+       int mainY=mainImage.getWindow().getY();  
+       
+       impZ=ImageJFunctions.show(imgz,"z"); impZ.getWindow().setLocation(maxZx, maxZy);
+       impX=ImageJFunctions.show(imgx,"x"); impX.getWindow().setLocation(mainX -impX.getWindow().getWidth(), mainY);
+       impY=ImageJFunctions.show(imgy,"y"); impY.getWindow().setLocation(mainX, mainY -impY.getWindow().getHeight());
+       
+       impXT=ImageJFunctions.show(imgxt,"xt"); impXT.getWindow().setLocation(maxZx -impXT.getWindow().getWidth(), maxZy);
+       impYT=ImageJFunctions.show(imgyt,"yt"); impYT.getWindow().setLocation(maxZx, maxZy -impYT.getWindow().getHeight());
        
        
-       impZ=ImageJFunctions.show(imgz,"z");
-       impX=ImageJFunctions.show(imgx,"x");
-       impY=ImageJFunctions.show(imgy,"y");
-       impXT=ImageJFunctions.show(imgxt,"xt");
-       impYT=ImageJFunctions.show(imgyt,"yt");
+       	
        //mainImage=ImageJFunctions.showUnsignedShort(img,"stack");     
     //   ImageJFunctions.showUnsignedShort(projection(rot,1),"x and z"); 
        
@@ -153,6 +162,20 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
        impX.addImageListener(this);
        impY.addImageListener(this);
        impZ.addImageListener(this);
+       mainImage.addImageListener(this);
+       
+       ContrastEnhancer ce= new ContrastEnhancer();
+	   ce.stretchHistogram(impZ.getProcessor(), 0.5); 	 
+	   impZ.updateAndDraw();
+	   ce.stretchHistogram(impX.getProcessor(), 0.5); 	
+	   impX.updateAndDraw();
+	   ce.stretchHistogram(impY.getProcessor(), 0.5); 	
+	   impY.updateAndDraw();
+	   ce.stretchHistogram(impXT.getProcessor(), 0.5);   
+	   impXT.updateAndDraw();
+	   ce.stretchHistogram(impYT.getProcessor(), 0.5); 
+	   impYT.updateAndDraw();
+       
        
      
         return;
@@ -198,6 +221,7 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 		
 	//	ov.add(new Line(lx,ly,x,y));
 		PolygonRoi r=new PolygonRoi(xs,ys,segments*2+2,Roi.POLYGON);
+		r.setStrokeColor(Color.yellow);
 	//	r.fitSpline();
 		ov.add(r);
     	    	
@@ -423,11 +447,14 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 		if(SliceNumber !=impZ.getSlice()) newSliceNumber= impZ.getSlice();
 		if(SliceNumber !=impY.getSlice()) newSliceNumber= impY.getSlice();
 		if(SliceNumber !=impX.getSlice()) newSliceNumber= impX.getSlice();
+		if(SliceNumber !=mainImage.getFrame()) newSliceNumber= mainImage.getFrame();
 		System.out.println("SN:" + SliceNumber+ " NSL:"+newSliceNumber);
+		int zSliceNumber=(mainImage.getCurrentSlice() -1)% 13 ;
 		
-		if(newSliceNumber!=SliceNumber)
+		
+		if(newSliceNumber!=SliceNumber|| zSliceNumber!=sliceNumberZ)
 		{
-			int zSliceNumber=mainImage.getCurrentSlice() % 13;
+			
 			Calibration cal=mainImage.getCalibration();
 			Properties prop=mainImage.getProperties();
 			
@@ -435,7 +462,8 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 			this.impX.setSlice(SliceNumber);
 			this.impY.setSlice(SliceNumber);
 			this.impZ.setSlice(SliceNumber);
-			this.mainImage.setPosition(1, zSliceNumber, SliceNumber);
+			this.mainImage.setPosition(1, zSliceNumber+1, SliceNumber);
+			sliceNumberZ=zSliceNumber;
 	//		this.mainImage.setSlice(zSliceNumber);
 		//	ImagePlus temp=ImageJFunctions.wrapUnsignedShort(Views.hyperSlice(original, 3, SliceNumber-1), "") ;			
 		//	mainImage.getWindow().setImage( temp);
@@ -449,8 +477,7 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 			
 			System.out.println("new slice:"+mainImage.getCurrentSlice());
 			
-	//		ContrastEnhancer ce= new ContrastEnhancer();
-		//	ce.stretchHistogram(mainImage.getProcessor(), 0.5); 
+			
 			
 			this.mainImage.updateAndDraw();
 			
@@ -458,9 +485,30 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 		       
 		       
 		       
-		       impX.setOverlay(ov);
-		       impY.setOverlay(ov);   
+	//	       impX.setOverlay(ov);
+	//	       impY.setOverlay(ov);   
 		       impZ.setOverlay(ov);
+		       
+		   Overlay ovLineYT=new Overlay();
+		   
+		   ovLineYT.add(new Line(0,SliceNumber-0.5,this.original.dimension(1) ,SliceNumber-0.5));
+		   ovLineYT.setStrokeColor(Color.yellow);
+		   this.impYT.setOverlay(ovLineYT);
+		   
+		   Overlay ovLineXT=new Overlay();
+		   ovLineXT.add(new Line(SliceNumber-0.5,0, SliceNumber-0.5, this.original.dimension(0) ));
+		   ovLineXT.setStrokeColor(Color.yellow);
+		   this.impXT.setOverlay(ovLineXT);
+		   
+		   Overlay ovLineY=new Overlay();
+		   ovLineY.add(new Line(0,(zSliceNumber+1-0.5)*this.xyToZ,this.original.dimension(1) ,(zSliceNumber+1-0.5)*this.xyToZ));
+		   ovLineY.setStrokeColor(Color.green);
+		   this.impY.setOverlay(ovLineY);
+		   
+		   Overlay ovLineX=new Overlay();
+		   ovLineX.add(new Line((zSliceNumber+1-0.5)*this.xyToZ,0, (zSliceNumber+1-0.5)*this.xyToZ, this.original.dimension(0) ));
+		   ovLineY.setStrokeColor(Color.green);
+		   this.impX.setOverlay(ovLineX);
 			
 		}
 		buisy=false;
