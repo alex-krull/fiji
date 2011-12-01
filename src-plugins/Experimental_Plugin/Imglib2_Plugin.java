@@ -1,6 +1,7 @@
 
 import java.awt.Color;
 import java.awt.event.*;
+
 import java.util.Properties;
 
 
@@ -35,6 +36,7 @@ import net.imglib2.img.ImgFactory;
 
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.view.IntervalView;
@@ -45,7 +47,9 @@ import net.imglib2.view.Views;
 
 
 
-public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements PlugIn, MouseListener, ImageListener{
+public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealType<T>  > implements PlugIn, MouseListener, ImageListener{
+	
+	
 	private ImagePlus impZ;
 	private ImagePlus impX;
 	private ImagePlus impY;
@@ -58,7 +62,9 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 	ImageCanvas canvasX;
 	ImageCanvas canvasY;
 	
-	Img original;
+	RandomAccessibleInterval<T> zProjections;
+	RandomAccessibleInterval<T> xProjections;
+	RandomAccessibleInterval<T> yProjections;
 	int SliceNumber=1;
 	int sliceNumberZ=1;
 	boolean buisy=false;
@@ -68,6 +74,10 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 
     /** Ask for parameters and then execute.*/
     public void run(String arg) {
+    	
+    	       
+            
+    	
     	
    // 	ImagePlusAdapter.wrap(IJ.getImage());
     	
@@ -88,7 +98,7 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
        
        Img<T> img = ImagePlusAdapter.wrap(imp);
        
-       original=img;
+       
        if (img==null) return;
 
        
@@ -99,15 +109,19 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
        
        
    
-       RandomAccessibleInterval<T> imgz = projection(img,2);
-       RandomAccessibleInterval<T> imgx = Views.zeroMin(Views.rotate(projection(img,0), 0,1) );
-       RandomAccessibleInterval<T> imgxt= Views.zeroMin(Views.rotate(projection(imgx,0),0,1) );
-       RandomAccessibleInterval<T> imgy = projection(img,1);
+       this.zProjections=projection(img,2);
+       this.xProjections=Views.zeroMin(  Views.invertAxis( projection(img,0), 0 )  );
+       this.yProjections=projection(img,1);
+       
+       RandomAccessibleInterval<T> imgz = Views.hyperSlice(zProjections,2,0);
+       RandomAccessibleInterval<T> imgx = Views.hyperSlice(xProjections,2,0);
+       RandomAccessibleInterval<T> imgxt= Views.zeroMin(  Views.invertAxis( projection(imgx,0),0 ) );
+       RandomAccessibleInterval<T> imgy = Views.hyperSlice(yProjections,2,0);
        RandomAccessibleInterval<T> imgyt= projection(imgy,1);
        IntervalView<T> imgmain=Views.hyperSlice(img, 3, 0);
        
-       IntervalView<T> rot = Views.rotate(imgz, 2, 0);
-       rot=Views.zeroMin(rot);
+    //   IntervalView<T> rot = Views.rotate(imgz, 2, 0);
+    //   rot=Views.zeroMin(rot);
        
        
     		   
@@ -140,7 +154,9 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
        int mainX=mainImage.getWindow().getX();      
        int mainY=mainImage.getWindow().getY();  
        
+     
        impZ=ImageJFunctions.show(imgz,"z"); impZ.getWindow().setLocation(maxZx, maxZy);
+       
        impX=ImageJFunctions.show(imgx,"x"); impX.getWindow().setLocation(mainX -impX.getWindow().getWidth(), mainY);
        impY=ImageJFunctions.show(imgy,"y"); impY.getWindow().setLocation(mainX, mainY -impY.getWindow().getHeight());
        
@@ -159,9 +175,9 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
            
      
       
-       impX.addImageListener(this);
-       impY.addImageListener(this);
-       impZ.addImageListener(this);
+    //   impX.addImageListener(this);
+    //   impY.addImageListener(this);
+    //   impZ.addImageListener(this);
        mainImage.addImageListener(this);
        
        ContrastEnhancer ce= new ContrastEnhancer();
@@ -176,6 +192,11 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 	   ce.stretchHistogram(impYT.getProcessor(), 0.5); 
 	   impYT.updateAndDraw();
        
+       
+	   gui screen = new gui("Example 1");
+       screen.setSize(500,100);
+       screen.setVisible(true);
+    //   screen.add(impZ.getCanvas());
        
      
         return;
@@ -314,7 +335,7 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 		        
 		
 	}
-    public static <T extends RealType<T> & NativeType<T>> void resize(RandomAccessibleInterval<T> source, IterableInterval<T> dst){
+    public static <T extends  NumericType<T> & RealType<T> & NativeType<T>  > void resize(RandomAccessibleInterval<T> source, IterableInterval<T> dst){
     	int dimensions=dst.numDimensions();
     	if(source.numDimensions()!=dimensions) return;
     	
@@ -343,7 +364,7 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 		
     }
     
-    public static <T extends RealType<T> & NativeType<T>> RandomAccessibleInterval<T> projection( RandomAccessibleInterval<T> source, int d){
+    public static <T extends RealType<T> & NativeType<T> & NumericType<T> > RandomAccessibleInterval<T> projection( RandomAccessibleInterval<T> source, int d){
     	System.out.println("start.");
     	IntervalView<T> imgv = Views.hyperSlice(source, d, 0);
         ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
@@ -437,16 +458,16 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 		
 	}
 
-	@Override
-	public synchronized void imageUpdated(ImagePlus ip) {
+	
+	private synchronized void doStuff(){
 		if(buisy)return;
 		buisy=true;
 		int newSliceNumber=SliceNumber;
 		
 		// TODO Auto-generated method stub
-		if(SliceNumber !=impZ.getSlice()) newSliceNumber= impZ.getSlice();
-		if(SliceNumber !=impY.getSlice()) newSliceNumber= impY.getSlice();
-		if(SliceNumber !=impX.getSlice()) newSliceNumber= impX.getSlice();
+	//	if(SliceNumber !=impZ.getSlice()) newSliceNumber= impZ.getSlice();
+	//	if(SliceNumber !=impY.getSlice()) newSliceNumber= impY.getSlice();
+	//	if(SliceNumber !=impX.getSlice()) newSliceNumber= impX.getSlice();
 		if(SliceNumber !=mainImage.getFrame()) newSliceNumber= mainImage.getFrame();
 		System.out.println("SN:" + SliceNumber+ " NSL:"+newSliceNumber);
 		int zSliceNumber=(mainImage.getCurrentSlice() -1)% 13 ;
@@ -459,9 +480,32 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 			Properties prop=mainImage.getProperties();
 			
 			SliceNumber=newSliceNumber;
-			this.impX.setSlice(SliceNumber);
-			this.impY.setSlice(SliceNumber);
-			this.impZ.setSlice(SliceNumber);
+	//		this.impX.setSlice(SliceNumber);
+	//		this.impY.setSlice(SliceNumber);
+			
+		//	System.out.println("dimensions"+ pro.numDimensions());
+			RandomAccessibleInterval<T> rai= Views.hyperSlice(zProjections,2,SliceNumber-1) ;		
+			ImagePlus impl=ImageJFunctions.wrap( rai , " ");			
+			ContrastEnhancer ce= new ContrastEnhancer();
+	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
+			this.impZ.setProcessor(impl.getProcessor());
+			impZ.updateAndDraw();
+			
+			
+			rai= Views.hyperSlice(xProjections,2,SliceNumber-1) ;		
+			impl=ImageJFunctions.wrap( rai , " ");					
+	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
+			this.impX.setProcessor(impl.getProcessor());
+			impX.updateAndDraw();
+			
+			rai= Views.hyperSlice(yProjections,2,SliceNumber-1) ;		
+			impl=ImageJFunctions.wrap( rai , " ");					
+	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
+			this.impY.setProcessor(impl.getProcessor());
+			impY.updateAndDraw();
+			
+			
+	
 			this.mainImage.setPosition(1, zSliceNumber+1, SliceNumber);
 			sliceNumberZ=zSliceNumber;
 	//		this.mainImage.setSlice(zSliceNumber);
@@ -491,27 +535,32 @@ public class Imglib2_Plugin < T extends NativeType<T> & RealType<T>> implements 
 		       
 		   Overlay ovLineYT=new Overlay();
 		   
-		   ovLineYT.add(new Line(0,SliceNumber-0.5,this.original.dimension(0) ,SliceNumber-0.5));
+		   ovLineYT.add(new Line(0,SliceNumber-0.5,this.zProjections.dimension(0) ,SliceNumber-0.5));
 		   ovLineYT.setStrokeColor(Color.yellow);
 		   this.impYT.setOverlay(ovLineYT);
 		   
 		   Overlay ovLineXT=new Overlay();
-		   ovLineXT.add(new Line(SliceNumber-0.5,0, SliceNumber-0.5, this.original.dimension(1) ));
+		   ovLineXT.add(new Line(SliceNumber-0.5,0, SliceNumber-0.5, this.zProjections.dimension(1) ));
 		   ovLineXT.setStrokeColor(Color.yellow);
 		   this.impXT.setOverlay(ovLineXT);
 		   
 		   Overlay ovLineY=new Overlay();
-		   ovLineY.add(new Line(0,(zSliceNumber+1-0.5)*this.xyToZ,this.original.dimension(0) ,(zSliceNumber+1-0.5)*this.xyToZ));
+		   ovLineY.add(new Line(0,(zSliceNumber+1-0.5)*this.xyToZ,this.zProjections.dimension(0) ,(zSliceNumber+1-0.5)*this.xyToZ));
 		   ovLineY.setStrokeColor(Color.green);
 		   this.impY.setOverlay(ovLineY);
 		   
 		   Overlay ovLineX=new Overlay();
-		   ovLineX.add(new Line((zSliceNumber+1-0.5)*this.xyToZ,0, (zSliceNumber+1-0.5)*this.xyToZ, this.original.dimension(1) ));
+		   ovLineX.add(new Line((zSliceNumber+1-0.5)*this.xyToZ,0, (zSliceNumber+1-0.5)*this.xyToZ, this.zProjections.dimension(1) ));
 		   ovLineX.setStrokeColor(Color.green);
 		   this.impX.setOverlay(ovLineX);
 			
 		}
 		buisy=false;
+	}
+	
+	@Override
+	public synchronized void imageUpdated(ImagePlus ip) {
+		doStuff();
 		
 	}
     
