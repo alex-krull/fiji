@@ -73,6 +73,20 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	
 
     /** Ask for parameters and then execute.*/
+	public Img<T> scaleByFactor(RandomAccessibleInterval<T> img, int d, double factor){
+		ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
+	       long[] dims = new long[img.numDimensions()];
+	  		for(int i=0;i<img.numDimensions();i++)
+	  			dims[i]=img.dimension(i);
+	  		
+	  		
+	   	        
+	       dims[d]=(long) ((double)dims[d]*factor);
+	       Img <T> result= imgFactory.create(dims, img.randomAccess().get().copy());      
+	       resize(img,result);  
+	       return result;
+	}
+	
     public void run(String arg) {
     	
     	       
@@ -107,46 +121,31 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
        
        
        
-       
+            
    
        this.zProjections=projection(img,2);
-       this.xProjections=Views.zeroMin(  Views.invertAxis( projection(img,0), 0 )  );
+       this.xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( projection(img,0),0,1) ),0  ) ); 
        this.yProjections=projection(img,1);
        
+       xProjections=scaleByFactor(xProjections,0,this.xyToZ);
+       yProjections=scaleByFactor(yProjections,1,this.xyToZ);
+       
        RandomAccessibleInterval<T> imgz = Views.hyperSlice(zProjections,2,0);
-       RandomAccessibleInterval<T> imgx = Views.hyperSlice(xProjections,2,0);
-       RandomAccessibleInterval<T> imgxt= Views.zeroMin(  Views.invertAxis( projection(imgx,0),0 ) );
+       RandomAccessibleInterval<T> imgx = Views.hyperSlice( xProjections,2,0);
+       RandomAccessibleInterval<T> imgxt= Views.zeroMin( Views.invertAxis(  Views.rotate( projection(xProjections,0) ,0,1),0 ) )  ;
        RandomAccessibleInterval<T> imgy = Views.hyperSlice(yProjections,2,0);
-       RandomAccessibleInterval<T> imgyt= projection(imgy,1);
+       RandomAccessibleInterval<T> imgyt= projection(yProjections,1);
        IntervalView<T> imgmain=Views.hyperSlice(img, 3, 0);
+       
        
     //   IntervalView<T> rot = Views.rotate(imgz, 2, 0);
     //   rot=Views.zeroMin(rot);
        
        
-    		   
-       ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
-       
-       long[] dims = new long[imgx.numDimensions()];
-   		for(int i=0;i<imgx.numDimensions();i++)
-   			dims[i]=imgx.dimension(i);
-    	        
-       dims[0]=(long)((double)dims[0]*this.xyToZ);
-       Img <T> imgxs= imgFactory.create(dims, imgx.randomAccess().get().copy());      
-       resize(imgx,imgxs);  
+    	   
        
        
-       
-       
-       for(int i=0;i<imgy.numDimensions();i++)
-  			dims[i]=imgy.dimension(i);
-       
-       dims[1]=(long)((double)dims[1]*this.xyToZ);
-       Img <T> imgys= imgFactory.create(dims, imgy.randomAccess().get().copy());      
-       resize(imgy,imgys);  
-       
-       imgx=imgxs;
-       imgy=imgys;
+      
        
        int maxZx=500;      
        int maxZy=500;  
