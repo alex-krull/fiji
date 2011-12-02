@@ -57,6 +57,10 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	private ImagePlus impXT;
 	private ImagePlus impYT;
 	
+	private boolean isVolume=false;
+	private boolean isTimeSequence=false;
+	private boolean isMultiChannel=false;
+	
 	ImagePlus mainImage;
 	ImageCanvas canvasZ;
 	ImageCanvas canvasX;
@@ -116,9 +120,17 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
        
        image = ImagePlusAdapter.wrap(imp);
        
+       this.isVolume=mainImage.getNSlices()>1;
+       this.isTimeSequence=mainImage.getNFrames()>1;
+       this.isMultiChannel=mainImage.getNChannels()>1;
+       
+       if(isVolume&&!isTimeSequence){
+    	   isVolume=false;
+    	   isTimeSequence=true;
+       }
        
        
-       if(mainImage.getNChannels()>1){
+       if(isMultiChannel){
     	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,image.numDimensions()-1),2) );
        if(image.numDimensions()==5)  	   
     	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,3),2 ));
@@ -130,13 +142,13 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
  		System.out.println("dimensions:" + image.numDimensions());
        
          
-       if(mainImage.getNSlices()>1){
+       if(isVolume){
     	   zProjections=projection(image,2);
     	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( projection(image,0),0,1) ),0  ) ); 
            yProjections=projection(image,1);
            xProjections=scaleByFactor(xProjections,0,this.xyToZ);
            yProjections=scaleByFactor(yProjections,1,this.xyToZ);
-           
+                  
            xtProjections=Views.zeroMin( Views.invertAxis(  Views.rotate( projection(xProjections,0) ,0,1),0 ) )  ;
            ytProjections=projection(yProjections,1);
        }
@@ -452,14 +464,14 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	       RandomAccessibleInterval<T> imgxt= xtProjections;      
 	       RandomAccessibleInterval<T> imgyt= ytProjections;
 	       
-	       if(mainImage.getNSlices()>1){
+	       if(isVolume){
 	       imgz=Views.hyperSlice(zProjections,2,frame);
 	       imgx=Views.hyperSlice(xProjections,2,frame);
 	       imgy=Views.hyperSlice(yProjections,2,frame);
 	       }
 	       
-	       if(mainImage.getNChannels()>1){
-	    	   if(mainImage.getNSlices()>1){
+	       if(isMultiChannel){
+	    	   if(isVolume){
 	    		   imgz=Views.hyperSlice( imgz,2,channel);
 		    	   imgx=Views.hyperSlice( imgx,2,channel);
 		    	   imgy=Views.hyperSlice( imgy,2,channel);   			
@@ -483,7 +495,7 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	       
 	      
 	       
-	       if(mainImage.getNSlices()>1){	     
+	       if(isVolume){	     
 	    	   impZ=ImageJFunctions.show(imgz,"z"); impZ.getWindow().setLocation(maxZx, maxZy);    
 	    	   impX=ImageJFunctions.show(imgx,"x"); impX.getWindow().setLocation(mainX -impX.getWindow().getWidth(), mainY);
 	    	   impY=ImageJFunctions.show(imgy,"y"); impY.getWindow().setLocation(mainX, mainY -impY.getWindow().getHeight());
@@ -514,7 +526,7 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	    				
 			
 	    	ImagePlus impl=null;
-			if(mainImage.getNSlices()>1){
+			if(isVolume){
 			impl=ImageJFunctions.wrap( imgz , " ");
 	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
 			this.impZ.setProcessor(impl.getProcessor());
@@ -561,6 +573,7 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	//	if(SliceNumber !=impX.getSlice()) newSliceNumber= impX.getSlice();
 		
 		newSliceNumber= mainImage.getFrame()-1;
+		if(mainImage.getNFrames()==1) newSliceNumber=mainImage.getSlice();
 		int zSliceNumber=mainImage.getSlice()-1;
 		int cNumber=mainImage.getChannel()-1;
 		
@@ -596,7 +609,7 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 		   ovLineXT.add(new Line(newSliceNumber-0.5,0, newSliceNumber-0.5, this.image.dimension(1) ));
 		   ovLineXT.setStrokeColor(Color.yellow);
 		   this.impXT.setOverlay(ovLineXT);
-		   if(mainImage.getNSlices()>1){	   
+		   if(isVolume){	   
 			   Overlay ovLineY=new Overlay();
 			   ovLineY.add(new Line(0,(zSliceNumber+1-0.5)*this.xyToZ,this.zProjections.dimension(0) ,(zSliceNumber+1-0.5)*this.xyToZ));
 			   ovLineY.setStrokeColor(Color.green);
