@@ -65,6 +65,9 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	RandomAccessibleInterval<T> zProjections;
 	RandomAccessibleInterval<T> xProjections;
 	RandomAccessibleInterval<T> yProjections;
+	RandomAccessibleInterval<T> xtProjections;
+	RandomAccessibleInterval<T> ytProjections;
+	RandomAccessibleInterval<T> image;
 	int SliceNumber=1;
 	int sliceNumberZ=1;
 	boolean buisy=false;
@@ -110,57 +113,26 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 
     	
        
-       Img<T> img = ImagePlusAdapter.wrap(imp);
-       
-       
-       if (img==null) return;
-
-       
-    	   
-       
-       
+       image = ImagePlusAdapter.wrap(imp);
+       if(image.numDimensions()==5){
+    	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,4),2) );
+    	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,3),2 ));
+       }
+  	      
        
        
             
    
-       this.zProjections=projection(img,2);
-       this.xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( projection(img,0),0,1) ),0  ) ); 
-       this.yProjections=projection(img,1);
+       this.zProjections=projection(image,2);
+       this.xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( projection(image,0),0,1) ),0  ) ); 
+       this.yProjections=projection(image,1);
        
        xProjections=scaleByFactor(xProjections,0,this.xyToZ);
        yProjections=scaleByFactor(yProjections,1,this.xyToZ);
-       
-       RandomAccessibleInterval<T> imgz = Views.hyperSlice(zProjections,2,0);
-       RandomAccessibleInterval<T> imgx = Views.hyperSlice( xProjections,2,0);
-       RandomAccessibleInterval<T> imgxt= Views.zeroMin( Views.invertAxis(  Views.rotate( projection(xProjections,0) ,0,1),0 ) )  ;
-       RandomAccessibleInterval<T> imgy = Views.hyperSlice(yProjections,2,0);
-       RandomAccessibleInterval<T> imgyt= projection(yProjections,1);
-       IntervalView<T> imgmain=Views.hyperSlice(img, 3, 0);
-       
-       
-    //   IntervalView<T> rot = Views.rotate(imgz, 2, 0);
-    //   rot=Views.zeroMin(rot);
-       
-       
-    	   
-       
-       
-      
-       
-       int maxZx=500;      
-       int maxZy=500;  
-       
-       int mainX=mainImage.getWindow().getX();      
-       int mainY=mainImage.getWindow().getY();  
-       
-     
-       impZ=ImageJFunctions.show(imgz,"z"); impZ.getWindow().setLocation(maxZx, maxZy);
-       
-       impX=ImageJFunctions.show(imgx,"x"); impX.getWindow().setLocation(mainX -impX.getWindow().getWidth(), mainY);
-       impY=ImageJFunctions.show(imgy,"y"); impY.getWindow().setLocation(mainX, mainY -impY.getWindow().getHeight());
-       
-       impXT=ImageJFunctions.show(imgxt,"xt"); impXT.getWindow().setLocation(maxZx -impXT.getWindow().getWidth(), maxZy);
-       impYT=ImageJFunctions.show(imgyt,"yt"); impYT.getWindow().setLocation(maxZx, maxZy -impYT.getWindow().getHeight());
+       xtProjections=Views.zeroMin( Views.invertAxis(  Views.rotate( projection(xProjections,0) ,0,1),0 ) )  ;
+       ytProjections=projection(yProjections,1);
+   
+       this.upDateImages(0, 0,true);
        
        
        	
@@ -457,6 +429,78 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 		
 	}
 
+	private synchronized void upDateImages(int frame, int channel, boolean init){
+		
+		
+			RandomAccessibleInterval<T> imgz = Views.hyperSlice(zProjections,2,frame);
+	       RandomAccessibleInterval<T> imgx = Views.hyperSlice( xProjections,2,frame);
+	       RandomAccessibleInterval<T> imgxt= xtProjections;
+	       RandomAccessibleInterval<T> imgy = Views.hyperSlice(yProjections,2,frame);
+	       RandomAccessibleInterval<T> imgyt= ytProjections;
+	      
+	       if(image.numDimensions()==5){
+	    	   imgz=Views.hyperSlice(imgz,2,channel);
+	    	   imgx=Views.hyperSlice(imgx,2,channel);
+	    	   imgy=Views.hyperSlice(imgy,2,channel);
+	    	   imgxt=Views.hyperSlice(imgxt,2,channel);
+	    	   imgyt=Views.hyperSlice(imgyt,2,channel);
+	       }
+	    
+	    	   
+	       
+	       
+	       
+	    if(init){  
+	       
+	       int maxZx=500;      
+	       int maxZy=500;  
+	       
+	       int mainX=mainImage.getWindow().getX();      
+	       int mainY=mainImage.getWindow().getY();  
+	       
+	     
+	       impZ=ImageJFunctions.show(imgz,"z"); impZ.getWindow().setLocation(maxZx, maxZy);
+	       
+	       impX=ImageJFunctions.show(imgx,"x"); impX.getWindow().setLocation(mainX -impX.getWindow().getWidth(), mainY);
+	       impY=ImageJFunctions.show(imgy,"y"); impY.getWindow().setLocation(mainX, mainY -impY.getWindow().getHeight());
+	       
+	       impXT=ImageJFunctions.show(imgxt,"xt"); impXT.getWindow().setLocation(maxZx -impXT.getWindow().getWidth(), maxZy);
+	       impYT=ImageJFunctions.show(imgyt,"yt"); impYT.getWindow().setLocation(maxZx, maxZy -impYT.getWindow().getHeight());
+	       
+	       
+	    }else{
+	    	ImagePlus impl=ImageJFunctions.wrap( imgz , " ");			
+			ContrastEnhancer ce= new ContrastEnhancer();
+			
+	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
+			this.impZ.setProcessor(impl.getProcessor());
+			impZ.updateAndDraw();
+			
+			impl=ImageJFunctions.wrap( imgx , " ");					
+	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
+			this.impX.setProcessor(impl.getProcessor());
+			impX.updateAndDraw();
+			
+			impl=ImageJFunctions.wrap( imgy , " ");					
+	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
+			this.impY.setProcessor(impl.getProcessor());
+			impY.updateAndDraw();	
+			
+			impl=ImageJFunctions.wrap( imgxt , " ");					
+	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
+			this.impXT.setProcessor(impl.getProcessor());
+			impXT.updateAndDraw();
+			
+			impl=ImageJFunctions.wrap( imgyt , " ");					
+	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
+			this.impYT.setProcessor(impl.getProcessor());
+			impYT.updateAndDraw();	
+			
+	    }
+		
+				
+	}
+	
 	
 	private synchronized void doStuff(){
 		if(buisy)return;
@@ -467,56 +511,17 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	//	if(SliceNumber !=impZ.getSlice()) newSliceNumber= impZ.getSlice();
 	//	if(SliceNumber !=impY.getSlice()) newSliceNumber= impY.getSlice();
 	//	if(SliceNumber !=impX.getSlice()) newSliceNumber= impX.getSlice();
-		if(SliceNumber !=mainImage.getFrame()) newSliceNumber= mainImage.getFrame();
-		System.out.println("SN:" + SliceNumber+ " NSL:"+newSliceNumber);
-		int zSliceNumber=(mainImage.getCurrentSlice() -1)% 13 ;
+		newSliceNumber= mainImage.getFrame()-1;
+		int zSliceNumber=mainImage.getSlice()-1;
+		int cNumber=mainImage.getChannel()-1;
 		
+		System.out.println("frame:"+ newSliceNumber+ "   slice:"+ zSliceNumber+ "  channel:"+cNumber );
 		
 		if(newSliceNumber!=SliceNumber|| zSliceNumber!=sliceNumberZ)
 		{
 			
-			Calibration cal=mainImage.getCalibration();
-			Properties prop=mainImage.getProperties();
-			
-			SliceNumber=newSliceNumber;
-	//		this.impX.setSlice(SliceNumber);
-	//		this.impY.setSlice(SliceNumber);
-			
-		//	System.out.println("dimensions"+ pro.numDimensions());
-			RandomAccessibleInterval<T> rai= Views.hyperSlice(zProjections,2,SliceNumber-1) ;		
-			ImagePlus impl=ImageJFunctions.wrap( rai , " ");			
-			ContrastEnhancer ce= new ContrastEnhancer();
-	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
-			this.impZ.setProcessor(impl.getProcessor());
-			impZ.updateAndDraw();
-			
-			
-			rai= Views.hyperSlice(xProjections,2,SliceNumber-1) ;		
-			impl=ImageJFunctions.wrap( rai , " ");					
-	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
-			this.impX.setProcessor(impl.getProcessor());
-			impX.updateAndDraw();
-			
-			rai= Views.hyperSlice(yProjections,2,SliceNumber-1) ;		
-			impl=ImageJFunctions.wrap( rai , " ");					
-	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
-			this.impY.setProcessor(impl.getProcessor());
-			impY.updateAndDraw();
-			
-			
-	
-			this.mainImage.setPosition(1, zSliceNumber+1, SliceNumber);
-			sliceNumberZ=zSliceNumber;
-	//		this.mainImage.setSlice(zSliceNumber);
-		//	ImagePlus temp=ImageJFunctions.wrapUnsignedShort(Views.hyperSlice(original, 3, SliceNumber-1), "") ;			
-		//	mainImage.getWindow().setImage( temp);
-		//	mainImage=temp;
-			
-			this.impZ.updateAndDraw();			
-			this.impY.updateAndDraw();
-			this.impX.updateAndDraw();
-			System.out.println("slice:"+zSliceNumber);
-	//		this.mainImage.setCalibration(cal);
+		
+			this.upDateImages(newSliceNumber, cNumber, false);
 			
 			System.out.println("new slice:"+mainImage.getCurrentSlice());
 			
@@ -534,12 +539,12 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 		       
 		   Overlay ovLineYT=new Overlay();
 		   
-		   ovLineYT.add(new Line(0,SliceNumber-0.5,this.zProjections.dimension(0) ,SliceNumber-0.5));
+		   ovLineYT.add(new Line(0,newSliceNumber-0.5,this.zProjections.dimension(0) ,newSliceNumber-0.5));
 		   ovLineYT.setStrokeColor(Color.yellow);
 		   this.impYT.setOverlay(ovLineYT);
 		   
 		   Overlay ovLineXT=new Overlay();
-		   ovLineXT.add(new Line(SliceNumber-0.5,0, SliceNumber-0.5, this.zProjections.dimension(1) ));
+		   ovLineXT.add(new Line(newSliceNumber-0.5,0, newSliceNumber-0.5, this.zProjections.dimension(1) ));
 		   ovLineXT.setStrokeColor(Color.yellow);
 		   this.impXT.setOverlay(ovLineXT);
 		   
