@@ -112,25 +112,47 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
       
 
     	
+    	
        
        image = ImagePlusAdapter.wrap(imp);
-       if(image.numDimensions()==5){
-    	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,4),2) );
+       
+       
+       
+       if(mainImage.getNChannels()>1){
+    	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,image.numDimensions()-1),2) );
+       if(image.numDimensions()==5)  	   
     	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,3),2 ));
+       
        }
-  	      
+  	     
+       
+       System.out.println("channels:" +mainImage.getNChannels()+ "  frames:"+mainImage.getNFrames()+ "  slices:"+mainImage.getNSlices());
+ 		System.out.println("dimensions:" + image.numDimensions());
+       
+         
+       if(mainImage.getNSlices()>1){
+    	   zProjections=projection(image,2);
+    	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( projection(image,0),0,1) ),0  ) ); 
+           yProjections=projection(image,1);
+           xProjections=scaleByFactor(xProjections,0,this.xyToZ);
+           yProjections=scaleByFactor(yProjections,1,this.xyToZ);
+           
+           xtProjections=Views.zeroMin( Views.invertAxis(  Views.rotate( projection(xProjections,0) ,0,1),0 ) )  ;
+           ytProjections=projection(yProjections,1);
+       }
+       else{ 
+    	   zProjections=null;
+    	   xProjections=null; 
+    	   yProjections=null;
+    	   
+    	   xtProjections=Views.zeroMin( Views.invertAxis(  Views.rotate( projection(image,0) ,0,1),0 ) )  ;
+    	   ytProjections=projection(image,1);
+       }
        
        
-            
-   
-       this.zProjections=projection(image,2);
-       this.xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( projection(image,0),0,1) ),0  ) ); 
-       this.yProjections=projection(image,1);
        
-       xProjections=scaleByFactor(xProjections,0,this.xyToZ);
-       yProjections=scaleByFactor(yProjections,1,this.xyToZ);
-       xtProjections=Views.zeroMin( Views.invertAxis(  Views.rotate( projection(xProjections,0) ,0,1),0 ) )  ;
-       ytProjections=projection(yProjections,1);
+       
+       
    
        this.upDateImages(0, 0,true);
        
@@ -140,9 +162,9 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
     //   ImageJFunctions.showUnsignedShort(projection(rot,1),"x and z"); 
        
     
-       canvasX=impX.getCanvas();
-       canvasY=impY.getCanvas();
-       canvasZ=impZ.getCanvas();
+   //    canvasX=impX.getCanvas();
+   //    canvasY=impY.getCanvas();
+   //    canvasZ=impZ.getCanvas();
            
      
       
@@ -151,24 +173,14 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
     //   impZ.addImageListener(this);
        mainImage.addImageListener(this);
        
-       ContrastEnhancer ce= new ContrastEnhancer();
-	   ce.stretchHistogram(impZ.getProcessor(), 0.5); 	 
-	   impZ.updateAndDraw();
-	   ce.stretchHistogram(impX.getProcessor(), 0.5); 	
-	   impX.updateAndDraw();
-	   ce.stretchHistogram(impY.getProcessor(), 0.5); 	
-	   impY.updateAndDraw();
-	   ce.stretchHistogram(impXT.getProcessor(), 0.5);   
-	   impXT.updateAndDraw();
-	   ce.stretchHistogram(impYT.getProcessor(), 0.5); 
-	   impYT.updateAndDraw();
+    
        
-       
-	   gui screen = new gui("Example 1");
-       screen.setSize(500,100);
-       screen.setVisible(true);
+	//   gui screen = new gui("Example 1");
+    //   screen.setSize(500,100);
+    //   screen.setVisible(true);
     //   screen.add(impZ.getCanvas());
        
+     
      
         return;
     }
@@ -383,10 +395,10 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 		// TODO Auto-generated method stub
 		int x = e.getX();
 		int y = e.getY();
-		int offscreenX = canvasX.offScreenX(x);
-		int offscreenY = canvasX.offScreenY(y);
-		System.out.println("mousePressed off screen: "+offscreenX+","+offscreenY);
-		System.out.println("mousePressed: "+x+","+y);
+	//	int offscreenX = canvasX.offScreenX(x);
+	//	int offscreenY = canvasX.offScreenY(y);
+	//	System.out.println("mousePressed off screen: "+offscreenX+","+offscreenY);
+	//	System.out.println("mousePressed: "+x+","+y);
 	
 	
 		
@@ -432,22 +444,33 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	private synchronized void upDateImages(int frame, int channel, boolean init){
 		
 		
-			RandomAccessibleInterval<T> imgz = Views.hyperSlice(zProjections,2,frame);
-	       RandomAccessibleInterval<T> imgx = Views.hyperSlice( xProjections,2,frame);
-	       RandomAccessibleInterval<T> imgxt= xtProjections;
-	       RandomAccessibleInterval<T> imgy = Views.hyperSlice(yProjections,2,frame);
+		
+		
+		RandomAccessibleInterval<T> imgx=zProjections;
+		RandomAccessibleInterval<T> imgy=xProjections;
+		RandomAccessibleInterval<T> imgz=yProjections;
+	       RandomAccessibleInterval<T> imgxt= xtProjections;      
 	       RandomAccessibleInterval<T> imgyt= ytProjections;
-	      
-	       if(image.numDimensions()==5){
-	    	   imgz=Views.hyperSlice(imgz,2,channel);
-	    	   imgx=Views.hyperSlice(imgx,2,channel);
-	    	   imgy=Views.hyperSlice(imgy,2,channel);
+	       
+	       if(mainImage.getNSlices()>1){
+	       imgz=Views.hyperSlice(zProjections,2,frame);
+	       imgx=Views.hyperSlice(xProjections,2,frame);
+	       imgy=Views.hyperSlice(yProjections,2,frame);
+	       }
+	       
+	       if(mainImage.getNChannels()>1){
+	    	   if(mainImage.getNSlices()>1){
+	    		   imgz=Views.hyperSlice( imgz,2,channel);
+		    	   imgx=Views.hyperSlice( imgx,2,channel);
+		    	   imgy=Views.hyperSlice( imgy,2,channel);   			
+	   		   }	
+	    	   
 	    	   imgxt=Views.hyperSlice(imgxt,2,channel);
 	    	   imgyt=Views.hyperSlice(imgyt,2,channel);
 	       }
 	    
 	    	   
-	       
+	       ContrastEnhancer ce= new ContrastEnhancer();
 	       
 	       
 	    if(init){  
@@ -458,24 +481,45 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	       int mainX=mainImage.getWindow().getX();      
 	       int mainY=mainImage.getWindow().getY();  
 	       
-	     
-	       impZ=ImageJFunctions.show(imgz,"z"); impZ.getWindow().setLocation(maxZx, maxZy);
+	      
 	       
-	       impX=ImageJFunctions.show(imgx,"x"); impX.getWindow().setLocation(mainX -impX.getWindow().getWidth(), mainY);
-	       impY=ImageJFunctions.show(imgy,"y"); impY.getWindow().setLocation(mainX, mainY -impY.getWindow().getHeight());
+	       if(mainImage.getNSlices()>1){	     
+	    	   impZ=ImageJFunctions.show(imgz,"z"); impZ.getWindow().setLocation(maxZx, maxZy);    
+	    	   impX=ImageJFunctions.show(imgx,"x"); impX.getWindow().setLocation(mainX -impX.getWindow().getWidth(), mainY);
+	    	   impY=ImageJFunctions.show(imgy,"y"); impY.getWindow().setLocation(mainX, mainY -impY.getWindow().getHeight());
+	    	   
+	    	   ce.stretchHistogram(impZ.getProcessor(), 0.5); 	 
+	    	   impZ.updateAndDraw();
+	    	   ce.stretchHistogram(impX.getProcessor(), 0.5); 	
+	    	   impX.updateAndDraw();
+	    	   ce.stretchHistogram(impY.getProcessor(), 0.5); 	
+	    	   impY.updateAndDraw();
+	    	  
+	    	   
+	       }else{
+	    	   impZ=null;
+	    	   impX=null;
+	    	   impY=null;
+	       }
 	       
 	       impXT=ImageJFunctions.show(imgxt,"xt"); impXT.getWindow().setLocation(maxZx -impXT.getWindow().getWidth(), maxZy);
 	       impYT=ImageJFunctions.show(imgyt,"yt"); impYT.getWindow().setLocation(maxZx, maxZy -impYT.getWindow().getHeight());
 	       
+	       ce.stretchHistogram(impXT.getProcessor(), 0.5);   
+    	   impXT.updateAndDraw();
+    	   ce.stretchHistogram(impYT.getProcessor(), 0.5); 
+    	   impYT.updateAndDraw();
 	       
 	    }else{
-	    	ImagePlus impl=ImageJFunctions.wrap( imgz , " ");			
-			ContrastEnhancer ce= new ContrastEnhancer();
+	    				
 			
+	    	ImagePlus impl=null;
+			if(mainImage.getNSlices()>1){
+			impl=ImageJFunctions.wrap( imgz , " ");
 	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
 			this.impZ.setProcessor(impl.getProcessor());
 			impZ.updateAndDraw();
-			
+					
 			impl=ImageJFunctions.wrap( imgx , " ");					
 	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
 			this.impX.setProcessor(impl.getProcessor());
@@ -485,6 +529,7 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
 			this.impY.setProcessor(impl.getProcessor());
 			impY.updateAndDraw();	
+			}
 			
 			impl=ImageJFunctions.wrap( imgxt , " ");					
 	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
@@ -497,6 +542,9 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 			impYT.updateAndDraw();	
 			
 	    }
+	    
+	    
+	    
 		
 				
 	}
@@ -511,6 +559,7 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	//	if(SliceNumber !=impZ.getSlice()) newSliceNumber= impZ.getSlice();
 	//	if(SliceNumber !=impY.getSlice()) newSliceNumber= impY.getSlice();
 	//	if(SliceNumber !=impX.getSlice()) newSliceNumber= impX.getSlice();
+		
 		newSliceNumber= mainImage.getFrame()-1;
 		int zSliceNumber=mainImage.getSlice()-1;
 		int cNumber=mainImage.getChannel()-1;
@@ -529,35 +578,35 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 			
 			this.mainImage.updateAndDraw();
 			
-			Overlay ov= cellOverlay(20, 40, 40.0, 10.0,SliceNumber);
+	//		Overlay ov= cellOverlay(20, 40, 40.0, 10.0,SliceNumber);
 		       
 		       
 		       
 	//	       impX.setOverlay(ov);
 	//	       impY.setOverlay(ov);   
-		       impZ.setOverlay(ov);
+	//	       impZ.setOverlay(ov);
 		       
 		   Overlay ovLineYT=new Overlay();
 		   
-		   ovLineYT.add(new Line(0,newSliceNumber-0.5,this.zProjections.dimension(0) ,newSliceNumber-0.5));
+		   ovLineYT.add(new Line(0,newSliceNumber-0.5,this.image.dimension(0) ,newSliceNumber-0.5));
 		   ovLineYT.setStrokeColor(Color.yellow);
 		   this.impYT.setOverlay(ovLineYT);
 		   
 		   Overlay ovLineXT=new Overlay();
-		   ovLineXT.add(new Line(newSliceNumber-0.5,0, newSliceNumber-0.5, this.zProjections.dimension(1) ));
+		   ovLineXT.add(new Line(newSliceNumber-0.5,0, newSliceNumber-0.5, this.image.dimension(1) ));
 		   ovLineXT.setStrokeColor(Color.yellow);
 		   this.impXT.setOverlay(ovLineXT);
+		   if(mainImage.getNSlices()>1){	   
+			   Overlay ovLineY=new Overlay();
+			   ovLineY.add(new Line(0,(zSliceNumber+1-0.5)*this.xyToZ,this.zProjections.dimension(0) ,(zSliceNumber+1-0.5)*this.xyToZ));
+			   ovLineY.setStrokeColor(Color.green);
+			   this.impY.setOverlay(ovLineY);
 		   
-		   Overlay ovLineY=new Overlay();
-		   ovLineY.add(new Line(0,(zSliceNumber+1-0.5)*this.xyToZ,this.zProjections.dimension(0) ,(zSliceNumber+1-0.5)*this.xyToZ));
-		   ovLineY.setStrokeColor(Color.green);
-		   this.impY.setOverlay(ovLineY);
-		   
-		   Overlay ovLineX=new Overlay();
-		   ovLineX.add(new Line((zSliceNumber+1-0.5)*this.xyToZ,0, (zSliceNumber+1-0.5)*this.xyToZ, this.zProjections.dimension(1) ));
-		   ovLineX.setStrokeColor(Color.green);
-		   this.impX.setOverlay(ovLineX);
-			
+			   Overlay ovLineX=new Overlay();
+			   ovLineX.add(new Line((zSliceNumber+1-0.5)*this.xyToZ,0, (zSliceNumber+1-0.5)*this.xyToZ, this.zProjections.dimension(1) ));
+			   ovLineX.setStrokeColor(Color.green);
+			   this.impX.setOverlay(ovLineX);
+		   }
 		}
 		buisy=false;
 	}
