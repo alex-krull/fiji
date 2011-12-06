@@ -187,8 +187,9 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
     //   impY.addImageListener(this);
     //   impZ.addImageListener(this);
        mainImage.addImageListener(this);
+       impX.getCanvas().addMouseMotionListener(this);
+       impY.getCanvas().addMouseMotionListener(this);
        impZ.getCanvas().addMouseMotionListener(this);
-       
     
        
 	//   gui screen = new gui("Example 1");
@@ -618,8 +619,22 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		System.out.println("x:" +this.impZ.getCanvas().offScreenX(arg0.getX()) );
-		System.out.println("y:" +this.impZ.getCanvas().offScreenY(arg0.getY()) );
+		Object source = arg0.getSource();
+		if(source.equals(this.impZ.getCanvas())){
+			System.out.println("x:" +this.impZ.getCanvas().offScreenX(arg0.getX()) );
+			System.out.println("y:" +this.impZ.getCanvas().offScreenY(arg0.getY()) );
+		}
+		
+		if(source.equals(this.impX.getCanvas())){
+			System.out.println("z:" +this.impX.getCanvas().offScreenX(arg0.getX()) );
+			System.out.println("y:" +this.impX.getCanvas().offScreenY(arg0.getY()) );
+		}
+		
+		if(source.equals(this.impY.getCanvas())){
+			System.out.println("x:" +this.impY.getCanvas().offScreenX(arg0.getX()) );
+			System.out.println("z:" +this.impY.getCanvas().offScreenY(arg0.getY()) );
+		}
+		
 		// TODO Auto-generated method stub
 		
 	}
