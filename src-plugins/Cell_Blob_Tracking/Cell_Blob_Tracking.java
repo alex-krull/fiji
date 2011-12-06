@@ -1,9 +1,10 @@
-package blobTracking;
 
+
+import blobTracking.BlobGui;
 import frameWork.Gui;
 import ij.plugin.PlugIn;
 
-public class CellAndBlobTracking implements PlugIn{
+public class Cell_Blob_Tracking implements PlugIn{
 
 	@Override
 	public void run(String arg0) {
