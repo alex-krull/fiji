@@ -47,7 +47,7 @@ import net.imglib2.view.Views;
 
 
 
-public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealType<T>  > implements PlugIn, MouseListener, ImageListener{
+public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealType<T>  > implements PlugIn, MouseMotionListener, ImageListener{
 	
 	
 	private ImagePlus impZ;
@@ -76,6 +76,9 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	int sliceNumberZ=1;
 	boolean buisy=false;
 	double xyToZ=3.5;
+	double mouseX=0;
+	double mouseY=0;
+	double mouseZ=0;
 
 	
 
@@ -184,6 +187,7 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
     //   impY.addImageListener(this);
     //   impZ.addImageListener(this);
        mainImage.addImageListener(this);
+       impZ.getCanvas().addMouseMotionListener(this);
        
     
        
@@ -402,7 +406,7 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
     }
     
    
-	@Override
+	
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		int x = e.getX();
@@ -416,30 +420,6 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 		
 	}
 
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		// TODO Auto-generated method stub
-	
-			
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		System.out.println("pressed ! !");
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println("released ! !");
-	}
 
 	@Override
 	public void imageClosed(ImagePlus arg0) {
@@ -627,6 +607,20 @@ public class Imglib2_Plugin < T extends  NumericType<T> & NativeType<T> & RealTy
 	@Override
 	public synchronized void imageUpdated(ImagePlus ip) {
 		doStuff();
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		System.out.println("x:" +this.impZ.getCanvas().offScreenX(arg0.getX()) );
+		System.out.println("y:" +this.impZ.getCanvas().offScreenY(arg0.getY()) );
+		// TODO Auto-generated method stub
 		
 	}
     
