@@ -6,6 +6,7 @@ import java.util.List;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.type.Type;
+import net.imglib2.view.Views;
 
 public class Controler<T extends Trackable, IT extends Type<IT>> { 
 
@@ -17,7 +18,12 @@ public Controler(RandomAccessibleInterval<IT> img , Frame<T,IT> fact){
 	image=img;
 	factory=fact;
 	frames= new ArrayList<Frame<T,IT>>();
-	frames.add(factory.createFrame(0,getFrameView(0,0)));
+	for(int i=0;i<40000;i++){
+		Frame<T,IT> f=factory.createFrame(i,getFrameView(0,0));
+		frames.add(f);
+		
+	}
+	
 }
 
 public void addTrackable(T trackable, int frameNumber){
@@ -25,7 +31,7 @@ public void addTrackable(T trackable, int frameNumber){
 }
 
 private  RandomAccessibleInterval<IT> getFrameView(int frameNumber, int channelNumber){
-	return null;
+	return Views.hyperSlice(image, 0, 0);
 }
 
 

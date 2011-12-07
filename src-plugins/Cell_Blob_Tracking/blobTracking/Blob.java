@@ -5,10 +5,19 @@ import frameWork.Frame;
 import frameWork.Trackable;
 
 public class Blob extends Trackable{
-	public double x;
-	public double y;
-	public double z;
-	@Override
+	public double xPos;
+	public double yPos;
+	public double zPos;
+	public double sigma;
+	
+	
+	public Blob(int x, int y ,int z, double sig){
+		xPos=x;
+		yPos=y;
+		zPos=z;
+		sigma=sig;
+	}
+	
 	public Roi getShape() {
 		// TODO Auto-generated method stub
 		return null;

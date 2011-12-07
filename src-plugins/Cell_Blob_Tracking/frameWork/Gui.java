@@ -30,7 +30,7 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
-public abstract class Gui< IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > implements MouseMotionListener, ImageListener {
+public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > implements MouseMotionListener, ImageListener {
 
 	protected RandomAccessibleInterval<IT> image;
 	protected ImagePlus impZ;
@@ -62,21 +62,23 @@ public abstract class Gui< IT extends  NumericType<IT> & NativeType<IT> & RealTy
 	protected double mouseX=0;
 	protected double mouseY=0;
 	protected double mouseZ=0;
+	
+	protected Controler<T,IT> controler;
 
 	
  
-    
-    public void exec() {
+	protected Gui(ImagePlus imp, RandomAccessibleInterval<IT> img, Controler<T,IT> contr){
+	
+		controler=contr;
         // 0 - Check validity of parameters
       
 
-    	ImagePlus imp = IJ.getImage();
-        mainImage=imp;
+        mainImage= imp;
       
-        if (null == imp) return;
+        if (null == mainImage) return;
     	
        
-       image = ImagePlusAdapter.wrap(imp);
+       image = img;
        
        this.isVolume=mainImage.getNSlices()>1;
        this.isTimeSequence=mainImage.getNFrames()>1;
@@ -157,6 +159,7 @@ public abstract class Gui< IT extends  NumericType<IT> & NativeType<IT> & RealTy
         return;
     }
     
+	
 private synchronized void upDateImages(int frame, int channel, boolean init){
 		
 		
