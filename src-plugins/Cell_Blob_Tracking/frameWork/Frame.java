@@ -7,7 +7,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.Type;
 
 public abstract class Frame<T extends Trackable, IT extends Type<IT>> {
-protected List <T> trackables;
+private List <T> trackables;
 protected RandomAccessibleInterval<IT> frameView;
 protected int frameNumber;
 
@@ -22,6 +22,10 @@ public abstract void optimizeFrame();
 public abstract Frame<T,IT> createFrame(int frameNum, RandomAccessibleInterval<IT> view);
 public void addTrackable(T trackable){
 	trackables.add(trackable);
+}
+
+public List<T>getTrackables(){
+	return trackables;
 }
 
 }

@@ -10,5 +10,4 @@ public abstract class Trackable {
 	
 public abstract Roi getShape();
 
-
 }

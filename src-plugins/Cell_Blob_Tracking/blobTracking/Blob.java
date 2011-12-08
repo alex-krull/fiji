@@ -1,6 +1,7 @@
 package blobTracking;
 
 import ij.gui.Roi;
+import ij.gui.EllipseRoi;
 import frameWork.Frame;
 import frameWork.Trackable;
 
@@ -11,7 +12,7 @@ public class Blob extends Trackable{
 	public double sigma;
 	
 	
-	public Blob(int x, int y ,int z, double sig){
+	public Blob(double x, double y ,double z, double sig){
 		xPos=x;
 		yPos=y;
 		zPos=z;
@@ -19,8 +20,11 @@ public class Blob extends Trackable{
 	}
 	
 	public Roi getShape() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		
+		Roi roi= new EllipseRoi(xPos+sigma*2,yPos,xPos-sigma*2,yPos,1 ); 
+		
+		return roi;
 	}
 
 		

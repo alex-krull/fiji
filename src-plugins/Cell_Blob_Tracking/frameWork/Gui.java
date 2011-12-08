@@ -10,7 +10,9 @@ import ij.plugin.ContrastEnhancer;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.List;
 
 import tools.ImglibTools;
 
@@ -30,7 +32,7 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
-public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > implements MouseMotionListener, ImageListener {
+public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > implements MouseMotionListener,MouseListener, ImageListener {
 
 	protected RandomAccessibleInterval<IT> image;
 	protected ImagePlus impZ;
@@ -55,8 +57,9 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
 	protected RandomAccessibleInterval<IT> xtProjections;
 	protected RandomAccessibleInterval<IT> ytProjections;
 	
-	protected int SliceNumber=1;
-	protected int sliceNumberZ=1;
+	protected int currentFrameNumber=0;
+	protected int currentSliceNumber=0;
+	protected int currentChannelNumber=0;
 	protected boolean buisy=false;
 	protected double xyToZ=3.5;
 	protected double mouseX=0;
@@ -126,7 +129,7 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
        
        
    
-       this.upDateImages(0, 0,true);
+       this.upDateImages(0, 0, 0,true);
        
        
        	
@@ -147,6 +150,11 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
        impX.getCanvas().addMouseMotionListener(this);
        impY.getCanvas().addMouseMotionListener(this);
        impZ.getCanvas().addMouseMotionListener(this);
+       
+       impXT.getCanvas().addMouseListener(this);
+       impYT.getCanvas().addMouseListener(this);
+       impX.getCanvas().addMouseListener(this);
+       impY.getCanvas().addMouseListener(this);
     
        
 	//   gui screen = new gui("Example 1");
@@ -156,14 +164,15 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
        
      
      
+       
         return;
     }
     
 	
-private synchronized void upDateImages(int frame, int channel, boolean init){
+private synchronized void upDateImages(int frame, int slice, int channel, boolean init){
 		
 		
-		
+		System.out.println("=================f:"+frame + " s:" + slice+ " c:" + " i:"+init);
 		
 		RandomAccessibleInterval<IT> imgx=zProjections;
 		RandomAccessibleInterval<IT> imgy=xProjections;
@@ -264,56 +273,86 @@ private synchronized void upDateImages(int frame, int channel, boolean init){
 	    
 	    
 	    
+	    
+	    
+	    
+	    
 		
+		System.out.println("new slice:"+mainImage.getCurrentSlice());
+		
+		
+		
+		this.mainImage.updateAndDraw();
+		
+		addOverlays(frame,slice,channel);
+		
+
+	  
 				
 	}
+
+private synchronized void updatePosition(int x,int y, int slice ,int frame, int channel){
+//	if(buisy)return;
+//	buisy=true;
+	System.out.println("oframe:"+ currentFrameNumber+ "   oslice:"+ currentSliceNumber+ "  ochannel:"+currentChannelNumber );
 	
+	currentSliceNumber=slice;
+	currentFrameNumber=frame;
+	currentChannelNumber=channel;
+	mainImage.setPosition(channel, slice+1, frame+1);
+	this.upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, false);
+	System.out.println("nframe:"+ currentFrameNumber+ "   nslice:"+ currentSliceNumber+ "  nchannel:"+currentChannelNumber );
+	//mainImage.setSlice(slice+1);
+	
+	
+//	buisy=false;
+}
 	
 	private synchronized void doStuff(){
-		if(buisy)return;
-		buisy=true;
-		int newSliceNumber=SliceNumber;
+		if(currentFrameNumber==mainImage.getFrame()-1
+				&& currentSliceNumber==mainImage.getSlice()-1)
+			return;
+		
+	//	buisy=true;
+	//	int newSliceNumber=currentFrameNumber;
 		
 		// TODO Auto-generated method stub
 	//	if(SliceNumber !=impZ.getSlice()) newSliceNumber= impZ.getSlice();
 	//	if(SliceNumber !=impY.getSlice()) newSliceNumber= impY.getSlice();
 	//	if(SliceNumber !=impX.getSlice()) newSliceNumber= impX.getSlice();
 		
-		newSliceNumber= mainImage.getFrame()-1;
+		int newSliceNumber= mainImage.getFrame()-1;
 		if(mainImage.getNFrames()==1) newSliceNumber=mainImage.getSlice();
 		int zSliceNumber=mainImage.getSlice()-1;
 		int cNumber=mainImage.getChannel()-1;
 		
+		System.out.println("______________________________");
 		System.out.println("frame:"+ newSliceNumber+ "   slice:"+ zSliceNumber+ "  channel:"+cNumber );
+		System.out.println("cframe:"+ currentFrameNumber+ "   cslice:"+ currentSliceNumber+ "  cchannel:"+currentChannelNumber );
 		
-		if(newSliceNumber!=SliceNumber|| zSliceNumber!=sliceNumberZ)
-		{
+		//if(newSliceNumber!=currentFrameNumber|| zSliceNumber!=currentSliceNumber)
+	//	{
 			
+			updatePosition(0,0, zSliceNumber ,newSliceNumber, cNumber);
+			
+			
+			
+	//	}
+	//	buisy=false;
+	}
+	
+	private void addOverlays(int frame, int slice, int channel){
 		
-			this.upDateImages(newSliceNumber, cNumber, false);
-			
-			System.out.println("new slice:"+mainImage.getCurrentSlice());
-			
-			
-			
-			this.mainImage.updateAndDraw();
-			
-	//		Overlay ov= cellOverlay(20, 40, 40.0, 10.0,SliceNumber);
-		       
-		       
-		       
-	//	       impX.setOverlay(ov);
-	//	       impY.setOverlay(ov);   
-	//	       impZ.setOverlay(ov);
-		       
-		   Overlay ovLineYT=new Overlay();
+		 Overlay ovLineYT=new Overlay();
+		   int newSliceNumber=frame;
+		   int zSliceNumber= slice;
 		   
-		   ovLineYT.add(new Line(0,newSliceNumber-0.5,this.image.dimension(0) ,newSliceNumber-0.5));
+		   ovLineYT.add(new Line(0,newSliceNumber+1-0.5,this.image.dimension(0) ,newSliceNumber+1-0.5));
 		   ovLineYT.setStrokeColor(Color.yellow);
 		   this.impYT.setOverlay(ovLineYT);
 		   
 		   Overlay ovLineXT=new Overlay();
-		   ovLineXT.add(new Line(newSliceNumber-0.5,0, newSliceNumber-0.5, this.image.dimension(1) ));
+		   ovLineXT.add(new Line(newSliceNumber+1-0.5,0, newSliceNumber+1-0.5, this.image.dimension(1) ));
 		   ovLineXT.setStrokeColor(Color.yellow);
 		   this.impXT.setOverlay(ovLineXT);
 		   if(isVolume){	   
@@ -327,8 +366,15 @@ private synchronized void upDateImages(int frame, int channel, boolean init){
 			   ovLineX.setStrokeColor(Color.green);
 			   this.impX.setOverlay(ovLineX);
 		   }
-		}
-		buisy=false;
+		   
+		   
+		   
+		   List<T> trackables= controler.getTrackablesForFrame(frame);
+		   Overlay circles=new Overlay();
+		   for(Trackable t : trackables){
+			   circles.add(t.getShape());
+		   }
+		   impZ.setOverlay(circles);
 	}
 
 
@@ -362,5 +408,71 @@ public void imageUpdated(ImagePlus arg0) {
 	doStuff();
 	
 }
+
+
+
+
+
+//MouseListener Methods
+@Override
+public void mouseClicked(MouseEvent arg0) {
+	
+	
+	if(impX.getCanvas().equals(arg0.getSource())){
+		int x=impX.getCanvas().offScreenX(arg0.getX());
+		int y=impX.getCanvas().offScreenY(arg0.getY());
+		System.out.println("x:"+ x +"  y:"+y);
+		
+	}
+	
+	if(impY.getCanvas().equals(arg0.getSource())){
+		int x=impY.getCanvas().offScreenX(arg0.getX());
+		int y=impY.getCanvas().offScreenY(arg0.getY());
+		System.out.println("x:"+ x +"  y:"+y);
+	}
+	
+	if(impXT.getCanvas().equals(arg0.getSource())){
+		int x=impXT.getCanvas().offScreenX(arg0.getX());
+		int y=impXT.getCanvas().offScreenY(arg0.getY());
+		System.out.println("x:"+ x +"  y:"+y);
+		
+	}
+	
+	if(impYT.getCanvas().equals(arg0.getSource())){
+		int x=impYT.getCanvas().offScreenX(arg0.getX());
+		int y=impYT.getCanvas().offScreenY(arg0.getY());
+		System.out.println("x:"+ x +"  y:"+y);
+		
+		this.updatePosition(0, 0, currentSliceNumber, y, currentChannelNumber);
+//		upDateImages(y, 1, 0, false);
+	}
+	
+}
+
+@Override
+public void mouseEntered(MouseEvent arg0) {
+
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void mouseExited(MouseEvent arg0) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void mousePressed(MouseEvent arg0) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void mouseReleased(MouseEvent arg0) {
+	// TODO Auto-generated method stub
+	
+}
+
 
 }

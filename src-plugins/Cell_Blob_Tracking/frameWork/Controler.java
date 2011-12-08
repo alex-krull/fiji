@@ -34,6 +34,10 @@ private  RandomAccessibleInterval<IT> getFrameView(int frameNumber, int channelN
 	return Views.hyperSlice(image, 0, 0);
 }
 
+public List<T> getTrackablesForFrame(int frame){
+	return frames.get(frame).getTrackables();
+}
+
 
 
 
