@@ -83,6 +83,7 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
        
        image = img;
        
+       System.out.println("channels:" +mainImage.getNChannels()+ "  frames:"+mainImage.getNFrames()+ "  slices:"+mainImage.getNSlices());
        this.isVolume=mainImage.getNSlices()>1;
        this.isTimeSequence=mainImage.getNFrames()>1;
        this.isMultiChannel=mainImage.getNChannels()>1;
@@ -90,7 +91,9 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
        if(isVolume&&!isTimeSequence){
     	   isVolume=false;
     	   isTimeSequence=true;
+    	   System.out.println("SWITCHING DIMENSIONS");
        }
+       
        
        
        if(isMultiChannel){
@@ -101,7 +104,7 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
        }
   	     
        
-       System.out.println("channels:" +mainImage.getNChannels()+ "  frames:"+mainImage.getNFrames()+ "  slices:"+mainImage.getNSlices());
+       
  		System.out.println("dimensions:" + image.numDimensions());
        
          
@@ -147,14 +150,16 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
     //   impY.addImageListener(this);
     //   impZ.addImageListener(this);
        mainImage.addImageListener(this);
-       impX.getCanvas().addMouseMotionListener(this);
-       impY.getCanvas().addMouseMotionListener(this);
-       impZ.getCanvas().addMouseMotionListener(this);
+       if(impX!=null) impX.getCanvas().addMouseMotionListener(this);
+       if(impY!=null) impY.getCanvas().addMouseMotionListener(this);
+       if(impZ!=null) impZ.getCanvas().addMouseMotionListener(this);
+       if(impXT!=null) impXT.getCanvas().addMouseMotionListener(this);
+       if(impYT!=null) impYT.getCanvas().addMouseMotionListener(this);
        
-       impXT.getCanvas().addMouseListener(this);
-       impYT.getCanvas().addMouseListener(this);
-       impX.getCanvas().addMouseListener(this);
-       impY.getCanvas().addMouseListener(this);
+       if(impXT!=null) impXT.getCanvas().addMouseListener(this);
+       if(impYT!=null) impYT.getCanvas().addMouseListener(this);
+       if(impX!=null) impX.getCanvas().addMouseListener(this);
+       if(impY!=null) impY.getCanvas().addMouseListener(this);
     
        
 	//   gui screen = new gui("Example 1");
@@ -293,17 +298,20 @@ private synchronized void upDateImages(int frame, int slice, int channel, boolea
 
 private synchronized void updatePosition(int x,int y, int slice ,int frame, int channel){
 
+	if(buisy) return;
+	buisy=true;
 	System.out.println("oframe:"+ currentFrameNumber+ "   oslice:"+ currentSliceNumber+ "  ochannel:"+currentChannelNumber );
 	
 	currentSliceNumber=slice;
 	currentFrameNumber=frame;
 	currentChannelNumber=channel;
-	mainImage.setPosition(channel+1, slice+1, frame+1);
+	if (mainImage.getNFrames()<=1 && mainImage.getNSlices()>1) mainImage.setPosition(channel+1, frame+1, slice+1); // switch dimensions
+	else mainImage.setPosition(channel+1, slice+1, frame+1);
 	this.upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, false);
 	System.out.println("nframe:"+ currentFrameNumber+ "   nslice:"+ currentSliceNumber+ "  nchannel:"+currentChannelNumber );
 	//mainImage.setSlice(slice+1);
 	
-	
+	buisy=false;
 
 }
 	
@@ -311,6 +319,11 @@ private synchronized void updatePosition(int x,int y, int slice ,int frame, int 
 		int newFrameNumber= mainImage.getFrame()-1;
 		int newSliceNumber= mainImage.getSlice()-1;
 		int newChannelNumber=mainImage.getChannel()-1;
+		
+		if (mainImage.getNFrames()<=1 && mainImage.getNSlices()>1){
+			newFrameNumber= mainImage.getSlice()-1;	// switch dimensions
+			newSliceNumber= mainImage.getFrame()-1;
+		}
 		
 		if(currentFrameNumber==newFrameNumber
 				&& currentSliceNumber==newSliceNumber
@@ -364,18 +377,54 @@ private synchronized void updatePosition(int x,int y, int slice ,int frame, int 
 		   for(Trackable t : trackables){
 			   circles.add(t.getShape());
 		   }
-		   impZ.setOverlay(circles);
+		   if(impZ!=null) impZ.setOverlay(circles);
 	}
 
 
 @Override
 public void mouseDragged(MouseEvent arg0) {
 	// TODO Auto-generated method stub
+	if(!arg0.isControlDown()) return;
+	if(impX!=null && impX.getCanvas().equals(arg0.getSource())){
+		int x=impX.getCanvas().offScreenX(arg0.getX());
+		int y=impX.getCanvas().offScreenY(arg0.getY());
+		System.out.println("x:"+ x +"  y:"+y);
+		this.updatePosition(0, 0, (int)(x/this.xyToZ), currentFrameNumber, currentChannelNumber);
+		
+	}
+	
+	if(impY!=null && impY.getCanvas().equals(arg0.getSource())){
+		int x=impY.getCanvas().offScreenX(arg0.getX());
+		int y=impY.getCanvas().offScreenY(arg0.getY());
+		System.out.println("x:"+ x +"  y:"+y);
+		this.updatePosition(0, 0, (int)(y/this.xyToZ), currentFrameNumber, currentChannelNumber);
+	}
+	
+	if(impXT!=null && impXT.getCanvas().equals(arg0.getSource())){
+		int x=impXT.getCanvas().offScreenX(arg0.getX());
+		int y=impXT.getCanvas().offScreenY(arg0.getY());
+		System.out.println("x:"+ x +"  y:"+y);
+		this.updatePosition(0, 0, currentSliceNumber, x, currentChannelNumber);
+		
+	}
+	
+	if(impYT!=null && impYT.getCanvas().equals(arg0.getSource())){
+		int x=impYT.getCanvas().offScreenX(arg0.getX());
+		int y=impYT.getCanvas().offScreenY(arg0.getY());
+		System.out.println("x:"+ x +"  y:"+y);
+		
+		this.updatePosition(0, 0, currentSliceNumber, y, currentChannelNumber);
+//		upDateImages(y, 1, 0, false);
+	}
+	arg0.consume();
+	
 	
 }
 
 @Override
 public void mouseMoved(MouseEvent arg0) {
+
+	
 	// TODO Auto-generated method stub
 	
 }
@@ -408,7 +457,7 @@ public void imageUpdated(ImagePlus arg0) {
 public void mouseClicked(MouseEvent arg0) {
 	
 	
-	if(impX.getCanvas().equals(arg0.getSource())){
+	if(impX!=null && impX.getCanvas().equals(arg0.getSource())){
 		int x=impX.getCanvas().offScreenX(arg0.getX());
 		int y=impX.getCanvas().offScreenY(arg0.getY());
 		System.out.println("x:"+ x +"  y:"+y);
@@ -416,14 +465,14 @@ public void mouseClicked(MouseEvent arg0) {
 		
 	}
 	
-	if(impY.getCanvas().equals(arg0.getSource())){
+	if(impY!=null && impY.getCanvas().equals(arg0.getSource())){
 		int x=impY.getCanvas().offScreenX(arg0.getX());
 		int y=impY.getCanvas().offScreenY(arg0.getY());
 		System.out.println("x:"+ x +"  y:"+y);
 		this.updatePosition(0, 0, (int)(y/this.xyToZ), currentFrameNumber, currentChannelNumber);
 	}
 	
-	if(impXT.getCanvas().equals(arg0.getSource())){
+	if(impXT!=null && impXT.getCanvas().equals(arg0.getSource())){
 		int x=impXT.getCanvas().offScreenX(arg0.getX());
 		int y=impXT.getCanvas().offScreenY(arg0.getY());
 		System.out.println("x:"+ x +"  y:"+y);
@@ -431,7 +480,7 @@ public void mouseClicked(MouseEvent arg0) {
 		
 	}
 	
-	if(impYT.getCanvas().equals(arg0.getSource())){
+	if(impYT!=null && impYT.getCanvas().equals(arg0.getSource())){
 		int x=impYT.getCanvas().offScreenX(arg0.getX());
 		int y=impYT.getCanvas().offScreenY(arg0.getY());
 		System.out.println("x:"+ x +"  y:"+y);

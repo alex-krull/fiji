@@ -24,6 +24,8 @@ public BlobGui(ImagePlus imp, RandomAccessibleInterval<IT> img, Controler<Blob,I
  	   Blob tra= new Blob(20,20+ Math.sin(i/10.0f)*5,5,2);
     controler.addTrackable(tra, i);
     controler.addTrackable(new Blob(20,20+ Math.sin(i/15.0f)*5,5,10), i);
+    controler.addTrackable(new Blob(70,20+ Math.sin(i/45.0f)*5,5,10), i);
+    controler.addTrackable(new Blob(20,70+ Math.sin(i/35.0f)*5,5,10), i);
     
  	   
     }
