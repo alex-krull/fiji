@@ -172,7 +172,7 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
 private synchronized void upDateImages(int frame, int slice, int channel, boolean init){
 		
 		
-		System.out.println("=================f:"+frame + " s:" + slice+ " c:" + " i:"+init);
+		System.out.println("=================f:"+frame + " s:" + slice+ " c:" + channel+ " i:"+init);
 		
 		RandomAccessibleInterval<IT> imgx=zProjections;
 		RandomAccessibleInterval<IT> imgy=xProjections;
@@ -292,53 +292,43 @@ private synchronized void upDateImages(int frame, int slice, int channel, boolea
 	}
 
 private synchronized void updatePosition(int x,int y, int slice ,int frame, int channel){
-//	if(buisy)return;
-//	buisy=true;
+
 	System.out.println("oframe:"+ currentFrameNumber+ "   oslice:"+ currentSliceNumber+ "  ochannel:"+currentChannelNumber );
 	
 	currentSliceNumber=slice;
 	currentFrameNumber=frame;
 	currentChannelNumber=channel;
-	mainImage.setPosition(channel, slice+1, frame+1);
+	mainImage.setPosition(channel+1, slice+1, frame+1);
 	this.upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, false);
 	System.out.println("nframe:"+ currentFrameNumber+ "   nslice:"+ currentSliceNumber+ "  nchannel:"+currentChannelNumber );
 	//mainImage.setSlice(slice+1);
 	
 	
-//	buisy=false;
+
 }
 	
 	private synchronized void doStuff(){
-		if(currentFrameNumber==mainImage.getFrame()-1
-				&& currentSliceNumber==mainImage.getSlice()-1)
-			return;
+		int newFrameNumber= mainImage.getFrame()-1;
+		int newSliceNumber= mainImage.getSlice()-1;
+		int newChannelNumber=mainImage.getChannel()-1;
 		
-	//	buisy=true;
-	//	int newSliceNumber=currentFrameNumber;
-		
-		// TODO Auto-generated method stub
-	//	if(SliceNumber !=impZ.getSlice()) newSliceNumber= impZ.getSlice();
-	//	if(SliceNumber !=impY.getSlice()) newSliceNumber= impY.getSlice();
-	//	if(SliceNumber !=impX.getSlice()) newSliceNumber= impX.getSlice();
-		
-		int newSliceNumber= mainImage.getFrame()-1;
-		if(mainImage.getNFrames()==1) newSliceNumber=mainImage.getSlice();
-		int zSliceNumber=mainImage.getSlice()-1;
-		int cNumber=mainImage.getChannel()-1;
+		if(currentFrameNumber==newFrameNumber
+				&& currentSliceNumber==newSliceNumber
+				&& currentChannelNumber==newChannelNumber){
+			return;    // sliders were not moved
+			
+		}else{
+						// sliders were moved
 		
 		System.out.println("______________________________");
-		System.out.println("frame:"+ newSliceNumber+ "   slice:"+ zSliceNumber+ "  channel:"+cNumber );
+		System.out.println("frame:"+ newFrameNumber+ "   slice:"+ newSliceNumber+ "  channel:"+newChannelNumber );
 		System.out.println("cframe:"+ currentFrameNumber+ "   cslice:"+ currentSliceNumber+ "  cchannel:"+currentChannelNumber );
 		
-		//if(newSliceNumber!=currentFrameNumber|| zSliceNumber!=currentSliceNumber)
-	//	{
 			
-			updatePosition(0,0, zSliceNumber ,newSliceNumber, cNumber);
+		updatePosition(0,0, newSliceNumber ,newFrameNumber, newChannelNumber);
 			
-			
-			
-	//	}
-	//	buisy=false;
+		
+		}
 	}
 	
 	private void addOverlays(int frame, int slice, int channel){
@@ -422,6 +412,7 @@ public void mouseClicked(MouseEvent arg0) {
 		int x=impX.getCanvas().offScreenX(arg0.getX());
 		int y=impX.getCanvas().offScreenY(arg0.getY());
 		System.out.println("x:"+ x +"  y:"+y);
+		this.updatePosition(0, 0, (int)(x/this.xyToZ), currentFrameNumber, currentChannelNumber);
 		
 	}
 	
@@ -429,12 +420,14 @@ public void mouseClicked(MouseEvent arg0) {
 		int x=impY.getCanvas().offScreenX(arg0.getX());
 		int y=impY.getCanvas().offScreenY(arg0.getY());
 		System.out.println("x:"+ x +"  y:"+y);
+		this.updatePosition(0, 0, (int)(y/this.xyToZ), currentFrameNumber, currentChannelNumber);
 	}
 	
 	if(impXT.getCanvas().equals(arg0.getSource())){
 		int x=impXT.getCanvas().offScreenX(arg0.getX());
 		int y=impXT.getCanvas().offScreenY(arg0.getY());
 		System.out.println("x:"+ x +"  y:"+y);
+		this.updatePosition(0, 0, currentSliceNumber, x, currentChannelNumber);
 		
 	}
 	

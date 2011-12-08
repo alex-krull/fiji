@@ -20,7 +20,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	@Override
 	public void run(String arg0) {
 		// TODO Auto-generated method stub
-		
+		long time0= System.nanoTime();
 		ImagePlus imp=IJ.getImage();
 		Img<IT> img= ImagePlusAdapter.wrap(imp);
 		System.out.println("creating Controler...");
@@ -28,6 +28,8 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		System.out.println("creating Gui...");
 		BlobGui<IT> gui= new BlobGui<IT>(imp, img,contr);
 		System.out.println("done!");
+		long time1= System.nanoTime();
+		System.out.println("Time taken:"+((time1-time0)/1000000));
 	}
 
 }
