@@ -13,6 +13,7 @@ public class Controler<T extends Trackable, IT extends Type<IT>> {
 private	List<Frame <T,IT>> frames;
 private	RandomAccessibleInterval<IT> image;
 private Frame<T,IT> factory;
+public T selected;
 
 public Controler(RandomAccessibleInterval<IT> img , Frame<T,IT> fact){
 	image=img;

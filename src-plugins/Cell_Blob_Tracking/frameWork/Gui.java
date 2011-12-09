@@ -6,6 +6,7 @@ import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.Line;
 import ij.gui.Overlay;
+import ij.gui.Roi;
 import ij.plugin.ContrastEnhancer;
 
 import java.awt.Color;
@@ -150,6 +151,7 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
     //   impY.addImageListener(this);
     //   impZ.addImageListener(this);
        mainImage.addImageListener(this);
+       
        if(impX!=null) impX.getCanvas().addMouseMotionListener(this);
        if(impY!=null) impY.getCanvas().addMouseMotionListener(this);
        if(impZ!=null) impZ.getCanvas().addMouseMotionListener(this);
@@ -160,6 +162,8 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
        if(impYT!=null) impYT.getCanvas().addMouseListener(this);
        if(impX!=null) impX.getCanvas().addMouseListener(this);
        if(impY!=null) impY.getCanvas().addMouseListener(this);
+       if(impZ!=null) impZ.getCanvas().addMouseListener(this);
+       
     
        
 	//   gui screen = new gui("Example 1");
@@ -174,7 +178,7 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
     }
     
 	
-private synchronized void upDateImages(int frame, int slice, int channel, boolean init){
+protected synchronized void upDateImages(int frame, int slice, int channel, boolean init){
 		
 		
 		System.out.println("=================f:"+frame + " s:" + slice+ " c:" + channel+ " i:"+init);
@@ -344,7 +348,7 @@ private synchronized void updatePosition(int x,int y, int slice ,int frame, int 
 		}
 	}
 	
-	private void addOverlays(int frame, int slice, int channel){
+	protected void addOverlays(int frame, int slice, int channel){
 		
 		 Overlay ovLineYT=new Overlay();
 		   int newSliceNumber=frame;
@@ -358,31 +362,37 @@ private synchronized void updatePosition(int x,int y, int slice ,int frame, int 
 		   ovLineXT.add(new Line(newSliceNumber+1-0.5,0, newSliceNumber+1-0.5, this.image.dimension(1) ));
 		   ovLineXT.setStrokeColor(Color.yellow);
 		   this.impXT.setOverlay(ovLineXT);
-		   if(isVolume){	   
-			   Overlay ovLineY=new Overlay();
-			   ovLineY.add(new Line(0,(zSliceNumber+1-0.5)*this.xyToZ,this.zProjections.dimension(0) ,(zSliceNumber+1-0.5)*this.xyToZ));
-			   ovLineY.setStrokeColor(Color.green);
-			   this.impY.setOverlay(ovLineY);
+		   Overlay ovY=new Overlay();
+		   Overlay ovX=new Overlay();
 		   
-			   Overlay ovLineX=new Overlay();
-			   ovLineX.add(new Line((zSliceNumber+1-0.5)*this.xyToZ,0, (zSliceNumber+1-0.5)*this.xyToZ, this.zProjections.dimension(1) ));
-			   ovLineX.setStrokeColor(Color.green);
-			   this.impX.setOverlay(ovLineX);
-		   }
-		   
-		   
-		   
+
+		   ovY.add(new Line(0,(zSliceNumber+1-0.5)*this.xyToZ,this.zProjections.dimension(0) ,(zSliceNumber+1-0.5)*this.xyToZ));
+		   ovY.setStrokeColor(Color.green);
+
+
+
+		   ovX.add(new Line((zSliceNumber+1-0.5)*this.xyToZ,0, (zSliceNumber+1-0.5)*this.xyToZ, this.zProjections.dimension(1) ));
+		   ovX.setStrokeColor(Color.green);
+
+
+
 		   List<T> trackables= controler.getTrackablesForFrame(frame);
-		   Overlay circles=new Overlay();
-		   for(Trackable t : trackables){
-			   circles.add(t.getShape());
+		   Overlay ovZ=new Overlay();
+		   for(Trackable t : trackables){			   
+			   t.addShapeX(ovX);
+			   t.addShapeY(ovY);
+			   t.addShapeZ(ovZ);
+			   
 		   }
-		   if(impZ!=null) impZ.setOverlay(circles);
+		   if(impZ!=null) impZ.setOverlay(ovZ);
+		   if(impX!=null) impX.setOverlay(ovX);
+		   if(impY!=null) impY.setOverlay(ovY);	   
 	}
 
 
 @Override
 public void mouseDragged(MouseEvent arg0) {
+	
 	// TODO Auto-generated method stub
 	if(!arg0.isControlDown()) return;
 	if(impX!=null && impX.getCanvas().equals(arg0.getSource())){
@@ -423,7 +433,7 @@ public void mouseDragged(MouseEvent arg0) {
 
 @Override
 public void mouseMoved(MouseEvent arg0) {
-
+	arg0.consume();
 	
 	// TODO Auto-generated method stub
 	
@@ -488,11 +498,13 @@ public void mouseClicked(MouseEvent arg0) {
 		this.updatePosition(0, 0, currentSliceNumber, y, currentChannelNumber);
 //		upDateImages(y, 1, 0, false);
 	}
+	arg0.consume();
 	
 }
 
 @Override
 public void mouseEntered(MouseEvent arg0) {
+	arg0.consume();
 
 	// TODO Auto-generated method stub
 	
@@ -500,18 +512,21 @@ public void mouseEntered(MouseEvent arg0) {
 
 @Override
 public void mouseExited(MouseEvent arg0) {
+	arg0.consume();
 	// TODO Auto-generated method stub
 	
 }
 
 @Override
 public void mousePressed(MouseEvent arg0) {
+	arg0.consume();
 	// TODO Auto-generated method stub
 	
 }
 
 @Override
 public void mouseReleased(MouseEvent arg0) {
+	arg0.consume();
 	// TODO Auto-generated method stub
 	
 }
