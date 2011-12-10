@@ -24,7 +24,7 @@ public class Blob extends Trackable {
 				yPos, 1);
 		roi.setStrokeColor(Color.RED);
 		ov.add(roi);
-		roi = new TextRoi((int)xPos,(int)yPos,Integer.toString(this.frameId),f);
+		roi = new TextRoi((int)xPos,(int)yPos,Integer.toString(this.sequenceId),f);
 		ov.add(roi);
 	}
 	
@@ -42,7 +42,8 @@ public class Blob extends Trackable {
 		ov.add(roi);
 	}
 	
-	public Blob(double x, double y, double z, double sig) {
+	public Blob(int seqId, int FrameId, double x, double y, double z, double sig) {
+		super(seqId, FrameId);
 		xPos = x;
 		yPos = y;
 		zPos = z;
