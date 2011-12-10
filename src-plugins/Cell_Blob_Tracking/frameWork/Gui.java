@@ -66,6 +66,7 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
 	protected double mouseX=0;
 	protected double mouseY=0;
 	protected double mouseZ=0;
+	protected int selectedSequenceId;
 	
 	protected Controler<T,IT> controler;
 
@@ -467,6 +468,7 @@ public void imageUpdated(ImagePlus arg0) {
 public void mouseClicked(MouseEvent arg0) {
 	
 	
+	
 	if(impX!=null && impX.getCanvas().equals(arg0.getSource())){
 		int x=impX.getCanvas().offScreenX(arg0.getX());
 		int y=impX.getCanvas().offScreenY(arg0.getY());
@@ -519,7 +521,32 @@ public void mouseExited(MouseEvent arg0) {
 
 @Override
 public void mousePressed(MouseEvent arg0) {
-	arg0.consume();
+	if(impZ!=null && impZ.getCanvas().equals(arg0.getSource())){
+		int x=impX.getCanvas().offScreenX(arg0.getX());
+		int y=impX.getCanvas().offScreenY(arg0.getY());
+		
+		this.selectedSequenceId=controler.selectAt(x, y,-1, currentFrameNumber);
+		System.out.println("nes seqID:"+selectedSequenceId);
+		
+	}
+	
+	if(impX!=null && impX.getCanvas().equals(arg0.getSource())){
+		int z=impX.getCanvas().offScreenX(arg0.getX());
+		int y=impX.getCanvas().offScreenY(arg0.getY());
+		
+		this.selectedSequenceId=controler.selectAt(-1, y,z, currentFrameNumber);
+		System.out.println("nes seqID:"+selectedSequenceId);
+		
+	}
+	
+	if(impY!=null && impY.getCanvas().equals(arg0.getSource())){
+		int x=impY.getCanvas().offScreenX(arg0.getX());
+		int z=impY.getCanvas().offScreenY(arg0.getY());
+		
+		this.selectedSequenceId=controler.selectAt(x, -1,z, currentFrameNumber);
+		System.out.println("nes seqID:"+selectedSequenceId);
+		
+	}
 	// TODO Auto-generated method stub
 	
 }

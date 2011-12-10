@@ -51,5 +51,14 @@ public class Blob extends Trackable {
 		sigmaZ = sigma * 2;
 	}
 
+	@Override
+	public double getDistanceTo(double x, double y, double z) {
+		// TODO Auto-generated method stub
+		if(x<0) x=this.xPos;
+		if(y<0) y=this.yPos;
+		if(z<0) z=this.zPos;
+		return (x-xPos)*(x-xPos)+(y-yPos)*(y-yPos)+(z-zPos)*(z-zPos);
+	}
+
 
 }

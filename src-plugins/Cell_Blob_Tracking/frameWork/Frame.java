@@ -24,6 +24,20 @@ public void addTrackable(T trackable){
 	trackables.add(trackable);
 }
 
+public int selectAt(int x, int y, int z){
+	double bestResponse=1;
+	int winner = -1;
+	for(T t: trackables){
+		double currentResponse=t.getDistanceTo(x, y, z);
+		if(winner==-1 || bestResponse> currentResponse){
+			bestResponse=currentResponse;
+			winner=t.sequenceId;
+		}
+		
+	}
+	return winner;
+}
+
 public List<T>getTrackables(){
 	return trackables;
 }

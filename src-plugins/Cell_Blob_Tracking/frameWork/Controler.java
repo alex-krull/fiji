@@ -33,6 +33,11 @@ public Controler(RandomAccessibleInterval<IT> img , Frame<T,IT> fact){
 	
 }
 
+public int selectAt(int x, int y, int z, int frameId){
+	Frame f= frames.get(frameId);
+	return f.selectAt(x, y, z);
+}
+
 public void addTrackable(T trackable){
 	
 	frames.get(trackable.frameId).addTrackable(trackable);

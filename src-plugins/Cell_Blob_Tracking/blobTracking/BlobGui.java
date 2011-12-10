@@ -45,7 +45,7 @@ public void mouseDragged(MouseEvent arg0) {
 		int y=impZ.getCanvas().offScreenY(arg0.getY());
 		System.out.println("setting x:"+ x +" setting y:"+y);
 		
-		Blob blob=controler.getTrackable(1, currentFrameNumber);
+		Blob blob=controler.getTrackable(selectedSequenceId, currentFrameNumber);
 		blob.xPos=x;
 		blob.yPos=y;
 		this.addOverlays(currentFrameNumber, currentSliceNumber, currentChannelNumber);
@@ -61,8 +61,9 @@ public void mouseDragged(MouseEvent arg0) {
 		int z=impX.getCanvas().offScreenX(arg0.getX());
 		int y=impX.getCanvas().offScreenY(arg0.getY());
 		
-		controler.selected.zPos=z;
-		controler.selected.yPos=y;
+		Blob blob=controler.getTrackable(selectedSequenceId, currentFrameNumber);
+		blob.zPos=z;
+		blob.yPos=y;
 		this.addOverlays(currentFrameNumber, currentSliceNumber, currentChannelNumber);
 		//this.updatePosition(0, 0, currentSliceNumber, x, currentChannelNumber);
 
@@ -76,8 +77,9 @@ public void mouseDragged(MouseEvent arg0) {
 		int x=impY.getCanvas().offScreenX(arg0.getX());
 		int z=impY.getCanvas().offScreenY(arg0.getY());
 		
-		controler.selected.xPos=x;
-		controler.selected.zPos=z;
+		Blob blob=controler.getTrackable(selectedSequenceId, currentFrameNumber);
+		blob.xPos=x;
+		blob.zPos=z;
 		this.addOverlays(currentFrameNumber, currentSliceNumber, currentChannelNumber);
 		//this.updatePosition(0, 0, currentSliceNumber, x, currentChannelNumber);
 
