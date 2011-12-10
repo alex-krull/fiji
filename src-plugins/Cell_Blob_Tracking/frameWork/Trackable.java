@@ -15,8 +15,8 @@ public abstract class Trackable {
 	
 	}
 	
-public abstract void addShapeZ(Overlay ov);
-public abstract void addShapeX(Overlay ov);
-public abstract void addShapeY(Overlay ov);
+public abstract void addShapeZ(Overlay ov, boolean selected);
+public abstract void addShapeX(Overlay ov, boolean selected);
+public abstract void addShapeY(Overlay ov, boolean selected);
 public abstract double getDistanceTo(double x, double y, double z);
 }

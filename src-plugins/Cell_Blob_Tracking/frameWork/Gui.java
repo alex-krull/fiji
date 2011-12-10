@@ -379,10 +379,11 @@ private synchronized void updatePosition(int x,int y, int slice ,int frame, int 
 
 		   List<T> trackables= controler.getTrackablesForFrame(frame);
 		   Overlay ovZ=new Overlay();
-		   for(Trackable t : trackables){			   
-			   t.addShapeX(ovX);
-			   t.addShapeY(ovY);
-			   t.addShapeZ(ovZ);
+		   for(Trackable t : trackables){	
+			   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
+			   t.addShapeX(ovX,selectedSequenceId==t.sequenceId);
+			   t.addShapeY(ovY,selectedSequenceId==t.sequenceId);
+			   t.addShapeZ(ovZ,selectedSequenceId==t.sequenceId);
 			   
 		   }
 		   if(impZ!=null) impZ.setOverlay(ovZ);
@@ -522,8 +523,8 @@ public void mouseExited(MouseEvent arg0) {
 @Override
 public void mousePressed(MouseEvent arg0) {
 	if(impZ!=null && impZ.getCanvas().equals(arg0.getSource())){
-		int x=impX.getCanvas().offScreenX(arg0.getX());
-		int y=impX.getCanvas().offScreenY(arg0.getY());
+		int x=impZ.getCanvas().offScreenX(arg0.getX());
+		int y=impZ.getCanvas().offScreenY(arg0.getY());
 		
 		this.selectedSequenceId=controler.selectAt(x, y,-1, currentFrameNumber);
 		System.out.println("nes seqID:"+selectedSequenceId);
@@ -547,7 +548,8 @@ public void mousePressed(MouseEvent arg0) {
 		System.out.println("nes seqID:"+selectedSequenceId);
 		
 	}
-	// TODO Auto-generated method stub
+	
+	this.addOverlays(currentFrameNumber, currentSliceNumber, currentChannelNumber);
 	
 }
 

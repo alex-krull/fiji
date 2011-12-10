@@ -33,6 +33,7 @@ public int selectAt(int x, int y, int z){
 			bestResponse=currentResponse;
 			winner=t.sequenceId;
 		}
+		System.out.println("seqID:"+t.sequenceId + "  dist:"+currentResponse);
 		
 	}
 	return winner;

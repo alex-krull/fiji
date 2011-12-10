@@ -18,27 +18,57 @@ public class Blob extends Trackable {
 	public double sigma;
 	public double sigmaZ;
 
-	public void addShapeZ(Overlay ov){
+	public void addShapeZ(Overlay ov, boolean selected){
 		Font f=new Font(null,Font.PLAIN,8);
+		
+		if(selected){
+			Roi roiS=new EllipseRoi(xPos + sigma * 2, yPos, xPos - sigma * 2,
+					yPos, 1);
+			roiS.setStrokeColor(Color.WHITE);
+			roiS.setStrokeWidth(3);
+			ov.add(roiS);
+		}
+		
 		Roi roi = new EllipseRoi(xPos + sigma * 2, yPos, xPos - sigma * 2,
 				yPos, 1);
 		roi.setStrokeColor(Color.RED);
+		roi.setStrokeWidth(1);
 		ov.add(roi);
+		
+		
 		roi = new TextRoi((int)xPos,(int)yPos,Integer.toString(this.sequenceId),f);
 		ov.add(roi);
 	}
 	
-	public void addShapeY(Overlay ov){
+	public void addShapeY(Overlay ov, boolean selected){
+		if(selected){
+			Roi roiS=new EllipseRoi(xPos + sigma * 2, zPos, xPos - sigma * 2,
+					zPos, sigmaZ / sigma);
+			roiS.setStrokeColor(Color.WHITE);
+			roiS.setStrokeWidth(3);
+			ov.add(roiS);
+		}
+		
 		Roi roi = new EllipseRoi(xPos + sigma * 2, zPos, xPos - sigma * 2,
 				zPos, sigmaZ / sigma);
 		roi.setStrokeColor(Color.RED);
+		roi.setStrokeWidth(1);
 		ov.add(roi);
 	}
 
-	public void addShapeX(Overlay ov){
+	public void addShapeX(Overlay ov, boolean selected){
+		if(selected){
+			Roi roiS=new EllipseRoi(zPos + sigmaZ * 2, yPos, zPos - sigmaZ * 2,
+					yPos, sigma / sigmaZ);
+			roiS.setStrokeColor(Color.WHITE);
+			roiS.setStrokeWidth(3);
+			ov.add(roiS);
+		}
+		
 		Roi roi = new EllipseRoi(zPos + sigmaZ * 2, yPos, zPos - sigmaZ * 2,
 				yPos, sigma / sigmaZ);
 		roi.setStrokeColor(Color.RED);
+		roi.setStrokeWidth(1);
 		ov.add(roi);
 	}
 	
@@ -54,10 +84,13 @@ public class Blob extends Trackable {
 	@Override
 	public double getDistanceTo(double x, double y, double z) {
 		// TODO Auto-generated method stub
-		if(x<0) x=this.xPos;
-		if(y<0) y=this.yPos;
-		if(z<0) z=this.zPos;
-		return (x-xPos)*(x-xPos)+(y-yPos)*(y-yPos)+(z-zPos)*(z-zPos);
+		double xn= x;
+		double yn= y;
+		double zn= z;
+		if(x<0) xn=this.xPos;
+		if(y<0) yn=this.yPos;
+		if(z<0) zn=this.zPos;
+		return (xn-xPos)*(xn-xPos)+(yn-yPos)*(yn-yPos)+(zn-zPos)*(zn-zPos);
 	}
 
 
