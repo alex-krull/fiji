@@ -461,6 +461,8 @@ CLASSPATH(plugins/Action_Bar.jar)=jars/ij.jar
 CLASSPATH(plugins/Multi_Kymograph.jar)=jars/ij.jar
 CLASSPATH(plugins/Reconstruct_Reader.jar)=jars/ij.jar:plugins/TrakEM2_.jar
 
+CLASSPATH(plugins/Cell_Blob_Tracking.jar)=jars/ij.jar:jars/imglib2.jar:jars/imglib2-io.jar:jars/imglib2-ij.jar:jars/imglib2-ui.jar
+
 # pre-Java5 generics ;-)
 
 src-plugins/VIB-lib/vib/FloatMatrix.java[src-plugins/VIB-lib/sed.py $PRE $TARGET] <- src-plugins/VIB-lib/vib/FastMatrix.java
