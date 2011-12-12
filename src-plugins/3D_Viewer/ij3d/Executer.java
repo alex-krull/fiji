@@ -1,71 +1,72 @@
 package ij3d;
 
-import ij3d.shapes.Scalebar;
-import ij.util.Java2;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.WindowManager;
 import ij.gui.GenericDialog;
-import ij.io.SaveDialog;
+import ij.gui.YesNoCancelDialog;
 import ij.io.DirectoryChooser;
 import ij.io.OpenDialog;
-import ij.IJ;
-import ij.WindowManager;
-import ij.ImagePlus;
-import ij.text.TextWindow;
+import ij.io.SaveDialog;
 import ij.plugin.frame.Recorder;
-import ij.process.StackConverter;
-import ij.process.ImageConverter;
-
-import ij3d.gui.LUTDialog;
+import ij.text.TextWindow;
 import ij3d.gui.ContentCreatorDialog;
-
-import math3d.TransformIO;
-
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.util.Arrays;
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.Map;
-
-import java.io.File;
-
-import vib.InterpolatedImage;
-import vib.FastMatrix;
-
-import orthoslice.MultiOrthoGroup;
-import orthoslice.OrthoGroup;
-import voltex.VoltexGroup;
-import voltex.VolumeRenderer;
-import isosurface.MeshExporter;
+import ij3d.gui.InteractiveTransformDialog;
+import ij3d.gui.LUTDialog;
+import ij3d.shapes.Scalebar;
+import ij3d.shortcuts.ShortCutDialog;
 import isosurface.MeshEditor;
+import isosurface.MeshExporter;
 import isosurface.SmoothControl;
 
-import customnode.u3d.U3DExporter;
+import java.awt.Button;
+import java.awt.Checkbox;
+import java.awt.Cursor;
+import java.awt.FlowLayout;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.Scrollbar;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.vecmath.Color3f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Matrix4d;
-import javax.media.j3d.Transform3D;
 import javax.media.j3d.Background;
 import javax.media.j3d.PointLight;
+import javax.media.j3d.Transform3D;
+import javax.vecmath.Color3f;
+import javax.vecmath.Matrix4d;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
 
+import math3d.TransformIO;
+import orthoslice.MultiOrthoGroup;
+import orthoslice.OrthoGroup;
+import vib.FastMatrix;
+import voltex.VoltexGroup;
+import voltex.VolumeRenderer;
 import customnode.CustomMesh;
 import customnode.CustomMeshNode;
 import customnode.CustomMultiMesh;
 import customnode.CustomTriangleMesh;
-
-import java.awt.event.TextListener;
-
-import java.util.concurrent.atomic.AtomicInteger;
-import javax.vecmath.Point3d;
-import octree.OctreeDialog;
-import octree.VolumeOctree;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import customnode.u3d.U3DExporter;
 
 public class Executer {
 
@@ -94,8 +95,11 @@ public class Executer {
 	public static final String SET_CS = "setCoordinateSystem";
 	public static final String SET_TRANSFORM = "setTransform";
 	public static final String APPLY_TRANSFORM = "applyTransform";
+	public static final String EXPORT_TRANSFORMED = "exportTransformed";
 	public static final String SAVE_TRANSFORM = "saveTransform";
 	public static final String RESET_TRANSFORM = "resetTransform";
+	public static final String IMPORT = "importContent";
+	public static final String EXPORT = "exportContent";
 
 	// TODO
 	public static final String ADD = "add";
@@ -221,12 +225,12 @@ public class Executer {
 // 		univ.removeOctree();
 // 	}
 
-	public void importWaveFront() {
-		OpenDialog od = new OpenDialog("Select .obj file", OpenDialog.getDefaultDirectory(), null);
+	protected void importFile(String dialogTitle, String extension, String formatDescription) {
+		OpenDialog od = new OpenDialog(dialogTitle, OpenDialog.getDefaultDirectory(), null);
 		String filename = od.getFileName();
 		if (null == filename) return;
-		if (!filename.toLowerCase().endsWith(".obj")) {
-			IJ.showMessage("Must select a wavefront .obj file!");
+		if (!filename.toLowerCase().endsWith(extension)) {
+			IJ.showMessage("Must select a " + formatDescription + " file!");
 			return;
 		}
 		String path = new StringBuilder(od.getDirectory()).append(filename).toString();
@@ -234,50 +238,75 @@ public class Executer {
 		Object ob;
 		try {
 			ob = univ.addContentLater(path);
+			record(IMPORT, path);
 		} catch (Exception e) {
 			e.printStackTrace();
 			ob = null;
 		}
 		if (null == ob)
 			IJ.showMessage("Could not load the file:\n" + path);
+	}
+
+	public void importWaveFront() {
+		importFile("Select .obj file", ".obj", "wavefront .ob");
 	}
 
 	public void importSTL() {
-		OpenDialog od = new OpenDialog("Select .stl file", OpenDialog.getDefaultDirectory(), null);
-		String filename = od.getFileName();
-		if (null == filename) return;
-		if (!filename.toLowerCase().endsWith(".stl")) {
-			IJ.showMessage("Must select an STL file!");
-			return;
-		}
-		String path = new StringBuilder(od.getDirectory()).append(filename).toString();
-		IJ.log("path: " + path);
-		Object ob;
-		try {
-			ob = univ.addContentLater(path);
-		} catch (Exception e) {
-			e.printStackTrace();
-			ob = null;
-		}
-		if (null == ob)
-			IJ.showMessage("Could not load the file:\n" + path);
+		importFile("Select .stl file", ".stl", "STL");
 	}
 
-
 	public void saveAsDXF() {
-		MeshExporter.saveAsDXF(univ.getContents());
+		File dxf_file = promptForFile("Save as DXF", "untitled", ".dxf");
+		if(dxf_file == null)
+			return;
+		MeshExporter.saveAsDXF(univ.getContents(), dxf_file);
+		record(EXPORT, "DXF", dxf_file.getAbsolutePath());
 	}
 
 	public void saveAsWaveFront() {
-		MeshExporter.saveAsWaveFront(univ.getContents());
+		File obj_file = promptForFile("Save WaveFront", "untitled", ".obj");
+		if(obj_file == null)
+			return;
+		MeshExporter.saveAsWaveFront(univ.getContents(), obj_file);
+		record(EXPORT, "WaveFront", obj_file.getAbsolutePath());
 	}
 
 	public void saveAsAsciiSTL(){
-		MeshExporter.saveAsSTL(univ.getContents(), MeshExporter.ASCII);
+		File stl_file = promptForFile("Save as STL (ASCII)", "untitled", ".stl");
+		if(stl_file == null)
+			return;
+		MeshExporter.saveAsSTL(univ.getContents(), stl_file, MeshExporter.ASCII);
+		record(EXPORT, "STL ASCII", stl_file.getAbsolutePath());
 	}
 
 	public void saveAsBinarySTL(){
-		MeshExporter.saveAsSTL(univ.getContents(), MeshExporter.BINARY);
+		File stl_file = promptForFile("Save as STL (binary)", "untitled", ".stl");
+		if(stl_file == null)
+			return;
+		MeshExporter.saveAsSTL(univ.getContents(), stl_file, MeshExporter.BINARY);
+		record(EXPORT, "STL Binary", stl_file.getAbsolutePath());
+	}
+
+	public static File promptForFile(String title, String suggestion, String ending) {
+		SaveDialog sd = new SaveDialog(title, suggestion, ending);
+		String dir = sd.getDirectory();
+		if (null == dir)
+			return null;
+		String filename = sd.getFileName();
+		if (!filename.toLowerCase().endsWith(ending))
+			filename += ending;
+
+		File file = new File(dir, filename);
+		// check if file exists
+		if (!IJ.isMacOSX()) {
+			if(file.exists()) {
+				YesNoCancelDialog yn = new YesNoCancelDialog(IJ.getInstance(), "Overwrite?", "File  " + filename + " exists!\nOverwrite?");
+				if (!yn.yesPressed())
+					return null;
+			}
+		}
+
+		return file;
 	}
 
 	public void saveAsU3D(){
@@ -295,6 +324,7 @@ public class Executer {
 			IJ.log("% pdflatex yourfilename.tex");
 			IJ.log("");
 			IJ.log(tex);
+			record(EXPORT, "U3D", dir + name);
 		} catch(Exception e) {
 			IJ.error(e.getMessage());
 		}
@@ -337,6 +367,7 @@ public class Executer {
 			return;
 		new Thread() {
 			{ setPriority(Thread.NORM_PRIORITY); }
+			@Override
 			public void run() {
 				try {
 					univ.loadSession(dir + name);
@@ -499,6 +530,7 @@ public class Executer {
 			final int i = k;
 			sl[i] = (Scrollbar)gd.getSliders().get(i);
 			sl[i].addAdjustmentListener(new AdjustmentListener() {
+				@Override
 				public void adjustmentValueChanged(
 							AdjustmentEvent e) {
 					os.setSlice(dirs[i], sl[i].getValue());
@@ -508,6 +540,7 @@ public class Executer {
 
 			cb[i] = (Checkbox)gd.getCheckboxes().get(i);
 			cb[i].addItemListener(new ItemListener() {
+				@Override
 				public void itemStateChanged(ItemEvent e) {
 					os.setVisible(dirs[i],cb[i].getState());
 				}
@@ -649,6 +682,7 @@ public class Executer {
 		if (showDefaultCheckbox) {
 			final Checkbox cBox = (Checkbox)gd.getCheckboxes().get(0);
 			cBox.addItemListener(new ItemListener() {
+				@Override
 				public void itemStateChanged(ItemEvent e) {
 					gd.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 					rSlider.setEnabled(!cBox.getState());
@@ -665,6 +699,7 @@ public class Executer {
 		}
 
 		AdjustmentListener listener = new AdjustmentListener() {
+			@Override
 			public void adjustmentValueChanged(AdjustmentEvent e) {
 				colorListener.colorChanged(new Color3f(
 						rSlider.getValue() / 255f,
@@ -701,11 +736,13 @@ public class Executer {
 		final ContentInstant ci = c.getCurrent();
 		final Color3f oldC = ci.getColor();
 		final ColorListener colorListener = new ColorListener() {
+			@Override
 			public void colorChanged(Color3f color) {
 				ci.setColor(color);
 				univ.fireContentChanged(c);
 			}
 
+			@Override
 			public void ok(final GenericDialog gd) {
 				if (gd.getNextBoolean())
 					record(SET_COLOR, "null", "null", "null");
@@ -730,12 +767,14 @@ public class Executer {
 		background.getColor(oldC);
 
 		final ColorListener colorListener = new ColorListener() {
+			@Override
 			public void colorChanged(Color3f color) {
 				background.setColor(color);
 				status.setBackground(color.get());
 				((ImageCanvas3D)univ.getCanvas()).render();
 			}
 
+			@Override
 			public void ok(final GenericDialog gd) {
 				// TODO macro record
 			}
@@ -749,11 +788,13 @@ public class Executer {
 		final ContentInstant ci = c.getCurrent();
 		final Color3f oldC = ci.getLandmarkColor();
 		final ColorListener colorListener = new ColorListener() {
+			@Override
 			public void colorChanged(Color3f color) {
 				ci.setLandmarkColor(color);
 				univ.fireContentChanged(c);
 			}
 
+			@Override
 			public void ok(final GenericDialog gd) {
 				// TODO: record
 				// gd.wasOKed: apply to all time points
@@ -777,6 +818,7 @@ public class Executer {
 		ld.addCtrlHint();
 
 		ld.addListener(new LUTDialog.Listener() {
+			@Override
 			public void applied() {
 				c.setLUT(r, g, b, a);
 				univ.fireContentChanged(c);
@@ -820,6 +862,7 @@ public class Executer {
 			return;
 		final ContentInstant ci = c.getCurrent();
 		final SliderAdjuster transp_adjuster = new SliderAdjuster() {
+			@Override
 			public synchronized final void setValue(ContentInstant ci, int v) {
 				ci.setTransparency(v / 100f);
 				univ.fireContentChanged(c);
@@ -833,14 +876,16 @@ public class Executer {
 
 		((Scrollbar)gd.getSliders().get(0)).
 			addAdjustmentListener(new AdjustmentListener() {
+			@Override
 			public void adjustmentValueChanged(AdjustmentEvent e) {
 				if(!transp_adjuster.go)
 					transp_adjuster.start();
-				transp_adjuster.exec((int)e.getValue(), ci, univ);
+				transp_adjuster.exec(e.getValue(), ci, univ);
 			}
 		});
 		((TextField)gd.getNumericFields().get(0)).
 			addTextListener(new TextListener() {
+			@Override
 			public void textValueChanged(TextEvent e) {
 				if(!transp_adjuster.go)
 					transp_adjuster.start();
@@ -862,7 +907,7 @@ public class Executer {
 				if (null != transp_adjuster)
 					transp_adjuster.quit();
 				if(gd.wasCanceled()) {
-					float newTr = (float)oldTr / 100f;
+					float newTr = oldTr / 100f;
 					ci.setTransparency(newTr);
 					univ.fireContentChanged(c);
 					return;
@@ -889,16 +934,17 @@ public class Executer {
 		}
 		final ContentInstant ci = c.getCurrent();
 		final SliderAdjuster thresh_adjuster = new SliderAdjuster() {
+			@Override
 			public synchronized final void setValue(ContentInstant ci, int v) {
 				ci.setThreshold(v);
 				univ.fireContentChanged(c);
 			}
 		};
-		final int oldTr = (int)(ci.getThreshold());
+		final int oldTr = (ci.getThreshold());
 		if(c.getType() == Content.SURFACE) {
 			final GenericDialog gd = new GenericDialog(
 				"Adjust threshold ...", univ.getWindow());
-			final int old = (int)ci.getThreshold();
+			final int old = ci.getThreshold();
 			gd.addNumericField("Threshold", old, 0);
 			gd.addCheckbox("Apply to all timepoints", true);
 			gd.showDialog();
@@ -921,11 +967,12 @@ public class Executer {
 		gd.addSlider("Threshold", 0, 255, oldTr);
 		((Scrollbar)gd.getSliders().get(0)).
 			addAdjustmentListener(new AdjustmentListener() {
+			@Override
 			public void adjustmentValueChanged(final AdjustmentEvent e) {
 				// start adjuster and request an action
 				if(!thresh_adjuster.go)
 					thresh_adjuster.start();
-				thresh_adjuster.exec((int)e.getValue(), ci, univ);
+				thresh_adjuster.exec(e.getValue(), ci, univ);
 			}
 		});
 		gd.addCheckbox("Apply to all timepoints", true);
@@ -1087,12 +1134,13 @@ public class Executer {
 			return;
 		final GenericDialog gd =
 			new GenericDialog("Point size", univ.getWindow());
-		final float oldS = (float)(c.getLandmarkPointSize());
+		final float oldS = (c.getLandmarkPointSize());
 		final float minS = oldS / 10f;
 		final float maxS = oldS * 10f;
 		gd.addSlider("Size", minS, maxS, oldS);
 		final TextField textField = (TextField)gd.getNumericFields().get(0);
 		textField.addTextListener(new TextListener() {
+			@Override
 			public void textValueChanged(TextEvent e2) {
 				try {
 					c.setLandmarkPointSize(Float.parseFloat(textField.getText()));
@@ -1103,6 +1151,7 @@ public class Executer {
 		});
 		((Scrollbar)gd.getSliders().get(0)).
 			addAdjustmentListener(new AdjustmentListener() {
+			@Override
 			public void adjustmentValueChanged(AdjustmentEvent e) {
 				float newS = Float.parseFloat(textField.getText());
 				c.setLandmarkPointSize(newS);
@@ -1204,36 +1253,102 @@ public class Executer {
 		record(RESET_TRANSFORM);
 	}
 
-	public void setTransform(Content c) {
+	@SuppressWarnings("serial")
+	public void setTransform(final Content c) {
 		if(!checkSel(c))
 			return;
 		if(c.isLocked()) {
 			IJ.error(c.getName() + " is locked");
 			return;
 		}
-		univ.fireTransformationStarted();
-		float[] t = readTransform(c);
-		if(t != null) {
-			c.setTransform(new Transform3D(t));
-			univ.fireTransformationFinished();
-			record(SET_TRANSFORM, affine2string(t));
-		}
+		final boolean useToFront = univ.getUseToFront();
+		univ.setUseToFront(false);
+
+		final Transform3D org = new Transform3D();
+		c.getLocalTranslate().getTransform(org);
+		Transform3D t2 = new Transform3D();
+		c.getLocalRotate().getTransform(t2);
+		org.mul(t2);
+		Matrix4f m = new Matrix4f();
+		org.get(m);
+
+		Point3d contentCenter = new Point3d();
+		c.getContent().getCenter(contentCenter);
+		Point3f center = new Point3f(contentCenter);
+
+		new InteractiveTransformDialog("Set transformation", center, m) {
+			@Override
+			public void transformationUpdated(Matrix4f mat) {
+				univ.fireTransformationStarted();
+				c.setTransform(new Transform3D(mat));
+				univ.fireTransformationFinished();
+			}
+			@Override
+			public void oked(Matrix4f mat) {
+				Transform3D t = new Transform3D(mat);
+				float[] v = new float[16];
+				t.get(v);
+				univ.setUseToFront(useToFront);
+				record(SET_TRANSFORM, affine2string(v));
+			}
+			@Override
+			public void canceled() {
+				c.setTransform(org);
+				univ.setUseToFront(useToFront);
+			}
+		};
 	}
 
-	public void applyTransform(Content c) {
+	@SuppressWarnings("serial")
+	public void applyTransform(final Content c) {
 		if(!checkSel(c))
 			return;
 		if(c.isLocked()) {
 			IJ.error(c.getName() + " is locked");
 			return;
 		}
-		univ.fireTransformationStarted();
-		float[] t = readTransform(c);
-		if(t != null) {
-			c.applyTransform(new Transform3D(t));
-			univ.fireTransformationFinished();
-			record(APPLY_TRANSFORM, affine2string(t));
-		}
+		final boolean useToFront = univ.getUseToFront();
+		univ.setUseToFront(false);
+
+		final Transform3D org = new Transform3D();
+		c.getLocalTranslate().getTransform(org);
+		Transform3D t2 = new Transform3D();
+		c.getLocalRotate().getTransform(t2);
+		org.mul(t2);
+		final Matrix4f m = new Matrix4f();
+		org.get(m);
+
+		final Matrix4f conc = new Matrix4f();
+
+		Point3d contentCenter = new Point3d();
+		c.getContent().getCenter(contentCenter);
+		Point3f center = new Point3f(contentCenter);
+
+		Matrix4f init = new Matrix4f();
+		init.setIdentity();
+
+		new InteractiveTransformDialog("Set transformation", center, init) {
+			@Override
+			public void transformationUpdated(Matrix4f mat) {
+				univ.fireTransformationStarted();
+				conc.mul(mat, m);
+				c.setTransform(new Transform3D(conc));
+				univ.fireTransformationFinished();
+			}
+			@Override
+			public void oked(Matrix4f mat) {
+				Transform3D t = new Transform3D(mat);
+				float[] v = new float[16];
+				t.get(v);
+				univ.setUseToFront(useToFront);
+				record(APPLY_TRANSFORM, affine2string(v));
+			}
+			@Override
+			public void canceled() {
+				c.setTransform(org);
+				univ.setUseToFront(useToFront);
+			}
+		};
 	}
 
 	public void saveTransform(Content c) {
@@ -1255,6 +1370,7 @@ public class Executer {
 			return;
 		new Thread() {
 			{ setPriority(Thread.NORM_PRIORITY); }
+			@Override
 			public void run() {
 				exportTr(c);
 			}
@@ -1262,43 +1378,14 @@ public class Executer {
 	}
 
 	private void exportTr(Content c) {
-		ImagePlus orig = c.getImage();
-		if(orig == null) {
-			IJ.error("No greyscale image exists for "
-				+ c.getName());
-			return;
+		try {
+			c.exportTransformed().show();
+			record(EXPORT_TRANSFORMED);
+		} catch(Exception e) {
+			e.printStackTrace();
+			IJ.error(e.getMessage());
 		}
-		Transform3D t1 = new Transform3D();
-		c.getLocalTranslate().getTransform(t1);
-		Transform3D t2 = new Transform3D();
-		c.getLocalRotate().getTransform(t2);
-		t1.mul(t2);
-		FastMatrix fc = FastMatrix.fromCalibration(orig);
-		FastMatrix fm = fc.inverse().times(toFastMatrix(t1).inverse()).
-			times(fc);
-		InterpolatedImage in = new InterpolatedImage(orig);
-		InterpolatedImage out = in.cloneDimensionsOnly();
-		int w = orig.getWidth(), h = orig.getHeight();
-		int d = orig.getStackSize();
-
-		for (int k = 0; k < d; k++) {
-			for (int j = 0; j < h; j++) {
-				for(int i = 0; i < w; i++) {
-					fm.apply(i, j, k);
-					out.set(i, j, k, (byte)in.interpol.get(
-							fm.x, fm.y, fm.z));
-				}
-				IJ.showProgress(k + 1, d);
-			}
-		}
-		out.getImage().setTitle(orig.getTitle() + "_transformed");
-		out.getImage().getProcessor().setColorModel(
-			orig.getProcessor().getColorModel());
-		out.getImage().show();
 	}
-
-
-
 
 	/* **********************************************************
 	 * View menu
@@ -1337,6 +1424,7 @@ public class Executer {
 
 	public void record360() {
 		new Thread() {
+			@Override
 			public void run() {
 				ImagePlus movie = univ.record360();
 				if(movie != null)
@@ -1431,6 +1519,10 @@ public class Executer {
 		UniverseSettings.initFromDialog(univ);
 	}
 
+	public void editShortcuts() {
+		new ShortCutDialog(univ.getShortcuts());
+	}
+
 	public void adjustLight() {
 		final PointLight l = univ.getLight();
 		final Point3f pos = new Point3f();
@@ -1439,10 +1531,12 @@ public class Executer {
 		l.getColor(col);
 
 		final ColorListener colorListener = new ColorListener() {
+			@Override
 			public void colorChanged(Color3f color) {
 				l.setColor(color);
 			}
 
+			@Override
 			public void ok(final GenericDialog gd) {
 				// TODO macro record
 			}
@@ -1521,6 +1615,7 @@ public class Executer {
 		Panel p = new Panel(new FlowLayout());
 		Button b = new Button("Open from file");
 		b.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				float[] m = new TransformIO().
 						openAffineTransform();
@@ -1543,7 +1638,7 @@ public class Executer {
 		return m;
 	}
 
-	private FastMatrix toFastMatrix(Transform3D t3d) {
+	static FastMatrix toFastMatrix(Transform3D t3d) {
 		Matrix4d m = new Matrix4d();
 		t3d.get(m);
 		return new FastMatrix(new double[][] {
@@ -1575,7 +1670,7 @@ public class Executer {
 		for(int z = 0; z < d; z++) {
 			byte[] p = (byte[])imp.getStack().getPixels(z+1);
 			for(int i = 0; i < p.length; i++) {
-				histo[(int)(p[i]&0xff)]++;
+				histo[(p[i]&0xff)]++;
 			}
 		}
 		return imp.getProcessor().getAutoThreshold(histo);

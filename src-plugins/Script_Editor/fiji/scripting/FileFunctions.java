@@ -3,6 +3,7 @@ package fiji.scripting;
 import fiji.SimpleExecuter;
 
 import fiji.build.Fake;
+import fiji.build.MiniMaven.POM;
 import fiji.build.Parser;
 import fiji.build.Rule;
 import fiji.build.SubFake;
@@ -15,6 +16,7 @@ import ij.plugin.BrowserLauncher;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -67,6 +69,15 @@ import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
 public class FileFunctions {
+	protected static String fijiDir;
+
+	static {
+		String dir = System.getProperty("fiji.dir");
+		if (!dir.endsWith("/"))
+			dir += "/";
+		fijiDir = dir;
+	}
+
 	protected TextEditor parent;
 
 	public FileFunctions(TextEditor parent) {
@@ -145,15 +156,10 @@ public class FileFunctions {
 		return false;
 	}
 
-	protected static String fijiDir;
-
 	/**
 	 * Make a sensible effort to get the path of the source for a class.
 	 */
 	public String getSourcePath(String className) throws ClassNotFoundException {
-		if (fijiDir == null)
-			fijiDir = System.getProperty("fiji.dir");
-
 		// First, let's try to get the .jar file for said class.
 		String result = getJar(className);
 		if (result == null)
@@ -162,8 +168,8 @@ public class FileFunctions {
 		// try the simple thing first
 		int slash = result.lastIndexOf('/'), backSlash = result.lastIndexOf('\\');
 		String baseName = result.substring(Math.max(slash, backSlash) + 1, result.length() - 4);
-		String dir = fijiDir + "/src-plugins/" + baseName;
-		String path = dir + "/" + className.replace('.', '/') + ".java";
+		String dir = fijiDir + "/src-plugins/" + baseName + "/";
+		String path = dir + className.replace('.', '/') + ".java";
 		if (new File(path).exists())
 			return path;
 		if (new File(dir).isDirectory())
@@ -172,7 +178,7 @@ public class FileFunctions {
 				if (dot < 0)
 					break;
 				className = className.substring(0, dot);
-				path = dir + "/" + className.replace('.', '/') + ".java";
+				path = dir + className.replace('.', '/') + ".java";
 			}
 
 		// Try to find it with the help of the Fakefile
@@ -194,8 +200,9 @@ public class FileFunctions {
 				String stripPath = rule.getStripPath();
 				dir = fijiDir + "/";
 				if (rule instanceof SubFake) {
+					SubFake subFake = (SubFake)rule;
 					stripPath = rule.getLastPrerequisite();
-					fakefile = ((SubFake)rule).getFakefile();
+					fakefile = subFake.getFakefile();
 					if (fakefile != null) {
 						dir += rule.getLastPrerequisite();
 						parser = fake.parse(new FileInputStream(fakefile), new File(dir));
@@ -204,10 +211,19 @@ public class FileFunctions {
 						if (rule != null)
 							stripPath = rule.getStripPath();
 					}
+					else {
+						POM pom = subFake.getPOM();
+						if (pom != null) {
+							dir += rule.getLastPrerequisite();
+							stripPath = pom.getSourcePath();
+						}
+					}
 				}
 				if (stripPath != null) {
+					if (!stripPath.endsWith("/"))
+						stripPath += "/";
 					dir += stripPath;
-					path = dir + "/" + className.replace('.', '/') + ".java";
+					path = dir + className.replace('.', '/') + ".java";
 					if (new File(path).exists())
 						return path;
 				}
@@ -217,6 +233,10 @@ public class FileFunctions {
 		}
 
 		return null;
+	}
+
+	public String getSourceURL(String className) {
+		return "http://fiji.sc/" + className.replace('.', '/') + ".java";
 	}
 
 	public String getJar(String className) {
@@ -250,8 +270,6 @@ public class FileFunctions {
 					"Question", JOptionPane.YES_OPTION)
 					!= JOptionPane.YES_OPTION)
 				return null;
-			if (fijiDir == null)
-				fijiDir = System.getProperty("fiji.dir");
 			class2source = new HashMap<String, List<String>>();
 			findJavaPaths(new File(fijiDir), "");
 		}
@@ -435,7 +453,9 @@ public class FileFunctions {
 
 			// insert classpath
 			offset = content.lastIndexOf("\nCLASSPATH(");
-			if (offset > 0 && content.substring(offset).startsWith("\nCLASSPATH(jars/test-fiji.jar)"))
+			while (offset > 0 &&
+					(content.substring(offset).startsWith("\nCLASSPATH(jars/test-fiji.jar)") ||
+					content.substring(offset).startsWith("\nCLASSPATH(plugins/FFMPEG")))
 				offset = content.lastIndexOf("\nCLASSPATH(", offset - 1);
 			if (offset < 0)
 				return false;
@@ -473,6 +493,8 @@ public class FileFunctions {
 	 * Get a list of files from a directory (recursively)
 	 */
 	public void listFilesRecursively(File directory, String prefix, List<String> result) {
+		if (!directory.exists())
+			return;
 		for (File file : directory.listFiles())
 			if (file.isDirectory())
 				listFilesRecursively(file, prefix + file.getName() + "/", result);
@@ -509,8 +531,12 @@ public class FileFunctions {
 				IJ.handleException(e);
 			}
 		}
-		else
+		else {
+			String prefix = IJ.isWindows() ? "file:/" : "file:";
+			if (url.startsWith(prefix))
+				url = url.substring(prefix.length());
 			listFilesRecursively(new File(url), "", result);
+		}
 		return result;
 	}
 
@@ -632,7 +658,7 @@ public class FileFunctions {
 		}
 
 		final JFrame frame = new JFrame((diffOnly ? "Unstaged differences for " : "Commit ") + root);
-		frame.setSize(640, diffOnly ? 480 : 640);
+		frame.setPreferredSize(new Dimension(640, diffOnly ? 480 : 640));
 		if (diffOnly)
 			frame.getContentPane().add(diff);
 		else {
@@ -923,10 +949,14 @@ public class FileFunctions {
 	}
 
 	public void showPluginChangesSinceUpload(String plugin) {
-		showPluginChangesSinceUpload(plugin, 0);
+		showPluginChangesSinceUpload(new LogComponentCommits(0, 15, false, null, null, "-p"), plugin, true);
 	}
 
 	public void showPluginChangesSinceUpload(final String plugin, final int verboseLevel) {
+		showPluginChangesSinceUpload(new LogComponentCommits(verboseLevel, 15, false, null, null, "-p"), plugin, false);
+	}
+
+	public void showPluginChangesSinceUpload(final LogComponentCommits logger, final String plugin, final boolean checkReadyForUpload) {
 		final DiffView diff = new DiffView();
 		diff.normal("Verbose level: ");
 		addChangesActionLink(diff, "file names", plugin, 0);
@@ -937,23 +967,25 @@ public class FileFunctions {
 		diff.normal(" ");
 		addChangesActionLink(diff, "hexdump", plugin, 3);
 		diff.normal("\n");
+		logger.setOutput(diff);
+		logger.setErrorOutput(diff);
 
+		final Cursor cursor = diff.getCursor();
+		diff.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		final Thread thread = new Thread() {
+			@Override
 			public void run() {
-				Cursor cursor = diff.getCursor();
-				diff.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-				populateDiff(diff, plugin, verboseLevel);
+				logger.showChanges(plugin);
 				diff.setCursor(cursor);
 			}
 		};
-		thread.start();
 		final JFrame frame = new JFrame("Changes since last upload " + plugin);
 		frame.getContentPane().add(diff);
 		frame.pack();
 		frame.setSize(640, 640);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				thread.interrupt();
+				thread.stop();
 				try {
 					thread.join();
 				} catch (InterruptedException e2) {
@@ -962,25 +994,24 @@ public class FileFunctions {
 			}
 		});
 		frame.setVisible(true);
-	}
 
-	protected void populateDiff(final DiffView diff, final String plugin, int verboseLevel) {
-		final String fijiDir = System.getProperty("fiji.dir");
-		List<String> cmdarray = new ArrayList<String>(Arrays.asList(new String[] {
-			fijiDir + "/bin/log-plugin-commits.bsh",
-			"-p", "--fuzz", "15"
-		}));
-		for (int i = 0; i < verboseLevel; i++)
-			cmdarray.add("-v");
-		cmdarray.add(plugin);
-		final String[] args = cmdarray.toArray(new String[cmdarray.size()]);
-		try {
-			SimpleExecuter e = new SimpleExecuter(args,
-				diff, new DiffView.IJLog(), new File(fijiDir));
-		} catch (IOException e) {
-			IJ.handleException(e);
-			return;
+		if (checkReadyForUpload) {
+			// When run from Updater, call ready-for-upload
+			diff.normal("Checking whether " + plugin + " is ready to be uploaded... \n");
+			try {
+				int pos = diff.document.getLength() - 1;
+				ReadyForUpload ready = new ReadyForUpload(new PrintStream(diff.getOutputStream()));
+				if (ready.check(plugin))
+					diff.green(pos, "Yes!");
+				else
+					diff.red(pos, "Not ready!");
+			} catch (Exception e) {
+				IJ.handleException(e);
+				diff.red("Probably not (see Exception)\n");
+			}
 		}
+
+		thread.start();
 	}
 
 	protected String stripSuffix(String string, String suffix) {

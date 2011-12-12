@@ -15,6 +15,19 @@ dirname () {
 	esac
 }
 
+look_for_tools_jar () {
+	for d in "$@"
+	do
+		test -d "$d" || continue
+		for j in java default-java
+		do
+			test -f "$d/$java/lib/tools.jar" || continue
+			export TOOLS_JAR="$d/$java/lib/tools.jar"
+			return
+		done
+	done
+}
+
 CWD="$(dirname "$0")"
 
 case "$(uname -s)" in
@@ -26,8 +39,15 @@ Darwin)
 	esac; exe=;;
 Linux)
 	case "$(uname -m)" in
-		x86_64) platform=linux64; java_submodule=linux-amd64;;
-		*) platform=linux; java_submodule=$platform;;
+	x86_64)
+		platform=linux64
+		java_submodule=linux-amd64
+		look_for_tools_jar /usr/lib/jvm
+		;;
+	*)	platform=linux
+		java_submodule=$platform
+		look_for_tools_jar /usr/lib64/jvm
+		;;
 	esac; exe=;;
 MINGW*|CYGWIN*)
 	case "$PROCESSOR_ARCHITEW6432" in
@@ -35,18 +55,47 @@ MINGW*|CYGWIN*)
 	*) platform=win64; java_submodule=$platform;;
 	esac
 	exe=.exe;;
+FreeBSD)
+	platform=freebsd
+	if test -z "$JAVA_HOME"
+	then
+		JAVA_HOME=/usr/local/jdk1.6.0/jre
+		export JAVA_HOME
+	fi
+	if ! test -f "$JAVA_HOME/jre/lib/ext/vecmath.jar" && ! test -f "$JAVA_HOME/lib/ext/vecmath.jar"
+	then
+		echo "You are missing Java3D. Please install with"
+		echo ""
+		echo "        sudo portinstall java3d"
+		echo ""
+		echo "(This requires some time)"
+		exit 1
+	fi;;
+*)
+	platform=
+	# copy and use bin/fiji-other.sh
+	test -f "$CWD/fiji" &&
+	test "$CWD/bin/fiji" -nt "$CWD/bin/fiji-other.sh" ||
+	cp "$CWD/bin/fiji-other.sh" "$CWD/fiji"
+	TOOLS_JAR="$(ls -t /usr/jdk*/lib/tools.jar \
+		/usr/local/jdk*/lib/tools.jar 2> /dev/null |
+		head -n 1)"
+	test -z "$TOOLS_JAR" ||
+	export TOOLS_JAR;;
 esac
 
+test -n "$platform" &&
 test -z "$JAVA_HOME" &&
 JAVA_HOME="$("$CWD"/precompiled/fiji-"$platform" --print-java-home 2> /dev/null)"
 
-if test ! -d "$JAVA_HOME"
+if test -n "$platform" && test ! -d "$JAVA_HOME"
 then
 	JAVA_HOME="$CWD"/java/$java_submodule
 	JAVA_HOME="$JAVA_HOME"/"$(ls -t "$JAVA_HOME" | head -n 1)"
 fi
 
 # need to clone java submodule
+test -z "$platform" ||
 test -f "$JAVA_HOME/lib/tools.jar" || test -f "$JAVA_HOME/../lib/tools.jar" ||
 test -f "$CWD"/java/"$java_submodule"/Home/lib/ext/vecmath.jar || {
 	echo "No JDK found; cloning it"

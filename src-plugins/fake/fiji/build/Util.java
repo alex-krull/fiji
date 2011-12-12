@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class Util {
 	public static List<String> splitCommandLine(String program)
@@ -271,8 +270,8 @@ public class Util {
 			return "macosx";
 		if (osName.startsWith("Windows"))
 			return "win" + (is64bit ? "64" : "32");
-		System.err.println("Unknown platform: " + osName);
-		return osName;
+		//System.err.println("Unknown platform: " + osName);
+		return osName.toLowerCase();
 	}
 
 	public static boolean isAbsolutePath(String path) {

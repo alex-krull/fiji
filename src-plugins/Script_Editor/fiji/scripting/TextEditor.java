@@ -11,6 +11,8 @@ import ij.gui.GenericDialog;
 
 import ij.io.SaveDialog;
 
+import ij.plugin.BrowserLauncher;
+
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
@@ -78,14 +80,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
-
-import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class TextEditor extends JFrame implements ActionListener,
 	       ChangeListener {
@@ -491,6 +489,23 @@ public class TextEditor extends JFrame implements ActionListener,
 		setTitle();
 	}
 
+	/**
+	 * Open a new editor to edit the given file, with a templateFile if the file does not exist yet
+	 */
+	public TextEditor(File file, File templateFile) {
+		this(file.exists() ? file.getPath() : templateFile.getPath());
+		if (!file.exists()) {
+			final EditorPane editorPane = getEditorPane();
+			try {
+				editorPane.setFile(file.getAbsolutePath());
+			} catch (IOException e) {
+				IJ.handleException(e);
+			}
+			editorPane.setLanguageByFileName(file.getName());
+			setTitle();
+		}
+	}
+
 	final public RSyntaxTextArea getTextArea() {
 		return getEditorPane();
 	}
@@ -833,7 +848,7 @@ public class TextEditor extends JFrame implements ActionListener,
 		else if (source == openHelpWithoutFrames)
 			openHelp(null, false);
 		else if (source == openMacroFunctions)
-			IJ.run("Macro Functions...");
+			new MacroFunctions().openHelp(getTextArea().getSelectedText());
 		else if (source == extractSourceJar)
 			extractSourceJar();
 		else if (source == openSourceForClass) {
@@ -842,6 +857,10 @@ public class TextEditor extends JFrame implements ActionListener,
 				String path = new FileFunctions(this).getSourcePath(className);
 				if (path != null)
 					open(path);
+				else {
+					String url = new FileFunctions(this).getSourceURL(className);
+					new BrowserLauncher().run(url);
+				}
 			} catch (ClassNotFoundException e) {
 				error("Could not open source for class " + className);
 			}
@@ -1398,6 +1417,7 @@ public class TextEditor extends JFrame implements ActionListener,
 		if (!write(file))
 			return false;
 		setFileName(file);
+		openRecent.add(path);
 		return true;
 	}
 
@@ -2147,7 +2167,8 @@ public class TextEditor extends JFrame implements ActionListener,
 	public void openHelp(String className, boolean withFrames) {
 		if (className == null)
 			className = getSelectedClassNameOrAsk();
-		getEditorPane().getClassNameFunctions().openHelpForClass(className, withFrames);
+		if (className != null)
+			getEditorPane().getClassNameFunctions().openHelpForClass(className, withFrames);
 	}
 
 	public void extractSourceJar() {

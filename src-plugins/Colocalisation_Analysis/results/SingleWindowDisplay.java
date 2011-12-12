@@ -1,18 +1,20 @@
 package results;
 
+import fiji.util.gui.JImagePanel;
 import gadgets.DataContainer;
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
-import ij.gui.ImageWindow;
 import ij.gui.Line;
-import ij.gui.NewImage;
 import ij.gui.Overlay;
 import ij.process.ImageProcessor;
 import ij.text.TextWindow;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Panel;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -33,9 +35,9 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
-import mpicbg.imglib.algorithm.math.ImageStatistics;
 import mpicbg.imglib.cursor.LocalizableByDimCursor;
 import mpicbg.imglib.image.Image;
 import mpicbg.imglib.image.display.imagej.ImageJFunctions;
@@ -49,15 +51,16 @@ import algorithms.Histogram2D;
  * and offers features like the use of different LUTs.
  *
  */
-public class SingleWindowDisplay<T extends RealType<T>> extends ImageWindow implements ResultHandler<T>, ItemListener, ActionListener, ClipboardOwner {
-	static final int WIN_WIDTH = 350;
-	static final int WIN_HEIGHT = 240;
+public class SingleWindowDisplay<T extends RealType<T>> extends JFrame implements ResultHandler<T>, ItemListener, ActionListener, ClipboardOwner {
+	private static final long serialVersionUID = -5642321584354176878L;
+	protected static final int WIN_WIDTH = 350;
+	protected static final int WIN_HEIGHT = 600;
 
 	// a static list for keeping track of all other SingleWindowDisplays
-	static ArrayList<SingleWindowDisplay> displays = new ArrayList<SingleWindowDisplay>();
+	protected static ArrayList<SingleWindowDisplay> displays = new ArrayList<SingleWindowDisplay>();
 
 	// indicates if original images should be displayed or not
-	boolean displayOriginalImages = false;
+	protected boolean displayOriginalImages = false;
 
 	// this is the image currently selected by the drop down menu
 	protected Image<? extends RealType> currentlyDisplayedImageResult;
@@ -81,18 +84,27 @@ public class SingleWindowDisplay<T extends RealType<T>> extends ImageWindow impl
 	protected LocalizableByDimCursor<? extends RealType> pixelAccessCursor;
 
 	// A PDF writer to call if user wants PDF print
-	PDFWriter<T> pdfWriter;
+	protected PDFWriter<T> pdfWriter;
+
+	// The current image
+	protected ImagePlus imp;
 
 	// GUI elements
-	JButton listButton, copyButton;
-	JCheckBox log;
+	protected JImagePanel imagePanel;
+	protected JButton listButton, copyButton;
+	protected JCheckBox log;
+
 	/* The data container with general information about
 	 * source images
 	 */
-	DataContainer<T> dataContainer = null;
+	protected DataContainer<T> dataContainer = null;
 
 	public SingleWindowDisplay(DataContainer<T> container, PDFWriter<T> pdfWriter){
-		super(NewImage.createFloatImage("Single Window Display", WIN_WIDTH, WIN_HEIGHT, 1, NewImage.FILL_WHITE));
+		super("Colocalisation " + container.getSourceImage1().getName() + " vs " +
+				container.getSourceImage2().getName());
+
+		setPreferredSize(new Dimension(WIN_WIDTH, WIN_HEIGHT));
+
 		// save a reference to the container
 		dataContainer = container;
 		this.pdfWriter = pdfWriter;
@@ -103,18 +115,15 @@ public class SingleWindowDisplay<T extends RealType<T>> extends ImageWindow impl
 	}
 
 	public void setup() {
-		Panel imageSelectionPanel = new Panel();
-		imageSelectionPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
 		JComboBox dropDownList = new JComboBox();
 		for(Image<? extends RealType> img : listOfImages) {
 			dropDownList.addItem(new NamedContainer<Image<? extends RealType> >(img, img.getName()));
 		}
 		dropDownList.addItemListener(this);
-		imageSelectionPanel.add(dropDownList);
 
-		Panel textPanel = new Panel();
-		textPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+		imagePanel = new JImagePanel(ij.IJ.createImage("dummy", "8-bit", 10, 10, 1));
+
 
 		// Create something to display it in
 		final JEditorPane editor = new JEditorPane();
@@ -123,9 +132,8 @@ public class SingleWindowDisplay<T extends RealType<T>> extends ImageWindow impl
 		editor.setText(makeHtmlText());			// specify the text to display
 
 		// Put the JEditorPane in a scrolling window and add it
-		JScrollPane sp = new JScrollPane(editor);
-		sp.setPreferredSize(new Dimension(256, 150));
-		textPanel.add(sp);
+		JScrollPane scrollPane = new JScrollPane(editor);
+		scrollPane.setPreferredSize(new Dimension(256, 150));
 
 		Panel buttons = new Panel();
 		buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -162,11 +170,21 @@ public class SingleWindowDisplay<T extends RealType<T>> extends ImageWindow impl
 		log.addActionListener(this);
 		buttons.add(log);
 
-		remove(ic);
-		add(imageSelectionPanel);
-		add(ic);
-		add(textPanel);
-		add(buttons);
+		final GridBagLayout layout = new GridBagLayout();
+		final Container pane = getContentPane();
+		getContentPane().setLayout(layout);
+		final GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		c.weightx = 1;
+		c.gridwidth = GridBagConstraints.BOTH;
+		c.gridy++;
+		pane.add(dropDownList, c);
+		c.gridy++;  c.weighty = 1;
+		pane.add(imagePanel, c);
+		c.gridy++; c.weighty = 1;
+		pane.add(scrollPane, c);
+		c.weighty = 0; c.gridy++;
+		pane.add(buttons, c);
 		pack();
     }
 
@@ -185,7 +203,7 @@ public class SingleWindowDisplay<T extends RealType<T>> extends ImageWindow impl
 			adjustDisplayedImage(listOfImages.get(0));
 		}
 		// show the GUI
-		this.show();
+		this.setVisible(true);
 	}
 
 	public void handleImage(Image<T> image) {
@@ -322,7 +340,9 @@ public class SingleWindowDisplay<T extends RealType<T>> extends ImageWindow impl
 			// get the actual histogram data
 			String histogramData = hr.getData();
 
-			TextWindow tw = new TextWindow(getTitle(), vHeadingX + "\t" + vHeadingY + "\tcount", histogramData, 250, 400);
+			TextWindow tw = new TextWindow(getTitle(), vHeadingX + "\t" +
+					vHeadingY + "\tcount", histogramData, 250, 400);
+			tw.setVisible(true);
 		}
 	}
 
@@ -411,21 +431,17 @@ public class SingleWindowDisplay<T extends RealType<T>> extends ImageWindow impl
 	 * lines will also be drawn
 	 */
 	protected void drawImage(Image<? extends RealType> img) {
-		// remove potentially added overlay
-		imp.setOverlay(null);
-		// get Imglib image as ImageJ image
-		ImagePlus imp = ImageJFunctions.displayAsVirtualStack( img );
-		this.imp.setProcessor(imp.getProcessor());
-		ImageProcessor ip = this.imp.getProcessor();
+		// get ImgLib image as ImageJ image
+		imp = ImageJFunctions.displayAsVirtualStack( img );
+		imagePanel.updateImage(imp);
 		// set the display range
-		double max = ImageStatistics.getImageMax((Image<T>)img).getRealDouble();
-		this.imp.setDisplayRange(0.0, max);
 
 		// check if a LUT should be applied
 		if ( listOfLUTs.containsKey(img) ) {
 			// select linked look up table
-			IJ.run(this.imp, listOfLUTs.get(img), null);
+			IJ.run(imp, listOfLUTs.get(img), null);
 		}
+		imp.getProcessor().resetMinAndMax();
 
 		boolean overlayModified = false;
 		Overlay overlay = new Overlay();
@@ -451,10 +467,10 @@ public class SingleWindowDisplay<T extends RealType<T>> extends ImageWindow impl
 
 		if (overlayModified) {
 			overlay.setStrokeColor(java.awt.Color.WHITE);
-			this.imp.setOverlay(overlay);
+			imp.setOverlay(overlay);
 		}
 
-		this.imp.updateAndDraw();
+		imagePanel.repaint();
 	}
 
 	/**
@@ -529,6 +545,9 @@ public class SingleWindowDisplay<T extends RealType<T>> extends ImageWindow impl
 
 		drawImage(img);
 		toggleLogarithmic(log.isSelected());
+		// ensure a valid layout, we changed the image
+		getContentPane().validate();
+		getContentPane().repaint();
 	}
 
 	public void itemStateChanged(ItemEvent e) {
@@ -539,15 +558,17 @@ public class SingleWindowDisplay<T extends RealType<T>> extends ImageWindow impl
 	}
 
 	protected void toggleLogarithmic(boolean enabled){
-		if (enabled){
-			this.imp.getProcessor().snapshot();
-			this.imp.getProcessor().log();
-			IJ.resetMinAndMax();
+		if (imp == null)
+			return;
+		ImageProcessor ip = imp.getProcessor();
+		if (enabled) {
+			ip.snapshot();
+			ip.log();
+			ip.resetMinAndMax();
 		}
-		else {
-			this.imp.getProcessor().reset();
-		}
-		this.imp.updateAndDraw();
+		else
+			ip.reset();
+		imagePanel.repaint();
 	}
 
 	public void actionPerformed(ActionEvent e) {

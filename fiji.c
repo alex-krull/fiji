@@ -5,7 +5,7 @@
  * Copyright 2007-2011 Johannes Schindelin, Mark Longair, Albert Cardona
  * Benjamin Schmid, Erwin Frise and Gregory Jefferis
  *
- * The source is distributed under the GPLv2 or later.
+ * The source is distributed under the BSD license.
  *
  * Clarification: the license of the Fiji launcher has no effect on
  * the Java Runtime, ImageJ or any plugins, since they are not derivatives.
@@ -17,10 +17,17 @@
 #include <limits.h>
 #include <string.h>
 
+#if defined(_WIN64) && !defined(WIN32)
+/* TinyCC's stdlib.h undefines WIN32 in 64-bit mode */
+#define WIN32 1
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#if !defined(WIN32) || !defined(__TINYC__)
 #include <unistd.h>
+#endif
 #include <errno.h>
 
 #ifdef __GNUC__
@@ -70,7 +77,7 @@ static void open_win_console();
 #endif
 #endif
 
-#ifdef __linux__
+#if defined(__linux__) && !defined(__TINYC__)
 #include "glibc-compat.h"
 #endif
 
@@ -307,7 +314,10 @@ static void string_vaddf(struct string *string, const char *fmt, va_list ap)
 			break;
 		}
 		case 'c':
-			string_add_char(string, va_arg(ap, int));
+			{
+				char c = va_arg(ap, int);
+				string_add_char(string, c);
+			}
 			break;
 		case 'u':
 		case 'i':
@@ -321,14 +331,17 @@ static void string_vaddf(struct string *string, const char *fmt, va_list ap)
 			int negative = 0, len;
 			unsigned long number, power;
 
-			if (*p == 'u')
+			if (*p == 'u') {
 				number = va_arg(ap, unsigned int);
+			}
 			else {
 				long signed_number;
-				if (*p == 'l')
+				if (*p == 'l') {
 					signed_number = va_arg(ap, long);
-				else
+				}
+				else {
 					signed_number = va_arg(ap, int);
+				}
 				if (signed_number < 0) {
 					negative = 1;
 					number = -signed_number;
@@ -458,7 +471,7 @@ static const char *default_main_class = "fiji.Main";
 
 static int is_default_main_class(const char *name)
 {
-	return !strcmp(name, default_main_class) || !strcmp(name, "ij.ImageJ");
+	return name && (!strcmp(name, default_main_class) || !strcmp(name, "ij.ImageJ"));
 }
 
 /* Dynamic library loading stuff */
@@ -580,7 +593,7 @@ size_t get_memory_size(int available_only)
 				host_info.inactive_count +
 				host_info.wire_count) * (size_t)page_size);
 }
-#elif defined(linux)
+#elif defined(__linux__)
 static size_t get_kB(struct string *string, const char *key)
 {
 	const char *p = strstr(string->buffer, key);
@@ -621,9 +634,13 @@ size_t get_memory_size(int available_only)
 #else
 size_t get_memory_size(int available_only)
 {
-	fprintf(stderr, "Unsupported\n");
+	fprintf(stderr, "Cannot reserve optimal memory on this platform\n");
 	return 0;
 }
+#endif
+
+#if defined(__TINYC__)
+#define strtoll strtol
 #endif
 
 static long long parse_memory(const char *amount)
@@ -1064,7 +1081,7 @@ static void show_splash(void)
 	int (*SplashLoadFile)(const char *path);
 	int (*SplashSetFileJarName)(const char *file_path, const char *jar_path);
 
-	if (no_splash || !lib_path)
+	if (no_splash || !lib_path || SplashClose)
 		return;
 	splashscreen = dlopen(lib_path->buffer, RTLD_LAZY);
 	if (!splashscreen) {
@@ -1075,14 +1092,25 @@ static void show_splash(void)
 	SplashLoadFile = dlsym(splashscreen, "SplashLoadFile");
 	SplashSetFileJarName = dlsym(splashscreen, "SplashSetFileJarName");
 	SplashClose = dlsym(splashscreen, "SplashClose");
-	if (!SplashInit || !SplashLoadFile || !SplashSetFileJarName || !SplashClose)
+	if (!SplashInit || !SplashLoadFile || !SplashSetFileJarName || !SplashClose) {
+		string_release(lib_path);
+		SplashClose = NULL;
 		return;
+	}
 
 	SplashInit();
 	SplashLoadFile(image_path);
 	SplashSetFileJarName(image_path, fiji_path("jars/Fiji.jar"));
 
 	string_release(lib_path);
+}
+
+static void hide_splash(void)
+{
+	if (!SplashClose)
+		return;
+	SplashClose();
+	SplashClose = NULL;
 }
 
 /*
@@ -1097,7 +1125,7 @@ static void show_splash(void)
  */
 static void maybe_reexec_with_correct_lib_path(void)
 {
-#ifdef linux
+#ifdef __linux__
 	struct string *path = string_initf("%s/%s", get_jre_home(), library_path);
 	struct string *parent = get_parent_directory(path->buffer);
 	struct string *lib_path = get_parent_directory(parent->buffer);
@@ -1108,7 +1136,7 @@ static void maybe_reexec_with_correct_lib_path(void)
 	string_release(parent);
 
 	// Is this JDK6?
-	if (dir_exists(jli->buffer)) {
+	if (!dir_exists(get_jre_home()) || dir_exists(jli->buffer)) {
 		string_release(lib_path);
 		string_release(jli);
 		return;
@@ -1125,6 +1153,7 @@ static void maybe_reexec_with_correct_lib_path(void)
 		string_append_path_list(lib_path, original);
 	setenv_or_exit("LD_LIBRARY_PATH", lib_path->buffer, 1);
 	error("Re-executing with correct library lookup path");
+	hide_splash();
 	execv(main_argv_backup[0], main_argv_backup);
 	die("Could not re-exec with correct library lookup!");
 #endif
@@ -1190,16 +1219,11 @@ static int create_java_vm(JavaVM **vm, void **env, JavaVMInitArgs *args)
 	const char *java_home = get_jre_home();
 
 #ifdef WIN32
-	/* Windows automatically adds the path of the executable to PATH */
-	struct string *path = string_initf("%s;%s/bin",
-		getenv("PATH"), java_home);
-	setenv_or_exit("PATH", path->buffer, 1);
-	string_release(path);
-
 	// on Windows, a setenv() invalidates strings obtained by getenv()
 	if (original_java_home_env)
 		original_java_home_env = xstrdup(original_java_home_env);
 #endif
+
 	setenv_or_exit("JAVA_HOME", java_home, 1);
 
 	string_addf(buffer, "%s/%s", java_home, library_path);
@@ -1316,6 +1340,7 @@ struct dir *open_dir(const char *path)
 	result->handle = FindFirstFile(result->pattern->buffer,
 			&(result->find_data));
 	if (result->handle == INVALID_HANDLE_VALUE) {
+		string_release(result->pattern);
 		free(result);
 		return NULL;
 	}
@@ -1755,6 +1780,15 @@ static void keep_only_one_memory_option(struct string_array *options)
 	options->nr = j;
 }
 
+static char has_memory_option(struct string_array *options)
+{
+	int i;
+	for (i = 0; i < options->nr; i++)
+		if (!prefixcmp(options->list[i], "-Xm"))
+			return 1;
+	return 0;
+}
+
 __attribute__((unused))
 static void read_file_as_string(const char *file_name, struct string *contents)
 {
@@ -2049,6 +2083,8 @@ static void __attribute__((__noreturn__)) usage(void)
 		"\tstart JavaC, the Java Compiler, instead of ImageJ\n"
 		"--ant\n"
 		"\trun Apache Ant\n"
+		"--mini-maven\n"
+		"\trun Fiji's very simple Maven mockup\n"
 		"--javah\n"
 		"\tstart javah instead of ImageJ\n"
 		"--javap\n"
@@ -2101,8 +2137,11 @@ static void jvm_workarounds(struct options *options)
 {
 	unsigned int java_version = guess_java_version();
 
-	if (java_version == 0x01070000 || java_version == 0x01070001)
+	if (java_version == 0x01070000 || java_version == 0x01070001) {
 		add_option(options, "-XX:-UseLoopPredicate", 0);
+		if (main_class && !strcmp(main_class, "sun.tools.javap.Main"))
+			main_class = "com.sun.tools.javap.Main";
+	}
 }
 
 /* the maximal size of the heap on 32-bit systems, in megabyte */
@@ -2159,13 +2198,15 @@ static void try_with_less_memory(size_t memory_size)
 
 	error("Trying with a smaller heap: %s", buffer->buffer);
 
+	hide_splash();
+
 #ifdef WIN32
 	new_argv[0] = dos_path(new_argv[0]);
 	for (i = 0; i < j; i++)
 		new_argv[i] = quote_win32(new_argv[i]);
 	execve(new_argv[0], (char * const *)new_argv, NULL);
 #else
-	execve(new_argv[0], new_argv, NULL);
+	execv(new_argv[0], new_argv);
 #endif
 
 	string_setf(buffer, "ERROR: failed to launch (errno=%d;%s):\n",
@@ -2192,14 +2233,33 @@ static int is_building(const char *target)
 	return 0;
 }
 
+/*
+ * Returns the number of elements which this option spans if it is an ImageJ1 option, 0 otherwise.
+ */
+static int imagej1_option_count(const char *option)
+{
+	if (!option)
+		return 0;
+	if (option[0] != '-') /* file names */
+		return 1;
+	if (!prefixcmp(option, "-port") || !strcmp(option, "-debug"))
+		return 1;
+	if (!strcmp(option, "-ijpath") || !strcmp(option, "-macro") || !strcmp(option, "-eval") || !strcmp(option, "-run"))
+		return 2;
+	if (!strcmp(option, "-batch"))
+		return 3;
+	return 0;
+}
+
+const char *properties[32];
+
 static int retrotranslator;
 
-static int start_ij(void)
+static struct options options;
+static size_t memory_size = 0;
+
+static void parse_command_line(void)
 {
-	JavaVM *vm;
-	struct options options;
-	JavaVMInitArgs args;
-	JNIEnv *env;
 	struct string *buffer = string_init(32);
 	struct string *buffer2 = string_init(32);
 	struct string *class_path = string_init(32);
@@ -2213,7 +2273,6 @@ static int start_ij(void)
 	int dashdash = 0;
 	int allow_multiple = 0, skip_build_classpath = 0;
 	int jdb = 0, add_class_path_option = 0, advanced_gc = 1, debug_gc = 0;
-	size_t memory_size = 0;
 	int count = 1, i;
 
 #ifdef WIN32
@@ -2229,7 +2288,7 @@ static int start_ij(void)
 			!is_building("fiji"))
 		error("Warning: your Fiji executable is not up-to-date");
 
-#ifdef linux
+#ifdef __linux__
 	string_append_path_list(java_library_path, getenv("LD_LIBRARY_PATH"));
 #endif
 #ifdef MACOSX
@@ -2396,7 +2455,9 @@ static int start_ij(void)
 			add_option_string(&options, arg, 1);
 		}
 		else if (!strcmp(main_argv[i], "--update")) {
+			skip_build_classpath = 1;
 			string_append_path_list(class_path, fiji_path("plugins/Fiji_Updater.jar"));
+			string_append_path_list(class_path, fiji_path("jars/jsch-0.1.44.jar"));
 			main_class = "fiji.updater.Main";
 		}
 		else if (handle_one_option(&i, "--class-path", arg) ||
@@ -2473,6 +2534,11 @@ static int start_ij(void)
 			string_append_path_list(class_path, "/usr/share/java/ant-nodeps.jar");
 			string_append_path_list(class_path, "/usr/share/java/ant-junit.jar");
 		}
+		else if (!strcmp(main_argv[i], "--mini-maven")) {
+			skip_build_classpath = 1;
+			string_append_path_list(class_path, fiji_path("jars/fake.jar"));
+			main_class = "fiji.build.MiniMaven";
+		}
 		else if (!strcmp(main_argv[i], "--retrotranslator") ||
 				!strcmp(main_argv[i], "--retro"))
 			retrotranslator = 1;
@@ -2503,6 +2569,13 @@ static int start_ij(void)
 
 	main_argc = count;
 
+#ifdef WIN32
+	/* Windows automatically adds the path of the executable to PATH */
+	struct string *path = string_initf("%s;%s/bin",
+		getenv("PATH"), get_jre_home());
+	setenv_or_exit("PATH", path->buffer, 1);
+	string_release(path);
+#endif
 	if (!headless &&
 #ifdef MACOSX
 			!CGSessionCopyCurrentDictionary()
@@ -2528,7 +2601,7 @@ static int start_ij(void)
 	add_option(&options, plugin_path->buffer, 0);
 
 	// if arguments don't set the memory size, set it after available memory
-	if (memory_size == 0) {
+	if (memory_size == 0 && !has_memory_option(&options.java_options)) {
 		memory_size = get_memory_size(0);
 		/* 0.75x, but avoid multiplication to avoid overflow */
 		memory_size -= memory_size >> 2;
@@ -2598,13 +2671,10 @@ static int start_ij(void)
 	maybe_reexec_with_correct_lib_path();
 
 	if (retrotranslator && build_classpath(class_path, fiji_path("retro"), 0))
-		return 1;
+		die("Retrotranslator is required but cannot be found!");
 
-	if (!headless && is_default_main_class(main_class))
+	if (!options.debug && !options.use_system_jvm && !headless && is_default_main_class(main_class))
 		show_splash();
-
-	/* Handle update/ */
-	update_all_files();
 
 	/* set up class path */
 	if (skip_build_classpath) {
@@ -2614,16 +2684,16 @@ static int start_ij(void)
 			string_set_length(class_path, len - 1);
 	}
 	else {
-		if (headless)
-			string_append_path_list(class_path, fiji_path("misc/headless.jar"));
-
 		if (is_default_main_class(main_class)) {
 			string_append_path_list(class_path, fiji_path("jars/Fiji.jar"));
 			string_append_path_list(class_path, fiji_path("jars/ij.jar"));
+			string_append_path_list(class_path, fiji_path("jars/javassist.jar"));
+			// Debian
+			string_append_path_list(class_path, "/usr/share/java/javassist.jar");
 		}
 		else {
 			if (build_classpath(class_path, fiji_path("plugins"), 0))
-				return 1;
+				die("Could not build classpath!");
 			build_classpath(class_path, fiji_path("jars"), 0);
 		}
 	}
@@ -2635,29 +2705,50 @@ static int start_ij(void)
 	if (default_arguments->length)
 		add_options(&options, default_arguments->buffer, 1);
 
-	if (dashdash) {
-		for (i = 1; i < dashdash; i++)
-			add_option(&options, main_argv[i], 0);
-		main_argv += dashdash - 1;
-		main_argc -= dashdash - 1;
-	}
-
 	if (add_class_path_option) {
 		add_option(&options, "-classpath", 1);
 		add_option_copy(&options, class_path->buffer, 1);
 	}
 
+	if (jdb)
+		add_option_copy(&options, main_class, 1);
+
 	if (!strcmp(main_class, "org.apache.tools.ant.Main"))
 		add_java_home_to_path();
 
-	if (jdb)
-		add_option_copy(&options, main_class, 1);
 	if (is_default_main_class(main_class)) {
 		if (allow_multiple)
 			add_option(&options, "-port0", 1);
 		else
 			add_option(&options, "-port7", 1);
 		add_option(&options, "-Dsun.java.command=Fiji", 0);
+	}
+
+	// If there is no -- but some options unknown to IJ1, DWIM it
+	if (!dashdash && is_default_main_class(main_class)) {
+		for (i = 1; i < main_argc; i++) {
+			int count = imagej1_option_count(main_argv[i]);
+			if (!count) {
+				dashdash = main_argc;
+				break;
+			}
+			i += count - 1;
+		}
+	}
+
+	if (dashdash) {
+		int is_imagej1 = is_default_main_class(main_class);
+
+		for (i = 1; i < dashdash; ) {
+			int count = is_imagej1 ? imagej1_option_count(main_argv[i]) : 0;
+			if (!count)
+				add_option(&options, main_argv[i++], 0);
+			else
+				while (count-- && i < dashdash)
+					add_option(&options, main_argv[i++], 1);
+		}
+		main_argv += dashdash - 1;
+		main_argc -= dashdash - 1;
 	}
 
 	/* handle "--headless script.ijm" gracefully */
@@ -2684,16 +2775,20 @@ static int start_ij(void)
 	for (i = 1; i < main_argc; i++)
 		add_option(&options, main_argv[i], 1);
 
-	const char *properties[] = {
-		"fiji.dir", fiji_dir,
-		"fiji.defaultLibPath", JAVA_LIB_PATH,
-		"fiji.executable", main_argv0,
-		"java.library.path", java_library_path->buffer,
+	i = 0;
+	properties[i++] = "fiji.dir";
+	properties[i++] =  fiji_dir,
+	properties[i++] = "fiji.defaultLibPath";
+	properties[i++] = JAVA_LIB_PATH;
+	properties[i++] = "fiji.executable";
+	properties[i++] = main_argv0;
+	properties[i++] = "java.library.path";
+	properties[i++] = java_library_path->buffer;
 #ifdef WIN32
-		"sun.java2d.noddraw", "true",
+	properties[i++] = "sun.java2d.noddraw";
+	properties[i++] = "true";
 #endif
-		NULL
-	};
+	properties[i++] = NULL;
 
 	keep_only_one_memory_option(&options.java_options);
 
@@ -2706,6 +2801,19 @@ static int start_ij(void)
 		show_commandline(&options);
 		exit(0);
 	}
+
+}
+
+static int start_ij(void)
+{
+	JavaVM *vm;
+	JavaVMInitArgs args;
+	JNIEnv *env;
+	struct string *buffer = string_init(32);
+	int i;
+
+	/* Handle update/ */
+	update_all_files();
 
 	memset(&args, 0, sizeof(args));
 	/* JNI_VERSION_1_4 is used on Mac OS X to indicate 1.4.x and later */
@@ -2758,8 +2866,7 @@ static int start_ij(void)
 		args = prepare_ij_options(env, &options.ij_options);
 		(*env)->CallStaticVoidMethodA(env, instance,
 				method, (jvalue *)&args);
-		if (SplashClose)
-			SplashClose();
+		hide_splash();
 		if ((*vm)->DetachCurrentThread(vm))
 			error("Could not detach current thread");
 		/* This does not return until ImageJ exits */
@@ -2802,8 +2909,7 @@ static int start_ij(void)
 			string_setf(buffer, "%s/bin/%s", java_home_env, get_java_command());
 		}
 		options.java_options.list[0] = buffer->buffer;
-		if (SplashClose)
-			SplashClose();
+		hide_splash();
 #ifndef WIN32
 		if (execvp(buffer->buffer, options.java_options.list))
 			error("Could not launch system-wide Java (%s)", strerror(errno));
@@ -3241,6 +3347,7 @@ static int launch_32bit_on_tiger(int argc, char **argv)
 		argv[0] = buffer;
 	}
 	strcpy(argv[0] + offset, replace);
+	hide_splash();
 	execv(argv[0], argv);
 	fprintf(stderr, "Could not execute %s: %d(%s)\n",
 		argv[0], errno, strerror(errno));
@@ -3456,6 +3563,8 @@ int main(int argc, char **argv, char **e)
 	main_argv_backup = (char **)xmalloc(size);
 	memcpy(main_argv_backup, main_argv, size);
 	main_argc_backup = argc;
+
+	parse_command_line();
 
 	return start_ij();
 }

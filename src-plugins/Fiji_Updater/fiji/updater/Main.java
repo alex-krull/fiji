@@ -2,7 +2,10 @@ package fiji.updater;
 
 import com.jcraft.jsch.UserInfo;
 
+import fiji.updater.java.UpdateJava;
+
 import fiji.updater.logic.Checksummer;
+import fiji.updater.logic.FileUploader;
 import fiji.updater.logic.PluginCollection;
 import fiji.updater.logic.PluginCollection.Filter;
 import fiji.updater.logic.PluginCollection.UpdateSite;
@@ -14,15 +17,20 @@ import fiji.updater.logic.PluginObject.Status;
 
 import fiji.updater.logic.XMLFileDownloader;
 
+import fiji.updater.logic.ssh.SSHFileUploader;
+
 import fiji.updater.util.Downloader;
 import fiji.updater.util.Progress;
 import fiji.updater.util.StderrProgress;
-import fiji.updater.util.UpdateJava;
+import fiji.updater.util.Util;
 
 import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,7 +53,7 @@ public class Main {
 		try {
 			plugins.read();
 		} catch (FileNotFoundException e) { /* ignore */ }
-		progress = new StderrProgress();
+		progress = new StderrProgress(80);
 		XMLFileDownloader downloader = new XMLFileDownloader(plugins);
 		downloader.addProgress(progress);
 		downloader.start();
@@ -67,11 +75,16 @@ public class Main {
 		protected Set<String> fileNames;
 
 		public FileFilter(List<String> files) {
-			if (files != null && files.size() > 0)
-				fileNames = new HashSet<String>(files);
+			if (files != null && files.size() > 0) {
+				fileNames = new HashSet<String>();
+				for (String file : files)
+					fileNames.add(Util.stripPrefix(file, ""));
+			}
 		}
 
 		public boolean matches(PluginObject plugin) {
+			if (!plugin.isUpdateablePlatform())
+				return false;
 			if (fileNames != null &&
 					!fileNames.contains(plugin.filename))
 				return false;
@@ -92,6 +105,7 @@ public class Main {
 			filter = new FileFilter(files);
 		else
 			filter = plugins.and(new FileFilter(files), filter);
+		plugins.sort();
 		for (PluginObject plugin : plugins.filter(filter))
 			System.out.println(plugin.filename + "\t("
 				+ plugin.getStatus() + ")\t"
@@ -107,11 +121,15 @@ public class Main {
 	}
 
 	public void listNotUptodate(List<String> files) {
-		list(files, plugins.not(plugins.is(Status.INSTALLED)));
+		list(files, plugins.not(plugins.oneOf(new Status[] { Status.OBSOLETE, Status.INSTALLED, Status.NOT_FIJI})));
 	}
 
 	public void listUpdateable(List<String> files) {
 		list(files, plugins.is(Status.UPDATEABLE));
+	}
+
+	public void listModified(List<String> files) {
+		list(files, plugins.is(Status.MODIFIED));
 	}
 
 	class OnePlugin implements Downloader.FileDownload {
@@ -122,7 +140,7 @@ public class Main {
 		}
 
 		public String getDestination() {
-			return plugin.filename;
+			return Util.prefix(plugin.filename);
 		}
 
 		public String getURL() {
@@ -141,6 +159,12 @@ public class Main {
 	public void download(PluginObject plugin) {
 		try {
 			new Downloader(progress).start(new OnePlugin(plugin));
+			if (Util.isLauncher(plugin.filename) && !Util.platform.startsWith("win")) try {
+				Runtime.getRuntime().exec(new String[] { "chmod", "0755", Util.prefix(plugin.filename) });
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException("Could not mark " + plugin.filename + " as executable");
+			}
 			System.err.println("Installed " + plugin.filename);
 		} catch (IOException e) {
 			System.err.println("IO error downloading "
@@ -157,22 +181,43 @@ public class Main {
 	}
 
 	public void update(List<String> files) {
+		update(files, false);
+	}
+
+	public void update(List<String> files, boolean force) {
+		update(files, force, false);
+	}
+
+	public void update(List<String> files, boolean force, boolean pristine) {
 		checksum(files);
 		for (PluginObject plugin : plugins.filter(new FileFilter(files)))
 			switch (plugin.getStatus()) {
-			case UPDATEABLE:
 			case MODIFIED:
+				if (!force) {
+					System.err.println("Skipping locally-modified " + plugin.filename);
+					break;
+				}
+			case UPDATEABLE:
 			case NEW:
 			case NOT_INSTALLED:
 				download(plugin);
 				break;
 			case NOT_FIJI:
-			case OBSOLETE:
+				if (!pristine) {
+					System.err.println("Keeping non-Fiji " + plugin.filename);
+					break;
+				}
 			case OBSOLETE_MODIFIED:
+				if (!force) {
+					System.err.println("Keeping modified but obsolete " + plugin.filename);
+					break;
+				}
+			case OBSOLETE:
 				delete(plugin);
 				break;
 			default:
-				System.err.println("Not updating " + plugin.filename + " (" + plugin.getStatus() + ")");
+				if (files != null && files.size() > 0)
+					System.err.println("Not updating " + plugin.filename + " (" + plugin.getStatus() + ")");
 			}
 		try {
 			plugins.write();
@@ -219,8 +264,10 @@ public class Main {
 		String username = uploader.getDefaultUsername();
 		if (username == null || username.equals(""))
 			username = userInfo.getUsername("Login for " + getLongUpdateSiteName(updateSite));
-		if (!uploader.setLogin(username, userInfo))
+		FileUploader sshUploader = SSHFileUploader.getUploader(uploader, username, userInfo);
+		if (sshUploader == null)
 			die("Aborting");
+		uploader.setUploader(sshUploader);
 		try {
 			uploader.upload(progress);
 			plugins.write();
@@ -287,8 +334,11 @@ public class Main {
 			+ "\tlist-uptodate [<files>]\n"
 			+ "\tlist-not-uptodate [<files>]\n"
 			+ "\tlist-updateable [<files>]\n"
+			+ "\tlist-modified [<files>]\n"
 			+ "\tlist-current [<files>]\n"
 			+ "\tupdate [<files>]\n"
+			+ "\tupdate-force [<files>]\n"
+			+ "\tupdate-force-pristine [<files>]\n"
 			+ "\tupload [<files>]\n"
 			+ "\tupdate-java");
 	}
@@ -298,6 +348,10 @@ public class Main {
 			usage();
 			System.exit(0);
 		}
+
+		Util.useSystemProxies();
+		Authenticator.setDefault(new ProxyAuthenticator());
+
 		String command = args[0];
 		if (command.equals("list"))
 			getInstance().list(makeList(args, 1));
@@ -309,14 +363,30 @@ public class Main {
 			getInstance().listNotUptodate(makeList(args, 1));
 		else if (command.equals("list-updateable"))
 			getInstance().listUpdateable(makeList(args, 1));
+		else if (command.equals("list-modified"))
+			getInstance().listModified(makeList(args, 1));
 		else if (command.equals("update"))
 			getInstance().update(makeList(args, 1));
+		else if (command.equals("update-force"))
+			getInstance().update(makeList(args, 1), true);
+		else if (command.equals("update-force-pristine"))
+			getInstance().update(makeList(args, 1), true, true);
 		else if (command.equals("update-java"))
 			new UpdateJava().run(null);
 		else if (command.equals("upload"))
 			getInstance().upload(makeList(args, 1));
 		else
 			usage();
+	}
+
+	protected static class ProxyAuthenticator extends Authenticator {
+		protected Console console = System.console();
+
+		protected PasswordAuthentication getPasswordAuthentication() {
+			String user = console.readLine("                                  \rProxy User: ");
+			char[] password = console.readPassword("Proxy Password: ");
+			return new PasswordAuthentication(user, password);
+		}
 	}
 
 	protected static class ConsoleUserInfo implements UserInfo {

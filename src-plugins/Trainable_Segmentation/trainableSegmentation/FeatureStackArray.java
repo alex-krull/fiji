@@ -23,14 +23,22 @@ package trainableSegmentation;
 
 import ij.IJ;
 import ij.ImagePlus;
-
+import ij.Prefs;
+	
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-
+/**
+ * This class stores the feature stacks of a set of input slices.
+ * It can be used so for 2D stacks or as the container of 3D features (by
+ * using a feature stack per section). 
+ * 
+ * @author Ignacio Arganda-Carreras (iarganda@mit.edu)
+ *
+ */
 public class FeatureStackArray 
 {
 	/** array of feature stacks */
@@ -83,6 +91,26 @@ public class FeatureStackArray
 	}
 	
 	/**
+	 * Create a feature stack array based on specific filters
+	 * 
+	 * @param inputImage original image
+	 * @param filters stack of filters to apply to the original image in order to create the features
+	 */
+	public FeatureStackArray(
+			final ImagePlus inputImage,
+			final ImagePlus filters)
+	{
+		this.featureStackArray = new FeatureStack[ inputImage.getImageStackSize() ];
+		
+		
+		for(int i=1; i <= featureStackArray.length; i++)
+		{		
+			featureStackArray[ i-1 ] = new FeatureStack(new ImagePlus("slice " + i, inputImage.getImageStack().getProcessor(i)));			
+			featureStackArray[ i-1 ].addFeaturesMT( filters );			 
+		}
+	}
+	
+	/**
 	 * Get the number of feature stacks
 	 * 
 	 * @return number of feature stacks stored in the array
@@ -123,7 +151,7 @@ public class FeatureStackArray
 		if (Thread.currentThread().isInterrupted() )
 			return false;
 		
-		final int numProcessors = Runtime.getRuntime().availableProcessors();
+		final int numProcessors = Prefs.getThreads();
 		final ExecutorService exe = Executors.newFixedThreadPool( numProcessors );
 		
 		final ArrayList< Future<Boolean> > futures = new ArrayList< Future<Boolean> >();
@@ -188,7 +216,7 @@ public class FeatureStackArray
 	 */
 	public boolean updateFeaturesMT()
 	{
-		final int numProcessors = Runtime.getRuntime().availableProcessors();
+		final int numProcessors = Prefs.getThreads();
 		final ExecutorService exe = Executors.newFixedThreadPool( numProcessors );
 		//IJ.log("Num of processors = " + numProcessors);
 		
@@ -396,6 +424,25 @@ public class FeatureStackArray
 		if(referenceStackIndex != -1)
 			return featureStackArray[referenceStackIndex].useNeighborhood();
 		return useNeighbors;
+	}
+	
+	public int getReferenceSliceIndex()
+	{
+		return referenceStackIndex;
+	}
+	
+	public int getWidth()
+	{
+		if(referenceStackIndex != -1)
+			return featureStackArray[referenceStackIndex].getWidth();
+		return -1;
+	}
+	
+	public int getHeight()
+	{
+		if(referenceStackIndex != -1)
+			return featureStackArray[referenceStackIndex].getHeight();
+		return -1;
 	}
 	
 }

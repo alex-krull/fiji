@@ -47,6 +47,7 @@ import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
@@ -70,6 +71,7 @@ public class NeuriteTracerResultsDialog
 	protected JMenuBar menuBar;
 	protected JMenu fileMenu;
 	protected JMenu analysisMenu;
+	protected JMenu viewMenu;
 
 	protected JMenuItem loadMenuItem;
 	protected JMenuItem loadLabelsMenuItem;
@@ -81,7 +83,10 @@ public class NeuriteTracerResultsDialog
 	protected JMenuItem analyzeSkeletonMenuItem;
 	protected JMenuItem makeLineStackMenuItem;
 	protected JMenuItem exportCSVMenuItemAgain;
+	protected JMenuItem sendToTrakEM2;
 	protected JMenuItem shollAnalysiHelpMenuItem;
+
+	protected JCheckBoxMenuItem mipOverlayMenuItem;
 
 	// These are the states that the UI can be in:
 
@@ -423,6 +428,7 @@ public class NeuriteTracerResultsDialog
 		}
 
 		plugin.cancelSearch( true );
+		plugin.notifyListeners(new SNTEvent(SNTEvent.QUIT));
 		pw.dispose();
 		fw.dispose();
 		dispose();
@@ -452,6 +458,7 @@ public class NeuriteTracerResultsDialog
 		exportCSVMenuItem.setEnabled(false);
 		exportAllSWCMenuItem.setEnabled(false);
 		exportCSVMenuItemAgain.setEnabled(false);
+		sendToTrakEM2.setEnabled(false);
 		analyzeSkeletonMenuItem.setEnabled(false);
 		saveMenuItem.setEnabled(false);
 		loadMenuItem.setEnabled(false);
@@ -499,6 +506,7 @@ public class NeuriteTracerResultsDialog
 					exportCSVMenuItem.setEnabled(true);
 					exportAllSWCMenuItem.setEnabled(true);
 					exportCSVMenuItemAgain.setEnabled(true);
+					sendToTrakEM2.setEnabled(plugin.anyListeners());
 					analyzeSkeletonMenuItem.setEnabled(true);
 					if( uploadButton != null ) {
 						uploadButton.setEnabled(true);
@@ -680,6 +688,9 @@ public class NeuriteTracerResultsDialog
 		analysisMenu = new JMenu("Analysis");
 		menuBar.add(analysisMenu);
 
+		viewMenu = new JMenu("View");
+		menuBar.add(viewMenu);
+
 		loadMenuItem = new JMenuItem("Load traces / SWC file...");
 		loadMenuItem.addActionListener(this);
 		fileMenu.add(loadMenuItem);
@@ -700,6 +711,10 @@ public class NeuriteTracerResultsDialog
 		exportAllSWCMenuItem.addActionListener(this);
 		fileMenu.add(exportAllSWCMenuItem);
 
+		sendToTrakEM2 = new JMenuItem("Send to TrakEM2");
+		sendToTrakEM2.addActionListener(this);
+		fileMenu.add(sendToTrakEM2);
+
 		quitMenuItem = new JMenuItem("Quit");
 		quitMenuItem.addActionListener(this);
 		fileMenu.add(quitMenuItem);
@@ -719,6 +734,14 @@ public class NeuriteTracerResultsDialog
 		shollAnalysiHelpMenuItem = new JMenuItem("Sholl Analysis help...");
 		shollAnalysiHelpMenuItem.addActionListener(this);
 		analysisMenu.add(shollAnalysiHelpMenuItem);
+
+		String opacityLabel = "Show MIP overlay(s) at "+
+			SimpleNeuriteTracer.OVERLAY_OPACITY_PERCENT+
+			"% opacity";
+		mipOverlayMenuItem = new JCheckBoxMenuItem(opacityLabel);
+		mipOverlayMenuItem.addItemListener(this);
+		viewMenu.add(mipOverlayMenuItem);
+
 
 		setJMenuBar(menuBar);
 
@@ -1159,6 +1182,10 @@ public class NeuriteTracerResultsDialog
 			IJ.showStatus("Export complete.");
 			changeState( preExportingState );
 
+		} else if( source == sendToTrakEM2 ) {
+
+			plugin.notifyListeners(new SNTEvent(SNTEvent.SEND_TO_TRAKEM2));
+
 		} else if( source == showCorrespondencesToButton ) {
 
 			// Ask for the traces file to show correspondences to:
@@ -1402,8 +1429,15 @@ public class NeuriteTracerResultsDialog
 			int selectedIndex = paths3DChoice.getSelectedIndex();
 			plugin.setPaths3DDisplay( selectedIndex + 1 );
 
-		}
+		} else if( source == mipOverlayMenuItem ) {
 
+			if( e.getStateChange() == ItemEvent.SELECTED ) {
+				plugin.showMIPOverlays(true);
+			} else {
+				plugin.showMIPOverlays(false);
+			}
+
+		}
 	}
 
 	@Override

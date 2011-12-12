@@ -27,13 +27,15 @@
 
 package tracing;
 
-import ij.*;
-import java.awt.*;
-import java.awt.event.*;
+import ij.IJ;
+import ij.ImagePlus;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+
 import stacks.ThreePanes;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 @SuppressWarnings("serial")
 public class InteractiveTracerCanvas extends TracerCanvas {
@@ -50,7 +52,7 @@ public class InteractiveTracerCanvas extends TracerCanvas {
 
 	// -------------------------------------------------------------
 
-	private SimpleNeuriteTracer tracerPlugin;
+	private final SimpleNeuriteTracer tracerPlugin;
 
 	public SimpleNeuriteTracer getTracerPlugin() {
 		return tracerPlugin;
@@ -85,6 +87,12 @@ public class InteractiveTracerCanvas extends TracerCanvas {
 
 	public void fakeMouseMoved( boolean shift_pressed, boolean join_modifier_pressed ) {
 		tracerPlugin.mouseMovedTo( last_x_in_pane_precise, last_y_in_pane_precise, plane, shift_pressed, join_modifier_pressed );
+	}
+
+	public void clickAtMaxPoint( ) {
+		tracerPlugin.clickAtMaxPoint( (int)Math.round(last_x_in_pane_precise),
+					      (int)Math.round(last_y_in_pane_precise),
+					      plane );
 	}
 
 	public void startShollAnalysis( ) {

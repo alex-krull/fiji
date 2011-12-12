@@ -46,7 +46,7 @@ public class Checksummer extends Progressable {
 	public Checksummer(PluginCollection plugins, Progress progress) {
 		this.plugins = plugins;
 		addProgress(progress);
-		setTitle("Checksumming");
+		setTitle("Czech Summer");
 	}
 
 	protected static class StringPair {
@@ -180,8 +180,6 @@ public class Checksummer extends Progressable {
 	}
 
 	public void updateFromLocal(List<String> files) {
-		if (!Util.isDeveloper)
-			throw new RuntimeException("Must be developer");
 		queue = new ArrayList<StringPair>();
 		for (String file : files)
 			queue(file);
@@ -265,8 +263,7 @@ public class Checksummer extends Progressable {
 	protected void initializeQueue() {
 		queue = new ArrayList<StringPair>();
 
-		for (String launcher : Util.isDeveloper ?
-					Util.launchers : Util.getLaunchers())
+		for (String launcher : Util.launchers)
 				queueIfExists(launcher);
 
 		for (int i = 0; i < directories.length; i += 2)

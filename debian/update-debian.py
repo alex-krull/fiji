@@ -151,6 +151,9 @@ package_name_to_file_matchers = {
     "fiji-lsm-reader" :
         [ "plugins/LSM_Reader.jar" ],
 
+    "fiji-image5d" :
+        [ "plugins/Image_5D.jar" ],
+
     "fiji-loci-tools" :
         [ "plugins/loci_tools.jar" ],
 
@@ -184,7 +187,10 @@ package_name_to_file_matchers = {
         [ "plugins/Simple_Neurite_Tracer.jar" ],
 
     "fiji-jython" :
-        [ "jars/jython.jar" ]
+        [ "jars/jython.jar" ],
+
+    "fiji-itext" :
+        [ "jars/itextpdf-5.1.1.jar" ]
 
 }
 
@@ -193,7 +199,8 @@ package_name_to_file_matchers = {
 # has been moved from one package to another.
 conflicts_and_replaces = {
     'fiji-3d-viewer' : ( 'fiji-plugins (<= 20100821202528)', ),
-    'fiji-imglib' : ( 'fiji-plugins (<= 20110609134243)', )
+    'fiji-imglib' : ( 'fiji-plugins (<= 20110609134243)', ),
+    'fiji-image5d' : ( 'fiji-plugins (<= 20111011070056)', ),
 }
 
 # A dictionary whose keys are regular expressions that match files in
@@ -212,7 +219,6 @@ map_to_external_dependencies = {
     'jars/junit.*\.jar' : ( 'junit', ),
     'jars/js\.jar' : ( 'rhino', ),
     'jars/Jama.*\.jar': ( 'libjama-java', ),
-    'jars/itext.*\.jar' : ( 'libitext1-java', ),
     'jars/jzlib.*\.jar' : ( 'libjzlib-java', ),
     'jars/jfreechart.*\.jar' : ( 'libjfreechart-java', ),
     'jars/jcommon.*\.jar' : ( 'libjcommon-java', ),
@@ -230,7 +236,6 @@ replacement_files =  {
     'jars/batik.jar' : ( '/usr/share/java/batik-all.jar', '/usr/share/java/xml-apis-ext.jar' ),
     'jars/bsh-2.0b4.jar' : ( '/usr/share/java/bsh.jar', ),
     'jars/clojure.jar' : ( '/usr/share/java/clojure.jar', ),
-    'jars/itext-1.3.jar' : ( '/usr/share/java/itext1.jar', ),
     'jars/Jama-1.0.2.jar' : ( '/usr/share/java/jama.jar', ),
     'jars/jcommon-1.0.12.jar' : ( '/usr/share/java/jcommon.jar', ),
     'jars/jfreechart-1.0.13.jar' : ( '/usr/share/java/jfreechart.jar', ),
@@ -655,6 +660,7 @@ if options.clean:
     to_remove.append("Retrotranslator")
     to_remove.append("clojure")
     to_remove.append("junit")
+    to_remove.append("javassist")
 
     # Remove files that are now provided by external dependencies.
     # FIXME: This list could (and should) be taken from the keys of
@@ -662,7 +668,6 @@ if options.clean:
     to_remove.append("jars/js.jar")
     to_remove.append("jars/bsh*.jar")
     to_remove.append("jars/Jama*.jar")
-    to_remove.append("jars/itext*.jar")
     to_remove.append("jars/jzlib*.jar")
     to_remove.append("jars/jcommon*.jar")
     to_remove.append("jars/jfreechart*.jar")
@@ -718,6 +723,7 @@ if options.clean:
         # format.  FIXME FIXME FIXME
         line = re.sub('\s+jars/Jama-1\.0\.2\.jar\s+',' ',line)
         line = re.sub('jars/Jama-1\.0\.2\.jar','/usr/share/java/jama.jar',line)
+        line = re.sub('jars/javassist.jar','/usr/share/java/javassist.jar',line)
         fp.write(line)
     fp.close()
 
