@@ -37,7 +37,17 @@ public BlobGui(ImagePlus imp, RandomAccessibleInterval<IT> img, Controller<Blob,
 	
 	
 }
-
+public void mouseClicked(MouseEvent arg0){
+	if(arg0.getClickCount()!=2) return;
+	if(impZ!=null && impZ.getCanvas().equals(arg0.getSource())){
+		int x=impZ.getCanvas().offScreenX(arg0.getX());
+		int y=impZ.getCanvas().offScreenY(arg0.getY());
+		
+		controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,5));
+		this.addOverlays(currentFrameNumber, currentSliceNumber, currentChannelNumber);
+		
+	}
+}
 
 public void mouseDragged(MouseEvent arg0) {
 	if(impZ!=null && impZ.getCanvas().equals(arg0.getSource())){

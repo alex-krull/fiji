@@ -1,5 +1,7 @@
 package tools;
 
+import org.apache.commons.math.special.Erf;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Callable;
@@ -48,7 +50,7 @@ public class ImglibTools {
 			
 			factors[dim]=(double)(source.max(dim)+1-source.min(dim)) / (double)(dst.max(dim)+1-dst.min(dim));
 			offsets[dim]=source.min(dim)-dst.min(dim);
-			System.out.println("f:"+factors[dim]+ "   s: "+ (source.max(dim)+1-source.min(dim))+ "  :d"+ (dst.max(dim)+1-dst.min(dim) ));
+	//		System.out.println("f:"+factors[dim]+ "   s: "+ (source.max(dim)+1-source.min(dim))+ "  :d"+ (dst.max(dim)+1-dst.min(dim) ));
 		}
 		
 		while ( d.hasNext() )
@@ -108,21 +110,23 @@ public static <T extends Type<T>> RandomAccessibleInterval<T> split( RandomAcces
 public static <T extends RealType<T> & NativeType<T> & NumericType<T> > 
 RandomAccessibleInterval<T>
 projection( RandomAccessibleInterval<T> source, int d, int noj){
-	int numOfJobs=8;
-	int splitAlongDim=0;
-	if(d==0)splitAlongDim=1;
+	int numOfJobs=4;
+	int splitAlongDim=source.numDimensions()-1;
+	if(d==source.numDimensions()-1)splitAlongDim=source.numDimensions()-2;
 	
 	
 	int cores = Runtime.getRuntime().availableProcessors();
 	ExecutorService pool= Executors.newFixedThreadPool(2);
 	
-	System.out.println("start.");
+	//System.out.println("start.");
 	IntervalView<T> imgv = Views.hyperSlice(source, d, 0);
     ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
 	Img <T> img= imgFactory.create(imgv, imgv.randomAccess().get().copy());  
 	for(int i=0;i<numOfJobs;i++){
 		 RandomAccessibleInterval<T> sView=split(source, i, numOfJobs, splitAlongDim);
-		 RandomAccessibleInterval<T> dView=split(img, i, numOfJobs, 0);
+		 RandomAccessibleInterval<T> dView;
+		 if(d==source.numDimensions()-1) dView=split(img, i, numOfJobs, splitAlongDim);
+		 else dView=split(img, i, numOfJobs, splitAlongDim-1);
 		 ProjectionJob<T> job=new ProjectionJob<T>(sView, dView, d);
 //		 try{job.call();}
 	//	 catch(Exception e){};
@@ -136,7 +140,7 @@ projection( RandomAccessibleInterval<T> source, int d, int noj){
 public static <T extends RealType<T> & NativeType<T> & NumericType<T> > RandomAccessibleInterval<T>
 projection( RandomAccessibleInterval<T> source, int d){
 	
-	System.out.println("start.");
+	//System.out.println("start.");
 	IntervalView<T> imgv = Views.hyperSlice(source, d, 0);
     ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
 	Img <T> img= imgFactory.create(imgv, imgv.randomAccess().get().copy());  
@@ -147,10 +151,10 @@ projection( RandomAccessibleInterval<T> source, int d){
 public static <T extends RealType<T> & NativeType<T> & NumericType<T> >
 void projectionWithDst( RandomAccessibleInterval<T> source,IterableInterval<T> img , int d){
 
-	System.out.println("start.");
+//	System.out.println("start.");
 	IntervalView<T> imgv = Views.hyperSlice(source, d, 0);
 
-    System.out.println("starting...");
+ //   System.out.println("starting...");
     
     Cursor<T> cursor = img.cursor();
     while ( cursor.hasNext() )	{
@@ -182,7 +186,7 @@ void projectionWithDst( RandomAccessibleInterval<T> source,IterableInterval<T> i
     	cursor.get().set(akku);
     	
 	}
-    System.out.println("stop");
+  //  System.out.println("stop");
     
 }
 
@@ -233,5 +237,14 @@ void projectionWithDst( RandomAccessibleInterval<T> source,IterableInterval<T> i
 	    return img;
 	}
 */
+
+static double gaussPixelIntegral(int x , int y, int z, double cx, double cy, double cz,double sig, double sigZ){
+    double sq=Math.sqrt(2);
+    double calcX=0.5*Erf.erf( ((double)x-cx+0.5)/(sq*sig) )-0.5*Erf.erf( ((double)x-cx-0.5)/(sq*sig) );
+    double calcY=0.5*Erf.erf( ((double)y-cy+0.5)/(sq*sig) )-0.5*Erf.erf( ((double)y-cy-0.5)/(sq*sig) );
+    double calcZ=0.5*Erf.erf( ((double)z-cz+0.5)/(sq*sigZ) )-0.5*Erf.erf( ((double)z-cz-0.5)/(sq*sigZ) );
+
+    return calcX*calcY*calcZ;
+}
 
 }

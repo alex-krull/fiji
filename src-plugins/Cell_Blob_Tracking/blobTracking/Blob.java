@@ -10,6 +10,7 @@ import ij.gui.EllipseRoi;
 import ij.gui.TextRoi;
 
 import frameWork.Trackable;
+import org.apache.commons.math.special.Erf;
 
 public class Blob extends Trackable {
 	public double xPos;
@@ -17,20 +18,29 @@ public class Blob extends Trackable {
 	public double zPos;
 	public double sigma;
 	public double sigmaZ;
+	
+	public double denominator=0;
 
+	public double conditionalProb(int x, int y, int z){
+		
+		return 0;
+	}
+	
 	public void addShapeZ(Overlay ov, boolean selected){
 		Font f=new Font(null,Font.PLAIN,8);
 		
 		if(selected){
 			Roi roiS=new EllipseRoi(xPos + sigma * 2, yPos, xPos - sigma * 2,
 					yPos, 1);
-			roiS.setStrokeColor(Color.WHITE);
-			roiS.setStrokeWidth(3);
+			Color c= new Color(255, 0, 0, 100);
+			roiS.setStrokeColor(c);
+			roiS.setStrokeWidth(5);
 			ov.add(roiS);
 		}
 		
 		Roi roi = new EllipseRoi(xPos + sigma * 2, yPos, xPos - sigma * 2,
 				yPos, 1);
+		
 		roi.setStrokeColor(Color.RED);
 		roi.setStrokeWidth(1);
 		ov.add(roi);
@@ -44,8 +54,9 @@ public class Blob extends Trackable {
 		if(selected){
 			Roi roiS=new EllipseRoi(xPos + sigma * 2, zPos, xPos - sigma * 2,
 					zPos, sigmaZ / sigma);
-			roiS.setStrokeColor(Color.WHITE);
-			roiS.setStrokeWidth(3);
+			Color c= new Color(255, 0, 0, 100);
+			roiS.setStrokeColor(c);
+			roiS.setStrokeWidth(5);
 			ov.add(roiS);
 		}
 		
@@ -60,8 +71,9 @@ public class Blob extends Trackable {
 		if(selected){
 			Roi roiS=new EllipseRoi(zPos + sigmaZ * 2, yPos, zPos - sigmaZ * 2,
 					yPos, sigma / sigmaZ);
-			roiS.setStrokeColor(Color.WHITE);
-			roiS.setStrokeWidth(3);
+			Color c= new Color(255, 0, 0, 100);
+			roiS.setStrokeColor(c);
+			roiS.setStrokeWidth(5);
 			ov.add(roiS);
 		}
 		

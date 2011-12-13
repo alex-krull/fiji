@@ -128,7 +128,7 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
        
  		System.out.println("dimensions:" + image.numDimensions());
        
-         
+        
        if(isVolume){
     	   ExecutorService pool= Executors.newFixedThreadPool(4);
     	   
@@ -138,16 +138,17 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
 
     	   
     	   pool.shutdown();
-    	   try{pool.awaitTermination(100, TimeUnit.HOURS);
+    	   try{
+    		   pool.awaitTermination(100, TimeUnit.HOURS);
     	   zProjections=zF.get();
     	   yProjections=yF.get();
     	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( xF.get(),0,1) ),0  ) ); 
-    	   }catch(Exception e){};
+    	   }catch(Exception e){e.printStackTrace();}
     	   
     	   
-    //	   zProjections=ImglibTools.projection(image,2);
-    //	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0),0,1) ),0  ) ); 
-    //     yProjections=ImglibTools.projection(image,1);
+   // 	   zProjections=ImglibTools.projection(image,2,20);
+   // 	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0,20),0,1) ),0  ) ); 
+   //        yProjections=ImglibTools.projection(image,1,20);
     	   
     	   
            xProjections=ImglibTools.scaleByFactor(xProjections,0,this.xyToZ);
