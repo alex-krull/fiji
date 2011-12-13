@@ -10,7 +10,7 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
-import frameWork.Controler;
+import frameWork.Controller;
 import frameWork.Gui;
 import frameWork.Trackable;
 
@@ -18,7 +18,7 @@ import frameWork.Trackable;
 public class BlobGui < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > extends Gui<Blob, IT> {
 	
 
-public BlobGui(ImagePlus imp, RandomAccessibleInterval<IT> img, Controler<Blob,IT> contr){
+public BlobGui(ImagePlus imp, RandomAccessibleInterval<IT> img, Controller<Blob,IT> contr){
 	super(imp, img, contr);
 	
 	

@@ -14,6 +14,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import tools.ImglibTools;
 
@@ -68,11 +73,25 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
 	protected double mouseZ=0;
 	protected int selectedSequenceId;
 	
-	protected Controler<T,IT> controler;
+	protected Controller<T,IT> controler;
 
-	
+	class ProjectionJob	implements Callable<RandomAccessibleInterval<IT> >{
+		RandomAccessibleInterval<IT> image;
+		int dim;
+		
+		ProjectionJob(RandomAccessibleInterval<IT> img, int d){
+			image= img;
+			dim=d;
+		}
+		@Override
+		public RandomAccessibleInterval<IT> call() throws Exception {
+			
+			return ImglibTools.projection(image, dim);
+		}
+		
+	}
  
-	protected Gui(ImagePlus imp, RandomAccessibleInterval<IT> img, Controler<T,IT> contr){
+	protected Gui(ImagePlus imp, RandomAccessibleInterval<IT> img, Controller<T,IT> contr){
 	
 		controler=contr;
         // 0 - Check validity of parameters
@@ -111,9 +130,26 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
        
          
        if(isVolume){
-    	   zProjections=ImglibTools.projection(image,2);
-    	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0),0,1) ),0  ) ); 
-           yProjections=ImglibTools.projection(image,1);
+    	   ExecutorService pool= Executors.newFixedThreadPool(4);
+    	   
+    		   Future <RandomAccessibleInterval<IT>>zF=pool.submit(new ProjectionJob(image, 2));
+    		   Future <RandomAccessibleInterval<IT>>xF=pool.submit(new ProjectionJob(image, 0));
+    		   Future <RandomAccessibleInterval<IT>>yF=pool.submit(new ProjectionJob(image, 1));
+
+    	   
+    	   pool.shutdown();
+    	   try{pool.awaitTermination(100, TimeUnit.HOURS);
+    	   zProjections=zF.get();
+    	   yProjections=yF.get();
+    	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( xF.get(),0,1) ),0  ) ); 
+    	   }catch(Exception e){};
+    	   
+    	   
+    //	   zProjections=ImglibTools.projection(image,2);
+    //	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0),0,1) ),0  ) ); 
+    //     yProjections=ImglibTools.projection(image,1);
+    	   
+    	   
            xProjections=ImglibTools.scaleByFactor(xProjections,0,this.xyToZ);
            yProjections=ImglibTools.scaleByFactor(yProjections,1,this.xyToZ);
                   
