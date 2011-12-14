@@ -130,7 +130,7 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
        
         
        if(isVolume){
-    	   ExecutorService pool= Executors.newFixedThreadPool(4);
+  /*  	   ExecutorService pool= Executors.newFixedThreadPool(4);
     	   
     		   Future <RandomAccessibleInterval<IT>>zF=pool.submit(new ProjectionJob(image, 2));
     		   Future <RandomAccessibleInterval<IT>>xF=pool.submit(new ProjectionJob(image, 0));
@@ -145,10 +145,10 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
     	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( xF.get(),0,1) ),0  ) ); 
     	   }catch(Exception e){e.printStackTrace();}
     	   
-    	   
-   // 	   zProjections=ImglibTools.projection(image,2,20);
-   // 	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0,20),0,1) ),0  ) ); 
-   //        yProjections=ImglibTools.projection(image,1,20);
+  */  	   
+    	   zProjections=ImglibTools.projection(image,2,20);
+    	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0,20),0,1) ),0  ) ); 
+           yProjections=ImglibTools.projection(image,1,20);
     	   
     	   
            xProjections=ImglibTools.scaleByFactor(xProjections,0,this.xyToZ);
@@ -202,6 +202,8 @@ public abstract class Gui<T extends Trackable, IT extends  NumericType<IT> & Nat
        if(impY!=null) impY.getCanvas().addMouseListener(this);
        if(impZ!=null) impZ.getCanvas().addMouseListener(this);
        
+       if(mainImage!=null) mainImage.getCanvas().addMouseListener(this);
+       if(mainImage!=null) mainImage.getCanvas().addMouseMotionListener(this);
     
        
 	//   gui screen = new gui("Example 1");
@@ -291,19 +293,26 @@ protected synchronized void upDateImages(int frame, int slice, int channel, bool
 	    	ImagePlus impl=null;
 			if(isVolume){
 			impl=ImageJFunctions.wrap( imgz , " ");
-	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
-			this.impZ.setProcessor(impl.getProcessor());
-			impZ.updateAndDraw();
+	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 
+	    	if(impZ!=null){
+	    		this.impZ.setProcessor(impl.getProcessor());
+	    		impZ.updateAndDraw();
+	    	}
 					
 			impl=ImageJFunctions.wrap( imgx , " ");					
 	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
-			this.impX.setProcessor(impl.getProcessor());
-			impX.updateAndDraw();
+			if(impX!=null){
+				this.impX.setProcessor(impl.getProcessor());
+				impX.updateAndDraw();
+			}
+			
 			
 			impl=ImageJFunctions.wrap( imgy , " ");					
-	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 			
-			this.impY.setProcessor(impl.getProcessor());
-			impY.updateAndDraw();	
+	    	ce.stretchHistogram(impl.getProcessor(), 0.5); 
+	    	if(impY!=null){
+	    		this.impY.setProcessor(impl.getProcessor());
+	    		impY.updateAndDraw();	
+	    	}
 			}
 			
 			impl=ImageJFunctions.wrap( imgxt , " ");					
@@ -403,7 +412,7 @@ private synchronized void updatePosition(int x,int y, int slice ,int frame, int 
 		   Overlay ovY=new Overlay();
 		   Overlay ovX=new Overlay();
 		   
-
+		   if(this.isVolume){
 		   ovY.add(new Line(0,(zSliceNumber+1-0.5)*this.xyToZ,this.zProjections.dimension(0) ,(zSliceNumber+1-0.5)*this.xyToZ));
 		   ovY.setStrokeColor(Color.green);
 
@@ -411,7 +420,7 @@ private synchronized void updatePosition(int x,int y, int slice ,int frame, int 
 
 		   ovX.add(new Line((zSliceNumber+1-0.5)*this.xyToZ,0, (zSliceNumber+1-0.5)*this.xyToZ, this.zProjections.dimension(1) ));
 		   ovX.setStrokeColor(Color.green);
-
+		   }
 
 
 		   List<T> trackables= controler.getTrackablesForFrame(frame);
@@ -426,6 +435,7 @@ private synchronized void updatePosition(int x,int y, int slice ,int frame, int 
 		   if(impZ!=null) impZ.setOverlay(ovZ);
 		   if(impX!=null) impX.setOverlay(ovX);
 		   if(impY!=null) impY.setOverlay(ovY);	   
+		   mainImage.setOverlay(ovZ);
 	}
 
 

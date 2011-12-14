@@ -10,7 +10,13 @@ import ij.gui.EllipseRoi;
 import ij.gui.TextRoi;
 
 import frameWork.Trackable;
+import net.imglib2.Interval;
+import net.imglib2.img.Img;
+import net.imglib2.type.numeric.real.FloatType;
+
 import org.apache.commons.math.special.Erf;
+
+import tools.ImglibTools;
 
 public class Blob extends Trackable {
 	public double xPos;
@@ -18,12 +24,28 @@ public class Blob extends Trackable {
 	public double zPos;
 	public double sigma;
 	public double sigmaZ;
+	public double pK=0.1;
+	public double pKAkku;
+	
 	
 	public double denominator=0;
+	public Img<FloatType> expectedValues=null;
 
-	public double conditionalProb(int x, int y, int z){
+	public double calcDenominator(Interval img){
+		denominator=ImglibTools.gaussIntegral((double)img.min(0)-0.5,(double)img.min(1)-0.5,(double)img.max(0)+0.5,(double) img.max(1)+0.5,xPos,yPos,sigma );
+		System.out.println("denominator :" +denominator );
+		return denominator;
+	}
+	
+	public double pXunderK(int x, int y, int z){
 		
-		return 0;
+		
+		return ImglibTools.gaussPixelIntegral(x, y, xPos, yPos, sigma)/denominator;
+		
+	}
+	
+	public double pXandK(int x, int y, int z){
+		return pXunderK(x,y,z)*pK;
 	}
 	
 	public void addShapeZ(Overlay ov, boolean selected){
@@ -103,6 +125,15 @@ public class Blob extends Trackable {
 		if(y<0) yn=this.yPos;
 		if(z<0) zn=this.zPos;
 		return (xn-xPos)*(xn-xPos)+(yn-yPos)*(yn-yPos)+(zn-zPos)*(zn-zPos);
+	}
+	
+	public String toString(){
+		String result=
+				"x:"+xPos+
+				" y:"+yPos+
+				" z:"+zPos+
+				" pK:"+pK+"\n";
+		return result;
 	}
 
 

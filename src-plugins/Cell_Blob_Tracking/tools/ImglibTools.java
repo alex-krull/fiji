@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import net.imglib2.Cursor;
+import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
@@ -190,6 +191,13 @@ void projectionWithDst( RandomAccessibleInterval<T> source,IterableInterval<T> i
     
 }
 
+public static long getNumOfPixels(Interval img){
+	long akku=1;
+	for(int i=0;i<img.numDimensions();i++)
+		akku*=(img.max(i)-img.min(i)+1);
+	return akku;
+}
+
 	/*
 	public static <T extends RealType<T> & NativeType<T> & NumericType<T> > RandomAccessibleInterval<T>
 	projection( RandomAccessibleInterval<T> source, int d){
@@ -238,13 +246,25 @@ void projectionWithDst( RandomAccessibleInterval<T> source,IterableInterval<T> i
 	}
 */
 
-static double gaussPixelIntegral(int x , int y, int z, double cx, double cy, double cz,double sig, double sigZ){
+public static double gaussPixelIntegral(int x , int y, double cx, double cy, double sig){
     double sq=Math.sqrt(2);
     double calcX=0.5*Erf.erf( ((double)x-cx+0.5)/(sq*sig) )-0.5*Erf.erf( ((double)x-cx-0.5)/(sq*sig) );
     double calcY=0.5*Erf.erf( ((double)y-cy+0.5)/(sq*sig) )-0.5*Erf.erf( ((double)y-cy-0.5)/(sq*sig) );
-    double calcZ=0.5*Erf.erf( ((double)z-cz+0.5)/(sq*sigZ) )-0.5*Erf.erf( ((double)z-cz-0.5)/(sq*sigZ) );
 
-    return calcX*calcY*calcZ;
+    return calcX*calcY;
 }
 
+public static double gaussIntegral(double x1 , double y1, double x2, double y2,  double cx, double cy, double sig){
+    double sq=Math.sqrt(2.0);
+    System.out.println("x1 :" +x1 );
+    System.out.println("y1 :" +y1 );
+    System.out.println("x2 :" +x2 );
+    System.out.println("y2 :" +y2 );
+    double calcX=0.5*Erf.erf( (x2-cx)/(sq*sig) )-0.5*Erf.erf( (x1-cx)/(sq*sig) );
+    double calcY=0.5*Erf.erf( (y2-cy)/(sq*sig) )-0.5*Erf.erf( (y1-cy)/(sq*sig) );
+    System.out.println("calcX :" +calcX );
+    System.out.println("calcY :" +calcY );
+
+    return calcX*calcY;
+}
 }
