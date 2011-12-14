@@ -10,6 +10,7 @@ import ij.gui.EllipseRoi;
 import ij.gui.TextRoi;
 
 import frameWork.Trackable;
+import net.imglib2.Cursor;
 import net.imglib2.Interval;
 import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
@@ -48,20 +49,30 @@ public class Blob extends Trackable {
 		return pXunderK(x,y,z)*pK;
 	}
 	
+	public double localLogLikelihood(){
+		double result=0;
+		Cursor<FloatType> cursor= expectedValues.cursor();	
+    	while ( cursor.hasNext() )	{ 
+    		result+=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1),0 )*Math.log(cursor.get().get());
+    	}
+		return result;
+	}
+	
+	
 	public void addShapeZ(Overlay ov, boolean selected){
 		Font f=new Font(null,Font.PLAIN,8);
 		
 		if(selected){
-			Roi roiS=new EllipseRoi(xPos + sigma * 2, yPos, xPos - sigma * 2,
-					yPos, 1);
+			Roi roiS=new EllipseRoi(0.5+xPos + sigma * 2,0.5+ yPos,0.5+ xPos - sigma * 2,
+					0.5+yPos, 1);
 			Color c= new Color(255, 0, 0, 100);
 			roiS.setStrokeColor(c);
 			roiS.setStrokeWidth(5);
 			ov.add(roiS);
 		}
 		
-		Roi roi = new EllipseRoi(xPos + sigma * 2, yPos, xPos - sigma * 2,
-				yPos, 1);
+		Roi roi = new EllipseRoi(0.5+xPos + sigma * 2,0.5+ yPos,0.5+ xPos - sigma * 2,
+				0.5+yPos, 1);
 		
 		roi.setStrokeColor(Color.RED);
 		roi.setStrokeWidth(1);

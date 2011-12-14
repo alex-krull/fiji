@@ -51,8 +51,7 @@ public class ImglibTools {
 			
 			factors[dim]=(double)(source.max(dim)+1-source.min(dim)) / (double)(dst.max(dim)+1-dst.min(dim));
 			offsets[dim]=source.min(dim)-dst.min(dim);
-	//		System.out.println("f:"+factors[dim]+ "   s: "+ (source.max(dim)+1-source.min(dim))+ "  :d"+ (dst.max(dim)+1-dst.min(dim) ));
-		}
+	}
 		
 		while ( d.hasNext() )
 		{
@@ -119,7 +118,7 @@ projection( RandomAccessibleInterval<T> source, int d, int noj){
 	int cores = Runtime.getRuntime().availableProcessors();
 	ExecutorService pool= Executors.newFixedThreadPool(2);
 	
-	//System.out.println("start.");
+	
 	IntervalView<T> imgv = Views.hyperSlice(source, d, 0);
     ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
 	Img <T> img= imgFactory.create(imgv, imgv.randomAccess().get().copy());  
@@ -141,7 +140,7 @@ projection( RandomAccessibleInterval<T> source, int d, int noj){
 public static <T extends RealType<T> & NativeType<T> & NumericType<T> > RandomAccessibleInterval<T>
 projection( RandomAccessibleInterval<T> source, int d){
 	
-	//System.out.println("start.");
+
 	IntervalView<T> imgv = Views.hyperSlice(source, d, 0);
     ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
 	Img <T> img= imgFactory.create(imgv, imgv.randomAccess().get().copy());  
@@ -152,11 +151,10 @@ projection( RandomAccessibleInterval<T> source, int d){
 public static <T extends RealType<T> & NativeType<T> & NumericType<T> >
 void projectionWithDst( RandomAccessibleInterval<T> source,IterableInterval<T> img , int d){
 
-//	System.out.println("start.");
+
 	IntervalView<T> imgv = Views.hyperSlice(source, d, 0);
 
- //   System.out.println("starting...");
-    
+
     Cursor<T> cursor = img.cursor();
     while ( cursor.hasNext() )	{
     	cursor.fwd();
@@ -187,8 +185,7 @@ void projectionWithDst( RandomAccessibleInterval<T> source,IterableInterval<T> i
     	cursor.get().set(akku);
     	
 	}
-  //  System.out.println("stop");
-    
+
 }
 
 public static long getNumOfPixels(Interval img){
@@ -256,14 +253,10 @@ public static double gaussPixelIntegral(int x , int y, double cx, double cy, dou
 
 public static double gaussIntegral(double x1 , double y1, double x2, double y2,  double cx, double cy, double sig){
     double sq=Math.sqrt(2.0);
-    System.out.println("x1 :" +x1 );
-    System.out.println("y1 :" +y1 );
-    System.out.println("x2 :" +x2 );
-    System.out.println("y2 :" +y2 );
+
     double calcX=0.5*Erf.erf( (x2-cx)/(sq*sig) )-0.5*Erf.erf( (x1-cx)/(sq*sig) );
     double calcY=0.5*Erf.erf( (y2-cy)/(sq*sig) )-0.5*Erf.erf( (y1-cy)/(sq*sig) );
-    System.out.println("calcX :" +calcX );
-    System.out.println("calcY :" +calcY );
+
 
     return calcX*calcY;
 }

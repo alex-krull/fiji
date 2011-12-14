@@ -32,9 +32,11 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		for(Blob b:trackables)
 			b.expectedValues= imgFactory.create(frameView, new FloatType());
 		
-			for(int i=0;i<100;i++){	
+			for(int i=0;i<1000;i++){	
 				double ti= doEStep();
-				this.doMstep(ti);
+				double change=this.doMstep(ti);
+				System.out.println("change:" +change);
+				if(change<0.01) break;
 			}
 				
 		for(Blob b:trackables)
@@ -82,12 +84,13 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		return totalInten;
 	}
 	
-	private void doMstep(double totalInten){
-		
+	private double doMstep(double totalInten){
+		double change=0;
 		double totalBlobsInten=0;
 		for(Blob b:trackables){   
 			double newX=0;
 			double newY=0;
+			double newSig=0;
 			double newZ=0;
 			double inten=0;
 			
@@ -106,20 +109,29 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		    	newX+=value*x;
 		    	newY+=value*y;
 		    	newZ+=value*z;	
-		    //	System.out.println("x:"+x+ " value:"+value);
+		    	newSig+=value*((x-b.xPos)*(x-b.xPos) + (y-b.yPos)*(y-b.yPos));
+		
 		    	
 		    	
 	    	}
+	    	newX=newX/inten;
+	    	newY=newY/inten;
+	    	newSig=Math.sqrt(newSig/(2*inten));
 	    	
-	    	b.xPos=newX/inten;
-	    	b.yPos=newY/inten;
+	    	change+=Math.abs(newX-b.xPos);
+	    	change+=Math.abs(newY-b.yPos);
+	    	//change+=Math.abs(newSig-b.sigma);
+	    	
+	    	b.xPos=newX;
+	    	b.yPos=newY;
+	    	//b.sigma=newSig;
 	//    	b.zPos=newZ/inten;
 	    	b.pK=inten/totalInten;
 	    	totalBlobsInten+=inten;
-	    	System.out.println(b.toString());
+	    
     	}
 		this.backProb=1-(totalBlobsInten/totalInten);
-		
+		return change;
 	}
 
 	

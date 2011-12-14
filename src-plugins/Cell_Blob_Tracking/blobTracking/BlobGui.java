@@ -43,7 +43,7 @@ public void mouseClicked(MouseEvent arg0){
 		int x=impZ.getCanvas().offScreenX(arg0.getX());
 		int y=impZ.getCanvas().offScreenY(arg0.getY());
 			
-		controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,2));
+		controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,1));
 		
 		controler.optimizeFrame(currentFrameNumber);
 		this.addOverlays(currentFrameNumber, currentSliceNumber, currentChannelNumber);
@@ -54,7 +54,7 @@ public void mouseClicked(MouseEvent arg0){
 		int x=mainImage.getCanvas().offScreenX(arg0.getX());
 		int y=mainImage.getCanvas().offScreenY(arg0.getY());
 			
-		controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,2));
+		controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,1));
 		
 		controler.optimizeFrame(currentFrameNumber);
 		this.addOverlays(currentFrameNumber, currentSliceNumber, currentChannelNumber);
