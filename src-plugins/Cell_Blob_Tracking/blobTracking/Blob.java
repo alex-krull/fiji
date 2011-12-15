@@ -16,10 +16,14 @@ import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 
 import org.apache.commons.math.special.Erf;
+import org.apache.commons.math.analysis.MultivariateRealFunction;
+import org.apache.commons.math.analysis.MultivariateRealFunction;
+import org.apache.commons.math.analysis.MultivariateVectorialFunction;
+import org.apache.commons.math.exception.MathUserException;
 
 import tools.ImglibTools;
 
-public class Blob extends Trackable {
+public class Blob extends Trackable implements MultivariateRealFunction {
 	public double xPos;
 	public double yPos;
 	public double zPos;
@@ -52,8 +56,13 @@ public class Blob extends Trackable {
 	public double localLogLikelihood(){
 		double result=0;
 		Cursor<FloatType> cursor= expectedValues.cursor();	
-    	while ( cursor.hasNext() )	{ 
-    		result+=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1),0 )*Math.log(cursor.get().get());
+    	while ( cursor.hasNext() )	{
+    		cursor.fwd();
+    		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1),0 );
+    		double b=(cursor.get().get());
+    		
+    		if(a<0.0000001) continue;
+    		result+=Math.log(a)*b;
     	}
 		return result;
 	}
@@ -146,6 +155,18 @@ public class Blob extends Trackable {
 				" pK:"+pK+"\n";
 		return result;
 	}
+
+	@Override
+	public double value(double[] position) {
+		xPos=position[0];
+		yPos=position[1];
+		sigma=Math.max(0.5,position[2]);
+		double value=this.localLogLikelihood();
+		
+		return this.localLogLikelihood();
+		
+	}
+	
 
 
 }

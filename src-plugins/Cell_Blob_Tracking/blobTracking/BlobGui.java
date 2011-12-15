@@ -38,12 +38,12 @@ public BlobGui(ImagePlus imp, RandomAccessibleInterval<IT> img, Controller<Blob,
 	
 }
 public void mouseClicked(MouseEvent arg0){
-	if(arg0.getClickCount()!=2) return;
+	//if(arg0.getClickCount()!=2) return;
 	if(impZ!=null && impZ.getCanvas().equals(arg0.getSource())){
 		int x=impZ.getCanvas().offScreenX(arg0.getX());
 		int y=impZ.getCanvas().offScreenY(arg0.getY());
 			
-		controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,1));
+		if(arg0.getClickCount()==2)controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,2));
 		
 		controler.optimizeFrame(currentFrameNumber);
 		this.addOverlays(currentFrameNumber, currentSliceNumber, currentChannelNumber);
@@ -54,7 +54,7 @@ public void mouseClicked(MouseEvent arg0){
 		int x=mainImage.getCanvas().offScreenX(arg0.getX());
 		int y=mainImage.getCanvas().offScreenY(arg0.getY());
 			
-		controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,1));
+		if(arg0.getClickCount()==2)controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,2));
 		
 		controler.optimizeFrame(currentFrameNumber);
 		this.addOverlays(currentFrameNumber, currentSliceNumber, currentChannelNumber);

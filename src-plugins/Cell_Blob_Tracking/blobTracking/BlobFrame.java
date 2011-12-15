@@ -20,6 +20,9 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 import frameWork.Frame;
 
+import org.apache.commons.math.optimization.GoalType;
+import org.apache.commons.math.optimization.direct.*;
+
 public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends Frame<Blob, IT>{
 	private double backProb=0.9;
 	public BlobFrame(int frameNum, RandomAccessibleInterval<IT> view){
@@ -32,15 +35,17 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		for(Blob b:trackables)
 			b.expectedValues= imgFactory.create(frameView, new FloatType());
 		
-			for(int i=0;i<1000;i++){	
+			for(int i=0;i<10;i++){	
 				double ti= doEStep();
+			
+				
 				double change=this.doMstep(ti);
-				System.out.println("change:" +change);
-				if(change<0.01) break;
+				System.out.println("change:" +change);			
+		//		if(change<0.001) break;
 			}
 				
-		for(Blob b:trackables)
-			b.expectedValues= null;
+	//	for(Blob b:trackables)
+	//		b.expectedValues= null;
 		
 
 	}
@@ -85,18 +90,23 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	}
 	
 	private double doMstep(double totalInten){
+		
+		
+		
+		
 		double change=0;
 		double totalBlobsInten=0;
 		for(Blob b:trackables){   
+	//		System.out.println(b.localLogLikelihood());
+	//		System.out.println(b.toString());
+			
 			double newX=0;
 			double newY=0;
 			double newSig=0;
 			double newZ=0;
 			double inten=0;
 			
-    		Cursor<FloatType> cursor= b.expectedValues.cursor();
-    
-	    	
+    		Cursor<FloatType> cursor= b.expectedValues.cursor();    	
 	    	while ( cursor.hasNext() )	{    		
 		    	cursor.fwd();
 				int x=cursor.getIntPosition(0);
@@ -117,14 +127,25 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	    	newX=newX/inten;
 	    	newY=newY/inten;
 	    	newSig=Math.sqrt(newSig/(2*inten));
-	    	
+	
+    		
+    	//	PowellOptimizer optimizer = new PowellOptimizer(100,100);
+	    	SimplexOptimizer optimizer = new SimplexOptimizer();
+    		double []startPoint={b.xPos,b.yPos,b.sigma};
+    		optimizer.setSimplex(new  NelderMeadSimplex(3));
+    		double []output = optimizer.optimize(10000, b, GoalType.MAXIMIZE, startPoint).getPoint();
+    		
+    		newX=output[0];
+    		newY=output[1];
+    		newSig=output[2];
+   		
 	    	change+=Math.abs(newX-b.xPos);
 	    	change+=Math.abs(newY-b.yPos);
-	    	//change+=Math.abs(newSig-b.sigma);
+	    	change+=Math.abs(newSig-b.sigma);
 	    	
 	    	b.xPos=newX;
 	    	b.yPos=newY;
-	    	//b.sigma=newSig;
+	    	b.sigma=newSig;
 	//    	b.zPos=newZ/inten;
 	    	b.pK=inten/totalInten;
 	    	totalBlobsInten+=inten;
