@@ -7,12 +7,10 @@ import java.awt.event.MouseEvent;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
-import net.imglib2.type.Type;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.Controller;
 import frameWork.Gui;
-import frameWork.Trackable;
 
 
 public class BlobGui < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > extends Gui<Blob, IT> {
@@ -37,6 +35,7 @@ public BlobGui(ImagePlus imp, RandomAccessibleInterval<IT> img, Controller<Blob,
 	
 	
 }
+@Override
 public void mouseClicked(MouseEvent arg0){
 	//if(arg0.getClickCount()!=2) return;
 	if(impZ!=null && impZ.getCanvas().equals(arg0.getSource())){
@@ -44,7 +43,7 @@ public void mouseClicked(MouseEvent arg0){
 		int y=impZ.getCanvas().offScreenY(arg0.getY());
 			
 		if(arg0.getClickCount()==2){	
-			controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,2));
+			controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,1.2));
 		}
 		
 		controler.optimizeFrame(currentFrameNumber);
@@ -56,7 +55,7 @@ public void mouseClicked(MouseEvent arg0){
 		int x=mainImage.getCanvas().offScreenX(arg0.getX());
 		int y=mainImage.getCanvas().offScreenY(arg0.getY());
 			
-		if(arg0.getClickCount()==2)controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,2));
+		if(arg0.getClickCount()==2)controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,1.2));
 		
 		controler.optimizeFrame(currentFrameNumber);
 		this.addOverlays(currentFrameNumber, currentSliceNumber, currentChannelNumber);
@@ -64,6 +63,7 @@ public void mouseClicked(MouseEvent arg0){
 	}
 }
 
+@Override
 public void mouseDragged(MouseEvent arg0) {
 	if(impZ!=null && impZ.getCanvas().equals(arg0.getSource())){
 		int x=impZ.getCanvas().offScreenX(arg0.getX());
