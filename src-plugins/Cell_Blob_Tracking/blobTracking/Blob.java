@@ -12,8 +12,10 @@ import ij.gui.TextRoi;
 import frameWork.Trackable;
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
+import net.imglib2.view.IterableRandomAccessibleInterval;
 
 import org.apache.commons.math.special.Erf;
 import org.apache.commons.math.analysis.MultivariateRealFunction;
@@ -35,10 +37,11 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	
 	public double denominator=0;
 	public Img<FloatType> expectedValues=null;
+	public IterableRandomAccessibleInterval <FloatType> expectedValuesRoi;
 
 	public double calcDenominator(Interval img){
 		denominator=ImglibTools.gaussIntegral((double)img.min(0)-0.5,(double)img.min(1)-0.5,(double)img.max(0)+0.5,(double) img.max(1)+0.5,xPos,yPos,sigma );
-		System.out.println("denominator :" +denominator );
+//		System.out.println("denominator :" +denominator );
 		return denominator;
 	}
 	
@@ -54,8 +57,9 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	}
 	
 	public double localLogLikelihood(){
+		this.calcDenominator(expectedValuesRoi);
 		double result=0;
-		Cursor<FloatType> cursor= expectedValues.cursor();	
+		Cursor<FloatType> cursor= expectedValuesRoi.cursor();	
     	while ( cursor.hasNext() )	{
     		cursor.fwd();
     		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1),0 );
@@ -157,13 +161,22 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	}
 
 	@Override
-	public double value(double[] position) {
+	public synchronized double value(double[] position) {
+		//if(position[2]<0) return Double.MIN_VALUE;
+		double xOld=xPos;
+		double yOld=yPos;
+		double sigmaOld=sigma;
+		
 		xPos=position[0];
 		yPos=position[1];
-		sigma=Math.max(0.5,position[2]);
+		sigma=Math.abs(position[2]);
 		double value=this.localLogLikelihood();
 		
-		return this.localLogLikelihood();
+		xPos=xOld;
+		yPos=yOld;
+		sigma=sigmaOld;
+		
+		return value;
 		
 	}
 	

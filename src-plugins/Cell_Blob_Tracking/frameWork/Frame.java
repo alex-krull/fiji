@@ -21,6 +21,7 @@ protected Frame(int frameNum, RandomAccessibleInterval<IT> view){
 public abstract void optimizeFrame();
 public abstract Frame<T,IT> createFrame(int frameNum, RandomAccessibleInterval<IT> view);
 public void addTrackable(T trackable){
+	trackables.clear();
 	trackables.add(trackable);
 }
 

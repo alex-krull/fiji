@@ -43,7 +43,9 @@ public void mouseClicked(MouseEvent arg0){
 		int x=impZ.getCanvas().offScreenX(arg0.getX());
 		int y=impZ.getCanvas().offScreenY(arg0.getY());
 			
-		if(arg0.getClickCount()==2)controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,2));
+		if(arg0.getClickCount()==2){	
+			controler.addTrackable(new Blob(3,currentFrameNumber,x,y,currentSliceNumber,2));
+		}
 		
 		controler.optimizeFrame(currentFrameNumber);
 		this.addOverlays(currentFrameNumber, currentSliceNumber, currentChannelNumber);
