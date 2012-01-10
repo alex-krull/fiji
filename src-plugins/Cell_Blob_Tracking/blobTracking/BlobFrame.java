@@ -215,9 +215,10 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	    	
 	    	SimplexOptimizer optimizer = new SimplexOptimizer();
 	    		    	
-    		double []startPoint={b.xPos,b.yPos,b.sigma};
+    	//	double []startPoint={b.xPos,b.yPos,b.sigma};
     		
     			
+    		double []startPoint={newX,newY,newSig};
     		
     		optimizer.setSimplex(new  NelderMeadSimplex(3));
     		double []output = optimizer.optimize(10000, b, GoalType.MAXIMIZE, startPoint).getPoint();
