@@ -76,6 +76,10 @@ public T getTrackable(int seqId, int frameId){
 	
 }
 
+public RandomAccessibleInterval<IT> getImage(){
+	return image;
+}
+
 
 
 	

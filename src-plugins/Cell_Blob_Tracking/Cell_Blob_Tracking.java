@@ -23,7 +23,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		long time0= System.nanoTime();
 		ImagePlus imp=IJ.getImage();
 		Img<IT> img= ImagePlusAdapter.wrap(imp);
-		System.out.println("creating Controler...");
+		System.out.println("creating Model...");
 		Model<Blob, IT> contr= new Model<Blob,IT>(img, new BlobFrame<IT>(0,null));
 		System.out.println("creating Gui...");
 		BlobController<IT> gui= new BlobController<IT>(imp, img,contr);

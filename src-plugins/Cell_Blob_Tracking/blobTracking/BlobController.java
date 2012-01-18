@@ -13,11 +13,11 @@ import frameWork.Model;
 import frameWork.Controller;
 
 
-public class BlobController < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > extends Controller<Blob, IT> {
+public class BlobController < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > extends Controller<Blob> {
 	
 
 public BlobController(ImagePlus imp, RandomAccessibleInterval<IT> img, Model<Blob,IT> contr){
-	super(imp, img, contr);
+	super(contr);
 	
 	
 //	for(int i=0;i<1000;i++){
@@ -35,6 +35,17 @@ public BlobController(ImagePlus imp, RandomAccessibleInterval<IT> img, Model<Blo
 	
 	
 }
+
+
+public void click(long[] position){
+	for(int i=0;i<position.length;i++){
+		System.out.println(position[i]);
+	}
+	return;
+}
+
+
+/*
 @Override
 public void mouseClicked(MouseEvent arg0){
 	//if(arg0.getClickCount()!=2) return;
@@ -129,6 +140,7 @@ public void mouseDragged(MouseEvent arg0) {
 
 	}
 }
+*/
 
 }
 
