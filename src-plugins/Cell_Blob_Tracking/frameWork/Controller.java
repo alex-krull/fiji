@@ -55,7 +55,7 @@ public abstract class Controller<T extends Trackable > {
 
 	 
 	protected Controller( Model<T,?> mod){
-	
+		model =mod;
 	}
      
 	

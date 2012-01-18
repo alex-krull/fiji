@@ -20,14 +20,14 @@ public BlobController(ImagePlus imp, RandomAccessibleInterval<IT> img, Model<Blo
 	super(contr);
 	
 	
-//	for(int i=0;i<1000;i++){
+	for(int i=0;i<1000;i++){
 
- //   controler.addTrackable(new Blob(0,i,20,20+ Math.sin(i/15.0f)*5,5,10));
- //   controler.addTrackable(new Blob(1,i,70,20+ Math.sin(i/45.0f)*5,5,10));
- //   controler.addTrackable(new Blob(2,i,20,70+ Math.sin(i/35.0f)*5,5,10));
+    model.addTrackable(new Blob(0,i,20,20+ Math.sin(i/15.0f)*5,5,10));
+    model.addTrackable(new Blob(1,i,70,20+ Math.sin(i/45.0f)*5,5,10));
+    model.addTrackable(new Blob(2,i,20,70+ Math.sin(i/35.0f)*5,5,10));
     
  	   
- //   }
+    }
 	
 	
 	

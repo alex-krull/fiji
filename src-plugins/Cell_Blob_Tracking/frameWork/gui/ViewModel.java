@@ -1,5 +1,8 @@
-package frameWork;
+package frameWork.gui;
 
+import frameWork.Controller;
+import frameWork.Model;
+import frameWork.Trackable;
 import ij.ImageListener;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
@@ -11,6 +14,7 @@ import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -47,7 +51,7 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
 	protected RandomAccessibleInterval<IT> xProjections;
 	protected RandomAccessibleInterval<IT> yProjections;
 	protected RandomAccessibleInterval<IT> xtProjections;
-	protected RandomAccessibleInterval<IT> ytProjections;
+	protected RandomAccessibleInterval<IT> ytProjections; 
 	
 	protected int currentFrameNumber=0;
 	protected int currentSliceNumber=0;
@@ -60,6 +64,9 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
 	protected int selectedSequenceId;
 	
 	protected Model<T,IT> model;
+	protected Controller<T> controller;
+	
+	protected List <ViewWindow<T,IT>> views;
 
 	class ProjectionJob	implements Callable<RandomAccessibleInterval<IT> >{
 		RandomAccessibleInterval<IT> image;
@@ -77,8 +84,9 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
 		
 	}
  
-	public ViewModel(ImagePlus imp,  Model<T,IT> mod){
-	
+	public ViewModel(ImagePlus imp,  Model<T,IT> mod, Controller<T> contr){
+		controller=contr;
+		
 	   model=mod;
        // 0 - Check validity of parameters
       
@@ -154,7 +162,8 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
        
        
        
-       
+       views= new ArrayList<ViewWindow<T,IT>>();
+       this.views.add(new Projection<T,IT>(model, zProjections));
        
    
        this.upDateImages(0, 0, 0,true);
@@ -206,6 +215,9 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
 	
 protected synchronized void upDateImages(int frame, int slice, int channel, boolean init){
 		
+	for(ViewWindow<T,IT> vw:views){
+		((Projection<T,IT>)vw).rePaint(frame);
+	}
 		
 		System.out.println("=================f:"+frame + " s:" + slice+ " c:" + channel+ " i:"+init);
 		
@@ -426,47 +438,6 @@ private synchronized void updatePosition(int x,int y, int slice ,int frame, int 
 
 
 @Override
-public void mouseDragged(MouseEvent arg0) {
-	
-	// TODO Auto-generated method stub
-	if(!arg0.isControlDown()) return;
-	if(impX!=null && impX.getCanvas().equals(arg0.getSource())){
-		int x=impX.getCanvas().offScreenX(arg0.getX());
-		int y=impX.getCanvas().offScreenY(arg0.getY());
-		System.out.println("x:"+ x +"  y:"+y);
-		this.updatePosition(0, 0, (int)(x/this.xyToZ), currentFrameNumber, currentChannelNumber);
-		
-	}
-	
-	if(impY!=null && impY.getCanvas().equals(arg0.getSource())){
-		int x=impY.getCanvas().offScreenX(arg0.getX());
-		int y=impY.getCanvas().offScreenY(arg0.getY());
-		System.out.println("x:"+ x +"  y:"+y);
-		this.updatePosition(0, 0, (int)(y/this.xyToZ), currentFrameNumber, currentChannelNumber);
-	}
-	
-	if(impXT!=null && impXT.getCanvas().equals(arg0.getSource())){
-		int x=impXT.getCanvas().offScreenX(arg0.getX());
-		int y=impXT.getCanvas().offScreenY(arg0.getY());
-		System.out.println("x:"+ x +"  y:"+y);
-		this.updatePosition(0, 0, currentSliceNumber, x, currentChannelNumber);
-		
-	}
-	
-	if(impYT!=null && impYT.getCanvas().equals(arg0.getSource())){
-		int x=impYT.getCanvas().offScreenX(arg0.getX());
-		int y=impYT.getCanvas().offScreenY(arg0.getY());
-		System.out.println("x:"+ x +"  y:"+y);
-		
-		this.updatePosition(0, 0, currentSliceNumber, y, currentChannelNumber);
-//		upDateImages(y, 1, 0, false);
-	}
-	arg0.consume();
-	
-	
-}
-
-@Override
 public void mouseMoved(MouseEvent arg0) {
 	arg0.consume();
 	
@@ -584,6 +555,30 @@ public void mousePressed(MouseEvent arg0) {
 	
 	this.addOverlays(currentFrameNumber, currentSliceNumber, currentChannelNumber);
 	
+}
+@Override
+public void mouseDragged(MouseEvent arg0) {
+	if(impZ!=null && impZ.getCanvas().equals(arg0.getSource())){
+		int x=impZ.getCanvas().offScreenX(arg0.getX());
+		int y=impZ.getCanvas().offScreenY(arg0.getY());
+		long[] pos={x,y};
+		controller.click(pos);
+	}
+	
+	if(mainImage!=null && mainImage.getCanvas().equals(arg0.getSource())){
+
+
+	}
+	
+	
+	if(impX!=null && impX.getCanvas().equals(arg0.getSource())){
+	
+	}
+	
+	
+	if(impY!=null && impY.getCanvas().equals(arg0.getSource())){
+	
+	}
 }
 
 @Override
