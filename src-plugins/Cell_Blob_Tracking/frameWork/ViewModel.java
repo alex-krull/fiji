@@ -77,7 +77,7 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
 		
 	}
  
-	protected ViewModel(ImagePlus imp,  Model<T,IT> mod){
+	public ViewModel(ImagePlus imp,  Model<T,IT> mod){
 	
 	   model=mod;
        // 0 - Check validity of parameters

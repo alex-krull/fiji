@@ -57,7 +57,7 @@ public abstract class Controller<T extends Trackable > {
 	protected Controller( Model<T,?> mod){
 	
 	}
-    
+     
 	
 private synchronized void updatePosition(int x,int y, int slice ,int frame, int channel){
 
