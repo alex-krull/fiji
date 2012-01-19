@@ -19,6 +19,7 @@ private	RandomAccessibleInterval<IT> image;
 private Frame<T,IT> factory;
 private SortedMap <Integer, Sequence<T>> Sequences;
 public T selected;
+public double xyToZ=3.5;
 
 
 public Model(RandomAccessibleInterval<IT> img , Frame<T,IT> fact){

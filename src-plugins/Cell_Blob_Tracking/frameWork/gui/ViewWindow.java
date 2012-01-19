@@ -6,9 +6,15 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 import frameWork.Trackable;
 
-public class ViewWindow <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
-	protected ViewWindow(Model<T,IT> mod){
+public abstract class ViewWindow <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
+	protected Model<T,IT> model;
+	protected String caption;
+	protected ViewWindow(Model<T,IT> mod, String title){
 		model=mod;
+		caption= title;
+		
 	}
-	Model<T,IT> model;
+	
+	public abstract void rePaint(long[] position);
+	
 }

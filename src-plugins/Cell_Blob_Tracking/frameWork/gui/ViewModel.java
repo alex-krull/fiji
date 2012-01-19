@@ -163,9 +163,13 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
        
        
        views= new ArrayList<ViewWindow<T,IT>>();
-       this.views.add(new Projection<T,IT>(model, zProjections));
+    //   this.views.add(new StackWindow<T,IT>(model, zProjections, "max-Z-projection", 3));
+    //   this.views.add(new StackWindow<T,IT>(model, xProjections, "max-X-projection", 3));
+    //   this.views.add(new StackWindow<T,IT>(model, yProjections, "max-Y-projection", 3));
+       views.add(new MaxProjectionZ<T,IT>(model, image));
+       views.add(new MaxProjectionX<T,IT>(model, image));
+       views.add(new MaxProjectionY<T,IT>(model, image));
        
-   
        this.upDateImages(0, 0, 0,true);
        
        
@@ -215,8 +219,10 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
 	
 protected synchronized void upDateImages(int frame, int slice, int channel, boolean init){
 		
+	long[] pos= {0,0,slice, frame, channel};
 	for(ViewWindow<T,IT> vw:views){
-		((Projection<T,IT>)vw).rePaint(frame);
+		
+		((StackWindow<T,IT>)vw).rePaint(pos);
 	}
 		
 		System.out.println("=================f:"+frame + " s:" + slice+ " c:" + channel+ " i:"+init);
