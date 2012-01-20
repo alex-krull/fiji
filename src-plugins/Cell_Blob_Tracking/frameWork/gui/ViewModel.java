@@ -169,7 +169,8 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
        views.add(new MaxProjectionZ<T,IT>(model, image));
        views.add(new MaxProjectionX<T,IT>(model, image));
        views.add(new MaxProjectionY<T,IT>(model, image));
-       views.add(new KymoWindow<T,IT>(model, xtProjections));
+       views.add(new KymographX<T,IT>(model, xtProjections));
+       views.add(new KymographY<T,IT>(model, ytProjections));
        this.upDateImages(0, 0, 0,true);
        
        
