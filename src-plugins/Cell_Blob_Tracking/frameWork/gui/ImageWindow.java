@@ -2,6 +2,7 @@ package frameWork.gui;
 
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
+import ij.gui.Line;
 import ij.gui.Overlay;
 
 import java.util.List;
@@ -60,4 +61,19 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 		   }
 		   imp.setOverlay(ovZ);
 	}
+	
+	protected void addYLineOverlay(double position){
+		   Overlay ov=new Overlay();
+		
+		   ov.add(new Line(0,position,this.image.dimension(0) ,position));		  			   
+		   imp.setOverlay(ov);
+	}
+	
+	protected void addXLineOverlay(double position){
+		   Overlay ov=new Overlay();
+		
+		   ov.add(new Line(position,0,position,this.image.dimension(1) ) );		  			   
+		   imp.setOverlay(ov);
+	}
 }
+

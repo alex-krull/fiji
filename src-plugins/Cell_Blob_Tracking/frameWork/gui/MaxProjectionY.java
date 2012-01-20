@@ -23,6 +23,7 @@ public class MaxProjectionY <T extends Trackable , IT extends  NumericType<IT> &
 		public void rePaint(long[] position){
 			super.rePaint(position);
 			this.addYOverlayes((int)position[3]);
+			this.addYLineOverlay(((double)position[2]+0.5)*model.xyToZ);
 		}
 
 	

@@ -28,6 +28,7 @@ import frameWork.Trackable;
 		public void rePaint(long[] position){
 			super.rePaint(position);
 			this.addXOverlayes((int)position[3]);
+			this.addXLineOverlay(((double)position[2]+0.5)*model.xyToZ);
 			}
 
 	}

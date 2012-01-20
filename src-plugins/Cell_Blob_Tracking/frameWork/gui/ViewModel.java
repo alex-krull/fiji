@@ -169,7 +169,7 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
        views.add(new MaxProjectionZ<T,IT>(model, image));
        views.add(new MaxProjectionX<T,IT>(model, image));
        views.add(new MaxProjectionY<T,IT>(model, image));
-       
+       views.add(new KymoWindow<T,IT>(model, xtProjections));
        this.upDateImages(0, 0, 0,true);
        
        
@@ -222,7 +222,7 @@ protected synchronized void upDateImages(int frame, int slice, int channel, bool
 	long[] pos= {0,0,slice, frame, channel};
 	for(ViewWindow<T,IT> vw:views){
 		
-		((StackWindow<T,IT>)vw).rePaint(pos);
+		((ImageWindow<T,IT>)vw).rePaint(pos);
 	}
 		
 		System.out.println("=================f:"+frame + " s:" + slice+ " c:" + channel+ " i:"+init);
