@@ -23,8 +23,8 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	protected ImageCanvas canvas;
 	protected Overlay ov;
 	
-	public ImageWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title){
-		super(mod, title);
+	public ImageWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title, ViewModel<T,IT> vm){
+		super(mod, title,vm);
 		ov= new Overlay();
 		image=img;
 		
@@ -33,6 +33,7 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	public void rePaint(){
 		imp.setOverlay(ov);
     	imp.updateAndDraw();
+    	
 	}
 
 	protected void clearOverlay(){

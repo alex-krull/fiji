@@ -11,6 +11,7 @@ import ij.gui.Overlay;
 import ij.plugin.ContrastEnhancer;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -85,6 +86,7 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
 	}
  
 	public ViewModel(ImagePlus imp,  Model<T,IT> mod, Controller<T> contr){
+		
 		controller=contr;
 		
 	   model=mod;
@@ -92,7 +94,13 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
       
 
        mainImage= imp;
-      
+       
+       Component[] comps= mainImage.getWindow().getComponents();
+       System.out.println("Components:");
+       for(int i=0;i<comps.length;i++){
+    	   System.out.println(comps[i].getClass().getName());
+       }
+       
        if (null == mainImage) return;
     	
        
@@ -166,11 +174,14 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
     //   this.views.add(new StackWindow<T,IT>(model, zProjections, "max-Z-projection", 3));
     //   this.views.add(new StackWindow<T,IT>(model, xProjections, "max-X-projection", 3));
     //   this.views.add(new StackWindow<T,IT>(model, yProjections, "max-Y-projection", 3));
-       views.add(new MaxProjectionZ<T,IT>(model, image));
-       views.add(new MaxProjectionX<T,IT>(model, image));
-       views.add(new MaxProjectionY<T,IT>(model, image));
-       views.add(new KymographX<T,IT>(model, xtProjections));
-       views.add(new KymographY<T,IT>(model, ytProjections));
+       
+       views.add(new MaxProjectionX<T,IT>(model, image,this));
+       views.add(new MaxProjectionY<T,IT>(model, image,this));
+    //   
+       views.add(new KymographY<T,IT>(model, ytProjections,this));
+       views.add(new MaxProjectionZ<T,IT>(model, image,this));
+       views.add(new KymographX<T,IT>(model, xtProjections,this));
+       views.add(new MainWindow<T,IT>(mainImage, image, model, this));
        this.upDateImages(0, 0, 0,true);
        
        
@@ -188,7 +199,7 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
     //   impX.addImageListener(this);
     //   impY.addImageListener(this);
     //   impZ.addImageListener(this);
-       mainImage.addImageListener(this);
+    //   mainImage.addImageListener(this);
        
        if(impX!=null) impX.getCanvas().addMouseMotionListener(this);
        if(impY!=null) impY.getCanvas().addMouseMotionListener(this);
@@ -217,15 +228,23 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
         return;
     }
     
+public void setPosition(int dim, int pos){
+	if(dim==2)this.currentSliceNumber= pos;
+	if(dim==3)this.currentFrameNumber= pos;
+	System.out.println("should be new frameA: "+ currentFrameNumber);
+	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, false );
+}
 	
 protected synchronized void upDateImages(int frame, int slice, int channel, boolean init){
-		
+	System.out.println("should be new frameB: "+ frame);
+	
 	long[] pos= {0,0,slice, frame, channel};
 	for(ViewWindow<T,IT> vw:views){
-		
+		System.out.println("should be new frameC: "+ frame);
+		System.out.println("should be new frameD: "+ pos[3]);
 		((ImageWindow<T,IT>)vw).rePaint(pos);
 	}
-		
+	/*	
 		System.out.println("=================f:"+frame + " s:" + slice+ " c:" + channel+ " i:"+init);
 		
 		RandomAccessibleInterval<IT> imgx=zProjections;
@@ -348,12 +367,12 @@ protected synchronized void upDateImages(int frame, int slice, int channel, bool
 		addOverlays(frame,slice,channel);
 		
 
-	  
+	 */ 
 				
 	}
 
 private synchronized void updatePosition(int x,int y, int slice ,int frame, int channel){
-
+/*
 	if(buisy) return;
 	buisy=true;
 	System.out.println("oframe:"+ currentFrameNumber+ "   oslice:"+ currentSliceNumber+ "  ochannel:"+currentChannelNumber );
@@ -368,7 +387,7 @@ private synchronized void updatePosition(int x,int y, int slice ,int frame, int 
 	//mainImage.setSlice(slice+1);
 	
 	buisy=false;
-
+*/
 }
 	
 	private synchronized void doStuff(){

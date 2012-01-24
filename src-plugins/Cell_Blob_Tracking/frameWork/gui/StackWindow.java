@@ -18,8 +18,8 @@ public class StackWindow <T extends Trackable , IT extends  NumericType<IT> & Na
 	protected int stackDimension;
 	
 	
-	public StackWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title, int sDim){
-		super(mod, img ,title);
+	public StackWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title, int sDim,  ViewModel<T,IT> vm){
+		super(mod, img ,title, vm);
 		stackDimension=sDim;
 		
 		RandomAccessibleInterval<IT> imgSlice=Views.hyperSlice(image,2,0);
@@ -37,6 +37,8 @@ public class StackWindow <T extends Trackable , IT extends  NumericType<IT> & Na
     	ce.stretchHistogram(impl.getProcessor(), 0.5); 
     	
     	this.imp.setProcessor(impl.getProcessor());
+    	System.out.println("REPAINTING ! ! ! ");
+    	System.out.println("new frame: "+ position[3]);
     	super.rePaint();
     	
 	}

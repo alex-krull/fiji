@@ -10,8 +10,8 @@ import frameWork.Trackable;
 
 public class KymoWindow <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends SingleImageWindow<T,IT>  {
 
-	public KymoWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img){
-		super(mod, img, "kymograph");
+	public KymoWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<T,IT> vm){
+		super(mod, img, "kymograph", vm);
 	}
 	
 	public void rePaint(long[] position){

@@ -11,8 +11,8 @@ import frameWork.Model;
 import frameWork.Trackable;
 
 public class SingleImageWindow <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<T,IT>{
-	SingleImageWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title){
-		super(mod, img ,title);
+	SingleImageWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title,  ViewModel<T,IT> vm){
+		super(mod, img ,title, vm);
 		imp=ImageJFunctions.show(image,caption);
 	}
 

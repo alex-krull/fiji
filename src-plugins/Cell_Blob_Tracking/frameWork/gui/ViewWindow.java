@@ -9,7 +9,9 @@ import frameWork.Trackable;
 public abstract class ViewWindow <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
 	protected Model<T,IT> model;
 	protected String caption;
-	protected ViewWindow(Model<T,IT> mod, String title){
+	protected ViewModel<T,IT> viewModel;
+	protected ViewWindow(Model<T,IT> mod, String title, ViewModel<T,IT> vm){
+		viewModel=vm;
 		model=mod;
 		caption= title;
 		
