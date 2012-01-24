@@ -6,12 +6,14 @@ import ij.gui.Line;
 import ij.gui.Overlay;
 
 import java.util.List;
+import java.util.SortedMap;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
+import frameWork.Sequence;
 import frameWork.Trackable;
 
 public abstract class ImageWindow  <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ViewWindow<T,IT>{
@@ -19,58 +21,82 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	protected ImagePlus imp;
 	protected RandomAccessibleInterval<IT> image;
 	protected ImageCanvas canvas;
+	protected Overlay ov;
 	
 	public ImageWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title){
 		super(mod, title);
+		ov= new Overlay();
 		image=img;
+		
 	}
 
+	protected void clearOverlay(){
+		ov= new Overlay();
+	}
+	
+	protected void addKymoXOverlayes(){
+		SortedMap <Integer, Sequence<T>> seqs= model.getSeqs();
+		for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
+			Sequence<T> seq = seqs.get(i);
+			if(seq!=null) seq.getKymoOverlayX(ov);
+		}
+	}
+	
+	protected void addKymoYOverlayes(){
+		SortedMap <Integer, Sequence<T>> seqs= model.getSeqs();
+		for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
+			Sequence<T> seq = seqs.get(i);
+			if(seq!=null) seq.getKymoOverlayY(ov);
+		}
+	}
 
 	protected void addXOverlayes(int frameNumber){
 		List<T> trackables= model.getTrackablesForFrame(frameNumber);
-		   Overlay ovX=new Overlay();
+		   
 		   for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			
-			   t.addShapeX(ovX,false);
+			   t.addShapeX(ov,false);
 			   
 		   }
-		   imp.setOverlay(ovX);
+		   imp.setOverlay(ov);
 	}
 	
 	protected void addYOverlayes(int frameNumber){
 		List<T> trackables= model.getTrackablesForFrame(frameNumber);
-		   Overlay ovY=new Overlay();
+		 
 		   for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			
-			   t.addShapeY(ovY,false);
+			   t.addShapeY(ov,false);
 			   
 		   }
-		   imp.setOverlay(ovY);
+		   imp.setOverlay(ov);
 	}
 	
 	protected void addZOverlayes(int frameNumber){
 		List<T> trackables= model.getTrackablesForFrame(frameNumber);
-		   Overlay ovZ=new Overlay();
+	
 		   for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			
-			   t.addShapeZ(ovZ,false);
+			   t.addShapeZ(ov,false);
 			   
 		   }
-		   imp.setOverlay(ovZ);
+		   imp.setOverlay(ov);
 	}
 	
+	
+	
 	protected void addYLineOverlay(double position){
-		   Overlay ov=new Overlay();
+		   
 		
 		   ov.add(new Line(0,position,this.image.dimension(0) ,position));		  			   
 		   imp.setOverlay(ov);
 	}
 	
 	protected void addXLineOverlay(double position){
-		   Overlay ov=new Overlay();
+		 
 		
 		   ov.add(new Line(position,0,position,this.image.dimension(1) ) );		  			   
 		   imp.setOverlay(ov);

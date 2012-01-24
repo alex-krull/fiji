@@ -7,6 +7,7 @@ import net.imglib2.type.Type;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import blobTracking.Blob;
+import blobTracking.BlobFactory;
 import blobTracking.BlobFrame;
 import blobTracking.BlobController;
 import frameWork.Model;
@@ -25,7 +26,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		ImagePlus imp=IJ.getImage();
 		Img<IT> img= ImagePlusAdapter.wrap(imp);
 		System.out.println("creating Model...");
-		Model<Blob, IT> model= new Model<Blob,IT>(img, new BlobFrame<IT>(0,null));
+		Model<Blob, IT> model= new Model<Blob,IT>(img, new BlobFactory<IT>());
 				System.out.println("creating Controller...");
 		BlobController<IT> bc= new BlobController<IT>(imp, img,model);
 		System.out.println("creating ViewModel...");

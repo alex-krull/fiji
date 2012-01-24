@@ -9,39 +9,47 @@ import java.util.TreeMap;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
+import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
-public class Model<T extends Trackable, IT extends Type<IT>> { 
+public class Model<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> { 
 
 private	List<Frame <T,IT>> frames;
 private	RandomAccessibleInterval<IT> image;
-private Frame<T,IT> factory;
+private Factory<T,IT> factory;
 private SortedMap <Integer, Sequence<T>> Sequences;
 public T selected;
 public double xyToZ=3.5;
 
 
-public Model(RandomAccessibleInterval<IT> img , Frame<T,IT> fact){
+
+public Model(RandomAccessibleInterval<IT> img , Factory<T,IT> fact){
 	Sequences= new TreeMap<Integer, Sequence<T>>();
 	image=img;
 	factory=fact;
 	frames= new ArrayList<Frame<T,IT>>();
 	for(int i=0;i<40000;i++){
-		Frame<T,IT> f=factory.createFrame(i,getFrameView(i,0));
+		Frame<T,IT> f=factory.produceFrame(i,getFrameView(i,0));
 		frames.add(f);
 		
 	}
 	
 }
 
+public SortedMap <Integer, Sequence<T>> getSeqs(){
+	return Sequences;
+}
+
 public void optimizeFrame(int frameId){
-	Frame f= frames.get(frameId);
+	Frame<T,IT> f= frames.get(frameId);
 	f.optimizeFrame();
 }
 
 public int selectAt(int x, int y, int z, int frameId){
-	Frame f= frames.get(frameId);
+	Frame<T,IT> f= frames.get(frameId);
 	return f.selectAt(x, y, z);
 }
 
@@ -51,7 +59,7 @@ public void addTrackable(T trackable){
 	Sequence<T> sequence= Sequences.get(trackable.sequenceId);
 	if(sequence==null){
 		
-		sequence=new Sequence<T>(trackable.sequenceId, Integer.toString(trackable.sequenceId));
+		sequence=factory.produceSequence(trackable.sequenceId, Integer.toString(trackable.sequenceId));
 		System.out.println("Adding Seq!");
 		Sequences.put(trackable.sequenceId, sequence);
 	}

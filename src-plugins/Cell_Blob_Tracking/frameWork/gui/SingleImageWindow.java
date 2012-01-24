@@ -20,12 +20,14 @@ public class SingleImageWindow <T extends Trackable , IT extends  NumericType<IT
 
 	@Override
 	public void rePaint(long[] position) {
+		
+		this.clearOverlay();
 		ImagePlus impl=ImageJFunctions.wrap( image , caption);
 	    ContrastEnhancer ce= new ContrastEnhancer();
     	ce.stretchHistogram(impl.getProcessor(), 0.5); 
     	
     	this.imp.setProcessor(impl.getProcessor());
-    	imp.updateAndDraw();
+    	//imp.updateAndDraw();
 	}
 	
 }

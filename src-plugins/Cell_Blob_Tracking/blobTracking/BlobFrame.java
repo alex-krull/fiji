@@ -255,9 +255,5 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	}
 
 	
-	@Override
-	public Frame<Blob,IT> createFrame(int frameNum, RandomAccessibleInterval<IT> view) {		
-		return new BlobFrame<IT>(frameNum, view);
-	}
 
 }

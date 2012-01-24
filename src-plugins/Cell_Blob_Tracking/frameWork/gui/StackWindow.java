@@ -28,6 +28,7 @@ public class StackWindow <T extends Trackable , IT extends  NumericType<IT> & Na
 	
 	
 	public void rePaint(long [] position){
+		this.clearOverlay();
 		long frameNumber= position[stackDimension];
 		RandomAccessibleInterval<IT> imgSlice=Views.hyperSlice(image,2,frameNumber);
 		
