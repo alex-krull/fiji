@@ -15,8 +15,10 @@ public class KymographY <T extends Trackable , IT extends  NumericType<IT> & Nat
 	}
 	
 	public void rePaint(long[] position){
-		super.rePaint(position);
+		this.clearOverlay();
+		this.addKymoYOverlayes();
 		this.addYLineOverlay(position[3]);
+		super.rePaint(position);
 	}
 
 }

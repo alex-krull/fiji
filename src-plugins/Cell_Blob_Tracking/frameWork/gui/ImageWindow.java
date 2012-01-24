@@ -29,6 +29,11 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 		image=img;
 		
 	}
+	
+	public void rePaint(){
+		imp.setOverlay(ov);
+    	imp.updateAndDraw();
+	}
 
 	protected void clearOverlay(){
 		ov= new Overlay();
@@ -59,7 +64,7 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 			   t.addShapeX(ov,false);
 			   
 		   }
-		   imp.setOverlay(ov);
+		   
 	}
 	
 	protected void addYOverlayes(int frameNumber){
@@ -71,7 +76,7 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 			   t.addShapeY(ov,false);
 			   
 		   }
-		   imp.setOverlay(ov);
+		   
 	}
 	
 	protected void addZOverlayes(int frameNumber){
@@ -83,7 +88,7 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 			   t.addShapeZ(ov,false);
 			   
 		   }
-		   imp.setOverlay(ov);
+		   
 	}
 	
 	
@@ -92,14 +97,14 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 		   
 		
 		   ov.add(new Line(0,position,this.image.dimension(0) ,position));		  			   
-		   imp.setOverlay(ov);
+		   
 	}
 	
 	protected void addXLineOverlay(double position){
 		 
 		
 		   ov.add(new Line(position,0,position,this.image.dimension(1) ) );		  			   
-		   imp.setOverlay(ov);
+		  
 	}
 }
 

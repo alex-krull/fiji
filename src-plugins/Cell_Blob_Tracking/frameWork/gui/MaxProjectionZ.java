@@ -18,9 +18,10 @@ public class MaxProjectionZ <T extends Trackable , IT extends  NumericType<IT> &
 		super(mod, ImglibTools.projection(img,2), "max-Z-projection",3);
 	}
 	
-	public void rePaint(long[] position){
-		super.rePaint(position);
+	public void rePaint(long[] position){	
+		this.clearOverlay();
 		addZOverlayes((int)position[3]);
+		super.rePaint(position);
 	}
 
 }

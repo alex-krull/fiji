@@ -16,11 +16,12 @@ public class KymographX <T extends Trackable , IT extends  NumericType<IT> & Nat
 	
 	public void rePaint(long[] position){
 		
-		super.rePaint(position);
 		
+		this.clearOverlay();
 		this.addKymoXOverlayes();
 		this.addXLineOverlay(position[3]);
-		imp.updateAndDraw();
+		super.rePaint(position);
+		//imp.updateAndDraw();
 		
 	}
 

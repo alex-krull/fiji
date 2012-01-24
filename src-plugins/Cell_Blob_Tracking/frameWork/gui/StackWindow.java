@@ -28,7 +28,7 @@ public class StackWindow <T extends Trackable , IT extends  NumericType<IT> & Na
 	
 	
 	public void rePaint(long [] position){
-		this.clearOverlay();
+		
 		long frameNumber= position[stackDimension];
 		RandomAccessibleInterval<IT> imgSlice=Views.hyperSlice(image,2,frameNumber);
 		
@@ -37,7 +37,8 @@ public class StackWindow <T extends Trackable , IT extends  NumericType<IT> & Na
     	ce.stretchHistogram(impl.getProcessor(), 0.5); 
     	
     	this.imp.setProcessor(impl.getProcessor());
-    	imp.updateAndDraw();
+    	super.rePaint();
+    	
 	}
 	
 }
