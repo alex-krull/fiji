@@ -28,10 +28,16 @@ public class MainWindow  <T extends Trackable , IT extends  NumericType<IT> & Na
 
 	@Override
 	public void rePaint(long[] position) {
+		
+			
 		if(position.length>3)currentFrameNumber= (int)position[3];
 		if(position.length>2)currentSliceNumber= (int)position[2];
 		if(position.length>4)currentChannelNumber=(int)position[4];
-		imp.setPosition(currentChannelNumber+1, currentSliceNumber+1, currentFrameNumber+1);
+		
+		if(currentFrameNumber != imp.getFrame()-1
+				|| currentSliceNumber!= imp.getSlice()-1
+				|| currentChannelNumber!= imp.getChannel()-1) 
+					imp.setPosition(currentChannelNumber+1, currentSliceNumber+1, currentFrameNumber+1);
 		this.clearOverlay();
 		addZOverlayes((int)position[3]);
 		imp.setOverlay(ov);
@@ -53,6 +59,7 @@ public class MainWindow  <T extends Trackable , IT extends  NumericType<IT> & Na
 
 	@Override
 	public void imageUpdated(ImagePlus arg0) {
+		if(!arg0.equals(imp)) return;
 		if(currentFrameNumber != imp.getFrame()-1){
 			currentFrameNumber= imp.getFrame()-1;
 			viewModel.setPosition(3, currentFrameNumber);
