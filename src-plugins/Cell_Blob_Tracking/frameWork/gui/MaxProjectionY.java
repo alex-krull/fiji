@@ -17,10 +17,11 @@ public class MaxProjectionY <T extends Trackable , IT extends  NumericType<IT> &
 		
 		public MaxProjectionY(Model<T,IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<T,IT> vm){
 			super(mod, 
-					ImglibTools.scaleByFactor(
+					//ImglibTools.scaleByFactor(
 							ImglibTools.projection(img,1),
-					1,mod.xyToZ)
-					, "max-Y-projection",3,vm);
+					//1,mod.xyToZ)
+					"max-Y-projection",3,vm);
+			this.scaleY=model.xyToZ;
 			this.imp.getCanvas().addMouseListener(this);
 		}
 		
@@ -28,17 +29,18 @@ public class MaxProjectionY <T extends Trackable , IT extends  NumericType<IT> &
 			this.clearOverlay();
 			
 			this.addYOverlayes((int)position[3]);
-			this.addYLineOverlay(((double)position[2]+0.5)*model.xyToZ);
+			this.addYLineOverlay((double)position[2]);
 			super.rePaint(position);
 		}
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			
-			int x=imp.getCanvas().offScreenX(e.getX());
-			int y=imp.getCanvas().offScreenY(e.getY());
+			int x=(int)((double)imp.getCanvas().offScreenX(e.getX())/this.scaleX);
+			int y=(int)((double)imp.getCanvas().offScreenY(e.getY())/this.scaleY);
+			
 			System.out.println("x:"+ x +"  y:"+y);
-			if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(2,(int)((double)y/model.xyToZ));
+			if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(2,(int)((double)y));
 			
 		}
 

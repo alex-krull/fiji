@@ -20,10 +20,10 @@ public class BlobSequence extends Sequence<Blob>{
 			
 		Blob b=null;
 		Blob lastB=null;
-		for(int i=trackables.firstKey();i<=trackables.lastKey();i++){
+		for(double i=(double)trackables.firstKey();i<=trackables.lastKey();i++){
 			lastB=b;
-			b=trackables.get(i);
-			if(lastB!=null&&b!=null)  ov.add(new Line((i-1)*scaleX,lastB.yPos*scaleY,i*scaleX,b.yPos*scaleY));
+			b=trackables.get((int)i);
+			if(lastB!=null&&b!=null)  ov.add(new Line((i-1+0.5)*scaleX,(lastB.yPos+0.5)*scaleY,(i+0.5)*scaleX,(b.yPos+0.5)*scaleY));
 		}
 	
 	}
@@ -32,10 +32,10 @@ public class BlobSequence extends Sequence<Blob>{
 	
 		Blob b=null;
 		Blob lastB=null;
-		for(int i=trackables.firstKey();i<=trackables.lastKey();i++){
+		for(double i=(double)trackables.firstKey();i<=trackables.lastKey();i++){
 			lastB=b;
-			b=trackables.get(i);
-			if(lastB!=null&&b!=null)  ov.add(new Line(lastB.xPos*scaleX,(i-1)*scaleY,b.xPos*scaleX,i*scaleY));
+			b=trackables.get((int)i);
+			if(lastB!=null&&b!=null)  ov.add(new Line((lastB.xPos+0.5)*scaleX,(i-1+0.5)*scaleY,(b.xPos+0.5)*scaleX,(i+0.5)*scaleY));
 		}
 	
 	}

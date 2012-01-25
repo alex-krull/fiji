@@ -128,14 +128,14 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	protected void addYLineOverlay(double position){
 		   
 		
-		   ov.add(new Line(0*scaleX,position*scaleY,this.image.dimension(0)*scaleX ,position*scaleY));		  			   
+		   ov.add(new Line(0*scaleX,(position+0.5)*scaleY,this.image.dimension(0)*scaleX ,(position+0.5)*scaleY));		  			   
 		   
 	}
 	
 	protected void addXLineOverlay(double position){
 		 
 		
-		   ov.add(new Line(position*scaleX,0*scaleY,position*scaleX,this.image.dimension(1) *scaleY) );		  			   
+		   ov.add(new Line((position+0.5)*scaleX,0*scaleY,(position+0.5)*scaleX,this.image.dimension(1) *scaleY) );		  			   
 		  
 	}
 }

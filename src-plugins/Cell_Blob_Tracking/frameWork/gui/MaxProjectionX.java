@@ -21,10 +21,11 @@ import frameWork.Trackable;
 		
 		public MaxProjectionX(Model<T,IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<T,IT> vm){
 			super(mod, 
-					ImglibTools.scaleByFactor(
+					//ImglibTools.scaleByFactor(
 							Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(img,0),0,1) ),0  ) ) , 
-					0,mod.xyToZ)
-					, "max-X-projection",3, vm);
+					//0,mod.xyToZ)
+					"max-X-projection",3, vm);
+			this.scaleX=model.xyToZ;
 			imp.getCanvas().addMouseListener(this);
 		}
 		
@@ -32,16 +33,16 @@ import frameWork.Trackable;
 			this.clearOverlay();
 			
 			this.addXOverlayes((int)position[3]);
-			this.addXLineOverlay(((double)position[2]+0.5)*model.xyToZ);
+			this.addXLineOverlay(((double)position[2]));
 			super.rePaint(position);
 			}
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			int x=imp.getCanvas().offScreenX(e.getX());
-			int y=imp.getCanvas().offScreenY(e.getY());
+			int x=(int)((double)imp.getCanvas().offScreenX(e.getX())/this.scaleX);
+			int y=(int)((double)imp.getCanvas().offScreenY(e.getY())/this.scaleY);
 			System.out.println("x:"+ x +"  y:"+y);
-			if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(2,(int)((double)x/model.xyToZ));
+			if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(2,(int)((double)x));
 			
 		}
 
