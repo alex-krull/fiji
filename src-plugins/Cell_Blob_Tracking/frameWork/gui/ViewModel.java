@@ -37,6 +37,8 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
 	protected boolean isTimeSequence=false;
 	protected boolean isMultiChannel=false;
 	
+	protected boolean buisy=false;
+	
 	protected ImagePlus mainImage;
 		
 	protected RandomAccessibleInterval<IT> zProjections;
@@ -148,18 +150,6 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
        views.add(new MaxProjectionZ<T,IT>(model, image,this));
        views.add(new KymographX<T,IT>(model, xtProjections,this));
        
-       views.add(new MaxProjectionX<T,IT>(model, image,this));
-       views.add(new MaxProjectionY<T,IT>(model, image,this));
-       views.add(new KymographY<T,IT>(model, ytProjections,this));
-       views.add(new MaxProjectionZ<T,IT>(model, image,this));
-       views.add(new KymographX<T,IT>(model, xtProjections,this));
-       
-       views.add(new MaxProjectionX<T,IT>(model, image,this));
-       views.add(new MaxProjectionY<T,IT>(model, image,this));
-       views.add(new KymographY<T,IT>(model, ytProjections,this));
-       views.add(new MaxProjectionZ<T,IT>(model, image,this));
-       views.add(new KymographX<T,IT>(model, xtProjections,this));
-       
        views.add(new MainWindow<T,IT>(mainImage, image, model, this));
        this.upDateImages(0, 0, 0,true);
        
@@ -170,11 +160,28 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
         return;
     }
     
+public synchronized boolean getMutex(){
+	System.out.println(buisy);
+	if(!buisy){
+		
+		buisy=true;
+		return true;
+	}else return false;
+		
+}
+
+public synchronized void releaseMutex(){
+	System.out.println("releasing");
+	buisy=false;	
+}
+
 public void setPosition(int dim, int pos){
+	
 	if(dim==2)this.currentSliceNumber= pos;
 	if(dim==3)this.currentFrameNumber= pos;
 	System.out.println("should be new frameA: "+ currentFrameNumber);
 	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, false );
+
 }
 	
 protected void upDateImages(int frame, int slice, int channel, boolean init){

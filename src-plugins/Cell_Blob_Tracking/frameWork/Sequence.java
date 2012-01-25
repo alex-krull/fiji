@@ -31,8 +31,8 @@ public abstract class Sequence<T extends Trackable> {
 		return trackables.get(frameNumber);
 	}
 	
-	public abstract void getKymoOverlayX(Overlay ov);
-	public abstract void getKymoOverlayY(Overlay ov);
+	public abstract void getKymoOverlayX(Overlay ov, double scaleX, double scaleY);
+	public abstract void getKymoOverlayY(Overlay ov, double scaleX, double scaleY);
 	
 	private List<List<T>> getPieces(){
 		List<List<T>> result =new ArrayList <List<T>>();

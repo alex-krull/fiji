@@ -37,11 +37,11 @@ import frameWork.Trackable;
 			}
 
 		@Override
-		public void mouseClicked(MouseEvent arg0) {
-			int x=imp.getCanvas().offScreenX(arg0.getX());
-			int y=imp.getCanvas().offScreenY(arg0.getY());
+		public void mouseClicked(MouseEvent e) {
+			int x=imp.getCanvas().offScreenX(e.getX());
+			int y=imp.getCanvas().offScreenY(e.getY());
 			System.out.println("x:"+ x +"  y:"+y);
-			viewModel.setPosition(2,(int)((double)x/model.xyToZ));
+			if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(2,(int)((double)x/model.xyToZ));
 			
 		}
 

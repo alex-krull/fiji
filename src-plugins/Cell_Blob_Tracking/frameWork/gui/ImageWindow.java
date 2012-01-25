@@ -4,11 +4,17 @@ import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.Line;
 import ij.gui.Overlay;
+import ij.plugin.ContrastEnhancer;
 
 import java.util.List;
 import java.util.SortedMap;
 
+import org.omg.PortableServer.IMPLICIT_ACTIVATION_POLICY_ID;
+
+import tools.ImglibTools;
+
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -22,6 +28,12 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	protected RandomAccessibleInterval<IT> image;
 	protected ImageCanvas canvas;
 	protected Overlay ov;
+	protected double scaleX=1;
+	protected double scaleY=1;
+	protected double transX=0;
+	protected double transY=0;
+
+	protected RandomAccessibleInterval<IT> toDraw;
 	
 	public ImageWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title, ViewModel<T,IT> vm){
 		super(mod, title,vm);
@@ -31,8 +43,27 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	}
 	
 	public void rePaint(){
+		
+		toDraw=ImglibTools.scaleByFactor(toDraw, 0, scaleX);
+		toDraw=ImglibTools.scaleByFactor(toDraw, 1, scaleY);
+		ImagePlus impl=ImageJFunctions.wrap( toDraw , caption);
+	//	transX=(scaleX*(double)impl.getProcessor().getWidth()- (double)impl.getProcessor().getWidth())/2.0;
+	//	transY=(scaleY*(double)impl.getProcessor().getHeight()- (double)impl.getProcessor().getHeight())/2.0;
+	    ContrastEnhancer ce= new ContrastEnhancer();
+    	ce.stretchHistogram(impl.getProcessor(), 0.5); 
+    	
+    //	impl.getProcessor().translate(transX/scaleX,transY/scaleY);
+    //	impl.getProcessor().scale(scaleX, scaleY);
+    	
+    	this.imp.setProcessor(impl.getProcessor());
+    	//imp.setImage(impl);
+    	
 		imp.setOverlay(ov);
-    	imp.updateAndDraw();
+		
+		//imp.setProcessor(imp.getProcessor().resize((int)(imp.getProcessor().getWidth()*scaleX), (int)(imp.getProcessor().getWidth()*scaleY)) );
+		//imp.setProcessor( );
+
+		imp.updateAndDraw();
     	
 	}
 
@@ -44,7 +75,7 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 		SortedMap <Integer, Sequence<T>> seqs= model.getSeqs();
 		for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
 			Sequence<T> seq = seqs.get(i);
-			if(seq!=null) seq.getKymoOverlayX(ov);
+			if(seq!=null) seq.getKymoOverlayX(ov,scaleX,scaleY);
 		}
 	}
 	
@@ -52,7 +83,7 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 		SortedMap <Integer, Sequence<T>> seqs= model.getSeqs();
 		for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
 			Sequence<T> seq = seqs.get(i);
-			if(seq!=null) seq.getKymoOverlayY(ov);
+			if(seq!=null) seq.getKymoOverlayY(ov,scaleX,scaleY);
 		}
 	}
 
@@ -97,14 +128,14 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	protected void addYLineOverlay(double position){
 		   
 		
-		   ov.add(new Line(0,position,this.image.dimension(0) ,position));		  			   
+		   ov.add(new Line(0*scaleX,position*scaleY,this.image.dimension(0)*scaleX ,position*scaleY));		  			   
 		   
 	}
 	
 	protected void addXLineOverlay(double position){
 		 
 		
-		   ov.add(new Line(position,0,position,this.image.dimension(1) ) );		  			   
+		   ov.add(new Line(position*scaleX,0*scaleY,position*scaleX,this.image.dimension(1) *scaleY) );		  			   
 		  
 	}
 }

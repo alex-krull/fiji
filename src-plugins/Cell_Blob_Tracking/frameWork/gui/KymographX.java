@@ -2,6 +2,9 @@ package frameWork.gui;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+
+import tools.ImglibTools;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
@@ -20,7 +23,7 @@ public class KymographX <T extends Trackable , IT extends  NumericType<IT> & Nat
 	
 	public void rePaint(long[] position){
 		
-		
+		scaleX=timeScale;
 		this.clearOverlay();
 		this.addKymoXOverlayes();
 		this.addXLineOverlay(position[3]);
@@ -31,10 +34,11 @@ public class KymographX <T extends Trackable , IT extends  NumericType<IT> & Nat
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		int x=imp.getCanvas().offScreenX(e.getX());
-		int y=imp.getCanvas().offScreenY(e.getY());
+		int x=(int)((double)imp.getCanvas().offScreenX(e.getX())/this.scaleX);
+		int y=(int)((double)imp.getCanvas().offScreenY(e.getY())/this.scaleY);
 		System.out.println("x:"+ x +"  y:"+y);
-		viewModel.setPosition(3,x);
+		if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(3,x);
+		
 		
 	}
 
@@ -61,5 +65,7 @@ public class KymographX <T extends Trackable , IT extends  NumericType<IT> & Nat
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
 
 }

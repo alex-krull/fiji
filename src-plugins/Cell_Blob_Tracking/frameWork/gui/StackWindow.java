@@ -30,15 +30,8 @@ public class StackWindow <T extends Trackable , IT extends  NumericType<IT> & Na
 	public void rePaint(long [] position){
 		
 		long frameNumber= position[stackDimension];
-		RandomAccessibleInterval<IT> imgSlice=Views.hyperSlice(image,2,frameNumber);
-		
-		ImagePlus impl=ImageJFunctions.wrap( imgSlice , caption);
-	    ContrastEnhancer ce= new ContrastEnhancer();
-    	ce.stretchHistogram(impl.getProcessor(), 0.5); 
-    	
-    	this.imp.setProcessor(impl.getProcessor());
-    	System.out.println("REPAINTING ! ! ! ");
-    	System.out.println("new frame: "+ position[3]);
+		toDraw=Views.hyperSlice(image,2,frameNumber);
+	
     	super.rePaint();
     	
 	}
