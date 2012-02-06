@@ -4,6 +4,7 @@ import ij.IJ;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -15,7 +16,7 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
-public class Model<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> { 
+public class Model<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends Observable{ 
 
 private	List<Frame <T,IT>> frames;
 private	RandomAccessibleInterval<IT> image;
@@ -23,8 +24,6 @@ private Factory<T,IT> factory;
 private SortedMap <Integer, Sequence<T>> Sequences;
 public T selected;
 public double xyToZ=3.5;
-
-
 
 public Model(RandomAccessibleInterval<IT> img , Factory<T,IT> fact){
 	Sequences= new TreeMap<Integer, Sequence<T>>();
@@ -39,8 +38,13 @@ public Model(RandomAccessibleInterval<IT> img , Factory<T,IT> fact){
 	
 }
 
+
 public SortedMap <Integer, Sequence<T>> getSeqs(){
 	return Sequences;
+}
+
+public Sequence<T> getSequence(int id){
+	return Sequences.get(id);
 }
 
 public void optimizeFrame(int frameId){
@@ -48,7 +52,7 @@ public void optimizeFrame(int frameId){
 	f.optimizeFrame();
 }
 
-public int selectAt(int x, int y, int z, int frameId){
+public int selectAt(int x, int y, int z, int frameId, int channel){
 	Frame<T,IT> f= frames.get(frameId);
 	return f.selectAt(x, y, z);
 }
@@ -89,6 +93,10 @@ public RandomAccessibleInterval<IT> getImage(){
 	return image;
 }
 
+public void makeChangesPublic(){
+	setChanged();
+	notifyObservers();
+}
 
 
 	

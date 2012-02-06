@@ -17,6 +17,6 @@ public abstract class ViewWindow <T extends Trackable , IT extends  NumericType<
 		
 	}
 	
-	public abstract void rePaint(long[] position);
+	public abstract void rePaint(long[] position, boolean rePaintImage);
 	
 }

@@ -26,8 +26,8 @@ public abstract class KymoWindow <T extends Trackable , IT extends  NumericType<
 		
 	}
 	
-	public void rePaint(long[] position){
-		super.rePaint(position);
+	public void rePaint(long[] position, boolean rePaintImage){
+		super.rePaint(position, rePaintImage);
 	}
 	
 	@Override

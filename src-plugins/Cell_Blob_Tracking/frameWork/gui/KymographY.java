@@ -22,13 +22,13 @@ public class KymographY <T extends Trackable , IT extends  NumericType<IT> & Nat
 		this.imp.getCanvas().addMouseListener(this);
 	}
 	
-	public void rePaint(long[] position){
+	public void rePaint(long[] position, boolean rePaintImage){
 		scaleY=timeScale;
 		
 		this.clearOverlay();
 		this.addKymoYOverlayes();
 		this.addYLineOverlay(position[3]);
-		super.rePaint(position);
+		super.rePaint(position, rePaintImage);
 	}
 
 	@Override

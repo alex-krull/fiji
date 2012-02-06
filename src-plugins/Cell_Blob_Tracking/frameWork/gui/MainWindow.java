@@ -27,7 +27,7 @@ public class MainWindow  <T extends Trackable , IT extends  NumericType<IT> & Na
 	}
 
 	@Override
-	public void rePaint(long[] position) {
+	public void rePaint(long[] position, boolean rePaintImage) {
 		
 			
 		if(position.length>3)currentFrameNumber= (int)position[3];
@@ -44,6 +44,7 @@ public class MainWindow  <T extends Trackable , IT extends  NumericType<IT> & Na
 		imp.updateAndDraw();
 
 	}
+	
 
 	@Override
 	public void imageClosed(ImagePlus arg0) {
@@ -62,30 +63,30 @@ public class MainWindow  <T extends Trackable , IT extends  NumericType<IT> & Na
 		
 		
 		if(!arg0.equals(imp)) return;
-		if(!viewModel.getMutex()) return;
+		
 		
 		if(currentFrameNumber != imp.getFrame()-1){
 			currentFrameNumber= imp.getFrame()-1;
 			viewModel.setPosition(3, currentFrameNumber);
-			viewModel.releaseMutex();
+		
 			return;
 		}
 		
 		if(currentSliceNumber!= imp.getSlice()-1){
 			currentSliceNumber= imp.getSlice()-1;
 			viewModel.setPosition(2, currentSliceNumber);
-			viewModel.releaseMutex();
+		
 			return;
 		}
 		
 		if(currentChannelNumber!= imp.getChannel()-1){
 			currentChannelNumber= imp.getChannel()-1;
 			viewModel.setPosition(4, currentChannelNumber);
-			viewModel.releaseMutex();
+			
 			return;
 		}
 			
-		viewModel.releaseMutex();
+	
 		return;
 		
 	}

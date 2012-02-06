@@ -19,11 +19,16 @@ public class SingleImageWindow <T extends Trackable , IT extends  NumericType<IT
 
 
 	@Override
-	public void rePaint(long[] position) {
+	public void rePaint(long[] position, boolean rePaintImage) {
 		
 		toDraw=image;
-    	super.rePaint();
+    	super.reDraw(rePaintImage);
     	
 	}
+
+
+
+	
+
 	
 }

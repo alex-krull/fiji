@@ -49,7 +49,8 @@ public abstract class Controller<T extends Trackable > {
 	protected double mouseX=0;
 	protected double mouseY=0;
 	protected double mouseZ=0;
-	protected int selectedSequenceId;
+	public int selectedSequenceId;
+	protected T selectedTrackable;
 	
 	protected Model<T,?> model;
 
@@ -78,7 +79,6 @@ private synchronized void updatePosition(int x,int y, int slice ,int frame, int 
 
 }
 
-public abstract void click(long[] position);
-
+public abstract void click(long[] position, MouseEvent e);
 
 }

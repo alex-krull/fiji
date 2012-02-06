@@ -33,6 +33,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		ViewModel<Blob,IT> vm= new ViewModel<Blob,IT>(imp, model,bc);
 		System.out.println("done!");
 		long time1= System.nanoTime();
+		model.addObserver(vm);
 		System.out.println("Time taken:"+((time1-time0)/1000000));
 	}
 

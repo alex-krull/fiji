@@ -17,6 +17,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.Callable;
 
 import net.imglib2.RandomAccessibleInterval;
@@ -27,7 +29,7 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 import tools.ImglibTools;
 
-public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
+public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Observer{
 	
 
 	protected RandomAccessibleInterval<IT> image;
@@ -53,7 +55,7 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
 	protected double mouseX=0;
 	protected double mouseY=0;
 	protected double mouseZ=0;
-	protected int selectedSequenceId;
+	
 	
 	protected Model<T,IT> model;
 	protected Controller<T> controller;
@@ -160,43 +162,47 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
         return;
     }
     
-public synchronized boolean getMutex(){
-	System.out.println(buisy);
-	if(!buisy){
-		
-		buisy=true;
-		return true;
-	}else return false;
-		
-}
-
-public synchronized void releaseMutex(){
-	System.out.println("releasing");
-	buisy=false;	
-}
 
 public void setPosition(int dim, int pos){
 	
 	if(dim==2)this.currentSliceNumber= pos;
 	if(dim==3)this.currentFrameNumber= pos;
-	System.out.println("should be new frameA: "+ currentFrameNumber);
-	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, false );
+	
+	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, true );
 
 }
+
+public long[] getPosition(){
+	long[] result= {0,0,currentSliceNumber, currentFrameNumber, currentChannelNumber};
+	return result;
+
+}
+
+public void mouseAtPosition(long [] pos, MouseEvent me){
 	
+	
+	controller.click(pos, me);
+}
+
 protected void upDateImages(int frame, int slice, int channel, boolean init){
-	System.out.println("should be new frameB: "+ frame);
-	
+
 	long[] pos= {0,0,slice, frame, channel};
 	for(ViewWindow<T,IT> vw:views){
-		System.out.println("should be new frameC: "+ frame);
-		System.out.println("should be new frameD: "+ pos[3]);
-		((ImageWindow<T,IT>)vw).rePaint(pos);
+	
+		((ImageWindow<T,IT>)vw).rePaint(pos, init);
 	}
  
 				
 	}
 
 
+@Override
+public void update(Observable arg0, Object arg1) {
+	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, false );
+}
+
+public int getSelectedSequenceId(){
+	return this.controller.selectedSequenceId;
+}
 
 }

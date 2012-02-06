@@ -6,6 +6,7 @@ import ij.gui.Line;
 import ij.gui.Overlay;
 import ij.plugin.ContrastEnhancer;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.SortedMap;
 
@@ -42,8 +43,9 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 		
 	}
 	
-	public void rePaint(){
-		
+	public void reDraw(boolean rePaintImage){
+		if(rePaintImage){
+			
 		toDraw=ImglibTools.scaleByFactor(toDraw, 0, scaleX);
 		toDraw=ImglibTools.scaleByFactor(toDraw, 1, scaleY);
 		ImagePlus impl=ImageJFunctions.wrap( toDraw , caption);
@@ -52,17 +54,13 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	    ContrastEnhancer ce= new ContrastEnhancer();
     	ce.stretchHistogram(impl.getProcessor(), 0.5); 
     	
-    //	impl.getProcessor().translate(transX/scaleX,transY/scaleY);
-    //	impl.getProcessor().scale(scaleX, scaleY);
-    	
+	
     	this.imp.setProcessor(impl.getProcessor());
-    	//imp.setImage(impl);
-    	
+	
+		}
 		imp.setOverlay(ov);
 		
-		//imp.setProcessor(imp.getProcessor().resize((int)(imp.getProcessor().getWidth()*scaleX), (int)(imp.getProcessor().getWidth()*scaleY)) );
-		//imp.setProcessor( );
-
+	
 		imp.updateAndDraw();
     	
 	}
@@ -89,11 +87,11 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 
 	protected void addXOverlayes(int frameNumber){
 		List<T> trackables= model.getTrackablesForFrame(frameNumber);
-		   
+		   int selected =viewModel.getSelectedSequenceId();
 		   for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
-			
-			   t.addShapeX(ov,false);
+			   Color c= model.getSequence(t.sequenceId).getColor();
+			   t.addShapeX(ov,t.sequenceId==selected,c);
 			   
 		   }
 		   
@@ -101,11 +99,11 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	
 	protected void addYOverlayes(int frameNumber){
 		List<T> trackables= model.getTrackablesForFrame(frameNumber);
-		 
+		 int selected =viewModel.getSelectedSequenceId();
 		   for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
-			
-			   t.addShapeY(ov,false);
+			   Color c= model.getSequence(t.sequenceId).getColor();
+			   t.addShapeY(ov,t.sequenceId==selected,c);
 			   
 		   }
 		   
@@ -113,11 +111,11 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	
 	protected void addZOverlayes(int frameNumber){
 		List<T> trackables= model.getTrackablesForFrame(frameNumber);
-	
+		 int selected =viewModel.getSelectedSequenceId();
 		   for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
-			
-			   t.addShapeZ(ov,false);
+			   Color c= model.getSequence(t.sequenceId).getColor();
+			   t.addShapeZ(ov,t.sequenceId==selected,c);
 			   
 		   }
 		   

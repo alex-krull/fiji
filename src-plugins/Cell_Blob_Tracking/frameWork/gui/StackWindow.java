@@ -27,12 +27,12 @@ public class StackWindow <T extends Trackable , IT extends  NumericType<IT> & Na
 	}
 	
 	
-	public void rePaint(long [] position){
+	public void rePaint(long[] position, boolean rePaintImage){
 		
 		long frameNumber= position[stackDimension];
 		toDraw=Views.hyperSlice(image,2,frameNumber);
 	
-    	super.rePaint();
+    	super.reDraw(rePaintImage);
     	
 	}
 	
