@@ -140,7 +140,7 @@ public class Descriptor_based_registration implements PlugIn
 			final DescriptorParameters params = new DescriptorParameters();
 			params.dimensionality = dimensionality;
 			params.reApply = true;
-			params.fuse = true;
+			params.fuse = 0;
 			params.setPointsRois = false;
 			Matching.descriptorBasedRegistration( imp1, imp2, params );
 			return;			
@@ -329,6 +329,11 @@ public class Descriptor_based_registration implements PlugIn
 			{
 				// ask for the dog parameters
 				final double[] values = getAdvancedDoGParameters( defaultSigma, defaultThreshold );
+				
+				// cancelled
+				if ( values == null )
+					return null;
+				
 				params.sigma1 = values[ 0 ];
 				params.threshold = values[ 1 ];				
 			}
@@ -429,7 +434,10 @@ public class Descriptor_based_registration implements PlugIn
 		params.ransacThreshold = ransacThreshold;
 		params.channel1 = channel1; 
 		params.channel2 = channel2;
-		params.fuse = createOverlay;
+		if ( createOverlay )
+			params.fuse = 0;
+		else
+			params.fuse = 2;
 		params.setPointsRois = addPointRoi;
 		
 		// ask for the approximate transformation

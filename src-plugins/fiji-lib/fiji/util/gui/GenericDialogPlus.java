@@ -88,6 +88,31 @@ public class GenericDialogPlus extends GenericDialog implements KeyListener {
 		new DropTarget(text, new TextDropTarget(text));
 	}
 
+	public void addDirectoryOrFileField(String label, String defaultPath) {
+		addDirectoryOrFileField(label, defaultPath, 20);
+	}
+
+	public void addDirectoryOrFileField(String label, String defaultPath, int columns) {
+		addStringField(label, defaultPath, columns);
+
+		TextField text = (TextField)stringField.lastElement();
+		GridBagLayout layout = (GridBagLayout)getLayout();
+		GridBagConstraints constraints = layout.getConstraints(text);
+
+		Button button = new Button("Browse...");
+		DirectoryListener listener = new DirectoryListener("Browse for " + label, text, JFileChooser.FILES_AND_DIRECTORIES);
+		button.addActionListener(listener);
+		button.addKeyListener(this);
+
+		Panel panel = new Panel();
+		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		panel.add(text);
+		panel.add(button);
+
+		layout.setConstraints(panel, constraints);
+		add(panel);
+	}
+
 	public void addDirectoryField(String label, String defaultPath) {
 		addDirectoryField(label, defaultPath, 20);
 	}
@@ -270,10 +295,16 @@ public class GenericDialogPlus extends GenericDialog implements KeyListener {
 	static class DirectoryListener implements ActionListener {
 		String title;
 		TextField text;
+		int fileSelectionMode;
 
-		public DirectoryListener(String title, TextField text) {
+		public DirectoryListener (String title, TextField text) {
+			this(title, text, JFileChooser.DIRECTORIES_ONLY);
+		}
+
+		public DirectoryListener (String title, TextField text, int fileSelectionMode) {
 			this.title = title;
 			this.text = text;
+			this.fileSelectionMode = fileSelectionMode;
 		}
 
 		@Override
@@ -283,7 +314,7 @@ public class GenericDialogPlus extends GenericDialog implements KeyListener {
 				directory = directory.getParentFile();
 
 			JFileChooser fc = new JFileChooser(directory);
-			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			fc.setFileSelectionMode(fileSelectionMode);
 
 			fc.showOpenDialog(null);
 			File selFile = fc.getSelectedFile();
@@ -359,8 +390,8 @@ public class GenericDialogPlus extends GenericDialog implements KeyListener {
 
 	public static void main(String[] args) {
 		GenericDialogPlus gd = new GenericDialogPlus("GenericDialogPlus Test");
-		gd.addFileField("A_file", System.getProperty("fiji.dir") + "/jars/ij.jar");
-		gd.addDirectoryField("A_directory", System.getProperty("fiji.dir") + "/plugins");
+		gd.addFileField("A_file", System.getProperty("ij.dir") + "/jars/ij.jar");
+		gd.addDirectoryField("A_directory", System.getProperty("ij.dir") + "/plugins");
 		gd.addButton("Click me!", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				IJ.showMessage("You clicked me!");

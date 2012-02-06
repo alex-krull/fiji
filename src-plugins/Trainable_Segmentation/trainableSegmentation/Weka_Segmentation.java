@@ -1185,12 +1185,11 @@ public class Weka_Segmentation implements PlugIn
 
 
 		if (Math.max(trainingImage.getWidth(), trainingImage.getHeight()) > 1024)
-			if (!IJ.showMessageWithCancel("Warning", "At least one dimension of the image \n" +
-					"is larger than 1024 pixels. \n" +
-					"Feature stack creation and classifier training \n" +
-					"might take some time depending on your computer.\n" +
-			"Proceed?"))
-				return;
+			IJ.log("Warning: at least one dimension of the image "  +
+					"is larger than 1024 pixels.\n" +
+					"Feature stack creation and classifier training " +
+					"might take some time depending on your computer.\n");
+
 
 		//trainingImage.setProcessor("Advanced Weka Segmentation", trainingImage.getProcessor().duplicate().convertToByte(true));
 		//wekaSegmentation.loadNewImage(trainingImage);
@@ -1568,7 +1567,7 @@ public class Weka_Segmentation implements PlugIn
 		// create a file chooser for the image files
 		String dir = OpenDialog.getLastDirectory();
 		if (null == dir)
-			dir = new String(".");
+			dir = OpenDialog.getDefaultDirectory();
 		JFileChooser fileChooser = new JFileChooser( dir );
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setMultiSelectionEnabled(true);
@@ -1577,6 +1576,7 @@ public class Weka_Segmentation implements PlugIn
 		int returnVal = fileChooser.showOpenDialog(null);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {
 			imageFiles = fileChooser.getSelectedFiles();
+			OpenDialog.setLastDirectory( imageFiles[ 0 ].getParent() );
 		} else {
 			return;
 		}
@@ -1655,7 +1655,8 @@ public class Weka_Segmentation implements PlugIn
 
 					ImagePlus segmentation = wekaSegmentation.applyClassifier(testImage, numFurtherThreads, probabilityMaps);
 
-					if (showResults) {
+					if (showResults && null != segmentation) 
+					{
 						segmentation.show();
 						testImage.show();
 					}
@@ -2331,7 +2332,7 @@ public class Weka_Segmentation implements PlugIn
 		 * Method to run when pressing the save feature stack button
 		 */
 		public void actionPerformed(ActionEvent e)
-		{			
+		{		
 			SaveDialog sd = new SaveDialog(title, "feature-stack", ".tif");
 			final String dir = sd.getDirectory();
 			final String fileWithExt = sd.getFileName();
@@ -2360,7 +2361,7 @@ public class Weka_Segmentation implements PlugIn
 			}
 			
 			// macro recording
-			record(SAVE_FEATURE_STACK, new String[]{ dir, fileWithExt });			
+			record(SAVE_FEATURE_STACK, new String[]{ dir, fileWithExt });
 		}
 	}	
 
