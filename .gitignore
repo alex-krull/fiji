@@ -292,6 +292,7 @@ hs_err*.log
 /modules/imagej2/jars/ij-plugin-swing.jar
 /jars/jars/ij-ui-swing.jar
 /modules/imagej2/jars/ij-ui-swing.jar
+/plugins/Cell_Blob_Tracking.jar
 /plugins/Reconstruct_Reader.jar
 /jars/mpicbg.jar
 /jars/clojure.jar

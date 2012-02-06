@@ -230,6 +230,7 @@ PLUGIN_TARGETS=plugins/Jython_Interpreter.jar \
 	plugins/SPIM_Opener.jar \
 	plugins/Reconstruct_Reader.jar \
 	jars/fiji-compat.jar \
+	plugins/Cell_Blob_Tracking.jar \
 	plugins/Fiji_Package_Maker.jar
 
 LEGACYLAUNCHER=fiji
@@ -697,3 +698,4 @@ check-*[bin/up-to-date-check.py * precompiled/*_.jar] <-
 
 MAINCLASS(jars/fake.jar)=fiji.build.Fake
 jars/fake.jar <- src-plugins/fake/**/*.java
+
