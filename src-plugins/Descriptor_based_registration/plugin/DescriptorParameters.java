@@ -34,6 +34,19 @@ public class DescriptorParameters
 	 * than minInlierFactor*4 
 	 */
 	public static float minInlierFactor = 2f;
+	
+	/**
+	 * if true we use filterRANSAC, otherwise only RANSAC
+	 */
+	public static boolean filterRANSAC = true;
+	
+	/**
+	 * How similar two descriptors at least have to be
+	 */
+	public static double minSimilarity = 100;
+	
+	// for debug
+	public static boolean printAllSimilarities = false;
 
 	public int dimensionality;
 	public double sigma1, sigma2, threshold;
@@ -49,12 +62,15 @@ public class DescriptorParameters
 	// for stack-registration
 	public int globalOpt; // 0=all-to-all; 1=all-to-all-withrange; 2=all-to-1; 3=Consecutive
 	public int range;	
+	public String directory;
 	
 	public boolean reApply = false;
 	public Roi roi1, roi2;
 	
 	public boolean setPointsRois = true;
-	public boolean fuse = true;
+	
+	// 0 == fuse in memory, 1 == write to disk, 2 == nothing
+	public int fuse = 0;
 	
 	protected AbstractModel< ? > initialModel = null; 
 	public AbstractModel<?> getInitialModel()

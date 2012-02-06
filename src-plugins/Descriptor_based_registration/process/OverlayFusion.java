@@ -5,8 +5,10 @@ import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.io.FileSaver;
 import ij.process.ImageProcessor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -49,7 +51,7 @@ public class OverlayFusion
 		return createOverlay( targetType, images, models, dimensionality, 1, new LinearInterpolatorFactory<FloatType>( new OutOfBoundsStrategyValueFactory<FloatType>() ) );
 	}
 	
-	public static <T extends RealType<T>> ImagePlus createReRegisteredSeries( final T targetType, final ImagePlus imp, final ArrayList<InvertibleBoundable> models, final int dimensionality )
+	public static <T extends RealType<T>> ImagePlus createReRegisteredSeries( final T targetType, final ImagePlus imp, final ArrayList<InvertibleBoundable> models, final int dimensionality, final String directory )
 	{
 		final int numImages = imp.getNFrames();
 
@@ -85,8 +87,27 @@ public class OverlayFusion
 				try 
 				{
 					final ImagePlus outImp = ((ImagePlusContainer<?,?>)out.getContainer()).getImagePlus();
-					for ( int z = 1; z <= out.getDimension( 2 ); ++z )
-						stack.addSlice( imp.getTitle(), outImp.getStack().getProcessor( z ) );
+					
+					if ( directory == null )
+					{
+						// fuse
+						for ( int z = 1; z <= out.getDimension( 2 ); ++z )
+							stack.addSlice( imp.getTitle(), outImp.getStack().getProcessor( z ) );
+					}
+					else
+					{
+						//write to disk
+						for ( int z = 1; z <= out.getDimension( 2 ); ++z )
+						{
+							final ImagePlus tmp = new ImagePlus( "img_t" + lz(t,numImages) + "_z" + lz(z,out.getDimension( 2 ) ) + "_c" + lz( c, imp.getNChannels() ), outImp.getStack().getProcessor( z ) );
+							final FileSaver fs = new FileSaver( tmp );
+							fs.saveAsTiff( new File( directory, tmp.getTitle() ).getAbsolutePath() );
+							tmp.close();
+						}
+						
+						out.close();
+						outImp.close();
+					}
 				} 
 				catch (ImgLibException e) 
 				{
@@ -94,6 +115,9 @@ public class OverlayFusion
 				}				
 			}
 		}
+		
+		if ( directory != null )
+			return null;
 		
 		//convertXYZCT ...
 		ImagePlus result = new ImagePlus( "registered " + imp.getTitle(), stack );
@@ -119,6 +143,16 @@ public class OverlayFusion
 		}
 	}
 	
+	private static final String lz( final int num, final int max )
+	{
+		String out = "" + num;
+		String outMax = "" + max;
+		
+		while ( out.length() < outMax.length() )
+			out = "0" + out;
+		
+		return out;
+	}
 	public static <T extends RealType<T>> CompositeImage createOverlay( final T targetType, final ArrayList<ImagePlus> images, final ArrayList<InvertibleBoundable> models, final int dimensionality, final int timepoint, final InterpolatorFactory< FloatType > factory )
 	{	
 		final int numImages = images.size();

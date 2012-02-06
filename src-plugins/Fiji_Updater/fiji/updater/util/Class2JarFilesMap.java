@@ -20,7 +20,7 @@ public class Class2JarFilesMap extends HashMap<String, ArrayList<String>> {
 	}
 
 	private void addDirectory(String directory) {
-		File dir = new File(Util.fijiRoot + "/" + directory);
+		File dir = new File(Util.ijRoot + "/" + directory);
 		if (!dir.isDirectory())
 			return;
 		String[] list = dir.list();
@@ -38,7 +38,7 @@ public class Class2JarFilesMap extends HashMap<String, ArrayList<String>> {
 
 	private void addJar(String jar) throws IOException {
 		try {
-			JarFile file = new JarFile(Util.fijiRoot + "/" + jar);
+			JarFile file = new JarFile(Util.ijRoot + "/" + jar);
 			Enumeration entries = file.entries();
 			while (entries.hasMoreElements()) {
 				String name = ((JarEntry)entries.nextElement())
@@ -58,7 +58,7 @@ public class Class2JarFilesMap extends HashMap<String, ArrayList<String>> {
 	 * handling plugin...
 	 */
 	private boolean ignore(String name, String jar) {
-		if (jar.endsWith("/batik.jar"))
+		if (jar.endsWith("/batik.jar") || jar.endsWith("/xml-apis.jar"))
 			return name.startsWith("org.xml.") ||
 				name.startsWith("org.w3c.") ||
 				name.startsWith("javax.xml.") ||

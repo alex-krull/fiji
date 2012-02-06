@@ -1,8 +1,11 @@
 package fiji.updater.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -24,6 +27,9 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /*
  * Class functionality:
  * Extend from it if you need to
@@ -44,51 +50,59 @@ public class Util {
 	// Note: ij.Prefs is only saved during shutdown of Fiji
 	public static final String PREFS_USER = "fiji.updater.login";
 
-	public final static boolean useMacPrefix;
 	public final static String macPrefix = "Contents/MacOS/";
 
-	public final static String fijiRoot, platform;
+	public final static String ijRoot, platform;
 	public final static boolean isDeveloper;
 	public final static String[] platforms, launchers;
 	protected final static Set<String> updateablePlatforms;
 
 	static {
-		String property = System.getProperty("fiji.dir");
-		fijiRoot = property != null ? property + File.separator :
+		String property = System.getProperty("ij.dir");
+		ijRoot = property != null ? property + File.separator :
 			new Util().getClass().getResource("Util.class")
 			.toString().replace("jar:file:", "")
 			.replace("plugins/Fiji_Updater.jar!/"
 				+ "fiji/updater/util/Util.class", "");
-		isDeveloper = new File(fijiRoot + "/fiji.c").exists();
+		isDeveloper = new File(ijRoot + "/ImageJ.c").exists();
 		platform = getPlatform();
 
-		String macLauncher = macPrefix + "fiji-macosx";
-		useMacPrefix = platform.equals("macosx") &&
-			new File(fijiRoot + "/" + macLauncher).exists();
-
-		String[] list = {
-			"linux", "linux64", "macosx", "tiger", "win32", "win64"
+		platforms = new String[] {
+			"linux32", "linux64", "macosx", "tiger", "win32", "win64"
 		};
+		int macIndex = 2;
+		Arrays.sort(platforms);
 
-		Arrays.sort(list);
-		platforms = list.clone();
-		for (int i = 0; i < list.length; i++)
-			list[i] = "fiji-" + list[i] +
-				(list[i].startsWith("win") ? ".exe" : "");
-		launchers = list.clone();
+		launchers = platforms.clone();
+		for (int i = 0; i < launchers.length; i++)
+			launchers[i] = (i == macIndex || i == macIndex + 1 ? macPrefix : "") +
+				"ImageJ-" + platforms[i] +
+				(platforms[i].startsWith("win") ? ".exe" : "");
+		Arrays.sort(launchers);
 
 		updateablePlatforms = new HashSet<String>();
 		updateablePlatforms.add(platform);
-		if (new File(fijiRoot, macLauncher).exists())
+		if (new File(ijRoot, launchers[macIndex]).exists() ||
+				new File(ijRoot, macPrefix + "fiji-macosx").exists())
 			updateablePlatforms.add("macosx");
-		String[] files = new File(fijiRoot).list();
+		String[] files = new File(ijRoot).list();
 		for (String name : files == null ? new String[0] : files)
-			if (name.startsWith("fiji-")) {
-				name = name.substring(5);
-				if (name.endsWith(".exe"))
-					name = name.substring(0, name.length() - 4);
-				updateablePlatforms.add(name);
-			}
+			if (name.startsWith("ImageJ-") || name.startsWith("fiji-"))
+				updateablePlatforms.add(platformForLauncher(name));
+	}
+
+	public static String platformForLauncher(String fileName) {
+		int dash = fileName.lastIndexOf('-');
+		if (dash < 0)
+			return null;
+		String name = fileName.substring(dash + 1);
+		if (name.endsWith(".exe"))
+			name = name.substring(0, name.length() - 4);
+		if (name.equals("tiger") || name.equals("panther"))
+			name = "macosx";
+		else if (name.equals("linux"))
+			name = "linux32";
+		return name;
 	}
 
 	private Util() {} // make sure this class is not instantiated
@@ -102,8 +116,6 @@ public class Util {
 	public static String stripPrefix(String string, String prefix) {
 		if (!string.startsWith(prefix))
 			return string;
-		if (useMacPrefix && string.startsWith(prefix + macPrefix))
-			return string.substring((prefix + macPrefix).length());
 		return string.substring(prefix.length());
 	}
 
@@ -112,7 +124,7 @@ public class Util {
 			System.getProperty("os.arch", "").indexOf("64") >= 0;
 		String osName = System.getProperty("os.name", "<unknown>");
 		if (osName.equals("Linux"))
-			return "linux" + (is64bit ? "64" : "");
+			return "linux" + (is64bit ? "64" : "32");
 		if (osName.equals("Mac OS X"))
 			return "macosx";
 		if (osName.startsWith("Windows"))
@@ -260,13 +272,9 @@ public class Util {
 	public static String prefix(String path) {
 		if (new File(path).isAbsolute())
 			return path;
-		if (useMacPrefix && path.startsWith(macPrefix))
-			path = path.substring(macPrefix.length());
 		if (File.separator.equals("\\"))
 			path = path.replace("\\", "/");
-		return fijiRoot + (isLauncher(path) ?
-				(isDeveloper ? "precompiled/" :
-				 (useMacPrefix ? macPrefix : "")) : "") + path;
+		return ijRoot + path;
 	}
 
 	public static String prefixUpdate(String path) {
@@ -278,15 +286,16 @@ public class Util {
 	}
 
 	public static boolean isLauncher(String filename) {
-		return Arrays.binarySearch(launchers,
-				stripPrefix(stripPrefix(filename, fijiRoot), "precompiled/")) >= 0;
+		return Arrays.binarySearch(launchers, stripPrefix(filename, ijRoot)) >= 0;
 	}
 
 	public static String[] getLaunchers() {
 		if (platform.equals("macosx"))
-			return new String[] { "fiji-macosx", "fiji-tiger" };
+			return new String[] {
+				macPrefix + "ImageJ-macosx", macPrefix + "ImageJ-tiger"
+			};
 
-		int index = Arrays.binarySearch(launchers, "fiji-" + platform);
+		int index = Arrays.binarySearch(launchers, "ImageJ-" + platform);
 		if (index < 0)
 			index = -1 - index;
 		return new String[] { launchers[index] };
@@ -310,5 +319,42 @@ public class Util {
 
 	public static void useSystemProxies() {
 		System.setProperty("java.net.useSystemProxies", "true");
+	}
+
+	protected static String readFile(File file) throws IOException {
+		StringBuilder builder = new StringBuilder();
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		for (;;) {
+			String line = reader.readLine();
+			if (line == null)
+				break;
+			builder.append(line).append('\n');
+		}
+		reader.close();
+
+		return builder.toString();
+	}
+
+	// This method writes to a .bup file and then renames; this might not work on Windows
+	protected static void writeFile(File file, String contents) throws IOException {
+		File result = new File(file.getAbsoluteFile().getParentFile(), file.getName() + ".new");
+		FileOutputStream out = new FileOutputStream(result);
+		out.write(contents.getBytes());
+		out.close();
+		result.renameTo(file);
+	}
+
+	public static boolean patchInfoPList(String executable) throws IOException {
+		File infoPList = new File(ijRoot, "Contents/Info.plist");
+		if (!infoPList.exists())
+			return false;
+		String contents = readFile(infoPList);
+		Pattern pattern = Pattern.compile(".*<key>CFBundleExecutable</key>[^<]*<string>([^<]*).*", Pattern.DOTALL | Pattern.MULTILINE);
+		Matcher matcher = pattern.matcher(contents);
+		if (!matcher.matches())
+			return false;
+		contents = contents.substring(0, matcher.start(1)) + executable + contents.substring(matcher.end(1));
+		writeFile(infoPList, contents);
+		return true;
 	}
 }

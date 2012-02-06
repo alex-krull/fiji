@@ -6,7 +6,7 @@ import ij.gui.Roi;
 
 
 public abstract class Trackable {
-	protected int sequenceId;
+	public int sequenceId;
 	protected int frameId;
 	
 	protected Trackable(int seqId, int fId){

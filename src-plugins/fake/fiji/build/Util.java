@@ -108,10 +108,8 @@ public class Util {
 		if (target.equals(source))
 			return;
 		try {
-			if (!target.startsWith("/"))
-				target = cwd + "/" + target;
-			if (!source.startsWith("/"))
-				source = cwd + "/" + source;
+			target = makePath(cwd, target);
+			source = makePath(cwd, source);
 			File parent = new File(target).getParentFile();
 			if (!parent.exists())
 				parent.mkdirs();
@@ -265,7 +263,7 @@ public class Util {
 		boolean is64bit = System.getProperty("os.arch", "").indexOf("64") >= 0;
 		String osName = System.getProperty("os.name", "<unknown>");
 		if (osName.equals("Linux"))
-			return "linux" + (is64bit ? "64" : "");
+			return "linux" + (is64bit ? "64" : "32");
 		if (osName.equals("Mac OS X"))
 			return "macosx";
 		if (osName.startsWith("Windows"))

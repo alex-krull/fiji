@@ -1,83 +1,84 @@
 package frameWork;
 
 import ij.IJ;
+import ij.ImageListener;
+import ij.ImagePlus;
+import ij.gui.ImageCanvas;
+import ij.gui.Line;
+import ij.gui.Overlay;
+import ij.gui.Roi;
+import ij.plugin.ContrastEnhancer;
 
-import java.util.ArrayList;
+import java.awt.Color;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
+import tools.ImglibTools;
+
+import net.imglib2.Cursor;
+import net.imglib2.IterableInterval;
+import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.Img;
+import net.imglib2.img.ImgFactory;
+import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
+import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
-public class Controller<T extends Trackable, IT extends Type<IT>> { 
-
-private	List<Frame <T,IT>> frames;
-private	RandomAccessibleInterval<IT> image;
-private Frame<T,IT> factory;
-private SortedMap <Integer, Sequence<T>> Sequences;
-public T selected;
+public abstract class Controller<T extends Trackable > {
 
 
-public Controller(RandomAccessibleInterval<IT> img , Frame<T,IT> fact){
-	Sequences= new TreeMap<Integer, Sequence<T>>();
-	image=img;
-	factory=fact;
-	frames= new ArrayList<Frame<T,IT>>();
-	for(int i=0;i<40000;i++){
-		Frame<T,IT> f=factory.createFrame(i,getFrameView(i,0));
-		frames.add(f);
-		
+	protected int currentFrameNumber=0;
+	protected int currentSliceNumber=0;
+	protected int currentChannelNumber=0;
+	protected boolean buisy=false;
+	protected double xyToZ=3.5;
+	protected double mouseX=0;
+	protected double mouseY=0;
+	protected double mouseZ=0;
+	protected int selectedSequenceId;
+	
+	protected Model<T,?> model;
+
+	 
+	protected Controller( Model<T,?> mod){
+		model =mod;
 	}
+     
 	
-}
+private synchronized void updatePosition(int x,int y, int slice ,int frame, int channel){
 
-public void optimizeFrame(int frameId){
-	Frame f= frames.get(frameId);
-	f.optimizeFrame();
-}
-
-public int selectAt(int x, int y, int z, int frameId){
-	Frame f= frames.get(frameId);
-	return f.selectAt(x, y, z);
-}
-
-public void addTrackable(T trackable){
+	if(buisy) return;
+	buisy=true;
+	System.out.println("oframe:"+ currentFrameNumber+ "   oslice:"+ currentSliceNumber+ "  ochannel:"+currentChannelNumber );
 	
-	frames.get(trackable.frameId).addTrackable(trackable);
-	Sequence<T> sequence= Sequences.get(trackable.sequenceId);
-	if(sequence==null){
-		
-		sequence=new Sequence<T>(trackable.sequenceId, Integer.toString(trackable.sequenceId));
-		System.out.println("Adding Seq!");
-		Sequences.put(trackable.sequenceId, sequence);
-	}
-	sequence.addTrackable(trackable);
-}
-
-private  RandomAccessibleInterval<IT> getFrameView(int frameNumber, int channelNumber){
-//	System.out.println("fn:"+frameNumber);
-	return Views.hyperSlice(image, 2, frameNumber);
-}
-
-public List<T> getTrackablesForFrame(int frame){
-	return frames.get(frame).getTrackables();
-}
-
-public T getTrackable(int seqId, int frameId){
-	Sequence<T> sequence= Sequences.get(seqId);	
-	if (sequence==null){
-		
-		return null;
-	}
-	return sequence.getTrackableForFrame(frameId);
+	currentSliceNumber=slice;
+	currentFrameNumber=frame;
+	currentChannelNumber=channel;
+	//if (mainImage.getNFrames()<=1 && mainImage.getNSlices()>1) mainImage.setPosition(channel+1, frame+1, slice+1); // switch dimensions
+	//else mainImage.setPosition(channel+1, slice+1, frame+1);
+	//this.upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, false);
+	System.out.println("nframe:"+ currentFrameNumber+ "   nslice:"+ currentSliceNumber+ "  nchannel:"+currentChannelNumber );
+	//mainImage.setSlice(slice+1);
 	
+	buisy=false;
+
 }
 
+public abstract void click(long[] position);
 
 
-	
-	
 }

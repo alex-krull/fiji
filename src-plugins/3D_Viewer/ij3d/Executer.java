@@ -11,12 +11,15 @@ import ij.io.SaveDialog;
 import ij.plugin.frame.Recorder;
 import ij.text.TextWindow;
 import ij3d.gui.ContentCreatorDialog;
+import ij3d.gui.InteractiveMeshDecimation;
 import ij3d.gui.InteractiveTransformDialog;
 import ij3d.gui.LUTDialog;
+import ij3d.gui.PrimitiveDialogs;
 import ij3d.shapes.Scalebar;
 import ij3d.shortcuts.ShortCutDialog;
 import isosurface.MeshEditor;
 import isosurface.MeshExporter;
+import isosurface.MeshGroup;
 import isosurface.SmoothControl;
 
 import java.awt.Button;
@@ -49,6 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.media.j3d.Background;
 import javax.media.j3d.PointLight;
 import javax.media.j3d.Transform3D;
+import javax.swing.JFileChooser;
 import javax.vecmath.Color3f;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Matrix4f;
@@ -100,6 +104,7 @@ public class Executer {
 	public static final String RESET_TRANSFORM = "resetTransform";
 	public static final String IMPORT = "importContent";
 	public static final String EXPORT = "exportContent";
+	public static final String SNAPSHOT = "snapshot";
 
 	// TODO
 	public static final String ADD = "add";
@@ -120,16 +125,15 @@ public class Executer {
 	 * *********************************************************/
 
 	public void addContentFromFile() {
-		OpenDialog od = new OpenDialog("Open from file", null);
-		String folder = od.getDirectory();
-		String name = od.getFileName();
-		if(folder == null || name == null)
+		JFileChooser chooser = new JFileChooser(OpenDialog.getLastDirectory());
+		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		chooser.setMultiSelectionEnabled(false);
+		int returnVal = chooser.showOpenDialog(null);
+		if (returnVal != JFileChooser.APPROVE_OPTION)
 			return;
-		File f = new File(folder, name);
-		if(f.exists())
-			addContent(null, f);
-		else
-			IJ.error("Can not load " + f.getAbsolutePath());
+		File f = chooser.getSelectedFile();
+		OpenDialog.setLastDirectory(f.getParentFile().getAbsolutePath());
+		addContent(null, f);
 	}
 
 	public void addContentFromImage(ImagePlus image) {
@@ -641,6 +645,25 @@ public class Executer {
 	/** Interactively smooth meshes, with undo. */
 	public void smoothControl() {
 		new SmoothControl(univ);
+	}
+
+	public void decimateMesh() {
+		Content c = univ.getSelected();
+		if(c == null)
+			return;
+		CustomTriangleMesh ctm;
+		ContentNode n = c.getContent();
+		if(n instanceof CustomMeshNode) {
+			if(((CustomMeshNode)n).getMesh() instanceof CustomTriangleMesh)
+				ctm = (CustomTriangleMesh)((CustomMeshNode) n).getMesh();
+			else
+				return;
+		} else if (n instanceof MeshGroup) {
+			ctm = ((MeshGroup)n).getMesh();
+		} else {
+			return;
+		}
+		new InteractiveMeshDecimation().run(ctm);
 	}
 
 	/* ----------------------------------------------------------
@@ -1388,6 +1411,27 @@ public class Executer {
 	}
 
 	/* **********************************************************
+	 * Add menu
+	 * *********************************************************/
+	public void addTube() {
+		PrimitiveDialogs.addTube(univ);
+	}
+
+	public void addSphere() {
+		PrimitiveDialogs.addSphere(univ);
+	}
+
+	public void addCone() {
+		PrimitiveDialogs.addCone(univ);
+	}
+
+	public void addBox() {
+		PrimitiveDialogs.addBox(univ);
+	}
+
+
+
+	/* **********************************************************
 	 * View menu
 	 * *********************************************************/
 	public void resetView() {
@@ -1512,8 +1556,8 @@ public class Executer {
 			return;
 		}
 		univ.takeSnapshot(w, h).show();
+		record(SNAPSHOT, Integer.toString(w), Integer.toString(h));
 	}
-
 
 	public void viewPreferences() {
 		UniverseSettings.initFromDialog(univ);
