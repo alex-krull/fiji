@@ -24,11 +24,11 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		// TODO Auto-generated method stub
 		long time0= System.nanoTime();
 		ImagePlus imp=IJ.getImage();
-		Img<IT> img= ImagePlusAdapter.wrap(imp);
 		System.out.println("creating Model...");
-		Model<Blob, IT> model= new Model<Blob,IT>(img, new BlobFactory<IT>());
+		Model<Blob, IT> model= new Model<Blob,IT>(imp, new BlobFactory<IT>());
 				System.out.println("creating Controller...");
-		BlobController<IT> bc= new BlobController<IT>(imp, img,model);
+					
+		BlobController<IT> bc= new BlobController<IT>(imp, model);
 		System.out.println("creating ViewModel...");
 		ViewModel<Blob,IT> vm= new ViewModel<Blob,IT>(imp, model,bc);
 		System.out.println("done!");

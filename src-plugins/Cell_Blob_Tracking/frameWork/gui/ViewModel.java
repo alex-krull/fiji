@@ -35,20 +35,12 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
 	protected RandomAccessibleInterval<IT> image;
 	
 	
-	protected boolean isVolume=false;
-	protected boolean isTimeSequence=false;
-	protected boolean isMultiChannel=false;
 	
-	protected boolean buisy=false;
+	
 	
 	protected ImagePlus mainImage;
 		
-	protected RandomAccessibleInterval<IT> zProjections;
-	protected RandomAccessibleInterval<IT> xProjections;
-	protected RandomAccessibleInterval<IT> yProjections;
-	protected RandomAccessibleInterval<IT> xtProjections;
-	protected RandomAccessibleInterval<IT> ytProjections; 
-	
+		
 	protected int currentFrameNumber=0;
 	protected int currentSliceNumber=0;
 	protected int currentChannelNumber=0;
@@ -96,31 +88,16 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
        image = model.getImage();
        
        System.out.println("channels:" +mainImage.getNChannels()+ "  frames:"+mainImage.getNFrames()+ "  slices:"+mainImage.getNSlices());
-       this.isVolume=mainImage.getNSlices()>1;
-       this.isTimeSequence=mainImage.getNFrames()>1;
-       this.isMultiChannel=mainImage.getNChannels()>1;
-       
-       if(isVolume&&!isTimeSequence){
-    	   isVolume=false;
-    	   isTimeSequence=true;
-    	   System.out.println("SWITCHING DIMENSIONS");
-       }
        
        
-       
-       if(isMultiChannel){
-    	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,image.numDimensions()-1),2) );
-       if(image.numDimensions()==5)  	   
-    	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,3),2 ));
-       
-       }
+    
   	     
        
        
  		System.out.println("dimensions:" + image.numDimensions());
        
-        
-       if(isVolume){
+   /*     
+       if(model.isVolume()){
  	   
     	   zProjections=ImglibTools.projection(image,2,20);
     	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0,20),0,1) ),0  ) ); 
@@ -142,17 +119,17 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
     	   ytProjections=ImglibTools.projection(image,1);
        }
        
-       
+    */   
        
        views= new ArrayList<ViewWindow<T,IT>>();
         
-       views.add(new MaxProjectionX<T,IT>(model, image,this));
-       views.add(new MaxProjectionY<T,IT>(model, image,this));
-       views.add(new KymographY<T,IT>(model, ytProjections,this));
-       views.add(new MaxProjectionZ<T,IT>(model, image,this));
-       views.add(new KymographX<T,IT>(model, xtProjections,this));
+       views.add(new MaxProjectionX<T,IT>(model, this));
+       views.add(new MaxProjectionY<T,IT>(model, this));
+    //   views.add(new KymographY<T,IT>(model, ytProjections,this));
+       views.add(new MaxProjectionZ<T,IT>(model, this));
+   //    views.add(new KymographX<T,IT>(model, xtProjections,this));
        
-       views.add(new MainWindow<T,IT>(mainImage, image, model, this));
+       views.add(new MainWindow<T,IT>(mainImage, model, this));
        this.upDateImages(0, 0, 0,true);
        
        
@@ -167,6 +144,7 @@ public void setPosition(int dim, int pos){
 	
 	if(dim==2)this.currentSliceNumber= pos;
 	if(dim==3)this.currentFrameNumber= pos;
+	if(dim==4)this.currentChannelNumber= pos;
 	
 	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, true );
 

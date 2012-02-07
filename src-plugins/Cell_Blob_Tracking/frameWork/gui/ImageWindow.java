@@ -19,13 +19,14 @@ import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.Views;
 import frameWork.Model;
 import frameWork.Sequence;
 import frameWork.Trackable;
 
 public abstract class ImageWindow  <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ViewWindow<T,IT>{
 	
-	protected ImagePlus imp;
+	protected ImagePlus imp=null;
 	protected RandomAccessibleInterval<IT> image;
 	protected ImageCanvas canvas;
 	protected Overlay ov;
@@ -36,31 +37,36 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 
 	protected RandomAccessibleInterval<IT> toDraw;
 	
-	public ImageWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title, ViewModel<T,IT> vm){
+	public ImageWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title, ViewModel<T,IT> vm, ImagePlus imagePlus){
 		super(mod, title,vm);
+		imp=imagePlus;
+		
 		ov= new Overlay();
 		image=img;
-		
+	 	if(imp==null) rePaint(vm.getPosition(),true);
 	}
 	
-	public void reDraw(boolean rePaintImage){
+	public void reDraw(long[] position, boolean rePaintImage){
 		if(rePaintImage){
-			
-		toDraw=ImglibTools.scaleByFactor(toDraw, 0, scaleX);
-		toDraw=ImglibTools.scaleByFactor(toDraw, 1, scaleY);
-		ImagePlus impl=ImageJFunctions.wrap( toDraw , caption);
-	//	transX=(scaleX*(double)impl.getProcessor().getWidth()- (double)impl.getProcessor().getWidth())/2.0;
-	//	transY=(scaleY*(double)impl.getProcessor().getHeight()- (double)impl.getProcessor().getHeight())/2.0;
-	    ContrastEnhancer ce= new ContrastEnhancer();
-    	ce.stretchHistogram(impl.getProcessor(), 0.5); 
+			System.out.println("dimensions:"+toDraw.numDimensions());
+			System.out.println("cn:"+position[4]);
+			if (toDraw.numDimensions()>2) toDraw=Views.hyperSlice(toDraw,2,position[4]);
+			System.out.println("dimensions after:"+toDraw.numDimensions());
+			toDraw=ImglibTools.scaleByFactor(toDraw, 0, scaleX);
+			toDraw=ImglibTools.scaleByFactor(toDraw, 1, scaleY);
+			if(imp==null) imp= ImageJFunctions.show(toDraw,caption);
+			ImagePlus impl=ImageJFunctions.wrap( toDraw , caption);
+			//	transX=(scaleX*(double)impl.getProcessor().getWidth()- (double)impl.getProcessor().getWidth())/2.0;
+			//	transY=(scaleY*(double)impl.getProcessor().getHeight()- (double)impl.getProcessor().getHeight())/2.0;
+			ContrastEnhancer ce= new ContrastEnhancer();
+			ce.stretchHistogram(impl.getProcessor(), 0.5); 
     	
+			
 	
-    	this.imp.setProcessor(impl.getProcessor());
+			this.imp.setProcessor(impl.getProcessor());
 	
 		}
 		imp.setOverlay(ov);
-		
-	
 		imp.updateAndDraw();
     	
 	}

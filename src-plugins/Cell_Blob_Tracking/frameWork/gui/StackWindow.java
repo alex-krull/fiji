@@ -19,11 +19,11 @@ public class StackWindow <T extends Trackable , IT extends  NumericType<IT> & Na
 	
 	
 	public StackWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title, int sDim,  ViewModel<T,IT> vm){
-		super(mod, img ,title, vm);
+		super(mod, img ,title, vm,null);
 		stackDimension=sDim;
 		
-		RandomAccessibleInterval<IT> imgSlice=Views.hyperSlice(image,2,0);
-		imp=ImageJFunctions.show(imgSlice,caption);
+		toDraw=Views.hyperSlice(image,2,0);
+		
 	}
 	
 	
@@ -32,7 +32,7 @@ public class StackWindow <T extends Trackable , IT extends  NumericType<IT> & Na
 		long frameNumber= position[stackDimension];
 		toDraw=Views.hyperSlice(image,2,frameNumber);
 	
-    	super.reDraw(rePaintImage);
+    	super.reDraw( position ,rePaintImage);
     	
 	}
 	

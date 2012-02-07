@@ -12,18 +12,16 @@ import frameWork.Trackable;
 
 public class SingleImageWindow <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<T,IT>{
 	SingleImageWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title,  ViewModel<T,IT> vm){
-		super(mod, img ,title, vm);
+		super(mod, img ,title, vm,null);
 		imp=ImageJFunctions.show(image,caption);
 	}
 
 
 
 	@Override
-	public void rePaint(long[] position, boolean rePaintImage) {
-		
+	public void rePaint(long[] position, boolean rePaintImage) {	
 		toDraw=image;
-    	super.reDraw(rePaintImage);
-    	
+    	super.reDraw(position, rePaintImage);
 	}
 
 

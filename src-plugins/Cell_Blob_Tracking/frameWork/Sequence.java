@@ -46,21 +46,5 @@ public abstract class Sequence<T extends Trackable> {
 	public abstract void getKymoOverlayX(Overlay ov, double scaleX, double scaleY);
 	public abstract void getKymoOverlayY(Overlay ov, double scaleX, double scaleY);
 	
-	private List<List<T>> getPieces(){
-		List<List<T>> result =new ArrayList <List<T>>();
-		
-		List<T> localList=null;
-		for(int i=trackables.firstKey();i<trackables.lastKey();i++){
-			T currentT = trackables.get(i);
-			if (currentT!=null){
-				if(localList==null)	localList=new ArrayList<T>();			
-				localList.add(currentT);
-			}else{
-				if(localList!=null) result.add(localList);
-				localList=null;
-			}
-		}
-		
-		return result;
-	}
+
 }

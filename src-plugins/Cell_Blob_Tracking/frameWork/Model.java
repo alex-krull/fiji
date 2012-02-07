@@ -1,6 +1,7 @@
 package frameWork;
 
 import ij.IJ;
+import ij.ImagePlus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +9,10 @@ import java.util.Observable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import tools.ImglibTools;
+
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.Img;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
@@ -24,12 +28,86 @@ private Factory<T,IT> factory;
 private SortedMap <Integer, Sequence<T>> Sequences;
 public T selected;
 public double xyToZ=3.5;
+private boolean isVolume=false;
+private boolean isTimeSequence=false;
+private boolean isMultiChannel=false;
 
-public Model(RandomAccessibleInterval<IT> img , Factory<T,IT> fact){
+private RandomAccessibleInterval<IT> zProjections = null;
+private RandomAccessibleInterval<IT> xProjections = null;
+private RandomAccessibleInterval<IT> yProjections = null;
+private RandomAccessibleInterval<IT> xtProjections= null;
+private RandomAccessibleInterval<IT> ytProjections= null; 
+
+public synchronized RandomAccessibleInterval<IT> getXProjections(){
+	if(xProjections==null) xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0),0,1) ),0  ) ); 
+	return xProjections;
+}
+
+public synchronized RandomAccessibleInterval<IT> getYProjections(){
+	if(yProjections==null) yProjections=ImglibTools.projection(image,1);
+	return yProjections;
+}
+
+public synchronized RandomAccessibleInterval<IT> getZProjections(){
+	if(zProjections==null) zProjections=ImglibTools.projection(image,2);
+	return zProjections;
+}
+
+public boolean isVolume() {
+	return isVolume;
+}
+
+
+public void setVolume(boolean isVolume) {
+	this.isVolume = isVolume;
+}
+
+
+public boolean isTimeSequence() {
+	return isTimeSequence;
+}
+
+
+public void setTimeSequence(boolean isTimeSequence) {
+	this.isTimeSequence = isTimeSequence;
+}
+
+
+public boolean isMultiChannel() {
+	return isMultiChannel;
+}
+
+
+public void setMultiChannel(boolean isMultiChannel) {
+	this.isMultiChannel = isMultiChannel;
+}
+
+public Model(ImagePlus imp , Factory<T,IT> fact){
 	Sequences= new TreeMap<Integer, Sequence<T>>();
-	image=img;
+	image=ImagePlusAdapter.wrap(imp);
 	factory=fact;
 	frames= new ArrayList<Frame<T,IT>>();
+	
+	setTimeSequence(imp.getNFrames()>1);
+	setMultiChannel(imp.getNChannels()>1);
+	setVolume(imp.getNSlices()>1);	
+	
+	if(isVolume&&!isTimeSequence){
+ 	   isVolume=false;
+ 	   isTimeSequence=true;
+ 	   System.out.println("SWITCHING DIMENSIONS");
+    }
+	
+	
+	   if(isMultiChannel()){
+    	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,image.numDimensions()-1),2) );
+       if(image.numDimensions()==5)  	   
+    	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,3),2 ));
+       
+       }
+	   
+	   
+	
 	for(int i=0;i<40000;i++){
 		Frame<T,IT> f=factory.produceFrame(i,getFrameView(i,0));
 		frames.add(f);

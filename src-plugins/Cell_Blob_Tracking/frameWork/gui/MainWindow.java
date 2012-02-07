@@ -1,5 +1,9 @@
 package frameWork.gui;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
 import ij.ImageListener;
 import ij.ImagePlus;
 import net.imglib2.RandomAccessibleInterval;
@@ -9,26 +13,28 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 import frameWork.Trackable;
 
-public class MainWindow  <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<T,IT> implements ImageListener {
+public class MainWindow  <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<T,IT>
+implements ImageListener, MouseListener, MouseMotionListener{
 
 	private int currentFrameNumber;
 	private int currentSliceNumber;
 	private int currentChannelNumber;
-	private ImagePlus imp; 
-	
-	protected MainWindow(ImagePlus imagePlus,  RandomAccessibleInterval<IT> img, Model<T, IT> mod, ViewModel<T, IT> vm) {
-		super(mod, img, imagePlus.getWindow().getTitle(), vm);
-		imp=imagePlus;
-		// TODO Auto-generated constructor stub
+		
+	protected MainWindow(ImagePlus imagePlus, Model<T, IT> mod, ViewModel<T, IT> vm) {
+		super(mod, mod.getImage(), imagePlus.getWindow().getTitle(), vm, imagePlus);
+		
+		
 		currentFrameNumber= imp.getFrame()-1;
 		currentSliceNumber= imp.getSlice()-1;
 		currentChannelNumber=imp.getChannel()-1;
+		imp.getCanvas().addMouseListener(this);
+		imp.getCanvas().addMouseMotionListener(this);
 		ImagePlus.addImageListener(this);
 	}
 
 	@Override
 	public void rePaint(long[] position, boolean rePaintImage) {
-		
+	
 			
 		if(position.length>3)currentFrameNumber= (int)position[3];
 		if(position.length>2)currentSliceNumber= (int)position[2];
@@ -89,6 +95,61 @@ public class MainWindow  <T extends Trackable , IT extends  NumericType<IT> & Na
 	
 		return;
 		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		viewModel.mouseAtPosition(positionFromEvent(e), e);	
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		
+		
+		viewModel.mouseAtPosition(positionFromEvent(e), e);			
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		
+		viewModel.mouseAtPosition(positionFromEvent(e), e);		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private long[] positionFromEvent(MouseEvent e){
+		int x=(int)((double)imp.getCanvas().offScreenX(e.getX())/this.scaleX);
+		int y=(int)((double)imp.getCanvas().offScreenY(e.getY())/this.scaleY);
+		System.out.println("x:"+ x +"  y:"+y);
+		
+		
+			long[] pos= viewModel.getPosition();
+			pos[0]=x;
+			pos[1]=y; 			
+		return pos;
 	}
 
 
