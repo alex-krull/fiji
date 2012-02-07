@@ -15,11 +15,11 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 import frameWork.Trackable;
 
-public class MaxProjectionZ <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends StackWindow<T,IT> 
+public class MaxProjectionZ <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<T,IT> 
 implements MouseListener, MouseMotionListener {
 	
 	public MaxProjectionZ(Model<T,IT> mod, ViewModel<T,IT> vm){
-		super(mod, mod.getZProjections(), "max-Z-projection",3,  vm);
+		super(mod, null, "max-Z-projection", vm, null);
 		imp.getCanvas().addMouseListener(this);
 		imp.getCanvas().addMouseMotionListener(this);
 	}
@@ -28,7 +28,10 @@ implements MouseListener, MouseMotionListener {
 		
 		this.clearOverlay();
 		addZOverlayes((int)position[3]);
-		super.rePaint(position, rePaintImage);
+		int frameNumber= (int)position[3];
+		toDraw=model.getFrame(frameNumber).getZProjections();
+		reDraw( position ,rePaintImage);
+		//super.rePaint(position, rePaintImage);
 	}
 
 	@Override

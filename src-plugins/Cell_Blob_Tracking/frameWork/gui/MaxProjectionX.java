@@ -18,12 +18,12 @@ import frameWork.Trackable;
 
 
 
-	public class MaxProjectionX <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends StackWindow<T,IT> implements MouseListener, MouseMotionListener{
+	public class MaxProjectionX <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<T,IT> implements MouseListener, MouseMotionListener{
 		
 		public MaxProjectionX(Model<T,IT> mod, ViewModel<T,IT> vm){
 			super(mod, 
-				     mod.getXProjections(),						
-					"max-X-projection",3, vm);
+				     null,		
+					"max-X-projection",vm, null);
 			this.scaleX=model.xyToZ;
 			
 			imp.getCanvas().addMouseListener(this);
@@ -35,7 +35,11 @@ import frameWork.Trackable;
 			
 			this.addXOverlayes((int)position[3]);
 			this.addXLineOverlay(((double)position[2]));
-			super.rePaint(position, rePaintImage);
+			
+			int frameNumber= (int)position[3];
+			toDraw=model.getFrame(frameNumber).getXProjections();
+			reDraw( position ,rePaintImage);
+	
 			}
 
 		@Override

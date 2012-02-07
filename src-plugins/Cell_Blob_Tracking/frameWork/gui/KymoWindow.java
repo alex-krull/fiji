@@ -11,14 +11,14 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 import frameWork.Trackable;
 
-public abstract class KymoWindow <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends SingleImageWindow<T,IT> implements MouseWheelListener {
+public abstract class KymoWindow <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<T,IT> implements MouseWheelListener {
 
 	protected RandomAccessibleInterval<IT> originalImage;
 	protected double timeScale=1;
 	protected double tics=0;
 	
 	public KymoWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<T,IT> vm){
-		super(mod, img, "kymograph", vm);
+		super(mod, img, "kymograph", vm, null);
 		originalImage=img;
 		
 		
@@ -27,7 +27,7 @@ public abstract class KymoWindow <T extends Trackable , IT extends  NumericType<
 	}
 	
 	public void rePaint(long[] position, boolean rePaintImage){
-		super.rePaint(position, rePaintImage);
+		reDraw(position, rePaintImage);
 	}
 	
 	@Override

@@ -14,15 +14,15 @@ import frameWork.Model;
 import frameWork.Trackable;
 
 
-public class MaxProjectionY <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends StackWindow<T,IT> 
+public class MaxProjectionY <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<T,IT> 
 implements MouseListener, MouseMotionListener {
 		
 		public MaxProjectionY(Model<T,IT> mod, ViewModel<T,IT> vm){
 			super(mod, 
 					//ImglibTools.scaleByFactor(
-							mod.getYProjections(),
+							null,
 					//1,mod.xyToZ)
-					"max-Y-projection",3,vm);
+					"max-Y-projection",vm,null);
 			this.scaleY=model.xyToZ;
 			imp.getCanvas().addMouseListener(this);
 			imp.getCanvas().addMouseMotionListener(this);
@@ -33,7 +33,10 @@ implements MouseListener, MouseMotionListener {
 			
 			this.addYOverlayes((int)position[3]);
 			this.addYLineOverlay((double)position[2]);
-			super.rePaint(position, rePaintImage);
+			int frameNumber= (int)position[3];
+			toDraw=model.getFrame(frameNumber).getYProjections();
+			reDraw( position ,rePaintImage);
+			//super.rePaint(position, rePaintImage);
 		}
 
 		@Override

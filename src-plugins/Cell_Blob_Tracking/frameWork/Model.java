@@ -38,6 +38,7 @@ private RandomAccessibleInterval<IT> yProjections = null;
 private RandomAccessibleInterval<IT> xtProjections= null;
 private RandomAccessibleInterval<IT> ytProjections= null; 
 
+
 public synchronized RandomAccessibleInterval<IT> getXProjections(){
 	if(xProjections==null) xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0),0,1) ),0  ) ); 
 	return xProjections;
@@ -150,7 +151,11 @@ public void addTrackable(T trackable){
 
 private  RandomAccessibleInterval<IT> getFrameView(int frameNumber, int channelNumber){
 //	System.out.println("fn:"+frameNumber);
-	return Views.hyperSlice(image, 2, frameNumber);
+	return Views.hyperSlice(image, 3, frameNumber);
+}
+
+public Frame<T,IT> getFrame(int frame){
+	return frames.get(frame);
 }
 
 public List<T> getTrackablesForFrame(int frame){
