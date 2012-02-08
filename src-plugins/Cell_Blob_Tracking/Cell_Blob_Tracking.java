@@ -25,15 +25,15 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		long time0= System.nanoTime();
 		ImagePlus imp=IJ.getImage();
 		System.out.println("creating Model...");
-		Model<Blob, IT> model= new Model<Blob,IT>(imp, new BlobFactory<IT>());
+		Model< IT> model= new Model<IT>(imp);
 				System.out.println("creating Controller...");
 					
 		BlobController<IT> bc= new BlobController<IT>(imp, model);
 		System.out.println("creating ViewModel...");
-		ViewModel<Blob,IT> vm= new ViewModel<Blob,IT>(imp, model,bc);
+		ViewModel<IT> vm= new ViewModel<IT>(imp, model,bc);
 		System.out.println("done!");
 		long time1= System.nanoTime();
-		model.addObserver(vm);
+	//	model.addObserver(vm);
 		System.out.println("Time taken:"+((time1-time0)/1000000));
 	}
 

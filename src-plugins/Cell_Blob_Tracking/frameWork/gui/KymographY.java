@@ -13,11 +13,11 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 import frameWork.Trackable;
 
-public class KymographY <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<T,IT> implements MouseListener{
+public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> implements MouseListener{
 
 	
 	
-	public KymographY(Model<T, IT> mod, RandomAccessibleInterval<IT> img, ViewModel<T,IT> vm) {
+	public KymographY(Model< IT> mod, RandomAccessibleInterval<IT> img, ViewModel<IT> vm) {
 		super(mod, img,vm);
 		this.imp.getCanvas().addMouseListener(this);
 	}

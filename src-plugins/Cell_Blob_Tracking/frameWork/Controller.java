@@ -52,10 +52,10 @@ public abstract class Controller<T extends Trackable > {
 	public int selectedSequenceId;
 	protected T selectedTrackable;
 	
-	protected Model<T,?> model;
+	protected Model<?> model;
 
 	 
-	protected Controller( Model<T,?> mod){
+	protected Controller( Model<?> mod){
 		model =mod;
 	}
      

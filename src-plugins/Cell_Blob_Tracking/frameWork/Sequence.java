@@ -10,7 +10,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public abstract class Sequence<T extends Trackable> {
-	protected int id; 
+	protected int id;
 	protected String label;
 	protected SortedMap <Integer,T> trackables;
 	protected List<List<T>> pieces;
@@ -42,6 +42,8 @@ public abstract class Sequence<T extends Trackable> {
 	public T getTrackableForFrame(int frameNumber){
 		return trackables.get(frameNumber);
 	}
+	
+	
 	
 	public abstract void getKymoOverlayX(Overlay ov, double scaleX, double scaleY);
 	public abstract void getKymoOverlayY(Overlay ov, double scaleX, double scaleY);

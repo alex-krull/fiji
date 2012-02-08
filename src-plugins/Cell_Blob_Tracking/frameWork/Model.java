@@ -9,6 +9,9 @@ import java.util.Observable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import blobTracking.Blob;
+import blobTracking.BlobFactory;
+
 import tools.ImglibTools;
 
 import net.imglib2.RandomAccessibleInterval;
@@ -20,63 +23,21 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
-public class Model<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends Observable{ 
+public class Model <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>>{ 
 	
-public class ProjectionThread extends Thread{
-	private Model <T,IT> model;
-	ProjectionThread(Model <T,IT> mod){
-		model=mod;
-	}
-	
-	public void run() {
-       for(int i=0;i<model.getNumberOfFrames();i++){
-    	   Frame<T,IT> f=model.getFrame(i);
-    	   f.getXProjections();
-    	   f.getYProjections();
-    	   f.getZProjections(); 
-       }
-    }
-}
 
 
-private	List<Frame <T,IT>> frames;
-private	RandomAccessibleInterval<IT> image;
-private Factory<T,IT> factory;
-private SortedMap <Integer, Sequence<T>> Sequences;
-public T selected;
+
+
 public double xyToZ=3.5;
 private boolean isVolume=false;
 private boolean isTimeSequence=false;
 private boolean isMultiChannel=false;
-
-private RandomAccessibleInterval<IT> zProjections = null;
-private RandomAccessibleInterval<IT> xProjections = null;
-private RandomAccessibleInterval<IT> yProjections = null;
-private RandomAccessibleInterval<IT> xtProjections= null;
-private RandomAccessibleInterval<IT> ytProjections= null; 
-
-public int getNumberOfFrames(){
-	return frames.size();
-}
-
-public synchronized RandomAccessibleInterval<IT> getXProjections(){
-	if(xProjections==null) xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0),0,1) ),0  ) ); 
-	return xProjections;
-}
-
-public synchronized RandomAccessibleInterval<IT> getYProjections(){
-	if(yProjections==null) yProjections=ImglibTools.projection(image,1);
-	return yProjections;
-}
-
-public synchronized RandomAccessibleInterval<IT> getZProjections(){
-	if(zProjections==null) zProjections=ImglibTools.projection(image,2);
-	return zProjections;
-}
-
-public boolean isVolume() {
-	return isVolume;
-}
+private int numberOfChannels;
+private int numberOfFrames;
+private int numberOfSlices;
+private	RandomAccessibleInterval<IT> image;
+private SortedMap <Integer, Channel <? extends Trackable, IT> > channels;
 
 
 public void setVolume(boolean isVolume) {
@@ -98,16 +59,21 @@ public boolean isMultiChannel() {
 	return isMultiChannel;
 }
 
+public boolean isVolume() {
+	return isVolume;
+}
 
 public void setMultiChannel(boolean isMultiChannel) {
 	this.isMultiChannel = isMultiChannel;
 }
 
-public Model(ImagePlus imp , Factory<T,IT> fact){
-	Sequences= new TreeMap<Integer, Sequence<T>>();
+public Model(ImagePlus imp){
+	
 	image=ImagePlusAdapter.wrap(imp);
-	factory=fact;
-	frames= new ArrayList<Frame<T,IT>>();
+	
+	numberOfFrames=imp.getNFrames();
+	numberOfChannels=imp.getNChannels();
+	numberOfSlices=imp.getNSlices();
 	
 	setTimeSequence(imp.getNFrames()>1);
 	setMultiChannel(imp.getNChannels()>1);
@@ -120,91 +86,65 @@ public Model(ImagePlus imp , Factory<T,IT> fact){
     }
 	
 	
-	   if(isMultiChannel()){
-    	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,image.numDimensions()-1),2) );
-       if(image.numDimensions()==5)  	   
-    	   image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,3),2 ));
-       
-       }
+	if(isMultiChannel()){
+       image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,image.numDimensions()-1),2) );
+    if(image.numDimensions()==5)  	   
+       image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,3),2 ));  
+    }   
 	   
-	   
+	channels=new TreeMap<Integer,Channel <? extends Trackable, IT> >();
 	
-	for(int i=0;i<50;i++){
-		Frame<T,IT> f=factory.produceFrame(i,getFrameView(i,0));
-		frames.add(f);
-		
+	if(isMultiChannel){
+		for(int i=0;i<numberOfChannels;i++){
+			Channel<Blob,IT> chann= new Channel<Blob,IT>(new BlobFactory<IT>(), Views.hyperSlice(image, image.numDimensions()-1, i));
+			channels.put(i, chann);
+		}
+	}else{
+		Channel<Blob,IT> chann= new Channel<Blob,IT>(new BlobFactory<IT>(), image);
+		channels.put(0, chann);
 	}
 	
-	ProjectionThread pt= new ProjectionThread(this);
-	pt.start();
-	
 }
 
 
-public SortedMap <Integer, Sequence<T>> getSeqs(){
-	return Sequences;
-}
 
-public Sequence<T> getSequence(int id){
-	return Sequences.get(id);
-}
-
-public void optimizeFrame(int frameId){
-	Frame<T,IT> f= frames.get(frameId);
-	f.optimizeFrame();
-}
-
-public int selectAt(int x, int y, int z, int frameId, int channel){
-	Frame<T,IT> f= frames.get(frameId);
-	return f.selectAt(x, y, z);
-}
-
-public void addTrackable(T trackable){
-	
-	frames.get(trackable.frameId).addTrackable(trackable);
-	Sequence<T> sequence= Sequences.get(trackable.sequenceId);
-	if(sequence==null){
-		
-		sequence=factory.produceSequence(trackable.sequenceId, Integer.toString(trackable.sequenceId));
-		System.out.println("Adding Seq!");
-		Sequences.put(trackable.sequenceId, sequence);
-	}
-	sequence.addTrackable(trackable);
-}
-
-private  RandomAccessibleInterval<IT> getFrameView(int frameNumber, int channelNumber){
-//	System.out.println("fn:"+frameNumber);
-	return Views.hyperSlice(image, 3, frameNumber);
-}
-
-public Frame<T,IT> getFrame(int frame){
-	return frames.get(frame);
-}
-
-public List<T> getTrackablesForFrame(int frame){
-	return frames.get(frame).getTrackables();
-}
-
-public T getTrackable(int seqId, int frameId){
-	Sequence<T> sequence= Sequences.get(seqId);	
-	if (sequence==null){
-		
-		return null;
-	}
-	return sequence.getTrackableForFrame(frameId);
-	
-}
 
 public RandomAccessibleInterval<IT> getImage(){
 	return image;
 }
 
-public void makeChangesPublic(){
-	setChanged();
-	notifyObservers();
+
+public int getNumberOfChannels() {
+	return numberOfChannels;
+}
+
+public int getNumberOfSlices() {
+	return numberOfSlices;
+}
+
+public int getNumberOfFrames() {
+	return numberOfFrames;
 }
 
 
-	
-	
+public int selectAt(int x, int y, int z, int frameId, int channel){
+	return channels.get(channel).selectAt(x, y, z, frameId, channel);
+}
+
+public List<? extends Trackable> getTrackablesForFrame(int frame, int channel){
+	return channels.get(channel).getTrackablesForFrame(frame);
+}
+
+public Trackable getTrackable(int seqId, int frameId, int channel){
+	return channels.get(channel).getTrackable(seqId, frameId);	
+}
+
+public Sequence<? extends Trackable> getSequence(int id, int channel){
+	return channels.get(channel).getSequence(id);
+}
+
+public Frame<? extends Trackable,IT> getFrame(int frame, int channel){
+	return channels.get(channel).getFrame(channel);
+}
+
 }

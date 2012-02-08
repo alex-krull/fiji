@@ -13,9 +13,9 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 import frameWork.Trackable;
 
-public class KymographX <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<T,IT> implements MouseListener{
+public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> implements MouseListener{
 
-	public KymographX(Model<T, IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<T,IT> vm) {
+	public KymographX(Model<IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<IT> vm) {
 		super(mod, img,vm);
 		
 		this.imp.getCanvas().addMouseListener(this);

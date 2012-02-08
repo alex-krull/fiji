@@ -13,14 +13,14 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 import frameWork.Trackable;
 
-public class MainWindow  <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<T,IT>
+public class MainWindow  < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<IT>
 implements ImageListener, MouseListener, MouseMotionListener{
 
 	private int currentFrameNumber;
 	private int currentSliceNumber;
 	private int currentChannelNumber;
 		
-	protected MainWindow(ImagePlus imagePlus, Model<T, IT> mod, ViewModel<T, IT> vm) {
+	protected MainWindow(ImagePlus imagePlus, Model< IT> mod, ViewModel< IT> vm) {
 		super(mod, mod.getImage(), imagePlus.getWindow().getTitle(), vm, imagePlus);
 		
 		

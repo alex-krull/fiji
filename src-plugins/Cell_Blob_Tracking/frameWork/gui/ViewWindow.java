@@ -6,11 +6,11 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 import frameWork.Trackable;
 
-public abstract class ViewWindow <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
-	protected Model<T,IT> model;
+public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
+	protected Model<IT> model;
 	protected String caption;
-	protected ViewModel<T,IT> viewModel;
-	protected ViewWindow(Model<T,IT> mod, String title, ViewModel<T,IT> vm){
+	protected ViewModel<IT> viewModel;
+	protected ViewWindow(Model<IT> mod, String title, ViewModel<IT> vm){
 		viewModel=vm;
 		model=mod;
 		caption= title;

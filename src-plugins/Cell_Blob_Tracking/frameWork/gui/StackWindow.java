@@ -12,13 +12,13 @@ import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.plugin.ContrastEnhancer;
 
-public class StackWindow <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<T,IT>{
+public class StackWindow <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<IT>{
 
 	
 	protected int stackDimension;
 	
 	
-	public StackWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title, int sDim,  ViewModel<T,IT> vm){
+	public StackWindow(Model<IT> mod, RandomAccessibleInterval<IT> img, String title, int sDim,  ViewModel<IT> vm){
 		super(mod, img ,title, vm,null);
 		stackDimension=sDim;
 		

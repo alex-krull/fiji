@@ -24,7 +24,7 @@ import frameWork.Model;
 import frameWork.Sequence;
 import frameWork.Trackable;
 
-public abstract class ImageWindow  <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ViewWindow<T,IT>{
+public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ViewWindow<IT>{
 	
 	protected ImagePlus imp=null;
 	protected RandomAccessibleInterval<IT> image;
@@ -37,7 +37,7 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 
 	protected RandomAccessibleInterval<IT> toDraw;
 	
-	public ImageWindow(Model<T,IT> mod, RandomAccessibleInterval<IT> img, String title, ViewModel<T,IT> vm, ImagePlus imagePlus){
+	public ImageWindow(Model<IT> mod, RandomAccessibleInterval<IT> img, String title, ViewModel<IT> vm, ImagePlus imagePlus){
 		super(mod, title,vm);
 		imp=imagePlus;
 		
@@ -76,27 +76,28 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	}
 	
 	protected void addKymoXOverlayes(){
-		SortedMap <Integer, Sequence<T>> seqs= model.getSeqs();
+	/*	
+		SortedMap <Integer, Sequence<? extends Trackable>> seqs= model.getSeqs(viewModel.getCurrentChannelNumber());
 		for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
 			Sequence<T> seq = seqs.get(i);
 			if(seq!=null) seq.getKymoOverlayX(ov,scaleX,scaleY);
-		}
+		} */
 	}
 	
 	protected void addKymoYOverlayes(){
-		SortedMap <Integer, Sequence<T>> seqs= model.getSeqs();
+	/*	SortedMap <Integer, Sequence<? extends Trackable>> seqs= model.getSeqs();
 		for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
 			Sequence<T> seq = seqs.get(i);
 			if(seq!=null) seq.getKymoOverlayY(ov,scaleX,scaleY);
-		}
+		}*/
 	}
 
 	protected void addXOverlayes(int frameNumber){
-		List<T> trackables= model.getTrackablesForFrame(frameNumber);
+		List<? extends Trackable> trackables= model.getTrackablesForFrame(frameNumber,viewModel.getCurrentChannelNumber());
 		   int selected =viewModel.getSelectedSequenceId();
 		   for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
-			   Color c= model.getSequence(t.sequenceId).getColor();
+			   Color c= model.getSequence(t.sequenceId,viewModel.getCurrentChannelNumber()).getColor();
 			   t.addShapeX(ov,t.sequenceId==selected,c);
 			   
 		   }
@@ -104,11 +105,11 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	}
 	
 	protected void addYOverlayes(int frameNumber){
-		List<T> trackables= model.getTrackablesForFrame(frameNumber);
+		List<? extends Trackable> trackables= model.getTrackablesForFrame(frameNumber,viewModel.getCurrentChannelNumber());
 		 int selected =viewModel.getSelectedSequenceId();
 		   for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
-			   Color c= model.getSequence(t.sequenceId).getColor();
+			   Color c= model.getSequence(t.sequenceId, viewModel.getCurrentChannelNumber()).getColor();
 			   t.addShapeY(ov,t.sequenceId==selected,c);
 			   
 		   }
@@ -116,11 +117,11 @@ public abstract class ImageWindow  <T extends Trackable , IT extends  NumericTyp
 	}
 	
 	protected void addZOverlayes(int frameNumber){
-		List<T> trackables= model.getTrackablesForFrame(frameNumber);
+		List<? extends Trackable> trackables= model.getTrackablesForFrame(frameNumber,viewModel.getCurrentChannelNumber());
 		 int selected =viewModel.getSelectedSequenceId();
 		   for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
-			   Color c= model.getSequence(t.sequenceId).getColor();
+			   Color c= model.getSequence(t.sequenceId, viewModel.getCurrentChannelNumber()).getColor();
 			   t.addShapeZ(ov,t.sequenceId==selected,c);
 			   
 		   }

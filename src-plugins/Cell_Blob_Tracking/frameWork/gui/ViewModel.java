@@ -29,7 +29,7 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 import tools.ImglibTools;
 
-public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Observer{
+public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Observer{
 	
 
 	protected RandomAccessibleInterval<IT> image;
@@ -49,10 +49,10 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
 	protected double mouseZ=0;
 	
 	
-	protected Model<T,IT> model;
-	protected Controller<T> controller;
+	protected Model<IT> model;
+	protected Controller controller;
 	
-	protected List <ViewWindow<T,IT>> views;
+	protected List <ViewWindow<IT>> views;
 
 	class ProjectionJob	implements Callable<RandomAccessibleInterval<IT> >{
 		RandomAccessibleInterval<IT> image;
@@ -70,7 +70,7 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
 		
 	}
  
-	public ViewModel(ImagePlus imp,  Model<T,IT> mod, Controller<T> contr){
+	public ViewModel(ImagePlus imp,  Model<IT> mod, Controller contr){
 		
 		controller=contr;
 		
@@ -121,15 +121,15 @@ public class ViewModel <T extends Trackable , IT extends  NumericType<IT> & Nati
        
     */   
        
-       views= new ArrayList<ViewWindow<T,IT>>();
+       views= new ArrayList<ViewWindow<IT>>();
         
-       views.add(new MaxProjectionX<T,IT>(model, this));
-       views.add(new MaxProjectionY<T,IT>(model, this));
-    //   views.add(new KymographY<T,IT>(model, ytProjections,this));
-       views.add(new MaxProjectionZ<T,IT>(model, this));
-   //    views.add(new KymographX<T,IT>(model, xtProjections,this));
+       views.add(new MaxProjectionX<IT>(model, this));
+       views.add(new MaxProjectionY<IT>(model, this));
+    //   views.add(new KymographY<IT>(model, ytProjections,this));
+       views.add(new MaxProjectionZ<IT>(model, this));
+   //    views.add(new KymographX<IT>(model, xtProjections,this));
        
-       views.add(new MainWindow<T,IT>(mainImage, model, this));
+       views.add(new MainWindow<IT>(mainImage, model, this));
        this.upDateImages(0, 0, 0,true);
        
        
@@ -165,9 +165,9 @@ public void mouseAtPosition(long [] pos, MouseEvent me){
 protected void upDateImages(int frame, int slice, int channel, boolean init){
 
 	long[] pos= {0,0,slice, frame, channel};
-	for(ViewWindow<T,IT> vw:views){
+	for(ViewWindow<IT> vw:views){
 	
-		((ImageWindow<T,IT>)vw).rePaint(pos, init);
+		((ImageWindow<IT>)vw).rePaint(pos, init);
 	}
  
 				
@@ -181,6 +181,10 @@ public void update(Observable arg0, Object arg1) {
 
 public int getSelectedSequenceId(){
 	return this.controller.selectedSequenceId;
+}
+
+public int getCurrentChannelNumber(){
+	return currentChannelNumber;
 }
 
 }
