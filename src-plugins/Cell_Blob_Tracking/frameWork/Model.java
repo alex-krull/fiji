@@ -144,7 +144,15 @@ public Sequence<? extends Trackable> getSequence(int id, int channel){
 }
 
 public Frame<? extends Trackable,IT> getFrame(int frame, int channel){
-	return channels.get(channel).getFrame(channel);
+	return channels.get(channel).getFrame(frame);
+}
+
+public synchronized RandomAccessibleInterval<IT> getXTProjections(int channel){
+	return channels.get(channel).getXTProjections();
+}
+
+public synchronized RandomAccessibleInterval<IT> getYTProjections(int channel){
+	return channels.get(channel).getYTProjections();
 }
 
 }

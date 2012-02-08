@@ -39,7 +39,6 @@ import frameWork.Trackable;
 			int frameNumber= (int)position[3];
 			toDraw=model.getFrame(frameNumber, viewModel.getCurrentChannelNumber()).getXProjections();
 			reDraw( position ,rePaintImage);
-	
 			}
 
 		@Override

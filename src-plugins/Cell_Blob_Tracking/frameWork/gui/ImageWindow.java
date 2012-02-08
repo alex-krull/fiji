@@ -52,18 +52,23 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 			System.out.println("cn:"+position[4]);
 			if (toDraw.numDimensions()>2) toDraw=Views.hyperSlice(toDraw,2,position[4]);
 			System.out.println("dimensions after:"+toDraw.numDimensions());
+			System.out.println("scaleX:" + scaleX + " scaleY:"+ scaleY);
+			if(imp==null) 
+				imp= ImageJFunctions.show(toDraw,caption);
+			else{
 			toDraw=ImglibTools.scaleByFactor(toDraw, 0, scaleX);
 			toDraw=ImglibTools.scaleByFactor(toDraw, 1, scaleY);
-			if(imp==null) imp= ImageJFunctions.show(toDraw,caption);
 			ImagePlus impl=ImageJFunctions.wrap( toDraw , caption);
 			//	transX=(scaleX*(double)impl.getProcessor().getWidth()- (double)impl.getProcessor().getWidth())/2.0;
 			//	transY=(scaleY*(double)impl.getProcessor().getHeight()- (double)impl.getProcessor().getHeight())/2.0;
 			ContrastEnhancer ce= new ContrastEnhancer();
 			ce.stretchHistogram(impl.getProcessor(), 0.5); 
+			
     	
 			
 	
 			this.imp.setProcessor(impl.getProcessor());
+			}
 	
 		}
 		imp.setOverlay(ov);

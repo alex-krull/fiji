@@ -125,9 +125,9 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
         
        views.add(new MaxProjectionX<IT>(model, this));
        views.add(new MaxProjectionY<IT>(model, this));
-    //   views.add(new KymographY<IT>(model, ytProjections,this));
+       views.add(new KymographY<IT>(model, null,this));
        views.add(new MaxProjectionZ<IT>(model, this));
-   //    views.add(new KymographX<IT>(model, xtProjections,this));
+       views.add(new KymographX<IT>(model, null,this));
        
        views.add(new MainWindow<IT>(mainImage, model, this));
        this.upDateImages(0, 0, 0,true);

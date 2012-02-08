@@ -22,11 +22,12 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	}
 	
 	public void rePaint(long[] position, boolean rePaintImage){
-		
+		System.out.println("timeScale:"+timeScale);
 		scaleX=timeScale;
 		this.clearOverlay();
 		this.addKymoXOverlayes();
 		this.addXLineOverlay(position[3]);
+		toDraw=model.getXTProjections((int)position[4]);
 		super.rePaint(position, rePaintImage);
 		//imp.updateAndDraw();
 		

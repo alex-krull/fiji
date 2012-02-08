@@ -28,6 +28,7 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		this.clearOverlay();
 		this.addKymoYOverlayes();
 		this.addYLineOverlay(position[3]);
+		toDraw=model.getYTProjections((int)position[4]);
 		super.rePaint(position, rePaintImage);
 	}
 
