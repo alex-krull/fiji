@@ -21,6 +21,23 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
 public class Model<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends Observable{ 
+	
+public class ProjectionThread extends Thread{
+	private Model <T,IT> model;
+	ProjectionThread(Model <T,IT> mod){
+		model=mod;
+	}
+	
+	public void run() {
+       for(int i=0;i<model.getNumberOfFrames();i++){
+    	   Frame<T,IT> f=model.getFrame(i);
+    	   f.getXProjections();
+    	   f.getYProjections();
+    	   f.getZProjections(); 
+       }
+    }
+}
+
 
 private	List<Frame <T,IT>> frames;
 private	RandomAccessibleInterval<IT> image;
@@ -38,6 +55,9 @@ private RandomAccessibleInterval<IT> yProjections = null;
 private RandomAccessibleInterval<IT> xtProjections= null;
 private RandomAccessibleInterval<IT> ytProjections= null; 
 
+public int getNumberOfFrames(){
+	return frames.size();
+}
 
 public synchronized RandomAccessibleInterval<IT> getXProjections(){
 	if(xProjections==null) xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0),0,1) ),0  ) ); 
@@ -109,11 +129,14 @@ public Model(ImagePlus imp , Factory<T,IT> fact){
 	   
 	   
 	
-	for(int i=0;i<40000;i++){
+	for(int i=0;i<50;i++){
 		Frame<T,IT> f=factory.produceFrame(i,getFrameView(i,0));
 		frames.add(f);
 		
 	}
+	
+	ProjectionThread pt= new ProjectionThread(this);
+	pt.start();
 	
 }
 

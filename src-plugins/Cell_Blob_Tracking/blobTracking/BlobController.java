@@ -20,12 +20,12 @@ public BlobController(ImagePlus imp, Model<Blob,IT> model){
 	super(model);
 	
 	
-	for(int i=0;i<1000;i++){
+	for(int i=0;i<model.getNumberOfFrames();i++){
 
 	if(i%10>5) continue;
 	model.addTrackable(new Blob(0,i,20 +Math.sin(i/15.0f)*25,20+ Math.sin(i/15.0f)*25,15,4, 0));
     model.addTrackable(new Blob(1,i,70 +Math.sin(i/15.0f)*25,20+ Math.sin(i/45.0f)*25,15,4,0));
-    model.addTrackable(new Blob(2,i,20 + Math.cos(i/15.0f)*25,70+ Math.sin(i/35.0f)*25,15,4, 0));
+    model.addTrackable(new Blob(2,i,20 +Math.cos(i/15.0f)*25,70+ Math.sin(i/35.0f)*25,15,4, 0));
     
  	   
     }
