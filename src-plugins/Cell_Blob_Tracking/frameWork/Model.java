@@ -37,8 +37,8 @@ private int numberOfChannels;
 private int numberOfFrames;
 private int numberOfSlices;
 private	RandomAccessibleInterval<IT> image;
-private SortedMap <Integer, Channel <? extends Trackable, IT> > channels;
-
+private SortedMap <Integer, MovieChannel <IT> > channels;
+private SortedMap <Integer, TrackingChannel <? extends Trackable,IT> > trackingChannels;
 
 public void setVolume(boolean isVolume) {
 	this.isVolume = isVolume;
@@ -92,15 +92,15 @@ public Model(ImagePlus imp){
        image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,3),2 ));  
     }   
 	   
-	channels=new TreeMap<Integer,Channel <? extends Trackable, IT> >();
+	channels=new TreeMap<Integer,MovieChannel <IT> >();
 	
 	if(isMultiChannel){
 		for(int i=0;i<numberOfChannels;i++){
-			Channel<Blob,IT> chann= new Channel<Blob,IT>(new BlobFactory<IT>(), Views.hyperSlice(image, image.numDimensions()-1, i));
+			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i));
 			channels.put(i, chann);
 		}
 	}else{
-		Channel<Blob,IT> chann= new Channel<Blob,IT>(new BlobFactory<IT>(), image);
+		MovieChannel<IT> chann= new MovieChannel<IT>( image);
 		channels.put(0, chann);
 	}
 	
@@ -128,23 +128,23 @@ public int getNumberOfFrames() {
 
 
 public int selectAt(int x, int y, int z, int frameId, int channel){
-	return channels.get(channel).selectAt(x, y, z, frameId, channel);
+	return trackingChannels.get(channel).selectAt(x, y, z, frameId, channel);
 }
 
 public List<? extends Trackable> getTrackablesForFrame(int frame, int channel){
-	return channels.get(channel).getTrackablesForFrame(frame);
+	return trackingChannels.get(channel).getTrackablesForFrame(frame);
 }
 
 public Trackable getTrackable(int seqId, int frameId, int channel){
-	return channels.get(channel).getTrackable(seqId, frameId);	
+	return trackingChannels.get(channel).getTrackable(seqId, frameId);	
 }
 
 public Sequence<? extends Trackable> getSequence(int id, int channel){
-	return channels.get(channel).getSequence(id);
+	return trackingChannels.get(channel).getSequence(id);
 }
 
-public Frame<? extends Trackable,IT> getFrame(int frame, int channel){
-	return channels.get(channel).getFrame(frame);
+public MovieFrame<IT> getFrame(int frame, int channel){
+	return channels.get(channel).getMovieFrame(frame);
 }
 
 public synchronized RandomAccessibleInterval<IT> getXTProjections(int channel){

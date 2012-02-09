@@ -20,18 +20,22 @@ import org.apache.commons.math.optimization.direct.SimplexOptimizer;
 
 import tools.ImglibTools;
 import frameWork.Frame;
+import frameWork.MovieFrame;
 
 public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends Frame<Blob, IT>{
+	
+	private MovieFrame<IT> movieFrame;
 	private double backProb=0.9;
-	public BlobFrame(int frameNum, RandomAccessibleInterval<IT> view){
-		super(frameNum, view);
+	public BlobFrame(int frameNum, MovieFrame<IT> mv){
+		super(frameNum);
+		movieFrame=mv;
 	}
 
 	@Override
 	public void optimizeFrame() {
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();	
 		for(Blob b:trackables)
-			b.expectedValues= imgFactory.create(frameView, new FloatType());
+			b.expectedValues= imgFactory.create(movieFrame.getFrameView(), new FloatType());
 		
 			
 			
@@ -52,16 +56,16 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	private double doEStep(){
 		double totalInten=0;
 		for(Blob b:trackables)
-			b.calcDenominator(frameView);
+			b.calcDenominator(movieFrame.getFrameView());
 		
-		IterableInterval<IT> iterableFrame= new IterableRandomAccessibleInterval<IT>(frameView);
+		IterableInterval<IT> iterableFrame= new IterableRandomAccessibleInterval<IT>(movieFrame.getFrameView());
 		Cursor<IT> cursor =iterableFrame.cursor();
 		
 		
 		double pX=0;
 		while ( cursor.hasNext() )	{
 	    	cursor.fwd();
-	    	pX=this.backProb/ImglibTools.getNumOfPixels(frameView); // init with probability for background
+	    	pX=this.backProb/ImglibTools.getNumOfPixels(movieFrame.getFrameView()); // init with probability for background
 
 	    	int x=cursor.getIntPosition(0);
 	    	int y=cursor.getIntPosition(1);
