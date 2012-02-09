@@ -14,11 +14,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
+import blobTracking.Blob;
+import blobTracking.BlobController;
+import blobTracking.BlobFactory;
 
 import tools.ImglibTools;
 
@@ -38,47 +44,40 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
-public abstract class Controller<T extends Trackable > {
+public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > {
 
 
-	protected int currentFrameNumber=0;
-	protected int currentSliceNumber=0;
-	protected int currentChannelNumber=0;
-	protected boolean buisy=false;
-	protected double xyToZ=3.5;
-	protected double mouseX=0;
-	protected double mouseY=0;
-	protected double mouseZ=0;
-	public int selectedSequenceId;
-	protected T selectedTrackable;
 	
-	protected Model<?> model;
+	protected double xyToZ=3.5;
+	public int selectedSequenceId;
+	
+	protected Model<IT> model;
+	private SortedMap <Integer, ChannelController <? extends Trackable,IT> > channelControllers;
 
 	 
-	protected Controller( Model<?> mod){
+	public Controller( Model<IT> mod){
 		model =mod;
+		channelControllers=	new TreeMap<Integer, ChannelController<? extends Trackable,IT>>();
+		
+		TrackingChannel<Blob,IT> tc= new TrackingChannel<Blob,IT>(new BlobFactory <IT>(model.getMovieChannel(0)),model.getNumberOfFrames() );
+		BlobController<IT> bc= new BlobController<IT>(model,tc);
+		channelControllers.put(0, bc);
+		model.addTrackingChannel(tc,0);
+		
+		for(int j=0;j<tc.getNumberOfFrames();j++){
+			tc.addTrackable(new Blob(2,j,20 +Math.cos(j/15.0f)*25,70+ Math.sin(j/35.0f)*25,15,4, 0));			 	   
+		}
 	}
-     
 	
-private synchronized void updatePosition(int x,int y, int slice ,int frame, int channel){
 
-	if(buisy) return;
-	buisy=true;
-	System.out.println("oframe:"+ currentFrameNumber+ "   oslice:"+ currentSliceNumber+ "  ochannel:"+currentChannelNumber );
-	
-	currentSliceNumber=slice;
-	currentFrameNumber=frame;
-	currentChannelNumber=channel;
-	//if (mainImage.getNFrames()<=1 && mainImage.getNSlices()>1) mainImage.setPosition(channel+1, frame+1, slice+1); // switch dimensions
-	//else mainImage.setPosition(channel+1, slice+1, frame+1);
-	//this.upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, false);
-	System.out.println("nframe:"+ currentFrameNumber+ "   nslice:"+ currentSliceNumber+ "  nchannel:"+currentChannelNumber );
-	//mainImage.setSlice(slice+1);
-	
-	buisy=false;
 
+public void click(long[] position, MouseEvent e){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get((int)position[4]);
+	System.out.println("click1");
+	if (cc!=null){
+		System.out.println("click2");
+		cc.click(position, e);
+	}
 }
-
-public abstract void click(long[] position, MouseEvent e);
 
 }

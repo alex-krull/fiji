@@ -9,15 +9,17 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
+import frameWork.ChannelController;
 import frameWork.Model;
 import frameWork.Controller;
+import frameWork.TrackingChannel;
 
 
-public class BlobController < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > extends Controller<Blob> {
+public class BlobController < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > extends ChannelController<Blob, IT> {
 	
 
-public BlobController(ImagePlus imp, Model<IT> model){
-	super(model);
+public BlobController(Model<IT> model, TrackingChannel<Blob,IT> tc){
+	super(model,tc);
 	
 	
 	for(int i=0;i<model.getNumberOfFrames();i++){
@@ -39,6 +41,8 @@ public BlobController(ImagePlus imp, Model<IT> model){
 
 
 public void click(long[] pos, MouseEvent e){
+	System.out.println("click!!!!");
+	
 	if(e.getID()==MouseEvent.MOUSE_CLICKED||e.getID()==MouseEvent.MOUSE_PRESSED)
 		selectedSequenceId=model.selectAt((int)pos[0],(int) pos[1],(int) pos[2],(int) pos[3],(int) pos[4]);
 	 

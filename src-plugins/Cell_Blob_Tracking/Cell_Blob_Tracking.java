@@ -28,9 +28,10 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		Model< IT> model= new Model<IT>(imp);
 				System.out.println("creating Controller...");
 					
-		BlobController<IT> bc= new BlobController<IT>(imp, model);
+		
+		Controller<IT> cont= new Controller<IT>(model);
 		System.out.println("creating ViewModel...");
-		ViewModel<IT> vm= new ViewModel<IT>(imp, model,bc);
+		ViewModel<IT> vm= new ViewModel<IT>(imp, model,cont);
 		System.out.println("done!");
 		long time1= System.nanoTime();
 		model.addObserver(vm);

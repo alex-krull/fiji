@@ -4,6 +4,7 @@ import ij.IJ;
 import ij.ImagePlus;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.SortedMap;
@@ -99,19 +100,8 @@ public Model(ImagePlus imp){
 		for(int i=0;i<numberOfChannels;i++){
 			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i));
 			channels.put(i, chann);
-			TrackingChannel<Blob,IT> tc=new TrackingChannel<Blob,IT>(new BlobFactory<IT>(chann), chann.getNumberOfFrames() );
-			trackingChannels.put(i, tc);
 			
-			for(int j=0;j<tc.getNumberOfFrames();j++){
-
-				if(i%2==0) tc.addTrackable(new Blob(2,j,20 +Math.cos(j/15.0f)*25,70+ Math.sin(j/35.0f)*25,15,4, i));
-				else tc.addTrackable(new Blob(2,j,20 +Math.cos(j/15.0f)*25,70- Math.sin(j/35.0f)*25,15,4, i));
-				//model.addTrackable(new Blob(0,i,20 +Math.sin(i/15.0f)*25,20+ Math.sin(i/15.0f)*25,15,4, 0), );
-			    //model.addTrackable(new Blob(1,i,70 +Math.sin(i/15.0f)*25,20+ Math.sin(i/45.0f)*25,15,4,0),0);
-			    //tc.addTrackable(new Blob(2,i,20 +Math.cos(i/15.0f)*25,70+ Math.sin(i/35.0f)*25,15,4, 0));
-			    
-			 	   
-			}
+			
 			
 			
 		}
@@ -150,7 +140,10 @@ public int selectAt(int x, int y, int z, int frameId, int channel){
 }
 
 public List<? extends Trackable> getTrackablesForFrame(int frame, int channel){
-	return trackingChannels.get(channel).getTrackablesForFrame(frame);
+	
+	if(trackingChannels.get(channel)!=null) return trackingChannels.get(channel).getTrackablesForFrame(frame);
+	else return new LinkedList<Trackable>();
+	
 }
 
 public Trackable getTrackable(int seqId, int frameId, int channel){
@@ -176,6 +169,14 @@ public synchronized RandomAccessibleInterval<IT> getYTProjections(int channel){
 public void makeChangesPublic(){
 	setChanged();
 	notifyObservers();
+}
+
+public MovieChannel<IT> getMovieChannel(int id){
+	return channels.get(id);
+}
+
+public void addTrackingChannel(TrackingChannel<? extends Trackable,IT> tc, int key){
+	trackingChannels.put(key, tc);
 }
 
 	

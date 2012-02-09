@@ -70,7 +70,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 		
 	}
  
-	public ViewModel(ImagePlus imp,  Model<IT> mod, Controller contr){
+	public ViewModel(ImagePlus imp,  Model<IT> mod, Controller<IT> contr){
 		
 		controller=contr;
 		
