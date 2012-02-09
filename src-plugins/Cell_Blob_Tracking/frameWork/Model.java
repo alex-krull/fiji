@@ -23,7 +23,7 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
-public class Model <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>>{ 
+public class Model <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends Observable{ 
 	
 
 
@@ -93,16 +93,34 @@ public Model(ImagePlus imp){
     }   
 	   
 	channels=new TreeMap<Integer,MovieChannel <IT> >();
+	trackingChannels= new TreeMap<Integer, TrackingChannel <? extends Trackable,IT> >();
 	
 	if(isMultiChannel){
 		for(int i=0;i<numberOfChannels;i++){
 			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i));
 			channels.put(i, chann);
+			TrackingChannel<Blob,IT> tc=new TrackingChannel<Blob,IT>(new BlobFactory<IT>(chann), chann.getNumberOfFrames() );
+			trackingChannels.put(i, tc);
+			
+			for(int j=0;j<tc.getNumberOfFrames();j++){
+
+				if(i%2==0) tc.addTrackable(new Blob(2,j,20 +Math.cos(j/15.0f)*25,70+ Math.sin(j/35.0f)*25,15,4, i));
+				else tc.addTrackable(new Blob(2,j,20 +Math.cos(j/15.0f)*25,70- Math.sin(j/35.0f)*25,15,4, i));
+				//model.addTrackable(new Blob(0,i,20 +Math.sin(i/15.0f)*25,20+ Math.sin(i/15.0f)*25,15,4, 0), );
+			    //model.addTrackable(new Blob(1,i,70 +Math.sin(i/15.0f)*25,20+ Math.sin(i/45.0f)*25,15,4,0),0);
+			    //tc.addTrackable(new Blob(2,i,20 +Math.cos(i/15.0f)*25,70+ Math.sin(i/35.0f)*25,15,4, 0));
+			    
+			 	   
+			}
+			
+			
 		}
 	}else{
 		MovieChannel<IT> chann= new MovieChannel<IT>( image);
 		channels.put(0, chann);
 	}
+	
+	
 	
 }
 
@@ -155,4 +173,10 @@ public synchronized RandomAccessibleInterval<IT> getYTProjections(int channel){
 	return channels.get(channel).getYTProjections();
 }
 
+public void makeChangesPublic(){
+	setChanged();
+	notifyObservers();
+}
+
+	
 }

@@ -1,5 +1,6 @@
 package frameWork;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.SortedMap;
@@ -9,16 +10,23 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 
-public abstract class TrackingChannel<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends Observable {
+public class TrackingChannel<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
 	
 	
 	private SortedMap <Integer, Sequence<T>> Sequences;
 	private	List<Frame <T,IT>> frames;
 	private Factory<T,IT> factory;
+	private long numOfFrames;
 	
-	public TrackingChannel(Factory <T,IT> fact){
+	public TrackingChannel(Factory <T,IT> fact,long numberOfFrames){
+		numOfFrames=numberOfFrames;
 		factory=fact;
 		Sequences= new TreeMap<Integer, Sequence<T>>();
+		frames=new ArrayList<Frame<T,IT>>();
+		for(int i=0;i<numOfFrames;i++){
+			frames.add(factory.produceFrame(i));
+		}
+		
 	}
 	
 	public List<T> getTrackablesForFrame(int frame){
@@ -66,8 +74,8 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		sequence.addTrackable(trackable);
 	}
 	
-	public void makeChangesPublic(){
-		setChanged();
-		notifyObservers();
+	public long getNumberOfFrames() {
+		
+		return numOfFrames;
 	}
 }
