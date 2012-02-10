@@ -24,5 +24,9 @@ public class BlobFactory  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	public Frame<Blob,IT> produceFrame(int frameNum) {		
 		return new BlobFrame<IT>(frameNum, mChannel.getMovieFrame(frameNum));
 	}
+	
+	public boolean isAssociatedWithMovieChannel(int id){
+		return (mChannel.getId()==id);
+	}
 
 }

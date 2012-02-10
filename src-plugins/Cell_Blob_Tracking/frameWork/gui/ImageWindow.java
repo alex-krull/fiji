@@ -23,6 +23,7 @@ import net.imglib2.view.Views;
 import frameWork.Model;
 import frameWork.Sequence;
 import frameWork.Trackable;
+import frameWork.TrackingChannel;
 
 public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ViewWindow<IT>{
 	
@@ -81,56 +82,75 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 	}
 	
 	protected void addKymoXOverlayes(){
-	/*	
-		SortedMap <Integer, Sequence<? extends Trackable>> seqs= model.getSeqs(viewModel.getCurrentChannelNumber());
-		for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
-			Sequence<T> seq = seqs.get(i);
+		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+	
+		for(TrackingChannel<? extends Trackable,IT> tc: tcs){
+		
+			if(tc==null) return;
+			SortedMap <Integer,? extends Sequence< ? extends Trackable>> seqs= tc.getSeqs();
+			if(seqs!=null) for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
+			Sequence<? extends Trackable> seq = seqs.get(i);
 			if(seq!=null) seq.getKymoOverlayX(ov,scaleX,scaleY);
-		} */
+			} 
+		}
 	}
 	
 	protected void addKymoYOverlayes(){
-	/*	SortedMap <Integer, Sequence<? extends Trackable>> seqs= model.getSeqs();
-		for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
-			Sequence<T> seq = seqs.get(i);
+		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		
+		for(TrackingChannel<? extends Trackable,IT> tc: tcs){
+		if(tc==null) return;
+		SortedMap <Integer,? extends Sequence< ? extends Trackable>> seqs= tc.getSeqs();
+	
+		if(seqs!=null) for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
+			Sequence<? extends Trackable> seq = seqs.get(i);
 			if(seq!=null) seq.getKymoOverlayY(ov,scaleX,scaleY);
-		}*/
+		}
+		}
 	}
 
 	protected void addXOverlayes(int frameNumber){
-		List<? extends Trackable> trackables= model.getTrackablesForFrame(frameNumber,viewModel.getCurrentChannelNumber());
+		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		for(TrackingChannel<? extends Trackable,IT> tc: tcs){	
+		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
 		   int selected =viewModel.getSelectedSequenceId();
-		   for(Trackable t : trackables){	
+		   if(trackables!=null) for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId,viewModel.getCurrentChannelNumber()).getColor();
 			   t.addShapeX(ov,t.sequenceId==selected,c);
 			   
 		   }
 		   
+		}
+		   
 	}
 	
 	protected void addYOverlayes(int frameNumber){
-		List<? extends Trackable> trackables= model.getTrackablesForFrame(frameNumber,viewModel.getCurrentChannelNumber());
+		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		for(TrackingChannel<? extends Trackable,IT> tc: tcs){	
+		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
 		 int selected =viewModel.getSelectedSequenceId();
-		   for(Trackable t : trackables){	
+		 if(trackables!=null) for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId, viewModel.getCurrentChannelNumber()).getColor();
 			   t.addShapeY(ov,t.sequenceId==selected,c);
 			   
 		   }
-		   
+		}
 	}
 	
 	protected void addZOverlayes(int frameNumber){
-		List<? extends Trackable> trackables= model.getTrackablesForFrame(frameNumber,viewModel.getCurrentChannelNumber());
+		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		for(TrackingChannel<? extends Trackable,IT> tc: tcs){	
+		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
 		 int selected =viewModel.getSelectedSequenceId();
-		   for(Trackable t : trackables){	
+		 if(trackables!=null)for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId, viewModel.getCurrentChannelNumber()).getColor();
 			   t.addShapeZ(ov,t.sequenceId==selected,c);
 			   
 		   }
-		   
+		} 
 	}
 	
 	

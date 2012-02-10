@@ -1,6 +1,10 @@
 package frameWork;
 
+
+import ij.gui.Overlay;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Observable;
 import java.util.SortedMap;
@@ -43,8 +47,13 @@ public class TrackingChannel<T extends Trackable, IT extends NumericType<IT> & N
 		
 	}
 	
-	public SortedMap <Integer, Sequence<T>> getSeqs(){
+	public SortedMap <Integer,? extends Sequence< T>> getSeqs(){
 		return Sequences;
+	}
+	
+	public Collection <? extends Sequence<T>> getSeqsCollection(){
+		
+		return Sequences.values();
 	}
 
 	public Sequence<T> getSequence(int id){
@@ -77,5 +86,16 @@ public class TrackingChannel<T extends Trackable, IT extends NumericType<IT> & N
 	public long getNumberOfFrames() {
 		
 		return numOfFrames;
+	}
+	
+	public void addKymoOverlaysX(Overlay ov, double scaleX, double scaleY){
+		for(int i=Sequences.firstKey();i<=Sequences.lastKey();i++){
+			Sequence<T> seq = Sequences.get(i);
+			if(seq!=null) seq.getKymoOverlayX(ov,scaleX,scaleY);
+		}
+	}
+	
+	public boolean isAssociatedWithChannel(int id){
+		return factory.isAssociatedWithMovieChannel(id);
 	}
 }

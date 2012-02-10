@@ -24,9 +24,10 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	private RandomAccessibleInterval<IT> ytProjections= null; 
 	private RandomAccessibleInterval<IT> image;
 	private long numOfFrames;
+	private int MovieChannelId;
 	
 	
-/*
+
 	public class ProjectionThreadKymographs extends Thread{
 		private MovieChannel <IT> channel;
 		ProjectionThreadKymographs(MovieChannel <IT> chan){
@@ -34,34 +35,31 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		}
 		
 		public void run() {
-	       for(int i=0;i<channel.getNumberOfFrames();i++){
-	    	   Frame<T,IT> f=channel.getFrame(i);
-	    	   f.getXProjections();
-	    	   f.getYProjections();
-	    	   f.getZProjections(); 
-	       }
+	       channel.getXTProjections();
+	       channel.getYTProjections();
 	    }
 	}
 	
 	public class ProjectionThread extends Thread{
-		private MovieChannel <T,IT> channel;
-		ProjectionThread(MovieChannel <T,IT> chan){
+		private MovieChannel <IT> channel;
+		ProjectionThread(MovieChannel <IT> chan){
 			channel=chan;
 		}
 		
 		public void run() {
 	       for(int i=0;i<channel.getNumberOfFrames();i++){
-	    	   Frame<T,IT> f=channel.getFrame(i);
+	    	   MovieFrame<IT> f=channel.getMovieFrame(i);
 	    	   f.getXProjections();
 	    	   f.getYProjections();
 	    	   f.getZProjections(); 
 	       }
 	    }
 	}
-	*/
 	
 	
-	public MovieChannel(RandomAccessibleInterval<IT> view){
+	
+	public MovieChannel(RandomAccessibleInterval<IT> view, int id){
+		MovieChannelId=id;
 		image=view;
 		numOfFrames=image.dimension(3);
 		
@@ -73,8 +71,11 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 			
 		}
 		
-		//ProjectionThread pt= new ProjectionThread(this);
-		//pt.start();
+		ProjectionThread pt= new ProjectionThread(this);
+		pt.start();
+		
+		ProjectionThreadKymographs ptk= new ProjectionThreadKymographs(this);
+		ptk.start();
 	}
 	
 	public synchronized RandomAccessibleInterval<IT> getXProjections(){
@@ -117,5 +118,9 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	
 	public long getNumberOfFrames(){
 		return numOfFrames;
+	}
+	
+	public int getId(){
+		return MovieChannelId;
 	}
 }

@@ -3,6 +3,7 @@ package frameWork.gui;
 import frameWork.Controller;
 import frameWork.Model;
 import frameWork.Trackable;
+import frameWork.TrackingChannel;
 import ij.ImageListener;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
@@ -51,8 +52,10 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	protected Model<IT> model;
 	protected Controller controller;
+	private List<TrackingChannel<? extends Trackable,IT>> tCsToBeDisplayed;
 	
 	protected List <ViewWindow<IT>> views;
+	
 
 	class ProjectionJob	implements Callable<RandomAccessibleInterval<IT> >{
 		RandomAccessibleInterval<IT> image;
@@ -72,11 +75,13 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
  
 	public ViewModel(ImagePlus imp,  Model<IT> mod, Controller<IT> contr){
 		
+		
 		controller=contr;
 		
 	   model=mod;
        // 0 - Check validity of parameters
-      
+	   //tCsToBeDisplayed= new ArrayList<TrackingChannel<? extends Trackable,IT>>();
+	   tCsToBeDisplayed=model.getTCsAssociatedWithChannel(0);
 
        mainImage= imp;
        
@@ -121,16 +126,9 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
        
     */   
        
-       views= new ArrayList<ViewWindow<IT>>();
-        
-       views.add(new MaxProjectionX<IT>(model, this));
-       views.add(new MaxProjectionY<IT>(model, this));
-       views.add(new KymographY<IT>(model, null,this));
-       views.add(new MaxProjectionZ<IT>(model, this));
-       views.add(new KymographX<IT>(model, null,this));
-       
-       views.add(new MainWindow<IT>(mainImage, model, this));
-       this.upDateImages(0, 0, 0,true);
+ 	  views= new ArrayList<ViewWindow<IT>>();
+ 	  addViewWindow(new MainWindow<IT>(mainImage, model, this));
+      this.upDateImages(0, 0, 0,true);
        
        
     
@@ -142,9 +140,14 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 
 public void setPosition(int dim, int pos){
 	
-	if(dim==2)this.currentSliceNumber= pos;
+	
+	if(dim==2)this.currentSliceNumber= pos;	
 	if(dim==3)this.currentFrameNumber= pos;
-	if(dim==4)this.currentChannelNumber= pos;
+	if(dim==4){
+		this.currentChannelNumber= pos;
+		tCsToBeDisplayed.clear();
+		tCsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);
+	}
 	
 	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, true );
 
@@ -167,7 +170,7 @@ protected void upDateImages(int frame, int slice, int channel, boolean init){
 	long[] pos= {0,0,slice, frame, channel};
 	for(ViewWindow<IT> vw:views){
 	
-		((ImageWindow<IT>)vw).rePaint(pos, init);
+		vw.rePaint(pos, init);
 	}
  
 				
@@ -185,6 +188,15 @@ public int getSelectedSequenceId(){
 
 public int getCurrentChannelNumber(){
 	return currentChannelNumber;
+}
+
+public void addViewWindow( ViewWindow<IT> vw){
+	views.add(vw);
+	this.upDateImages(0, 0, 0,true);
+}
+
+public List<TrackingChannel<? extends Trackable,IT>> getTCsToBeDisplayed(){
+	return this.tCsToBeDisplayed;
 }
 
 }

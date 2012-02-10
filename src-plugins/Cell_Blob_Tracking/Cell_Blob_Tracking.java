@@ -1,5 +1,7 @@
 
 
+import java.util.ArrayList;
+
 import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.Img;
 import net.imglib2.type.NativeType;
@@ -12,13 +14,44 @@ import blobTracking.BlobFrame;
 import blobTracking.BlobController;
 import frameWork.Model;
 import frameWork.Controller;
+import frameWork.MovieChannel;
+import frameWork.MovieFrame;
+import frameWork.gui.KymographX;
+import frameWork.gui.KymographY;
+import frameWork.gui.MainWindow;
+import frameWork.gui.MaxProjectionX;
+import frameWork.gui.MaxProjectionY;
+import frameWork.gui.MaxProjectionZ;
 import frameWork.gui.ViewModel;
+import frameWork.gui.ViewWindow;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.plugin.PlugIn;
 
 public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>> implements PlugIn{
 
+	public class AddingViewsThread extends Thread{
+		private Model <IT> model;
+		private ViewModel<IT> viewModel;
+		
+		AddingViewsThread(ViewModel<IT> vm, Model<IT> mod){
+			model= mod;
+			viewModel=vm;
+		}
+		public void run() {
+			
+	        
+			viewModel.addViewWindow(new MaxProjectionX<IT>(model, viewModel));
+			viewModel.addViewWindow(new MaxProjectionY<IT>(model, viewModel));
+			viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel));
+					
+			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel));		
+			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel));
+		       
+			
+	    }
+	}
+	
 	@Override
 	public void run(String arg0) {
 		// TODO Auto-generated method stub
@@ -36,6 +69,9 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		long time1= System.nanoTime();
 		model.addObserver(vm);
 		System.out.println("Time taken:"+((time1-time0)/1000000));
+		
+		AddingViewsThread awt= new AddingViewsThread(vm,model);
+		awt.start();
 	}
 
 }

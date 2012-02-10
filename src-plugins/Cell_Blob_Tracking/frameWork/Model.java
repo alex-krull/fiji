@@ -4,6 +4,7 @@ import ij.IJ;
 import ij.ImagePlus;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -98,7 +99,7 @@ public Model(ImagePlus imp){
 	
 	if(isMultiChannel){
 		for(int i=0;i<numberOfChannels;i++){
-			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i));
+			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i),i);
 			channels.put(i, chann);
 			
 			
@@ -106,7 +107,7 @@ public Model(ImagePlus imp){
 			
 		}
 	}else{
-		MovieChannel<IT> chann= new MovieChannel<IT>( image);
+		MovieChannel<IT> chann= new MovieChannel<IT>( image,0);
 		channels.put(0, chann);
 	}
 	
@@ -151,7 +152,9 @@ public Trackable getTrackable(int seqId, int frameId, int channel){
 }
 
 public Sequence<? extends Trackable> getSequence(int id, int channel){
-	return trackingChannels.get(channel).getSequence(id);
+	TrackingChannel<? extends Trackable, IT> tc=trackingChannels.get(channel);
+	if(tc==null) return null;
+	else return trackingChannels.get(channel).getSequence(id);
 }
 
 public MovieFrame<IT> getFrame(int frame, int channel){
@@ -175,9 +178,21 @@ public MovieChannel<IT> getMovieChannel(int id){
 	return channels.get(id);
 }
 
+public TrackingChannel<? extends Trackable, IT> getTrackingChannel(int id){
+	return trackingChannels.get(id);
+}
+
 public void addTrackingChannel(TrackingChannel<? extends Trackable,IT> tc, int key){
 	trackingChannels.put(key, tc);
 }
 
-	
+public List<TrackingChannel<? extends Trackable,IT>> getTCsAssociatedWithChannel(int id){
+	List<TrackingChannel<? extends Trackable,IT>> result= new ArrayList<TrackingChannel<? extends Trackable,IT>>();
+	Collection <TrackingChannel<? extends Trackable,IT>> coll= this.trackingChannels.values();
+	for(TrackingChannel<? extends Trackable,IT> tc: coll){
+		if(tc.isAssociatedWithChannel(id)) result.add(tc);
+	}
+	return result;
+}
+
 }

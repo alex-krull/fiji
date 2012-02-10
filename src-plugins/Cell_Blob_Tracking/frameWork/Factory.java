@@ -7,5 +7,6 @@ import net.imglib2.type.numeric.RealType;
 
 public interface Factory <T extends Trackable,IT extends NumericType<IT> & NativeType<IT> & RealType<IT>>{
 	public abstract Frame<T,IT> produceFrame(int frameNum);
-	public abstract Sequence<T> produceSequence(int ident, String lab); 	
+	public abstract Sequence<T> produceSequence(int ident, String lab);
+	public abstract boolean isAssociatedWithMovieChannel(int id);
 }
