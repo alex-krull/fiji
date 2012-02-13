@@ -36,14 +36,22 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	public void rePaint(long[] position, boolean rePaintImage) {
 	
 			
-		if(position.length>3)currentFrameNumber= (int)position[3];
-		if(position.length>2)currentSliceNumber= (int)position[2];
-		if(position.length>4)currentChannelNumber=(int)position[4];
+		currentFrameNumber= (int)position[3];
+		currentSliceNumber= (int)position[2];
+		currentChannelNumber=(int)position[4];
 		
-		if(currentFrameNumber != imp.getFrame()-1
+		if(!model.hasSwitchedDimension()){
+			if(currentFrameNumber != imp.getFrame()-1
 				|| currentSliceNumber!= imp.getSlice()-1
 				|| currentChannelNumber!= imp.getChannel()-1) 
 					imp.setPosition(currentChannelNumber+1, currentSliceNumber+1, currentFrameNumber+1);
+		}else
+		{
+			if(currentFrameNumber != imp.getSlice()-1					
+					|| currentChannelNumber!= imp.getChannel()-1) 
+						imp.setPosition(currentChannelNumber+1, currentFrameNumber+1, 0);
+		}
+		
 		this.clearOverlay();
 		addZOverlayes((int)position[3]);
 		imp.setOverlay(ov);
@@ -70,20 +78,31 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		
 		if(!arg0.equals(imp)) return;
 		
+		if(!model.hasSwitchedDimension()){
 		
-		if(currentFrameNumber != imp.getFrame()-1){
-			currentFrameNumber= imp.getFrame()-1;
-			viewModel.setPosition(3, currentFrameNumber);
+			if(currentFrameNumber != imp.getFrame()-1){
+				currentFrameNumber= imp.getFrame()-1;
+				viewModel.setPosition(3, currentFrameNumber);
 		
-			return;
+				return;
+			}
+		
+			if(currentSliceNumber!= imp.getSlice()-1){
+				currentSliceNumber= imp.getSlice()-1;
+				viewModel.setPosition(2, currentSliceNumber);
+		
+				return;
+			}
+		
+		}else{
+			
+			if(currentFrameNumber!= imp.getSlice()-1){
+				currentFrameNumber=imp.getSlice()-1;
+				viewModel.setPosition(3, currentFrameNumber);
+			}
 		}
 		
-		if(currentSliceNumber!= imp.getSlice()-1){
-			currentSliceNumber= imp.getSlice()-1;
-			viewModel.setPosition(2, currentSliceNumber);
 		
-			return;
-		}
 		
 		if(currentChannelNumber!= imp.getChannel()-1){
 			currentChannelNumber= imp.getChannel()-1;

@@ -139,11 +139,18 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
     
 
 public void setPosition(int dim, int pos){
+	System.out.println("dim:" + dim + " pos: "+pos);
 	
-	
-	if(dim==2)this.currentSliceNumber= pos;	
-	if(dim==3)this.currentFrameNumber= pos;
+	if(dim==2){
+		if(currentSliceNumber==pos) return;
+		this.currentSliceNumber= pos;	
+	}
+	if(dim==3){
+		if(currentFrameNumber==pos) return;
+		this.currentFrameNumber= pos;
+	}
 	if(dim==4){
+		if(currentChannelNumber==pos) return;
 		this.currentChannelNumber= pos;
 		tCsToBeDisplayed.clear();
 		tCsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);

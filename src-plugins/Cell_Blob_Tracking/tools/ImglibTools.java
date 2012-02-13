@@ -137,10 +137,17 @@ projection( RandomAccessibleInterval<T> source, int d, int noj){
 	try{pool.awaitTermination(100, TimeUnit.HOURS);}catch(Exception e){};
 	return img;
 }
+/*
+public static <T extends RealType<T> & NativeType<T> & NumericType<T> > RandomAccessibleInterval<T>
+fillUpDimensions( RandomAccessibleInterval<T> source){
+	ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
+	Img <T> img= imgFactory.create()
+			
+}*/
+
 public static <T extends RealType<T> & NativeType<T> & NumericType<T> > RandomAccessibleInterval<T>
 projection( RandomAccessibleInterval<T> source, int d){
 	
-
 	IntervalView<T> imgv = Views.hyperSlice(source, d, 0);
     ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
 	Img <T> img= imgFactory.create(imgv, imgv.randomAccess().get().copy());  

@@ -40,11 +40,15 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		}
 		public void run() {
 			
-	        
+			System.out.println("iv:" + model.isVolume()+ "  its:" +model.isTimeSequence() + "  imc:"+ model.isMultiChannel() );
+			
+	        if(model.isVolume()){
+	        System.out.println("adding projections");
 			viewModel.addViewWindow(new MaxProjectionX<IT>(model, viewModel));
 			viewModel.addViewWindow(new MaxProjectionY<IT>(model, viewModel));
 			viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel));
-					
+	        }
+	        
 			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel));		
 			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel));
 		       

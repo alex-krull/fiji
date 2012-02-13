@@ -35,6 +35,7 @@ public double xyToZ=3.5;
 private boolean isVolume=false;
 private boolean isTimeSequence=false;
 private boolean isMultiChannel=false;
+private boolean switchedDimensions=false;
 private int numberOfChannels;
 private int numberOfFrames;
 private int numberOfSlices;
@@ -46,6 +47,9 @@ public void setVolume(boolean isVolume) {
 	this.isVolume = isVolume;
 }
 
+public boolean hasSwitchedDimension(){
+	return switchedDimensions;
+}
 
 public boolean isTimeSequence() {
 	return isTimeSequence;
@@ -73,7 +77,7 @@ public Model(ImagePlus imp){
 	
 	image=ImagePlusAdapter.wrap(imp);
 	
-	numberOfFrames=imp.getNFrames();
+
 	numberOfChannels=imp.getNChannels();
 	numberOfSlices=imp.getNSlices();
 	
@@ -81,9 +85,12 @@ public Model(ImagePlus imp){
 	setMultiChannel(imp.getNChannels()>1);
 	setVolume(imp.getNSlices()>1);	
 	
-	if(isVolume&&!isTimeSequence){
+	System.out.println("iv:" + isVolume+ "  its:" +isTimeSequence + "  imc:"+ isMultiChannel);
+	
+	if(isVolume&&!isTimeSequence && !imp.isHyperStack()){
  	   isVolume=false;
  	   isTimeSequence=true;
+ 	  switchedDimensions=true;
  	   System.out.println("SWITCHING DIMENSIONS");
     }
 	
@@ -97,22 +104,24 @@ public Model(ImagePlus imp){
 	channels=new TreeMap<Integer,MovieChannel <IT> >();
 	trackingChannels= new TreeMap<Integer, TrackingChannel <? extends Trackable,IT> >();
 	
+	if(!switchedDimensions)numberOfFrames=imp.getNFrames();
+	else numberOfFrames=imp.getNSlices();
+	
 	if(isMultiChannel){
 		for(int i=0;i<numberOfChannels;i++){
-			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i),i);
+			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i),i,numberOfFrames );
 			channels.put(i, chann);
-			
-			
-			
+				
 			
 		}
 	}else{
-		MovieChannel<IT> chann= new MovieChannel<IT>( image,0);
+		MovieChannel<IT> chann= new MovieChannel<IT>( image,0, numberOfFrames);
 		channels.put(0, chann);
 	}
 	
 	
 	
+	System.out.println("numOfFrames:" +numberOfFrames);
 }
 
 

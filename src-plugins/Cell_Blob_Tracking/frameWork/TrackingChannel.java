@@ -34,6 +34,7 @@ public class TrackingChannel<T extends Trackable, IT extends NumericType<IT> & N
 	}
 	
 	public List<T> getTrackablesForFrame(int frame){
+		System.out.println("frame:" + frame + "  nOfF:"+ frames.size());
 		return frames.get(frame).getTrackables();
 	}
 

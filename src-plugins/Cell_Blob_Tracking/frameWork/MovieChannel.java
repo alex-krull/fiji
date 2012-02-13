@@ -25,6 +25,8 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	private RandomAccessibleInterval<IT> image;
 	private long numOfFrames;
 	private int MovieChannelId;
+	private boolean isVolume;
+	private boolean isTimeSeries;
 	
 	
 
@@ -58,21 +60,26 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	
 	
 	
-	public MovieChannel(RandomAccessibleInterval<IT> view, int id){
+	public MovieChannel(RandomAccessibleInterval<IT> view, int id, int nOfFrames){
 		MovieChannelId=id;
 		image=view;
-		numOfFrames=image.dimension(3);
+		numOfFrames=nOfFrames;
+		isTimeSeries = numOfFrames>1;
+		isVolume = (image.numDimensions()>3|| (!isTimeSeries && image.numDimensions()>2) );
+		
 		
 		frames= new ArrayList<MovieFrame<IT>>();
 		
 		for(int i=0;i<numOfFrames;i++){
-			MovieFrame<IT> f=new MovieFrame<IT>(i, getFrameView(i,0));
+			MovieFrame<IT> f=new MovieFrame<IT>(i, getFrameView(i));
 			frames.add(f);
 			
 		}
 		
-		ProjectionThread pt= new ProjectionThread(this);
-		pt.start();
+		if(isVolume){
+			ProjectionThread pt= new ProjectionThread(this);
+			pt.start();
+		}
 		
 		ProjectionThreadKymographs ptk= new ProjectionThreadKymographs(this);
 		ptk.start();
@@ -89,13 +96,16 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	}
 
 	public synchronized RandomAccessibleInterval<IT> getZProjections(){
-		if(zProjections==null) zProjections=ImglibTools.projection(image,2);
+		if(zProjections==null){
+			if(isVolume) zProjections=ImglibTools.projection(image,2);
+			else zProjections=image;
+			
+		}
 		return zProjections;
 	}
 	
 	public synchronized RandomAccessibleInterval<IT> getXTProjections(){
 		if(xtProjections==null) xtProjections=Views.zeroMin( Views.invertAxis(    Views.rotate(ImglibTools.projection(getZProjections(),0),0,1 ),0 ) ) ;
-
 		return xtProjections;
 	}
 	
@@ -106,13 +116,15 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 
 		
 	
-
-	private  RandomAccessibleInterval<IT> getFrameView(int frameNumber, int channelNumber){
+	private  RandomAccessibleInterval<IT> getFrameView(int frameNumber){
 //		System.out.println("fn:"+frameNumber);
-		return Views.hyperSlice(image, 3, frameNumber);
+		if(isTimeSeries) return Views.hyperSlice(image, image.numDimensions()-1, frameNumber);
+		else return image;
+		
 	}
 
 	public MovieFrame<IT> getMovieFrame(int frame){
+		
 		return frames.get(frame);
 	}
 	
