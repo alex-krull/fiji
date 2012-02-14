@@ -151,7 +151,7 @@ public void setPosition(int dim, int pos){
 		tCsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);
 	}
 	
-	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, true );
+	upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, true );
 
 }
 

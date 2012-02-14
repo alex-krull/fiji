@@ -1,5 +1,6 @@
 package frameWork.gui;
 
+import java.awt.Scrollbar;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -15,13 +16,19 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 
 	public KymographX(Model<IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<IT> vm) {
 		super(mod, img,vm);
+		xSize=(int)model.getXTProjections(0).max(0);
+		//if(xSize>300) xSize=300;
 		
 		this.imp.getCanvas().addMouseListener(this);
+		imp.getWindow().add(new Scrollbar(Scrollbar.HORIZONTAL, 0, 1, 0, 255));
 	}
 	
 	public void rePaint(long[] position, boolean rePaintImage){
-		System.out.println("timeScale:"+timeScale);
+		
 		scaleX=timeScale;
+		transX=Math.min(Math.max(0,(int)(scaleX*position[3])-xSize/2), model.getXTProjections((int)position[4]).max(0)*scaleX-xSize);
+		System.out.println("timeScale:"+timeScale);
+		System.out.println("transX:"+transX);
 		this.clearOverlay();
 		this.addKymoXOverlayes();
 		this.addXLineOverlay(position[3]);
@@ -33,8 +40,8 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		int x=(int)((double)imp.getCanvas().offScreenX(e.getX())/this.scaleX);
-		int y=(int)((double)imp.getCanvas().offScreenY(e.getY())/this.scaleY);
+		int x=(int)(((double)imp.getCanvas().offScreenX(e.getX())+transX)/this.scaleX);
+		int y=(int)(((double)imp.getCanvas().offScreenY(e.getY())+transY)/this.scaleY);
 		System.out.println("x:"+ x +"  y:"+y);
 		if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(3,x);
 		
@@ -63,8 +70,6 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
-	}
-	
-	
+	}	
 
 }

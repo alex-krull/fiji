@@ -32,9 +32,9 @@ public class ImglibTools {
 	  		
 	  		
 	   	        
-	       dims[d]=(long) ((double)dims[d]*factor);
+	       dims[d]=(long) ((double)dims[d]*factor)+1;
 	       Img <T> result= imgFactory.create(dims, img.randomAccess().get().copy());      
-	       resize(img,result);  
+	       resize(img,result);
 	       return result;
 	}
 

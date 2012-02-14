@@ -24,7 +24,7 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 		
 		
 		imp.getCanvas().addMouseWheelListener(this);
-		
+				
 	}
 	
 	public void rePaint(long[] position, boolean rePaintImage){
@@ -32,14 +32,22 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 	}
 	
 	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
+	public synchronized void  mouseWheelMoved(MouseWheelEvent e) {
 	
+	//	if(e.isControlDown()){
+	//		this.transX++;
+	//		viewModel.setPosition(-1, -1);
+	//		return;
+	//	}
 		
-	
-		tics+= e.getWheelRotation();
-		timeScale=Math.pow(1.05, tics);
+		
+	//	tics+= e.getWheelRotation();
+	//	timeScale=Math.pow(1.1, tics);
+		timeScale=timeScale*Math.pow(1.1, e.getWheelRotation());
+		rePaint(viewModel.getPosition(),true);
 		//image = ImglibTools.scaleByFactor(this.originalImage,1,this.timeScale);
-		viewModel.setPosition(-1, -1);
+		//viewModel.setPosition(-1, -1);
+		
 		//long[] pos= {0,0,0,0,0};
 		
 		//if(viewModel.getMutex()){
@@ -49,6 +57,7 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 		
 		
 		System.out.println("timeScale:"+timeScale);
+		
 		// TODO Auto-generated method stub
 		
 		

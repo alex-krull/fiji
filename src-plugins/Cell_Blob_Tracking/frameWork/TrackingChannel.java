@@ -86,12 +86,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		return numOfFrames;
 	}
 	
-	public void addKymoOverlaysX(Overlay ov, double scaleX, double scaleY){
-		for(int i=Sequences.firstKey();i<=Sequences.lastKey();i++){
-			Sequence<T> seq = Sequences.get(i);
-			if(seq!=null) seq.getKymoOverlayX(ov,scaleX,scaleY);
-		}
-	}
+	
 		
 	protected abstract TrackingFrame<T,IT> produceFrame(int frameNum);
 	protected abstract Sequence<T> produceSequence(int ident, String lab);

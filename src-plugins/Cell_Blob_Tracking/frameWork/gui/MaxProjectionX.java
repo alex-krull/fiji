@@ -19,6 +19,8 @@ import frameWork.Model;
 				     null,		
 					"max-X-projection",vm, null);
 			this.scaleX=model.xyToZ;
+		//	xSize=(int)model.getFrame(0, viewModel.getCurrentChannelNumber()).getXProjections().max(0);
+		//	ySize=(int)model.getFrame(0, viewModel.getCurrentChannelNumber()).getXProjections().max(1);
 			
 			imp.getCanvas().addMouseListener(this);
 			imp.getCanvas().addMouseMotionListener(this);
