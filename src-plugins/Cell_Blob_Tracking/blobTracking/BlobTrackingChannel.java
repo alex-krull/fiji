@@ -4,16 +4,18 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
-import frameWork.Factory;
-import frameWork.Frame;
+import frameWork.TrackingFrame;
 import frameWork.MovieChannel;
 import frameWork.Sequence;
+import frameWork.Trackable;
+import frameWork.TrackingChannel;
 
-public class BlobFactory  <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> implements Factory <Blob, IT> {
+public class BlobTrackingChannel  <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends TrackingChannel <Blob, IT> {
 
 	private MovieChannel<IT> mChannel;
-	public BlobFactory(MovieChannel<IT> mv){
+	public BlobTrackingChannel( MovieChannel<IT> mv){
 		mChannel=mv;
+		initialize(mv.getNumberOfFrames());
 	}
 	
 	@Override
@@ -21,7 +23,7 @@ public class BlobFactory  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		return new BlobSequence( ident,  lab);
 	}
 	
-	public Frame<Blob,IT> produceFrame(int frameNum) {		
+	public TrackingFrame<Blob,IT> produceFrame(int frameNum) {		
 		return new BlobFrame<IT>(frameNum, mChannel.getMovieFrame(frameNum));
 	}
 	

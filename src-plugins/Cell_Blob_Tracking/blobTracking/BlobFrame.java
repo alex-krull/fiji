@@ -19,10 +19,10 @@ import org.apache.commons.math.optimization.direct.NelderMeadSimplex;
 import org.apache.commons.math.optimization.direct.SimplexOptimizer;
 
 import tools.ImglibTools;
-import frameWork.Frame;
+import frameWork.TrackingFrame;
 import frameWork.MovieFrame;
 
-public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends Frame<Blob, IT>{
+public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends TrackingFrame<Blob, IT>{
 	
 	private MovieFrame<IT> movieFrame;
 	private double backProb=0.9;

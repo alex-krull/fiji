@@ -12,7 +12,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import blobTracking.Blob;
-import blobTracking.BlobFactory;
+import blobTracking.BlobTrackingChannel;
 
 import tools.ImglibTools;
 
@@ -199,7 +199,7 @@ public List<TrackingChannel<? extends Trackable,IT>> getTCsAssociatedWithChannel
 	List<TrackingChannel<? extends Trackable,IT>> result= new ArrayList<TrackingChannel<? extends Trackable,IT>>();
 	Collection <TrackingChannel<? extends Trackable,IT>> coll= this.trackingChannels.values();
 	for(TrackingChannel<? extends Trackable,IT> tc: coll){
-		if(tc.isAssociatedWithChannel(id)) result.add(tc);
+		if(tc.isAssociatedWithMovieChannel(id)) result.add(tc);
 	}
 	return result;
 }

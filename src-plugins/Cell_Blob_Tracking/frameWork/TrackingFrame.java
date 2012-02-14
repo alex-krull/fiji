@@ -12,11 +12,11 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
-public abstract class Frame<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
+public abstract class TrackingFrame<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
 protected List <T> trackables;
 protected int frameNumber;
 
-protected Frame(int frameNum){
+protected TrackingFrame(int frameNum){
 	frameNumber=frameNum;
 	trackables= new ArrayList<T>();
 }

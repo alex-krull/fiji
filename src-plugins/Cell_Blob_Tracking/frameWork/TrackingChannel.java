@@ -14,21 +14,19 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 
-public class TrackingChannel<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
+public abstract class TrackingChannel<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
 	
 	
 	private SortedMap <Integer, Sequence<T>> Sequences;
-	private	List<Frame <T,IT>> frames;
-	private Factory<T,IT> factory;
+	private	List<TrackingFrame <T,IT>> frames;
 	private long numOfFrames;
 	
-	public TrackingChannel(Factory <T,IT> fact,long numberOfFrames){
-		numOfFrames=numberOfFrames;
-		factory=fact;
+	protected void initialize(long numberOfFrames){
+		numOfFrames=numberOfFrames;		
 		Sequences= new TreeMap<Integer, Sequence<T>>();
-		frames=new ArrayList<Frame<T,IT>>();
+		frames=new ArrayList<TrackingFrame<T,IT>>();
 		for(int i=0;i<numOfFrames;i++){
-			frames.add(factory.produceFrame(i));
+			frames.add(produceFrame(i));
 		}
 		
 	}
@@ -62,12 +60,12 @@ public class TrackingChannel<T extends Trackable, IT extends NumericType<IT> & N
 	}
 
 	public void optimizeFrame(int frameId){
-		Frame<T,IT> f= frames.get(frameId);
+		TrackingFrame<T,IT> f= frames.get(frameId);
 		f.optimizeFrame();
 	}
 
 	public int selectAt(int x, int y, int z, int frameId, int channel){
-		Frame<T,IT> f= frames.get(frameId);
+		TrackingFrame<T,IT> f= frames.get(frameId);
 		return f.selectAt(x, y, z);
 	}
 
@@ -77,7 +75,7 @@ public class TrackingChannel<T extends Trackable, IT extends NumericType<IT> & N
 		Sequence<T> sequence= Sequences.get(trackable.sequenceId);
 		if(sequence==null){
 			
-			sequence=factory.produceSequence(trackable.sequenceId, Integer.toString(trackable.sequenceId));
+			sequence=produceSequence(trackable.sequenceId, Integer.toString(trackable.sequenceId));
 			System.out.println("Adding Seq!");
 			Sequences.put(trackable.sequenceId, sequence);
 		}
@@ -95,8 +93,10 @@ public class TrackingChannel<T extends Trackable, IT extends NumericType<IT> & N
 			if(seq!=null) seq.getKymoOverlayX(ov,scaleX,scaleY);
 		}
 	}
+		
+	protected abstract TrackingFrame<T,IT> produceFrame(int frameNum);
+	protected abstract Sequence<T> produceSequence(int ident, String lab);
+	protected abstract boolean isAssociatedWithMovieChannel(int id);
 	
-	public boolean isAssociatedWithChannel(int id){
-		return factory.isAssociatedWithMovieChannel(id);
-	}
+	
 }

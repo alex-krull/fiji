@@ -35,7 +35,7 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 	public void mouseWheelMoved(MouseWheelEvent e) {
 	
 		
-	/*	
+	
 		tics+= e.getWheelRotation();
 		timeScale=Math.pow(1.05, tics);
 		//image = ImglibTools.scaleByFactor(this.originalImage,1,this.timeScale);
@@ -51,7 +51,7 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 		System.out.println("timeScale:"+timeScale);
 		// TODO Auto-generated method stub
 		
-	*/	
+		
 		
 	}
 

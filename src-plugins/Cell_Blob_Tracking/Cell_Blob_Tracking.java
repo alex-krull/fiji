@@ -9,7 +9,7 @@ import net.imglib2.type.Type;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import blobTracking.Blob;
-import blobTracking.BlobFactory;
+import blobTracking.BlobTrackingChannel;
 import blobTracking.BlobFrame;
 import blobTracking.BlobController;
 import frameWork.Model;

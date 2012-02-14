@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import blobTracking.Blob;
 import blobTracking.BlobController;
-import blobTracking.BlobFactory;
+import blobTracking.BlobTrackingChannel;
 
 import tools.ImglibTools;
 
@@ -59,7 +59,7 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		model =mod;
 		channelControllers=	new TreeMap<Integer, ChannelController<? extends Trackable,IT>>();
 		
-		TrackingChannel<Blob,IT> tc= new TrackingChannel<Blob,IT>(new BlobFactory <IT>(model.getMovieChannel(0)),model.getNumberOfFrames() );
+		TrackingChannel<Blob,IT> tc= new BlobTrackingChannel<IT>(model.getMovieChannel(0) );
 		BlobController<IT> bc= new BlobController<IT>(model,tc);
 		channelControllers.put(0, bc);
 		model.addTrackingChannel(tc,0);
