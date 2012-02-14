@@ -1,6 +1,6 @@
 package frameWork;
 
-import ij.IJ;
+
 import ij.ImagePlus;
 
 import java.util.ArrayList;
@@ -11,16 +11,13 @@ import java.util.Observable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import blobTracking.Blob;
-import blobTracking.BlobTrackingChannel;
 
-import tools.ImglibTools;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.ImagePlusAdapter;
-import net.imglib2.img.Img;
+
 import net.imglib2.type.NativeType;
-import net.imglib2.type.Type;
+
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;

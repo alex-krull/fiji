@@ -6,7 +6,6 @@ import ij.gui.Overlay;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Observable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 

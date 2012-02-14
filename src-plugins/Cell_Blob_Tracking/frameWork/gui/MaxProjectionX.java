@@ -1,20 +1,14 @@
 package frameWork.gui;
 
-import ij.gui.Overlay;
-
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.List;
 
-import tools.ImglibTools;
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.view.Views;
 import frameWork.Model;
-import frameWork.Trackable;
+
 
 
 

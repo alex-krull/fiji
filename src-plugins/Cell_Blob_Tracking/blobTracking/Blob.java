@@ -12,16 +12,15 @@ import ij.gui.TextRoi;
 import frameWork.Trackable;
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 
-import org.apache.commons.math.special.Erf;
+
 import org.apache.commons.math.analysis.MultivariateRealFunction;
-import org.apache.commons.math.analysis.MultivariateRealFunction;
-import org.apache.commons.math.analysis.MultivariateVectorialFunction;
-import org.apache.commons.math.exception.MathUserException;
+
+
+
 
 import tools.ImglibTools;
 

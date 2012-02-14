@@ -1,13 +1,13 @@
 package blobTracking;
 
-import net.imglib2.RandomAccessibleInterval;
+
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.TrackingFrame;
 import frameWork.MovieChannel;
 import frameWork.Sequence;
-import frameWork.Trackable;
+
 import frameWork.TrackingChannel;
 
 public class BlobTrackingChannel  <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends TrackingChannel <Blob, IT> {

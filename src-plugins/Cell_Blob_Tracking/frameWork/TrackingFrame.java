@@ -3,14 +3,13 @@ package frameWork;
 import java.util.ArrayList;
 import java.util.List;
 
-import tools.ImglibTools;
 
-import net.imglib2.RandomAccessibleInterval;
+
 import net.imglib2.type.NativeType;
-import net.imglib2.type.Type;
+
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.view.Views;
+
 
 public abstract class TrackingFrame<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
 protected List <T> trackables;

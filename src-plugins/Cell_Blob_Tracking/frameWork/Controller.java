@@ -1,48 +1,24 @@
 package frameWork;
 
-import ij.IJ;
-import ij.ImageListener;
-import ij.ImagePlus;
-import ij.gui.ImageCanvas;
-import ij.gui.Line;
-import ij.gui.Overlay;
-import ij.gui.Roi;
-import ij.plugin.ContrastEnhancer;
 
-import java.awt.Color;
+
+
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.List;
+
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import blobTracking.Blob;
 import blobTracking.BlobController;
 import blobTracking.BlobTrackingChannel;
 
-import tools.ImglibTools;
 
-import net.imglib2.Cursor;
-import net.imglib2.IterableInterval;
-import net.imglib2.RandomAccess;
-import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.ImagePlusAdapter;
-import net.imglib2.img.Img;
-import net.imglib2.img.ImgFactory;
-import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.img.display.imagej.ImageJFunctions;
+
 import net.imglib2.type.NativeType;
-import net.imglib2.type.Type;
+
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.view.IntervalView;
-import net.imglib2.view.Views;
+
 
 public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > {
 

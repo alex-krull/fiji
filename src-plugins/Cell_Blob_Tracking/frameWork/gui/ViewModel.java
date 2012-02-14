@@ -4,18 +4,13 @@ import frameWork.Controller;
 import frameWork.Model;
 import frameWork.Trackable;
 import frameWork.TrackingChannel;
-import ij.ImageListener;
-import ij.ImagePlus;
-import ij.gui.ImageCanvas;
-import ij.gui.Line;
-import ij.gui.Overlay;
-import ij.plugin.ContrastEnhancer;
 
-import java.awt.Color;
-import java.awt.Component;
+import ij.ImagePlus;
+
+
+
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -23,11 +18,11 @@ import java.util.Observer;
 import java.util.concurrent.Callable;
 
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.display.imagej.ImageJFunctions;
+
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.view.Views;
+
 import tools.ImglibTools;
 
 public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Observer{
@@ -51,7 +46,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	
 	protected Model<IT> model;
-	protected Controller controller;
+	protected Controller<IT> controller;
 	private List<TrackingChannel<? extends Trackable,IT>> tCsToBeDisplayed;
 	
 	protected List <ViewWindow<IT>> views;

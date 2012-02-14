@@ -1,17 +1,11 @@
 package blobTracking;
 
-import ij.ImagePlus;
-import ij.gui.Roi;
-
 import java.awt.event.MouseEvent;
-
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.ChannelController;
 import frameWork.Model;
-import frameWork.Controller;
 import frameWork.TrackingChannel;
 
 

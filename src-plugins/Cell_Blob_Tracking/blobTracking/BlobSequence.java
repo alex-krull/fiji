@@ -1,14 +1,12 @@
 package blobTracking;
 
 
-import java.util.List;
+
 
 import ij.gui.Line;
 import ij.gui.Overlay;
-import ij.gui.PolygonRoi;
-import ij.gui.Roi;
 import frameWork.Sequence;
-import frameWork.Trackable;
+
 
 public class BlobSequence extends Sequence<Blob>{
 

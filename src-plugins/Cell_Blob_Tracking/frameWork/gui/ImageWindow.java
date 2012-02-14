@@ -10,7 +10,6 @@ import java.awt.Color;
 import java.util.List;
 import java.util.SortedMap;
 
-import org.omg.PortableServer.IMPLICIT_ACTIVATION_POLICY_ID;
 
 import tools.ImglibTools;
 

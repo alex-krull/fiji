@@ -2,9 +2,7 @@ package frameWork;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.SortedMap;
-import java.util.TreeMap;
+
 
 import tools.ImglibTools;
 
