@@ -32,10 +32,20 @@ public class ImglibTools {
 	  		
 	  		
 	   	        
-	       dims[d]=(long) ((double)dims[d]*factor)+1;
+	       dims[d]=(long) ((double)dims[d]*factor);
 	       Img <T> result= imgFactory.create(dims, img.randomAccess().get().copy());      
 	       resize(img,result);
 	       return result;
+	}
+	
+	public static <T extends  NumericType<T> & RealType<T> & NativeType<T>  > Img<T> resizeTo(RandomAccessibleInterval<T> source, long x, long y){
+		ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
+		long[] dims = new long[2];
+		dims[0]=x;
+		dims[1]=y;
+		Img <T> result= imgFactory.create(dims, source.randomAccess().get().copy());
+		resize(source,result);
+	    return result;
 	}
 
 

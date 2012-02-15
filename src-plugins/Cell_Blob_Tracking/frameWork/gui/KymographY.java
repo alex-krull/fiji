@@ -31,7 +31,9 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	public void rePaint(long[] position, boolean rePaintImage){
 		scaleY=timeScale;	
-		transY=Math.min(Math.max(0,(int)(scaleY*position[3])-ySize/2), model.getYTProjections((int)position[4]).max(1)*scaleY-ySize);
+		transY=Math.max(0,(int)(scaleY*position[3])-ySize/2);
+		System.out.println("position:" + transY + "  Maximum:"+  ((int)(model.getYTProjections((int)position[4]).max(1)*scaleY-ySize) ) + "ySize:" +ySize);
+		transY=Math.min( transY, (int)((1+model.getYTProjections((int)position[4]).max(1))*scaleY)-ySize );
 		
 		this.clearOverlay();
 	//	this.addKymoYOverlayes();
@@ -87,14 +89,14 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 
 	@Override
 	public synchronized void componentResized(ComponentEvent arg0) {
-		if(buisy){
-			buisy=false;
-			return;
-		}
-		buisy =true;
-		ySize=imp.getWindow().getHeight()-30;
-    	timeScale=(double)ySize/(double)model.getYTProjections(0).max(1);
-    	rePaint(viewModel.getPosition(),true);	
+	//	if(buisy){
+	//		buisy=false;
+	//		return;
+	//	}
+	//	buisy =true;
+	//	ySize=imp.getWindow().getHeight()-30;
+    //	timeScale=(double)ySize/(double)model.getYTProjections(0).max(1);
+    //	rePaint(viewModel.getPosition(),true);	
 	}
 
 	@Override

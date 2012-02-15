@@ -58,18 +58,34 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		//	long[] mins= {(long)Math.min(transX,0), (long)Math.min(transY,0)};
 		//	long[] maxs= {(long)transX+xSize, (long)transY+ySize};
 			
-			if(xSize<0 )xSize= (int)(scaleX*((int)toDraw.max(0)- (int)toDraw.min(0)));
-			if(ySize<0 )ySize= (int)(scaleY*((int)toDraw.max(1)- (int)toDraw.min(1)));	
+			if(xSize<0 )xSize= (int)(scaleX*((int)toDraw.dimension(0)));
+			if(ySize<0 )ySize= (int)(scaleY*((int)toDraw.dimension(1)));	
 			
-			long minX=(long)((double)(transX)/(double)scaleX)  ;
-			long minY=(long)((double)(transY)/(double)scaleY)  ;
-			long maxX=minX+(long)((double)xSize/(double)scaleX)  +2;
-			long maxY=minY+(long)((double)ySize/(double)scaleY ) +2;
+			long minX=(long)((double)(transX)/(double)scaleX) -1;
+			long minY=(long)((double)(transY)/(double)scaleY) -1;
+			
 			
 			minX=Math.max(minX, 0);
 			minY=Math.max(minY, 0);
-			maxX=Math.min(maxX, toDraw.max(0));
-			maxY=Math.min(maxY, toDraw.max(1));
+			
+			long maxX=minX+(long)((double)(xSize)/(double)scaleX) +2;
+			long maxY=minY+(long)((double)(ySize)/(double)scaleY) +2;
+			
+			if(maxX>=toDraw.max(0)){
+				maxX=toDraw.max(0);
+				minX=Math.max( (long)((double)(maxX-xSize)/scaleX) -1, 0);
+			}
+			
+			if(maxY>=toDraw.max(1)){
+				maxY=toDraw.max(1);
+				minY=Math.max( (long)((double)(maxY-ySize)/scaleY) -1, 0);
+			}
+			
+						
+			System.out.println("			(maxX-minX)*scaleX:" + (maxX-minX)*scaleX);
+			System.out.println("			 maxX:" + maxX*scaleX);
+			System.out.println("			 minX:" + minX*scaleX);
+			
 			
 			long[] minsP= {minX, minY};
 			long[] maxsP= {maxX,maxY};
@@ -77,22 +93,36 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 			
 			
 			
-			RandomAccessibleInterval<IT> temp=  Views.zeroMin(Views.interval(toDraw, minsP, maxsP));
+			toDraw=  Views.zeroMin(Views.interval(toDraw, minsP, maxsP));
 			
-			temp=ImglibTools.scaleByFactor(temp, 0, scaleX);
+			RandomAccessibleInterval<IT> temp=ImglibTools.scaleByFactor(toDraw, 0, scaleX);
 			temp=ImglibTools.scaleByFactor(temp, 1, scaleY);
+			
+			minsP[0]=(long)(-scaleX*(double)minsP[0]);
+			minsP[1]=(long)(-scaleY*(double)minsP[1]);
+			
+			temp= Views.translate(temp, minsP);
 				
-			long[] mins= {(long)transX-(long)((double)minX*scaleX), (long)transY-(long)((double)minY*scaleY)};
-			long[] maxs= {Math.min(xSize+mins[0], temp.max(0)), Math.min(ySize+mins[1], temp.max(1))};
+			long[] mins= {(long)transX,(long) transY};
+			
+			long[] maxs= {Math.min(xSize+mins[0]-1, temp.max(0)), Math.min(ySize+mins[1]-1, temp.max(1))};
 				
 								
-			toDraw= Views.zeroMin( Views.interval(temp, mins, maxs) );
-			//if(toDraw.max(0)!=xSize) toDraw= ImglibTools.scaleByFactor(toDraw, 0, (double)xSize/(double)toDraw.max(0));
-		//	if(toDraw.max(1)!=ySize) toDraw= ImglibTools.scaleByFactor(toDraw, 0, (double)ySize/(double)toDraw.max(1));
+			temp= Views.zeroMin( Views.interval(temp, mins, maxs) );
+			//toDraw=temp;
+			//if(toDraw.max(0)!=xSize) toDraw= ImglibTools.scaleByFactor(toDraw, 0, (double)xSize/(double)(toDraw.max(0)+1));
+			//if(toDraw.max(1)!=ySize) toDraw= ImglibTools.scaleByFactor(toDraw, 0, (double)ySize/(double)(toDraw.max(1)+1));
+		//	toDraw=ImglibTools.resizeTo(toDraw, xSize, ySize);
+			System.out.println("            xSize:" +xSize + "  ySize:" + ySize);
+			System.out.println("            minX:" +mins[0] + "  minY:" + mins[1]);
+			System.out.println("            maxX:" +maxs[0] + "  maxY:" + maxs[1]);
+			System.out.println("            tempMaxX:" +temp.max(0) + "  temMaxY:" + temp.max(1));
+			System.out.println("            tempMinX:" +temp.min(0) + "  temMinY:" + temp.min(1));
+			System.out.println("            transX:" +transX + "  transY:" + transY);
 			
-			ImagePlus impl=ImageJFunctions.wrap( toDraw , caption);
-			//	transX=(scaleX*(double)impl.getProcessor().getWidth()- (double)impl.getProcessor().getWidth())/2.0;
-			//	transY=(scaleY*(double)impl.getProcessor().getHeight()- (double)impl.getProcessor().getHeight())/2.0;
+			ImagePlus impl=ImageJFunctions.wrap( temp , caption);
+		//		transX=(scaleX*(double)impl.getProcessor().getWidth()- (double)impl.getProcessor().getWidth())/2.0;
+		//		transY=(scaleY*(double)impl.getProcessor().getHeight()- (double)impl.getProcessor().getHeight())/2.0;
 			ContrastEnhancer ce= new ContrastEnhancer();
 			ce.stretchHistogram(impl.getProcessor(), 0.5); 
 			
