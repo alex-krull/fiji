@@ -1,5 +1,7 @@
 package frameWork.gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
@@ -12,7 +14,7 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 
 
-public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> implements MouseListener , ComponentListener{
+public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> implements MouseListener , ActionListener{
 
 	
 	private boolean buisy=false;
@@ -26,7 +28,7 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	    }
 	    
 		this.imp.getCanvas().addMouseListener(this);
-		imp.getWindow().addComponentListener(this);
+		
 	}
 	
 	public void rePaint(long[] position, boolean rePaintImage){
@@ -75,33 +77,13 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		
 	}
 
+
+
+
 	@Override
-	public void componentHidden(ComponentEvent arg0) {
+	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void componentMoved(ComponentEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public synchronized void componentResized(ComponentEvent arg0) {
-	//	if(buisy){
-	//		buisy=false;
-	//		return;
-	//	}
-	//	buisy =true;
-	//	ySize=imp.getWindow().getHeight()-30;
-    //	timeScale=(double)ySize/(double)model.getYTProjections(0).max(1);
-    //	rePaint(viewModel.getPosition(),true);	
-	}
-
-	@Override
-	public void componentShown(ComponentEvent arg0) {
-			
 	}
 	
 

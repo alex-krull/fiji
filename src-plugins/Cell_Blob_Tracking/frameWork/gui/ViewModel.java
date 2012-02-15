@@ -134,7 +134,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
     
 
 public void setPosition(int dim, int pos){
-	System.out.println("dim:" + dim + " pos: "+pos);
+//	System.out.println("dim:" + dim + " pos: "+pos);
 	
 	if(dim==2){
 		if(currentSliceNumber==pos) return;

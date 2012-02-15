@@ -1,20 +1,102 @@
 package frameWork.gui;
 
+import java.awt.Scrollbar;
+import java.awt.event.AdjustmentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import ij.ImageListener;
 import ij.ImagePlus;
+import ij.gui.StackWindow;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 
 
-public class MainWindow  < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<IT>
+public class MainWindow  < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<IT> 
 implements ImageListener, MouseListener, MouseMotionListener{
+	
+	private class MyStackWindow extends StackWindow{	
+		
+		public MyStackWindow(ImagePlus imp) {
+			super(imp);
+			
+		//	this.sliceSelector= new Scrollbar(Scrollbar.HORIZONTAL, 0,1,1,model.getNumberOfSlices()+1);
+		//	this.sliceSelector.setVisible(true);
+		//	this.zSelector.setVisible(true);
+		//	this.cSelector.setVisible(true);
+			
+			// TODO Auto-generated constructor stub
+		}
+		
+		public void adjustmentValueChanged(java.awt.event.AdjustmentEvent e){
+			
+			if (!running2 || imp.isHyperStack()) {
+                         
+				if(!model.hasSwitchedDimension()){
+					
+					//	System.out.println("no SwitchedDimension");
+						
+						//viewModel.setPosition(3, this.getImagePlus().getFrame()-1);
+						if(model.isVolume()) viewModel.setPosition(2, sliceSelector.getValue()-1);
+						if(model.isTimeSequence()) viewModel.setPosition(3, tSelector.getValue()-1);
+						if(model.isMultiChannel()) viewModel.setPosition(4, cSelector.getValue()-1);
+					
+				
+				}else{
+				//	    System.out.println("SwitchedDimension");
+					//	viewModel.setPosition(3, currentFrameNumber);
 
+		//			    if(model.isTimeSequence()) viewModel.setPosition(3, sliceSelector.getValue()-1);
+				//		if(model.isMultiChannel()) viewModel.setPosition(4, cSelector.getValue()-1);
+
+				
+				
+				//	viewModel.setPosition(4, currentChannelNumber);
+					
+				}
+				
+                notify();
+        }
+
+		
+					
+			
+			if(!model.hasSwitchedDimension()){
+				
+				//	System.out.println("no SwitchedDimension");
+					
+					//viewModel.setPosition(3, this.getImagePlus().getFrame()-1);
+					if(model.isVolume()) viewModel.setPosition(2, sliceSelector.getValue()-1);
+					if(model.isTimeSequence()) viewModel.setPosition(3, tSelector.getValue()-1);
+					if(model.isMultiChannel()) viewModel.setPosition(4, cSelector.getValue()-1);
+				
+			
+			}else{
+			//	    System.out.println("SwitchedDimension");
+				//	viewModel.setPosition(3, currentFrameNumber);
+
+	//			    if(model.isTimeSequence()) viewModel.setPosition(3, sliceSelector.getValue()-1);
+			//		if(model.isMultiChannel()) viewModel.setPosition(4, cSelector.getValue()-1);
+
+			
+			
+			//	viewModel.setPosition(4, currentChannelNumber);
+				
+			}
+				
+		
+	//		super.adjustmentValueChanged(e);
+			return;
+		}
+		
+	}
+	
+
+	private StackWindow stackWindow;
 	private int currentFrameNumber;
 	private int currentSliceNumber;
 	private int currentChannelNumber;
@@ -26,8 +108,13 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		currentFrameNumber= imp.getFrame()-1;
 		currentSliceNumber= imp.getSlice()-1;
 		currentChannelNumber=imp.getChannel()-1;
-		imp.getCanvas().addMouseListener(this);
-		imp.getCanvas().addMouseMotionListener(this);
+		//imp.getWindow().close();
+		imp.setOpenAsHyperStack(true);
+		stackWindow= new StackWindow(imp);
+		
+		stackWindow.getCanvas().addMouseListener(this);
+		stackWindow.getCanvas().addMouseMotionListener(this);
+		
 		ImagePlus.addImageListener(this);
 	}
 
@@ -72,43 +159,41 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	}
 
 	@Override
-	public synchronized void imageUpdated(ImagePlus arg0) {
+	public void imageUpdated(ImagePlus arg0) {
 		
 		
 		if(!arg0.equals(imp)) return;
 		
 		if(!model.hasSwitchedDimension()){
 		
-			if(currentFrameNumber != imp.getFrame()-1){
+			
 				currentFrameNumber= imp.getFrame()-1;
 				viewModel.setPosition(3, currentFrameNumber);
 		
-				return;
-			}
+			
 		
-			if(currentSliceNumber!= imp.getSlice()-1){
+			
 				currentSliceNumber= imp.getSlice()-1;
 				viewModel.setPosition(2, currentSliceNumber);
 		
-				return;
-			}
+			
 		
 		}else{
 			
-			if(currentFrameNumber!= imp.getSlice()-1){
+			
 				currentFrameNumber=imp.getSlice()-1;
 				viewModel.setPosition(3, currentFrameNumber);
-			}
+			
 		}
 		
 		
 		
-		if(currentChannelNumber!= imp.getChannel()-1){
+		
 			currentChannelNumber= imp.getChannel()-1;
 			viewModel.setPosition(4, currentChannelNumber);
 			
-			return;
-		}
+			
+		
 			
 	
 		return;

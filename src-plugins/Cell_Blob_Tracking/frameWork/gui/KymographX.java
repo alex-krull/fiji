@@ -1,6 +1,10 @@
 package frameWork.gui;
 
 import java.awt.Scrollbar;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -14,17 +18,21 @@ import frameWork.Model;
 
 public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> implements MouseListener{
 
+	private Scrollbar sb;
+	private boolean buisy =false;
+	
 	public KymographX(Model<IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<IT> vm) {
 		super(mod, img,vm);
 		xSize=(int)model.getXTProjections(0).max(0);
 		//if(xSize>300) xSize=300;
 		
 		this.imp.getCanvas().addMouseListener(this);
-		imp.getWindow().add(new Scrollbar(Scrollbar.HORIZONTAL, 0, 1, 0, 255));
+		sb=new Scrollbar(Scrollbar.HORIZONTAL, 0, 1, 1, 100);
+		imp.getWindow().add(sb);
+		
 	}
 	
 	public void rePaint(long[] position, boolean rePaintImage){
-		
 		scaleX=timeScale;
 		transX=Math.min(Math.max(0,(int)(scaleX*position[3])-xSize/2),(1+model.getXTProjections((int)position[4]).max(0))*scaleX-xSize);
 		System.out.println("timeScale:"+timeScale);

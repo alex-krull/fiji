@@ -24,6 +24,10 @@ import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
 public class ImglibTools {
+	
+	public static final int MAXPROJECTION = 0;
+	public static final int SUMPROJECTION = 1;
+	
 	public static <T extends  NumericType<T> & RealType<T> & NativeType<T>  > Img<T> scaleByFactor(RandomAccessibleInterval<T> img, int d, double factor){
 		ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
 	       long[] dims = new long[img.numDimensions()];

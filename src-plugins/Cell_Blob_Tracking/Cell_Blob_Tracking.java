@@ -44,9 +44,9 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 			
 	        if(model.isVolume()){
 	        System.out.println("adding projections");
-			viewModel.addViewWindow(new MaxProjectionX<IT>(model, viewModel));
-			viewModel.addViewWindow(new MaxProjectionY<IT>(model, viewModel));
-			viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel));
+		//	viewModel.addViewWindow(new MaxProjectionX<IT>(model, viewModel));
+		//	viewModel.addViewWindow(new MaxProjectionY<IT>(model, viewModel));
+		//	viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel));
 	        }
 	        
 			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel));		
