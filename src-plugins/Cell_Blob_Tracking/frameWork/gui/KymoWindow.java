@@ -20,7 +20,7 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 	protected double tics=0;
 	
 	public KymoWindow(Model<IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<IT> vm){
-		super(mod, img, "kymograph", vm, null, 10);
+		super(mod, img, "kymograph", vm, null, 3);
 		
 		timeScale=1;
 		originalImage=img;
