@@ -4,6 +4,7 @@ import frameWork.Controller;
 import frameWork.Model;
 import frameWork.Trackable;
 import frameWork.TrackingChannel;
+import frameWork.gui.ViewWindow.UpdateTask;
 
 import ij.ImagePlus;
 
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
 import net.imglib2.RandomAccessibleInterval;
@@ -51,6 +54,8 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	protected List <ViewWindow<IT>> views;
 	
+	protected BlockingQueue<UpdateTask> blockingQueue;
+	
 
 	class ProjectionJob	implements Callable<RandomAccessibleInterval<IT> >{
 		RandomAccessibleInterval<IT> image;
@@ -70,7 +75,9 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
  
 	public ViewModel(ImagePlus imp,  Model<IT> mod, Controller<IT> contr){
 		
-		
+		blockingQueue= new ArrayBlockingQueue<UpdateTask>(1);
+		UpdateThread udt= new UpdateThread();
+		udt.start();
 		controller=contr;
 		
 	   model=mod;
@@ -131,9 +138,38 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
        
         return;
     }
-    
 
-public void setPosition(int dim, int pos){
+	
+	protected class UpdateTask{
+		public int dim;
+		public int position;
+		public UpdateTask(int d, int  p){
+			position=p;
+			dim=d;
+		}
+	}
+	
+	protected class UpdateThread extends Thread{
+		long[] position;
+		boolean rePaintImage;
+		
+		public UpdateThread(){
+	
+		}
+		public void run() {
+		   while(true){
+			   try {
+				UpdateTask item = blockingQueue.take();
+				setPositionInternal(item.dim,item.position);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		   }
+		}  
+	}
+
+public void setPositionInternal(int dim, int pos){
 //	System.out.println("dim:" + dim + " pos: "+pos);
 	
 	if(dim==2){
@@ -151,8 +187,19 @@ public void setPosition(int dim, int pos){
 		tCsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);
 	}
 	
+	//UpdateThread udt = new UpdateThread();
+	//udt.start();
 	upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, true );
 
+}
+	
+public synchronized void setPosition(int dim, int pos){
+	try {
+		blockingQueue.put(new UpdateTask(dim,pos));
+	} catch (InterruptedException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 }
 
 public long[] getPosition(){
@@ -171,8 +218,8 @@ protected void upDateImages(int frame, int slice, int channel, boolean init){
 
 	long[] pos= {0,0,slice, frame, channel};
 	for(ViewWindow<IT> vw:views){
-	
-		vw.rePaint(pos, init);
+		
+		vw.upDate(pos, init);
 	}
  
 				

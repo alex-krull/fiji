@@ -68,8 +68,8 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 			minX=Math.max(minX, 0);
 			minY=Math.max(minY, 0);
 			
-			long maxX=minX+(long)((double)(xSize)/(double)scaleX) +2;
-			long maxY=minY+(long)((double)(ySize)/(double)scaleY) +2;
+			long maxX=minX+(long)((double)(xSize)/(double)scaleX) +xSize/2;
+			long maxY=minY+(long)((double)(ySize)/(double)scaleY) +ySize/2;
 			
 			if(maxX>=toDraw.max(0)){
 				maxX=toDraw.max(0);

@@ -34,40 +34,11 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		
 		public void adjustmentValueChanged(java.awt.event.AdjustmentEvent e){
 			
-			if (!running2 || imp.isHyperStack()) {
-                         
-				if(!model.hasSwitchedDimension()){
-					
-					//	System.out.println("no SwitchedDimension");
+	
 						
-						//viewModel.setPosition(3, this.getImagePlus().getFrame()-1);
-						if(model.isVolume()) viewModel.setPosition(2, sliceSelector.getValue()-1);
-						if(model.isTimeSequence()) viewModel.setPosition(3, tSelector.getValue()-1);
-						if(model.isMultiChannel()) viewModel.setPosition(4, cSelector.getValue()-1);
-					
-				
-				}else{
-				//	    System.out.println("SwitchedDimension");
-					//	viewModel.setPosition(3, currentFrameNumber);
-
-		//			    if(model.isTimeSequence()) viewModel.setPosition(3, sliceSelector.getValue()-1);
-				//		if(model.isMultiChannel()) viewModel.setPosition(4, cSelector.getValue()-1);
-
-				
-				
-				//	viewModel.setPosition(4, currentChannelNumber);
-					
-				}
-				
-                notify();
-        }
-
-		
-					
-			
 			if(!model.hasSwitchedDimension()){
 				
-				//	System.out.println("no SwitchedDimension");
+					System.out.println("no SwitchedDimension");
 					
 					//viewModel.setPosition(3, this.getImagePlus().getFrame()-1);
 					if(model.isVolume()) viewModel.setPosition(2, sliceSelector.getValue()-1);
@@ -76,11 +47,10 @@ implements ImageListener, MouseListener, MouseMotionListener{
 				
 			
 			}else{
-			//	    System.out.println("SwitchedDimension");
-				//	viewModel.setPosition(3, currentFrameNumber);
-
-	//			    if(model.isTimeSequence()) viewModel.setPosition(3, sliceSelector.getValue()-1);
-			//		if(model.isMultiChannel()) viewModel.setPosition(4, cSelector.getValue()-1);
+				    System.out.println("SwitchedDimension");
+		//			viewModel.setPosition(3, currentFrameNumber);
+				    if(model.isTimeSequence()) viewModel.setPosition(3, sliceSelector.getValue()-1);
+					if(model.isMultiChannel()) viewModel.setPosition(4, cSelector.getValue()-1);
 
 			
 			
@@ -110,12 +80,12 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		currentChannelNumber=imp.getChannel()-1;
 		//imp.getWindow().close();
 		imp.setOpenAsHyperStack(true);
-		stackWindow= new StackWindow(imp);
+		stackWindow= new MyStackWindow(imp);
 		
 		stackWindow.getCanvas().addMouseListener(this);
 		stackWindow.getCanvas().addMouseMotionListener(this);
 		
-		ImagePlus.addImageListener(this);
+		//ImagePlus.addImageListener(this);
 	}
 
 	@Override

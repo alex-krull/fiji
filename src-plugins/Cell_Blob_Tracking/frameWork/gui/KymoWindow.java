@@ -49,9 +49,9 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 	//	timeScale=Math.pow(1.1, tics);
 		
 		timeScale=timeScale*Math.pow(1.1, e.getWheelRotation());
-		rePaint(viewModel.getPosition(),true);
+		//rePaint(viewModel.getPosition(),true);
 		//image = ImglibTools.scaleByFactor(this.originalImage,1,this.timeScale);
-		//viewModel.setPosition(-1, -1);
+		viewModel.setPosition(-1, -1);
 		
 		//long[] pos= {0,0,0,0,0};
 		
