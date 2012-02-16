@@ -17,7 +17,7 @@ import frameWork.Model;
 		public MaxProjectionX(Model<IT> mod, ViewModel<IT> vm){
 			super(mod, 
 				     null,		
-					"max-X-projection",vm, null);
+					"max-X-projection",vm, null, 100);
 			this.scaleX=model.xyToZ;
 		//	xSize=(int)model.getFrame(0, viewModel.getCurrentChannelNumber()).getXProjections().max(0);
 		//	ySize=(int)model.getFrame(0, viewModel.getCurrentChannelNumber()).getXProjections().max(1);

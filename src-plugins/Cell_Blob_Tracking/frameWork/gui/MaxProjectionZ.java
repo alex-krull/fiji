@@ -13,7 +13,7 @@ public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & Rea
 implements MouseListener, MouseMotionListener {
 	
 	public MaxProjectionZ(Model<IT> mod, ViewModel<IT> vm){
-		super(mod, null, "max-Z-projection", vm, null);
+		super(mod, null, "max-Z-projection", vm, null,100);
 		imp.getCanvas().addMouseListener(this);
 		imp.getCanvas().addMouseMotionListener(this);
 	}

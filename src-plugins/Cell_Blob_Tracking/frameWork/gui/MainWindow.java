@@ -59,7 +59,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 			}
 				
 		
-	//		super.adjustmentValueChanged(e);
+			//super.adjustmentValueChanged(e);
 			return;
 		}
 		
@@ -72,7 +72,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	private int currentChannelNumber;
 		
 	protected MainWindow(ImagePlus imagePlus, Model< IT> mod, ViewModel< IT> vm) {
-		super(mod, mod.getImage(), imagePlus.getWindow().getTitle(), vm, imagePlus);
+		super(mod, mod.getImage(), imagePlus.getWindow().getTitle(), vm, imagePlus, 500);
 		
 		
 		currentFrameNumber= imp.getFrame()-1;
@@ -91,7 +91,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	@Override
 	public void rePaint(long[] position, boolean rePaintImage) {
 	
-			
+		System.out.println("=========================================capacity:" + blockingQueue.remainingCapacity());
 		currentFrameNumber= (int)position[3];
 		currentSliceNumber= (int)position[2];
 		currentChannelNumber=(int)position[4];

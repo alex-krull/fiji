@@ -39,8 +39,8 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 
 	protected RandomAccessibleInterval<IT> toDraw;
 	
-	public ImageWindow(Model<IT> mod, RandomAccessibleInterval<IT> img, String title, ViewModel<IT> vm, ImagePlus imagePlus){
-		super(mod, title,vm);
+	public ImageWindow(Model<IT> mod, RandomAccessibleInterval<IT> img, String title, ViewModel<IT> vm, ImagePlus imagePlus, int capacity){
+		super(mod, title,vm, capacity);
 		imp=imagePlus;
 		
 		ov= new Overlay();
@@ -68,8 +68,8 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 			minX=Math.max(minX, 0);
 			minY=Math.max(minY, 0);
 			
-			long maxX=minX+(long)((double)(xSize)/(double)scaleX) +xSize/2;
-			long maxY=minY+(long)((double)(ySize)/(double)scaleY) +ySize/2;
+			long maxX=minX+(long)((double)(xSize)/(double)scaleX) +(long)((double)xSize/(2*scaleX));
+			long maxY=minY+(long)((double)(ySize)/(double)scaleY) +(long)((double)ySize/(2*scaleY));
 			
 			if(maxX>=toDraw.max(0)){
 				maxX=toDraw.max(0);

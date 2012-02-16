@@ -2,6 +2,7 @@ package frameWork.gui;
 
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.concurrent.LinkedBlockingQueue;
 
 
 import net.imglib2.RandomAccessibleInterval;
@@ -9,6 +10,7 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
+import frameWork.gui.ViewWindow.UpdateTask;
 
 
 public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<IT> implements MouseWheelListener {
@@ -18,12 +20,14 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 	protected double tics=0;
 	
 	public KymoWindow(Model<IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<IT> vm){
-		super(mod, img, "kymograph", vm, null);
+		super(mod, img, "kymograph", vm, null, 10);
+		
 		timeScale=1;
 		originalImage=img;
 		
 		
 		imp.getCanvas().addMouseWheelListener(this);
+		
 				
 	}
 	

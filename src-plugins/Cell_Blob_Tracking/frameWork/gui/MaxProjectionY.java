@@ -19,7 +19,7 @@ implements MouseListener, MouseMotionListener {
 					//ImglibTools.scaleByFactor(
 							null,
 					//1,mod.xyToZ)
-					"max-Y-projection",vm,null);
+					"max-Y-projection",vm,null, 100);
 			this.scaleY=model.xyToZ;
 			imp.getCanvas().addMouseListener(this);
 			imp.getCanvas().addMouseMotionListener(this);

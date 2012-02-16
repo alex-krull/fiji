@@ -14,10 +14,14 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	protected String caption;
 	protected ViewModel<IT> viewModel;
 	protected BlockingQueue<UpdateTask> blockingQueue;
-	protected ViewWindow(Model<IT> mod, String title, ViewModel<IT> vm){
-		blockingQueue= new LinkedBlockingQueue<UpdateTask>(1);
-		UpdateThread udt= new UpdateThread();
+	protected ViewWindow(Model<IT> mod, String title, ViewModel<IT> vm, int capacity){
+		blockingQueue= new ArrayBlockingQueue<UpdateTask>(capacity);
+		
+		UpdateThread udt= new UpdateThread();	
 		udt.start();
+		
+		//UpdateThread udt2= new UpdateThread();
+		//udt2.start();
 		viewModel=vm;
 		model=mod;
 		caption= title;
@@ -27,9 +31,14 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	public abstract void rePaint(long[] position, boolean rePaintImage);
 	
 	public synchronized void upDate(long[] pos, boolean rpImage){
+		
 		try {
-			blockingQueue.put(new UpdateTask(pos,rpImage));
-		} catch (InterruptedException e) {
+			//blockingQueue.put(new UpdateTask(pos,rpImage));
+			while(!blockingQueue.offer(new UpdateTask(pos,rpImage))){
+				blockingQueue.take();				
+			}
+				//blockingQueue.clear();
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -53,6 +62,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		}
 		public void run() {
 		   while(true){
+			   
 			   try {
 				UpdateTask item = blockingQueue.take();
 				rePaint(item.position,item.rePaintImage);

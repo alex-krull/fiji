@@ -5,6 +5,7 @@ import frameWork.Model;
 import frameWork.Trackable;
 import frameWork.TrackingChannel;
 import frameWork.gui.ViewWindow.UpdateTask;
+import frameWork.gui.ViewWindow.UpdateThread;
 
 import ij.ImagePlus;
 
@@ -54,9 +55,6 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	protected List <ViewWindow<IT>> views;
 	
-	protected BlockingQueue<UpdateTask> blockingQueue;
-	
-
 	class ProjectionJob	implements Callable<RandomAccessibleInterval<IT> >{
 		RandomAccessibleInterval<IT> image;
 		int dim;
@@ -70,15 +68,14 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 			
 			return ImglibTools.projection(image, dim);
 		}
+
 		
 	}
  
 	public ViewModel(ImagePlus imp,  Model<IT> mod, Controller<IT> contr){
 		
-		blockingQueue= new ArrayBlockingQueue<UpdateTask>(1);
-		UpdateThread udt= new UpdateThread();
-		udt.start();
-		controller=contr;
+	
+	   controller=contr;
 		
 	   model=mod;
        // 0 - Check validity of parameters
@@ -139,35 +136,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
         return;
     }
 
-	
-	protected class UpdateTask{
-		public int dim;
-		public int position;
-		public UpdateTask(int d, int  p){
-			position=p;
-			dim=d;
-		}
-	}
-	
-	protected class UpdateThread extends Thread{
-		long[] position;
-		boolean rePaintImage;
-		
-		public UpdateThread(){
-	
-		}
-		public void run() {
-		   while(true){
-			   try {
-				UpdateTask item = blockingQueue.take();
-				setPositionInternal(item.dim,item.position);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		   }
-		}  
-	}
+
 
 public void setPositionInternal(int dim, int pos){
 //	System.out.println("dim:" + dim + " pos: "+pos);
@@ -193,13 +162,14 @@ public void setPositionInternal(int dim, int pos){
 
 }
 	
-public synchronized void setPosition(int dim, int pos){
-	try {
+public void setPosition(int dim, int pos){
+/*	try {
 		blockingQueue.put(new UpdateTask(dim,pos));
 	} catch (InterruptedException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-	}
+	}*/
+	setPositionInternal( dim,  pos);
 }
 
 public long[] getPosition(){
