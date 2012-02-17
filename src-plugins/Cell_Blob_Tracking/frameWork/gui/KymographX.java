@@ -23,7 +23,8 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	public KymographX(Model<IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<IT> vm) {
 		super(mod, img,vm);
-		xSize=(int)model.getXTProjections(0).max(0);
+		xSize=(int)model.getXTProjections(0).dimension(0);
+		System.out.println("/////////////////////////////xSize:"+xSize);
 		//if(xSize>300) xSize=300;
 		
 		this.imp.getCanvas().addMouseListener(this);

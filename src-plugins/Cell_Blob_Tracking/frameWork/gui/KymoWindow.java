@@ -32,7 +32,10 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 	}
 	
 	public void rePaint(long[] position, boolean rePaintImage){
+		long time0= System.nanoTime();
 		reDraw(position, rePaintImage);
+		long time1= System.nanoTime();
+		System.out.println("Time taken:"+((time1-time0)/1000000));
 	}
 	
 	@Override
@@ -46,8 +49,8 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 		
 		
 		tics+= e.getWheelRotation();
-		if(tics<1){
-			tics=1;
+		if(tics<0){
+			tics=0;
 			return;
 		}
 	//	timeScale=Math.pow(1.1, tics);

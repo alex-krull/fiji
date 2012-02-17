@@ -57,28 +57,30 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 						
 		//	long[] mins= {(long)Math.min(transX,0), (long)Math.min(transY,0)};
 		//	long[] maxs= {(long)transX+xSize, (long)transY+ySize};
+				
+			System.out.println("/////////////////////////////toDraw.dimension(0):"+toDraw.dimension(0));
 			
 			if(xSize<0 )xSize= (int)(scaleX*((int)toDraw.dimension(0)));
 			if(ySize<0 )ySize= (int)(scaleY*((int)toDraw.dimension(1)));	
 			
-			long minX=(long)((double)(transX)/(double)scaleX) -1;
-			long minY=(long)((double)(transY)/(double)scaleY) -1;
+			long minX=(long)((double)(transX)/(double)scaleX) -4;
+			long minY=(long)((double)(transY)/(double)scaleY) -4;
 			
 			
 			minX=Math.max(minX, 0);
 			minY=Math.max(minY, 0);
 			
-			long maxX=minX+(long)((double)(xSize)/(double)scaleX) +(long)((double)xSize/(2*scaleX));
-			long maxY=minY+(long)((double)(ySize)/(double)scaleY) +(long)((double)ySize/(2*scaleY));
+			long maxX=minX+8+(long)((double)(xSize)/(double)scaleX) ;
+			long maxY=minY+8+(long)((double)(ySize)/(double)scaleY) ;
 			
 			if(maxX>=toDraw.max(0)){
 				maxX=toDraw.max(0);
-				minX=Math.max( (long)((double)(maxX-xSize)/scaleX) -1, 0);
+				minX=Math.max( (long)((double)maxX-(double)xSize/(scaleX)-8) , 0);
 			}
 			
 			if(maxY>=toDraw.max(1)){
 				maxY=toDraw.max(1);
-				minY=Math.max( (long)((double)(maxY-ySize)/scaleY) -1, 0);
+				minY=Math.max( (long)((double)maxY-(double)ySize/(scaleY)-8) , 0);
 			}
 			
 						
@@ -101,14 +103,39 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 			minsP[0]=(long)(-scaleX*(double)minsP[0]);
 			minsP[1]=(long)(-scaleY*(double)minsP[1]);
 			
-			temp= Views.translate(temp, minsP);
-				
-			long[] mins= {(long)transX,(long) transY};
+//			temp= Views.zeroMin(temp);
 			
-			long[] maxs= {Math.min(xSize+mins[0]-1, temp.max(0)), Math.min(ySize+mins[1]-1, temp.max(1))};
+						
+			
+			minX=(long) transX+minsP[0];
+			minY=(long) transY+minsP[1];
+			
+			minX=Math.max(minX, 0);
+			minY=Math.max(minY, 0);
+			
+			maxX=minX+xSize-1 ;
+			maxY=minY+ySize-1 ;
+		
+			if(maxX>temp.max(0)){
+				System.out.println("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]maxToBig!");
+				maxX=temp.max(0);
+				minX=Math.max( maxX-xSize+1 , 0);
+			}
+			
+			if(maxY>=temp.max(1)){
+				maxY=temp.max(1);
+				minY=Math.max( maxY-ySize+1 , 0);
+			}
+			
+			
+			
+			long[] mins= {minX,minY};
+			
+			
+			long[] maxs= {maxX,maxY};
 				
 								
-			temp= Views.zeroMin( Views.interval(temp, mins, maxs) );
+			
 			//toDraw=temp;
 			//if(toDraw.max(0)!=xSize) toDraw= ImglibTools.scaleByFactor(toDraw, 0, (double)xSize/(double)(toDraw.max(0)+1));
 			//if(toDraw.max(1)!=ySize) toDraw= ImglibTools.scaleByFactor(toDraw, 0, (double)ySize/(double)(toDraw.max(1)+1));
@@ -119,6 +146,8 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 			System.out.println("            tempMaxX:" +temp.max(0) + "  temMaxY:" + temp.max(1));
 			System.out.println("            tempMinX:" +temp.min(0) + "  temMinY:" + temp.min(1));
 			System.out.println("            transX:" +transX + "  transY:" + transY);
+			
+			temp= Views.zeroMin( Views.interval(temp, mins, maxs) );
 			
 			ImagePlus impl=ImageJFunctions.wrap( temp , caption);
 		//		transX=(scaleX*(double)impl.getProcessor().getWidth()- (double)impl.getProcessor().getWidth())/2.0;

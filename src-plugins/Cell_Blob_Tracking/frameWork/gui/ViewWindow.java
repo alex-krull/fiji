@@ -35,7 +35,8 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		try {
 			//blockingQueue.put(new UpdateTask(pos,rpImage));
 			while(!blockingQueue.offer(new UpdateTask(pos,rpImage))){
-				blockingQueue.take();				
+				UpdateTask udt=blockingQueue.peek();
+				if(udt!=null) blockingQueue.remove(udt);				
 			}
 				//blockingQueue.clear();
 		} catch (Exception e) {

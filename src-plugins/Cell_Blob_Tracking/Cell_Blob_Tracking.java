@@ -49,7 +49,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 			viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel));
 	        }
 	        
-			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel));		
+		//	viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel));		
 			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel));
 		       
 			
