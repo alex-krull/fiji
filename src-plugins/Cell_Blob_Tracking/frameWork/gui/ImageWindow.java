@@ -32,8 +32,8 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 	protected Overlay ov;
 	protected double scaleX=1;
 	protected double scaleY=1;
-	protected double transX=0;
-	protected double transY=0;
+	protected int transX=0;
+	protected int transY=0;
 	protected int xSize=-1;
 	protected int ySize=-1;
 
@@ -47,7 +47,7 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		image=img;
 	 	if(imp==null) rePaint(vm.getPosition(),true);
 	}
-	
+		
 	public void reDraw(long[] position, boolean rePaintImage){
 		if(rePaintImage){
 			if (toDraw.numDimensions()>2) toDraw=Views.hyperSlice(toDraw,2,position[4]);
@@ -55,103 +55,12 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 				imp= ImageJFunctions.show(toDraw,caption);
 			else{
 						
-		//	long[] mins= {(long)Math.min(transX,0), (long)Math.min(transY,0)};
-		//	long[] maxs= {(long)transX+xSize, (long)transY+ySize};
-				
-			System.out.println("/////////////////////////////toDraw.dimension(0):"+toDraw.dimension(0));
-			
+
 			if(xSize<0 )xSize= (int)(scaleX*((int)toDraw.dimension(0)));
 			if(ySize<0 )ySize= (int)(scaleY*((int)toDraw.dimension(1)));	
 			
-			long minX=(long)((double)(transX)/(double)scaleX) -4;
-			long minY=(long)((double)(transY)/(double)scaleY) -4;
-			
-			
-			minX=Math.max(minX, 0);
-			minY=Math.max(minY, 0);
-			
-			long maxX=minX+8+(long)((double)(xSize)/(double)scaleX) ;
-			long maxY=minY+8+(long)((double)(ySize)/(double)scaleY) ;
-			
-			if(maxX>=toDraw.max(0)){
-				maxX=toDraw.max(0);
-				minX=Math.max( (long)((double)maxX-(double)xSize/(scaleX)-8) , 0);
-			}
-			
-			if(maxY>=toDraw.max(1)){
-				maxY=toDraw.max(1);
-				minY=Math.max( (long)((double)maxY-(double)ySize/(scaleY)-8) , 0);
-			}
-			
-						
-			System.out.println("			(maxX-minX)*scaleX:" + (maxX-minX)*scaleX);
-			System.out.println("			 maxX:" + maxX*scaleX);
-			System.out.println("			 minX:" + minX*scaleX);
-			
-			
-			long[] minsP= {minX, minY};
-			long[] maxsP= {maxX,maxY};
-			
-			
-			
-			
-			toDraw=  Views.zeroMin(Views.interval(toDraw, minsP, maxsP));
-			
-			RandomAccessibleInterval<IT> temp=ImglibTools.scaleByFactor(toDraw, 0, scaleX);
-			temp=ImglibTools.scaleByFactor(temp, 1, scaleY);
-			
-			minsP[0]=(long)(-scaleX*(double)minsP[0]);
-			minsP[1]=(long)(-scaleY*(double)minsP[1]);
-			
-//			temp= Views.zeroMin(temp);
-			
-						
-			
-			minX=(long) transX+minsP[0];
-			minY=(long) transY+minsP[1];
-			
-			minX=Math.max(minX, 0);
-			minY=Math.max(minY, 0);
-			
-			maxX=minX+xSize-1 ;
-			maxY=minY+ySize-1 ;
-		
-			if(maxX>temp.max(0)){
-			
-				maxX=temp.max(0);
-				minX=Math.max( maxX-xSize+1 , 0);
-			}
-			
-			if(maxY>=temp.max(1)){
-				maxY=temp.max(1);
-				minY=Math.max( maxY-ySize+1 , 0);
-			}
-			
-			
-			
-			long[] mins= {minX,minY};
-			
-			
-			long[] maxs= {maxX,maxY};
-				
-								
-			
-			//toDraw=temp;
-			//if(toDraw.max(0)!=xSize) toDraw= ImglibTools.scaleByFactor(toDraw, 0, (double)xSize/(double)(toDraw.max(0)+1));
-			//if(toDraw.max(1)!=ySize) toDraw= ImglibTools.scaleByFactor(toDraw, 0, (double)ySize/(double)(toDraw.max(1)+1));
-		//	toDraw=ImglibTools.resizeTo(toDraw, xSize, ySize);
-			System.out.println("            xSize:" +xSize + "  ySize:" + ySize);
-			System.out.println("            minX:" +mins[0] + "  minY:" + mins[1]);
-			System.out.println("            maxX:" +maxs[0] + "  maxY:" + maxs[1]);
-			System.out.println("            tempMaxX:" +temp.max(0) + "  temMaxY:" + temp.max(1));
-			System.out.println("            tempMinX:" +temp.min(0) + "  temMinY:" + temp.min(1));
-			System.out.println("            transX:" +transX + "  transY:" + transY);
-			
-			temp= Views.zeroMin( Views.interval(temp, mins, maxs) );
-			
+			RandomAccessibleInterval<IT> temp = ImglibTools.scaleAndShift(toDraw, transX, transY, scaleX, scaleY, xSize, ySize);
 			ImagePlus impl=ImageJFunctions.wrap( temp , caption);
-		//		transX=(scaleX*(double)impl.getProcessor().getWidth()- (double)impl.getProcessor().getWidth())/2.0;
-		//		transY=(scaleY*(double)impl.getProcessor().getHeight()- (double)impl.getProcessor().getHeight())/2.0;
 			ContrastEnhancer ce= new ContrastEnhancer();
 			ce.stretchHistogram(impl.getProcessor(), 0.5); 
 			

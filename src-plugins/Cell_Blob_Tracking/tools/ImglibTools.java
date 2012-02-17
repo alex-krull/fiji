@@ -281,4 +281,80 @@ public static double gaussIntegral(double x1 , double y1, double x2, double y2, 
 
     return calcX*calcY;
 }
+
+public static <T extends RealType<T> & NativeType<T> & NumericType<T>> RandomAccessibleInterval<T> 
+scaleAndShift(RandomAccessibleInterval<T> src, int transX, int transY, double scaleX, double scaleY, int xSize, int ySize){
+	
+	long minX=(long)((double)(transX)/(double)scaleX) -4;
+	long minY=(long)((double)(transY)/(double)scaleY) -4;
+	
+	
+	minX=Math.max(minX, 0);
+	minY=Math.max(minY, 0);
+	
+	long maxX=minX+8+(long)((double)(xSize)/(double)scaleX) ;
+	long maxY=minY+8+(long)((double)(ySize)/(double)scaleY) ;
+	
+	if(maxX>=src.max(0)){
+		maxX=src.max(0);
+		minX=Math.max( (long)((double)maxX-(double)xSize/(scaleX)-8) , 0);
+	}
+	
+	if(maxY>=src.max(1)){
+		maxY=src.max(1);
+		minY=Math.max( (long)((double)maxY-(double)ySize/(scaleY)-8) , 0);
+	}
+	
+
+	
+	long[] minsP= {minX, minY};
+	long[] maxsP= {maxX,maxY};
+	
+			
+	RandomAccessibleInterval<T> temp=  Views.zeroMin(Views.interval(src, minsP, maxsP));
+	
+	temp=ImglibTools.scaleByFactor(temp, 0, scaleX);
+	temp=ImglibTools.scaleByFactor(temp, 1, scaleY);
+	
+	minsP[0]=(long)(-scaleX*(double)minsP[0]);
+	minsP[1]=(long)(-scaleY*(double)minsP[1]);
+	
+				
+	
+	minX=(long) transX+minsP[0];
+	minY=(long) transY+minsP[1];
+	
+	minX=Math.max(minX, 0);
+	minY=Math.max(minY, 0);
+	
+	maxX=minX+xSize-1 ;
+	maxY=minY+ySize-1 ;
+
+	if(maxX>temp.max(0)){
+	
+		maxX=temp.max(0);
+		minX=Math.max( maxX-xSize+1 , 0);
+	}
+	
+	if(maxY>=temp.max(1)){
+		maxY=temp.max(1);
+		minY=Math.max( maxY-ySize+1 , 0);
+	}
+	
+	
+	
+	long[] mins= {minX,minY};
+	
+	
+	long[] maxs= {maxX,maxY};
+		
+						
+	
+		
+	temp= Views.zeroMin( Views.interval(temp, mins, maxs) );
+	
+	return temp;
+}
+
+
 }
