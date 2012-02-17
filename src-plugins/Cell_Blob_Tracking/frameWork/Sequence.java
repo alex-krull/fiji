@@ -45,7 +45,7 @@ public abstract class Sequence<T extends Trackable> {
 	
 	
 	public abstract void getKymoOverlayX(Overlay ov, double scaleX, double scaleY, double transX, double transY);
-	public abstract void getKymoOverlayY(Overlay ov, double scaleX, double scaleY);
+	public abstract void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY);
 	
 
 }

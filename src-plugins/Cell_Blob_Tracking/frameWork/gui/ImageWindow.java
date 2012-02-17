@@ -194,7 +194,7 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 	
 		if(seqs!=null) for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
 			Sequence<? extends Trackable> seq = seqs.get(i);
-			if(seq!=null) seq.getKymoOverlayY(ov,scaleX,scaleY);
+			if(seq!=null) seq.getKymoOverlayY(ov,scaleX,scaleY, transX, transY);
 		}
 		}
 	}

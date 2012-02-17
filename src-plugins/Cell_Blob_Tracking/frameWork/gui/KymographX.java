@@ -16,21 +16,22 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 
 
-public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> implements MouseListener, AdjustmentListener{
+public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> implements MouseListener{
 
-	private Scrollbar sb;
+	
 	private boolean buisy =false;
 	
 	public KymographX(Model<IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<IT> vm) {
 		super(mod, img,vm);
 		xSize=(int)model.getXTProjections(0).dimension(0);
-		System.out.println("/////////////////////////////xSize:"+xSize);
+		
 		if(xSize>300) xSize=300;
+		if(xSize<100) xSize=100;
+		baseTimeScale=(double)xSize/(double)model.getNumberOfFrames();	
+		timeScale=baseTimeScale*Math.pow(1.1, tics);
 		
 		this.imp.getCanvas().addMouseListener(this);
-		sb=new Scrollbar(Scrollbar.HORIZONTAL, 0, 1, 1, model.getNumberOfFrames()+1);
-		imp.getWindow().add(sb);
-		sb.addAdjustmentListener(this);
+	//	sb.setOrientation(Scrollbar.HORIZONTAL);
 		
 	}
 	
@@ -82,10 +83,6 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		
 	}
 
-	@Override
-	public void adjustmentValueChanged(AdjustmentEvent e) {
 	
-		viewModel.setPosition(3,e.getValue()-1);
-	}	
 
 }

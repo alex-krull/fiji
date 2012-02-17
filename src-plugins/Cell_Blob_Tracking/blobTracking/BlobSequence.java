@@ -26,14 +26,14 @@ public class BlobSequence extends Sequence<Blob>{
 	
 	}
 	
-	public void getKymoOverlayY(Overlay ov, double scaleX, double scaleY){	
+	public void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY){	
 	
 		Blob b=null;
 		Blob lastB=null;
 		for(double i=(double)trackables.firstKey();i<=trackables.lastKey();i++){
 			lastB=b;
 			b=trackables.get((int)i);
-			if(lastB!=null&&b!=null)  ov.add(new Line((lastB.xPos+0.5)*scaleX,(i-1+0.5)*scaleY,(b.xPos+0.5)*scaleX,(i+0.5)*scaleY));
+			if(lastB!=null&&b!=null)  ov.add(new Line((lastB.xPos+0.5)*scaleX-transX,(i-1+0.5)*scaleY-transY,(b.xPos+0.5)*scaleX-transX,(i+0.5)*scaleY-transY));
 		}
 	
 	}
