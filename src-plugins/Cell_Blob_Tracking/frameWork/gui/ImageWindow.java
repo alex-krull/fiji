@@ -117,7 +117,7 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 			maxY=minY+ySize-1 ;
 		
 			if(maxX>temp.max(0)){
-				System.out.println("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]maxToBig!");
+			
 				maxX=temp.max(0);
 				minX=Math.max( maxX-xSize+1 , 0);
 			}

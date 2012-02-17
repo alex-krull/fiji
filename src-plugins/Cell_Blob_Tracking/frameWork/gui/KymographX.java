@@ -25,7 +25,7 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		super(mod, img,vm);
 		xSize=(int)model.getXTProjections(0).dimension(0);
 		System.out.println("/////////////////////////////xSize:"+xSize);
-		//if(xSize>300) xSize=300;
+		if(xSize>300) xSize=300;
 		
 		this.imp.getCanvas().addMouseListener(this);
 		sb=new Scrollbar(Scrollbar.HORIZONTAL, 0, 1, 1, model.getNumberOfFrames()+1);
