@@ -28,24 +28,40 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		
 	}
 	
-	public abstract void rePaint(long[] position, boolean rePaintImage);
 	
-	public synchronized void upDate(long[] pos, boolean rpImage){
+	/**
+	 * update the view
+	 *
+	 * The ViewWindow is updated and redrawn, considering the position given.
+	 *
+	 * @param position The position the ViewWindow should switch to.
+	 * @param rePaintImage if true, the image in the View will be redrawn.
+	 **/
+	public abstract void rePaint(long[] position, boolean rePaintImage) ;
+	
+	
+	/**
+	 * update the view using its own thread 
+	 *
+	 * The task of updating the window is, added to the job-queue of the ViewWindows thread
+	 * 
+	 * @param position The position the ViewWindow should switch to.
+	 * @param rePaintImage if true, the image in the View will be redrawn.
+	 **/
+	public synchronized void upDate(long[] position, boolean rePaintImage){
 		
 		try {
-			//blockingQueue.put(new UpdateTask(pos,rpImage));
-			while(!blockingQueue.offer(new UpdateTask(pos,rpImage))){
+			while(!blockingQueue.offer(new UpdateTask(position,rePaintImage))){
 				UpdateTask udt=blockingQueue.peek();
 				if(udt!=null) blockingQueue.remove(udt);				
 			}
-				//blockingQueue.clear();
+	
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	protected class UpdateTask{
+	private class UpdateTask{
 		public long[] position;
 		public boolean rePaintImage;
 		public UpdateTask(long[] pos, boolean rpImage){
@@ -54,10 +70,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		}
 	}
 	
-	protected class UpdateThread extends Thread{
-		long[] position;
-		boolean rePaintImage;
-		
+	private class UpdateThread extends Thread{	
 		public UpdateThread(){
 	
 		}

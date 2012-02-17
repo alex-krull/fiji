@@ -23,7 +23,7 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	public KymographY(Model< IT> mod, RandomAccessibleInterval<IT> img, ViewModel<IT> vm) {
 		super(mod, img,vm);
 		ySize=(int)model.getYTProjections(0).dimension(1);
-		if(ySize>300) ySize=300;
+		if(ySize>500) ySize=500;
 		if(ySize<100) ySize=100;
 	    baseTimeScale=(double)ySize/(double)model.getNumberOfFrames();	
 		timeScale=baseTimeScale*Math.pow(1.1, tics);

@@ -4,9 +4,6 @@ import frameWork.Controller;
 import frameWork.Model;
 import frameWork.Trackable;
 import frameWork.TrackingChannel;
-import frameWork.gui.ViewWindow.UpdateTask;
-import frameWork.gui.ViewWindow.UpdateThread;
-
 import ij.ImagePlus;
 
 
@@ -38,9 +35,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	
 	
-	protected ImagePlus mainImage;
-		
-		
+			
 	protected int currentFrameNumber=0;
 	protected int currentSliceNumber=0;
 	protected int currentChannelNumber=0;
@@ -72,26 +67,25 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 		
 	}
  
-	public ViewModel(ImagePlus imp,  Model<IT> mod, Controller<IT> contr){
+	/**
+	 * Creates a new ViewModel
+	 *
+	 * The ViewModel from a Model and a Controller
+	 *
+	 * @param mod the Model to be used.
+	 * @param contr the Controller to be used.
+	 **/
+	public ViewModel(Model<IT> mod, Controller<IT> contr){
 		
 	
 	   controller=contr;
 		
 	   model=mod;
-       // 0 - Check validity of parameters
-	   //tCsToBeDisplayed= new ArrayList<TrackingChannel<? extends Trackable,IT>>();
-	   tCsToBeDisplayed=model.getTCsAssociatedWithChannel(0);
-
-       mainImage= imp;
-       
-     
-       
-       if (null == mainImage) return;
-    	
-       
+   	   tCsToBeDisplayed=model.getTCsAssociatedWithChannel(0);     
+            
        image = model.getImage();
        
-       System.out.println("channels:" +mainImage.getNChannels()+ "  frames:"+mainImage.getNFrames()+ "  slices:"+mainImage.getNSlices());
+       System.out.println("channels:" +model.getNumberOfChannels()+ "  frames:"+model.getNumberOfFrames()+ "  slices:"+model.getNumberOfSlices());
        
        
     
@@ -99,47 +93,23 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
        
        
  		System.out.println("dimensions:" + image.numDimensions());
-       
-   /*     
-       if(model.isVolume()){
- 	   
-    	   zProjections=ImglibTools.projection(image,2,20);
-    	   xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0,20),0,1) ),0  ) ); 
-           yProjections=ImglibTools.projection(image,1,20);
-    	   
-    	   
-           xProjections=ImglibTools.scaleByFactor(xProjections,0,model.xyToZ);
-           yProjections=ImglibTools.scaleByFactor(yProjections,1,model.xyToZ);
-                  
-           xtProjections=Views.zeroMin( Views.invertAxis(  Views.rotate( ImglibTools.projection(xProjections,0) ,0,1),0 ) )  ;
-           ytProjections=ImglibTools.projection(yProjections,1);
-       }
-       else{ 
-    	   zProjections=null;
-    	   xProjections=null; 
-    	   yProjections=null;
-    	   
-    	   xtProjections=Views.zeroMin( Views.invertAxis(  Views.rotate( ImglibTools.projection(image,0) ,0,1),0 ) )  ;
-    	   ytProjections=ImglibTools.projection(image,1);
-       }
-       
-    */   
+   
        
  	  views= new ArrayList<ViewWindow<IT>>();
- 	  addViewWindow(new MainWindow<IT>(mainImage, model, this));
-      this.upDateImages(0, 0, 0,true);
-       
-       
-    
-     
-       
-        return;
+            return;
     }
 
 
 
-public void setPositionInternal(int dim, int pos){
-//	System.out.println("dim:" + dim + " pos: "+pos);
+	/**
+	 * set the ViewModel to a different position
+	 *
+	 * All ViewWindows will be set to the position automatically as well.
+	 *
+	 * @param dim the dimension that should be changed
+	 * @param pos the new value for the chosen dimension.
+	 **/
+public void setPosition(int dim, int pos){
 	
 	if(dim==2){
 		if(currentSliceNumber==pos) return;
@@ -155,23 +125,15 @@ public void setPositionInternal(int dim, int pos){
 		tCsToBeDisplayed.clear();
 		tCsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);
 	}
-	
-	//UpdateThread udt = new UpdateThread();
-	//udt.start();
 	upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, true );
 
 }
-	
-public void setPosition(int dim, int pos){
-/*	try {
-		blockingQueue.put(new UpdateTask(dim,pos));
-	} catch (InterruptedException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}*/
-	setPositionInternal( dim,  pos);
-}
 
+/**
+ * Gives the current position in form of a long[]
+ *
+ * @return the position
+ **/
 public long[] getPosition(){
 	long[] result= {0,0,currentSliceNumber, currentFrameNumber, currentChannelNumber};
 	return result;
@@ -187,9 +149,9 @@ public void mouseAtPosition(long [] pos, MouseEvent me){
 protected void upDateImages(int frame, int slice, int channel, boolean init){
 
 	long[] pos= {0,0,slice, frame, channel};
-	for(ViewWindow<IT> vw:views){
-		
+	for(ViewWindow<IT> vw:views){	
 		vw.upDate(pos, init);
+		
 	}
  
 				

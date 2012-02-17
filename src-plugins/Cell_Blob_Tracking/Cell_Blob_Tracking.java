@@ -43,6 +43,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 			System.out.println("iv:" + model.isVolume()+ "  its:" +model.isTimeSequence() + "  imc:"+ model.isMultiChannel() );
 			
 	        if(model.isVolume()){
+	        
 	        System.out.println("adding projections");
 			viewModel.addViewWindow(new MaxProjectionX<IT>(model, viewModel));
 			viewModel.addViewWindow(new MaxProjectionY<IT>(model, viewModel));
@@ -68,12 +69,13 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		Controller<IT> cont= new Controller<IT>(model);
 		System.out.println("creating ViewModel...");
-		ViewModel<IT> vm= new ViewModel<IT>(imp, model,cont);
+		ViewModel<IT> vm= new ViewModel<IT>( model,cont);
 		System.out.println("done!");
 		long time1= System.nanoTime();
 		model.addObserver(vm);
 		System.out.println("Time taken:"+((time1-time0)/1000000));
 		
+		vm.addViewWindow(new MainWindow<IT>(imp, model, vm));
 		AddingViewsThread awt= new AddingViewsThread(vm,model);
 		awt.start();
 	}

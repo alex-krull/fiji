@@ -25,7 +25,7 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		super(mod, img,vm);
 		xSize=(int)model.getXTProjections(0).dimension(0);
 		
-		if(xSize>300) xSize=300;
+		if(xSize>500) xSize=500;
 		if(xSize<100) xSize=100;
 		baseTimeScale=(double)xSize/(double)model.getNumberOfFrames();	
 		timeScale=baseTimeScale*Math.pow(1.1, tics);

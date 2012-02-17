@@ -47,7 +47,7 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		image=img;
 	 	if(imp==null) rePaint(vm.getPosition(),true);
 	}
-		
+	
 	public void reDraw(long[] position, boolean rePaintImage){
 		if(rePaintImage){
 			if (toDraw.numDimensions()>2) toDraw=Views.hyperSlice(toDraw,2,position[4]);

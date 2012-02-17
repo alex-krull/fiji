@@ -21,16 +21,11 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	
 	private class MyStackWindow extends StackWindow{	
 		
+		
 		public MyStackWindow(ImagePlus imp) {
 			super(imp);
-			
-		//	this.sliceSelector= new Scrollbar(Scrollbar.HORIZONTAL, 0,1,1,model.getNumberOfSlices()+1);
-		//	this.sliceSelector.setVisible(true);
-		//	this.zSelector.setVisible(true);
-		//	this.cSelector.setVisible(true);
-			
-			// TODO Auto-generated constructor stub
 		}
+		
 		
 		public void adjustmentValueChanged(java.awt.event.AdjustmentEvent e){
 			
@@ -71,7 +66,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	private int currentSliceNumber;
 	private int currentChannelNumber;
 		
-	protected MainWindow(ImagePlus imagePlus, Model< IT> mod, ViewModel< IT> vm) {
+	public MainWindow(ImagePlus imagePlus, Model< IT> mod, ViewModel< IT> vm) {
 		super(mod, mod.getImage(), imagePlus.getWindow().getTitle(), vm, imagePlus, 500);
 		
 		
