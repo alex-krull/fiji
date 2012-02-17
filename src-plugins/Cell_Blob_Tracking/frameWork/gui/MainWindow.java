@@ -80,18 +80,18 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		currentChannelNumber=imp.getChannel()-1;
 		//imp.getWindow().close();
 		imp.setOpenAsHyperStack(true);
-		stackWindow= new MyStackWindow(imp);
+		stackWindow= new StackWindow(imp);
 		
 		stackWindow.getCanvas().addMouseListener(this);
 		stackWindow.getCanvas().addMouseMotionListener(this);
 		
-		//ImagePlus.addImageListener(this);
+		ImagePlus.addImageListener(this);
 	}
 
 	@Override
 	public void rePaint(long[] position, boolean rePaintImage) {
 	
-		System.out.println("=========================================capacity:" + blockingQueue.remainingCapacity());
+		
 		currentFrameNumber= (int)position[3];
 		currentSliceNumber= (int)position[2];
 		currentChannelNumber=(int)position[4];

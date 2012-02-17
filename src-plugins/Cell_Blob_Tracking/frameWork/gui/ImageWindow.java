@@ -63,10 +63,6 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 			ImagePlus impl=ImageJFunctions.wrap( temp , caption);
 			ContrastEnhancer ce= new ContrastEnhancer();
 			ce.stretchHistogram(impl.getProcessor(), 0.5); 
-			
-    	
-			
-	
 			this.imp.setProcessor(impl.getProcessor());
 			}
 	
