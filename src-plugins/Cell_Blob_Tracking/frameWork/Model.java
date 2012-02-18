@@ -11,13 +11,9 @@ import java.util.Observable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-
-
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.ImagePlusAdapter;
-
 import net.imglib2.type.NativeType;
-
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
@@ -33,12 +29,12 @@ private boolean isVolume=false;
 private boolean isTimeSequence=false;
 private boolean isMultiChannel=false;
 private boolean switchedDimensions=false;
-private int numberOfChannels;
+private final int numberOfChannels;
 private int numberOfFrames;
-private int numberOfSlices;
+private final int numberOfSlices;
 private	RandomAccessibleInterval<IT> image;
-private SortedMap <Integer, MovieChannel <IT> > channels;
-private SortedMap <Integer, TrackingChannel <? extends Trackable,IT> > trackingChannels;
+private final SortedMap <Integer, MovieChannel <IT> > channels;
+private final SortedMap <Integer, TrackingChannel <? extends Trackable,IT> > trackingChannels;
 
 public void setVolume(boolean isVolume) {
 	this.isVolume = isVolume;
@@ -140,7 +136,6 @@ public int getNumberOfSlices() {
 public int getNumberOfFrames() {
 	return numberOfFrames;
 }
-
 
 public int selectAt(int x, int y, int z, int frameId, int channel){
 	return trackingChannels.get(channel).selectAt(x, y, z, frameId, channel);

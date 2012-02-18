@@ -1,29 +1,33 @@
 package blobTracking;
 
 
+import ij.gui.EllipseRoi;
+import ij.gui.Overlay;
+import ij.gui.Roi;
+import ij.gui.TextRoi;
+
 import java.awt.Color;
 import java.awt.Font;
 
-import ij.gui.Overlay;
-import ij.gui.Roi;
-import ij.gui.EllipseRoi;
-import ij.gui.TextRoi;
-
-import frameWork.Trackable;
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
 import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 
-
 import org.apache.commons.math.analysis.MultivariateRealFunction;
 
-
-
-
 import tools.ImglibTools;
+import frameWork.Trackable;
 
+/**
+ * @author alex
+ *
+ */
+/**
+ * @author alex
+ *
+ */
 public class Blob extends Trackable implements MultivariateRealFunction {
 	public double xPos;
 	public double yPos;
@@ -39,7 +43,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public IterableRandomAccessibleInterval <FloatType> expectedValuesRoi;
 
 	public double calcDenominator(Interval img){
-		denominator=ImglibTools.gaussIntegral((double)img.min(0)-0.5,(double)img.min(1)-0.5,(double)img.max(0)+0.5,(double) img.max(1)+0.5,xPos,yPos,sigma );
+		denominator=ImglibTools.gaussIntegral(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5,xPos,yPos,sigma );
 //		System.out.println("denominator :" +denominator );
 		return denominator;
 	}
@@ -50,6 +54,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		return ImglibTools.gaussPixelIntegral(x, y, xPos, yPos, sigma)/denominator;
 		
 	}
+	
 	
 	public double pXandK(int x, int y, int z){
 		return pXunderK(x,y,z)*pK;
@@ -71,6 +76,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	}
 	
 	
+	@Override
 	public void addShapeZ(Overlay ov, boolean selected, Color c){
 		Font f=new Font(null,Font.PLAIN,8);
 		
@@ -95,6 +101,11 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		ov.add(roi);
 	}
 	
+	
+	
+	
+	
+	@Override
 	public void addShapeY(Overlay ov, boolean selected, Color c){
 		if(selected){
 			Roi roiS=new EllipseRoi(xPos , zPos-2*sigmaZ, xPos ,
@@ -111,6 +122,8 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		ov.add(roi);
 	}
 
+	
+	@Override
 	public void addShapeX(Overlay ov, boolean selected, Color c){
 		if(selected){
 			Roi roiS=new EllipseRoi(zPos + sigmaZ * 2, yPos, zPos - sigmaZ * 2,
@@ -128,6 +141,18 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		ov.add(roi);
 	}
 	
+	
+	/**
+	 * Creates a new Blob
+	 * 
+	 * @param seqId the id of the Sequqnce the blob belongs to
+	 * @param FrameId the frame number the blob is in
+	 * @param x the x-position of the blob
+	 * @param y the y-position of the blob
+	 * @param z the z-position of the blob
+	 * @param sig the standard deviation of the blob
+	 * @param chan the channel the blob belongs to
+	 */
 	public Blob(int seqId, int FrameId, double x, double y, double z, double sig, int chan) {
 		super(seqId, FrameId, chan);
 		xPos = x;
@@ -149,6 +174,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		return (xn-xPos)*(xn-xPos)+(yn-yPos)*(yn-yPos)+(zn-zPos)*(zn-zPos);
 	}
 	
+	@Override
 	public String toString(){
 		String result=
 				"x:"+xPos+

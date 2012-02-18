@@ -1,5 +1,9 @@
 package frameWork.gui;
 
+import frameWork.Model;
+import frameWork.Sequence;
+import frameWork.Trackable;
+import frameWork.TrackingChannel;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.Line;
@@ -10,20 +14,20 @@ import java.awt.Color;
 import java.util.List;
 import java.util.SortedMap;
 
-
-import tools.ImglibTools;
-
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
-import frameWork.Model;
-import frameWork.Sequence;
-import frameWork.Trackable;
-import frameWork.TrackingChannel;
+import tools.ImglibTools;
 
+
+/**
+ * @author alex
+ *
+ * @param <IT>
+ */
 public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ViewWindow<IT>{
 	
 	protected ImagePlus imp=null;
@@ -76,6 +80,10 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		ov= new Overlay();
 	}
 	
+	
+	/**
+	 * add the Overlays of the traces for the x-projection-kymographs
+	 */
 	protected void addKymoXOverlayes(){
 		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
 	
@@ -90,6 +98,9 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		}
 	}
 	
+	/**
+	 * add the Overlays of the traces for the y-projection-kymographs
+	 */
 	protected void addKymoYOverlayes(){
 		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
 		
@@ -104,6 +115,12 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		}
 	}
 
+	
+	/**
+	 * add the overlays for the maximum-x-projections of a specific Frame
+	 * 
+	 * @param frameNumber the number of the frame to be used
+	 */
 	protected void addXOverlayes(int frameNumber){
 		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
 		for(TrackingChannel<? extends Trackable,IT> tc: tcs){	
@@ -120,6 +137,11 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		   
 	}
 	
+	/**
+	 * add the overlays for the maximum-y-projections of a specific Frame
+	 * 
+	 * @param frameNumber the number of the frame to be used
+	 */
 	protected void addYOverlayes(int frameNumber){
 		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
 		for(TrackingChannel<? extends Trackable,IT> tc: tcs){	
@@ -134,6 +156,11 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		}
 	}
 	
+	/**
+	 * add the overlays for the maximum-z-projections of a specific Frame
+	 * 
+	 * @param frameNumber the number of the frame to be used
+	 */
 	protected void addZOverlayes(int frameNumber){
 		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
 		for(TrackingChannel<? extends Trackable,IT> tc: tcs){	
@@ -150,6 +177,10 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 	
 	
 	
+	/**
+	 * Adds a vertical line Overlay from top to bottom.
+	 * @param position the x-position of the line
+	 */
 	protected void addYLineOverlay(double position){
 		   
 		
@@ -157,6 +188,10 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		   
 	}
 	
+	/**
+	 * Adds a horizontal line Overlay from the left to the right border.
+	 * @param position the y-position of the line
+	 */
 	protected void addXLineOverlay(double position){
 		 
 		

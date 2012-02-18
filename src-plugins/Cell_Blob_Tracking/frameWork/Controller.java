@@ -4,20 +4,15 @@ package frameWork;
 
 
 import java.awt.event.MouseEvent;
-
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.RealType;
 import blobTracking.Blob;
 import blobTracking.BlobController;
 import blobTracking.BlobTrackingChannel;
-
-
-
-import net.imglib2.type.NativeType;
-
-import net.imglib2.type.numeric.NumericType;
-import net.imglib2.type.numeric.RealType;
 
 
 public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > {
@@ -28,7 +23,7 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 	public int selectedSequenceId;
 	
 	protected Model<IT> model;
-	private SortedMap <Integer, ChannelController <? extends Trackable,IT> > channelControllers;
+	private final SortedMap <Integer, ChannelController <? extends Trackable,IT> > channelControllers;
 
 	 
 	public Controller( Model<IT> mod){
@@ -41,12 +36,18 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		model.addTrackingChannel(tc,0);
 		
 		for(int j=0;j<tc.getNumberOfFrames();j++){
-			tc.addTrackable(new Blob(2,j,20 +Math.cos(j/15.0f)*25,70+ Math.sin(j/35.0f)*25,15,4, 0));			 	   
+			tc.addTrackable(new Blob(2,j,20 +Math.cos(j/15.0f)*25,70+ Math.sin(j/35.0f)*25,15,4, 0));			
 		}
 	}
 	
 
 
+/**
+ * Processes a MoseEvent generated at one of the ViewWindows 
+ *
+ * @param position the position of the event as vector in 5D 
+ * @param e the original MouseEvent
+ */
 public void click(long[] position, MouseEvent e){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get((int)position[4]);
 	System.out.println("click1");
