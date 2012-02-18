@@ -1,19 +1,17 @@
 package frameWork.gui;
 
-import java.awt.Scrollbar;
-import java.awt.event.AdjustmentEvent;
+import frameWork.Model;
+import ij.ImageListener;
+import ij.ImagePlus;
+import ij.gui.StackWindow;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import ij.ImageListener;
-import ij.ImagePlus;
-import ij.gui.StackWindow;
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
-import frameWork.Model;
 
 
 public class MainWindow  < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<IT> 
@@ -27,6 +25,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		}
 		
 		
+		@Override
 		public void adjustmentValueChanged(java.awt.event.AdjustmentEvent e){
 			
 	
@@ -61,13 +60,13 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	}
 	
 
-	private StackWindow stackWindow;
+	private final StackWindow stackWindow;
 	private int currentFrameNumber;
 	private int currentSliceNumber;
 	private int currentChannelNumber;
 		
 	public MainWindow(ImagePlus imagePlus, Model< IT> mod, ViewModel< IT> vm) {
-		super(mod, mod.getImage(), imagePlus.getWindow().getTitle(), vm, imagePlus, 500);
+		super(mod, mod.getImage(), imagePlus.getWindow().getTitle(), vm, imagePlus, 1);
 		
 		
 		currentFrameNumber= imp.getFrame()-1;
@@ -209,8 +208,8 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	}
 	
 	private long[] positionFromEvent(MouseEvent e){
-		int x=(int)((double)imp.getCanvas().offScreenX(e.getX())/this.scaleX);
-		int y=(int)((double)imp.getCanvas().offScreenY(e.getY())/this.scaleY);
+		int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
+		int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);
 		System.out.println("x:"+ x +"  y:"+y);
 		
 		

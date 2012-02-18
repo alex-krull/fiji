@@ -1,21 +1,7 @@
 
 
-import java.util.ArrayList;
-
-import net.imglib2.img.ImagePlusAdapter;
-import net.imglib2.img.Img;
-import net.imglib2.type.NativeType;
-import net.imglib2.type.Type;
-import net.imglib2.type.numeric.NumericType;
-import net.imglib2.type.numeric.RealType;
-import blobTracking.Blob;
-import blobTracking.BlobTrackingChannel;
-import blobTracking.BlobFrame;
-import blobTracking.BlobController;
-import frameWork.Model;
 import frameWork.Controller;
-import frameWork.MovieChannel;
-import frameWork.MovieFrame;
+import frameWork.Model;
 import frameWork.gui.KymographX;
 import frameWork.gui.KymographY;
 import frameWork.gui.MainWindow;
@@ -23,21 +9,24 @@ import frameWork.gui.MaxProjectionX;
 import frameWork.gui.MaxProjectionY;
 import frameWork.gui.MaxProjectionZ;
 import frameWork.gui.ViewModel;
-import frameWork.gui.ViewWindow;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.plugin.PlugIn;
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.RealType;
 
 public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>> implements PlugIn{
 
 	public class AddingViewsThread extends Thread{
-		private Model <IT> model;
-		private ViewModel<IT> viewModel;
+		private final Model <IT> model;
+		private final ViewModel<IT> viewModel;
 		
 		AddingViewsThread(ViewModel<IT> vm, Model<IT> mod){
 			model= mod;
 			viewModel=vm;
 		}
+		@Override
 		public void run() {
 			
 			System.out.println("iv:" + model.isVolume()+ "  its:" +model.isTimeSequence() + "  imc:"+ model.isMultiChannel() );
