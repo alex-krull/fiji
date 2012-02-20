@@ -15,7 +15,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	protected ViewModel<IT> viewModel;
 	protected BlockingQueue<UpdateTask> blockingQueue;
 	protected ViewWindow(Model<IT> mod, String title, ViewModel<IT> vm, int capacity){
-		blockingQueue= new ArrayBlockingQueue<UpdateTask>(capacity);
+		blockingQueue= new ArrayBlockingQueue<UpdateTask>(10);
 		
 		UpdateThread udt= new UpdateThread();	
 		udt.start();
