@@ -110,6 +110,9 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	 * @param pos the new value for the chosen dimension.
 	 **/
 public void setPosition(int dim, int pos){
+	long time0= System.nanoTime();
+	
+	
 	
 	if(dim==2){
 		if(currentSliceNumber==pos) return;
@@ -127,6 +130,8 @@ public void setPosition(int dim, int pos){
 	}
 	upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, true );
 
+	long time1= System.nanoTime();
+	System.out.println("]]]]]]]]]]]]]]]]]]Time taken to set position:"+((time1-time0)/1000));
 }
 
 /**

@@ -14,7 +14,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	protected String caption;
 	protected ViewModel<IT> viewModel;
 	protected Thread thread;
-	protected UpdateTask currentUpdateTask;
+	protected volatile UpdateTask currentUpdateTask=null;
 	protected ViewWindow(Model<IT> mod, String title, ViewModel<IT> vm, int capacity){
 		
 		
@@ -48,7 +48,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param position The position the ViewWindow should switch to.
 	 * @param rePaintImage if true, the image in the View will be redrawn.
 	 **/
-	public synchronized void upDate(long[] position, boolean rePaintImage){
+	public void upDate(long[] position, boolean rePaintImage){
 
 		UpdateTask udt= new UpdateTask(position,rePaintImage);
 		synchronized( this){
