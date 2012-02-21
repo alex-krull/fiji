@@ -9,23 +9,23 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 
-public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
+public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Runnable{
 	protected Model<IT> model;
 	protected String caption;
 	protected ViewModel<IT> viewModel;
-	protected BlockingQueue<UpdateTask> blockingQueue;
+	protected Thread thread;
+	protected UpdateTask currentUpdateTask;
 	protected ViewWindow(Model<IT> mod, String title, ViewModel<IT> vm, int capacity){
-		blockingQueue= new ArrayBlockingQueue<UpdateTask>(10);
 		
-		UpdateThread udt= new UpdateThread();	
-		udt.start();
 		
-		//UpdateThread udt2= new UpdateThread();
-		//udt2.start();
+		
 		viewModel=vm;
 		model=mod;
 		caption= title;
 		
+		
+		thread= new Thread(this);
+		thread.start();
 	}
 	
 	
@@ -49,15 +49,11 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param rePaintImage if true, the image in the View will be redrawn.
 	 **/
 	public synchronized void upDate(long[] position, boolean rePaintImage){
-		
-		try {
-			while(!blockingQueue.offer(new UpdateTask(position,rePaintImage))){
-				UpdateTask udt=blockingQueue.peek();
-				if(udt!=null) blockingQueue.remove(udt);				
-			}
-	
-		} catch (Exception e) {
-			e.printStackTrace();
+
+		UpdateTask udt= new UpdateTask(position,rePaintImage);
+		synchronized( this){
+			currentUpdateTask=udt;
+			notify();
 		}
 	}
 	
@@ -70,21 +66,23 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		}
 	}
 	
-	private class UpdateThread extends Thread{	
-		public UpdateThread(){
-	
-		}
-		public void run() {
-		   while(true){
-			   
-			   try {
-				UpdateTask item = blockingQueue.take();
-				rePaint(item.position,item.rePaintImage);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	public void run(){
+		UpdateTask udt;
+		while(true){
+			
+			synchronized( this){
+			while (currentUpdateTask==null)
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			udt=currentUpdateTask;
+			currentUpdateTask=null;
 			}
-		   }
-		}  
+			if(udt!=null)rePaint(udt.position,udt.rePaintImage);
+		}
 	}
+	
 }

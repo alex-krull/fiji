@@ -74,12 +74,12 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		currentChannelNumber=imp.getChannel()-1;
 		//imp.getWindow().close();
 		imp.setOpenAsHyperStack(true);
-		stackWindow= new StackWindow(imp);
+		stackWindow= new MyStackWindow(imp);
 		
 		stackWindow.getCanvas().addMouseListener(this);
 		stackWindow.getCanvas().addMouseMotionListener(this);
 		
-		ImagePlus.addImageListener(this);
+		//ImagePlus.addImageListener(this);
 	}
 
 	@Override
