@@ -25,6 +25,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		
 		
 		thread= new Thread(this);
+	//.setPriority(Thread.MIN_PRIORITY);
 		thread.start();
 	}
 	
@@ -67,19 +68,28 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	}
 	
 	public void run(){
-		UpdateTask udt;
+		UpdateTask udt=null;
 		while(true){
 			
 			synchronized( this){
-			while (currentUpdateTask==null)
+			if (currentUpdateTask!=null){
+				
+			
+				udt=currentUpdateTask;
+				currentUpdateTask=null;
+			
+			}else{
 				try {
+		//			long time0= System.nanoTime();
 					wait();
+		//			long time1= System.nanoTime();
+		//			System.out.println("]]]]]]]]]]]]]]]]]]Time sleeping:"+((time1-time0)/1000));
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			udt=currentUpdateTask;
-			currentUpdateTask=null;
+			}
+			
 			}
 			if(udt!=null)rePaint(udt.position,udt.rePaintImage);
 		}

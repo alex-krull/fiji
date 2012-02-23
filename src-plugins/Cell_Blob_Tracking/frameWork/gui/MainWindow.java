@@ -219,9 +219,9 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		return pos;
 	}
 	
-	public void UpDate(long[] position, boolean rePaintImage){
-		rePaint(position, rePaintImage);
-	}
+	//public void UpDate(long[] position, boolean rePaintImage){
+	//	rePaint(position, rePaintImage);
+	//}
 
 
 

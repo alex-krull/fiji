@@ -7,6 +7,7 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 
 import net.imglib2.RandomAccessibleInterval;
@@ -16,7 +17,7 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 
 
-public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> implements MouseListener{
+public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> {
 
 	
 	private boolean buisy =false;
@@ -30,7 +31,9 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		baseTimeScale=(double)xSize/(double)model.getNumberOfFrames();	
 		timeScale=baseTimeScale*Math.pow(1.1, tics);
 		
-		this.imp.getCanvas().addMouseListener(this);
+		MyListener ml=new MyListener();
+		this.imp.getCanvas().addMouseListener(ml);
+		this.imp.getCanvas().addMouseMotionListener(ml);
 	//	sb.setOrientation(Scrollbar.HORIZONTAL);
 		
 	}
@@ -49,10 +52,14 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		
 	}
 
-	@Override
+	public class MyListener implements MouseListener, MouseMotionListener{
+	
+	private int dragStart=-1;
+		
+	@Override	
 	public void mouseClicked(MouseEvent e) {
-		int x=(int)(((double)imp.getCanvas().offScreenX(e.getX())+transX)/this.scaleX);
-		int y=(int)(((double)imp.getCanvas().offScreenY(e.getY())+transY)/this.scaleY);
+		int x=(int)(((double)imp.getCanvas().offScreenX(e.getX())+transX)/scaleX);
+		int y=(int)(((double)imp.getCanvas().offScreenY(e.getY())+transY)/scaleY);
 		System.out.println("x:"+ x +"  y:"+y);
 		if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(3,x);
 		
@@ -73,6 +80,8 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		dragStart=(int)(((double)imp.getCanvas().offScreenX(e.getX()))/scaleX);
+		System.out.println("_______________________________dragStart:"+ dragStart);
 		// TODO Auto-generated method stub
 		
 	}
@@ -80,7 +89,30 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
+		dragStart=-1;
 		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+/*		int dif=dragStart-(int)(((double)imp.getCanvas().offScreenX(e.getX()))/scaleX);
+		if(dif<0) dif=-1;
+		if(dif>0) dif=1;
+		System.out.println("_______________________________dif:"+ dif+ "  dragStart:"+ dragStart);
+		int newValue=Math.min(Math.max(0,(int)viewModel.getPosition()[3] - dif ), model.getNumberOfFrames()-1 );
+		
+		viewModel.setPosition(3,newValue);
+		//dragStart=(int)(((double)imp.getCanvas().offScreenX(e.getX()))/scaleX);
+		// TODO Auto-generated method stub
+	*/	
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	}
 
 	
