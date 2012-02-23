@@ -68,11 +68,12 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 
 		public synchronized void  mouseWheelMoved(MouseWheelEvent e) {
 			
-			//	if(e.isControlDown()){
-			//		this.transX++;
-			//		viewModel.setPosition(-1, -1);
-			//		return;
-			//	}
+				if(e.isControlDown()){
+					int newPos= (int)(viewModel.getPosition()[3]+ ((double)e.getWheelRotation()/timeScale)*20);
+					newPos=Math.min(Math.max(newPos, 0), model.getNumberOfFrames()-1);
+					viewModel.setPosition(3,newPos);
+					return;
+				}
 				
 				
 				tics+= e.getWheelRotation();
