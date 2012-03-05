@@ -1,8 +1,6 @@
 package frameWork;
 
 
-import ij.gui.Overlay;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -58,9 +56,9 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		return Sequences.get(id);
 	}
 
-	public void optimizeFrame(int frameId){
+	public void optimizeFrame(int frameId, boolean cheap){
 		TrackingFrame<T,IT> f= frames.get(frameId);
-		f.optimizeFrame();
+		f.optimizeFrame(cheap);
 	}
 
 	public int selectAt(int x, int y, int z, int frameId, int channel){

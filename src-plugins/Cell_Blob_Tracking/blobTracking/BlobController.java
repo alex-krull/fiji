@@ -1,6 +1,7 @@
 package blobTracking;
 
 import java.awt.event.MouseEvent;
+
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -34,6 +35,7 @@ public BlobController(Model<IT> model, TrackingChannel<Blob,IT> tc){
 }
 
 
+@Override
 public void click(long[] pos, MouseEvent e){
 	System.out.println("click!!!!");
 	
@@ -48,7 +50,19 @@ public void click(long[] pos, MouseEvent e){
 		if(selectedTrackable==null) return; 
 		if(pos[0]>=0)selectedTrackable.xPos=pos[0];
 		if(pos[1]>=0)selectedTrackable.yPos=pos[1];
-		if(pos[2]>=0)selectedTrackable.zPos=(double)pos[2]*model.xyToZ;
+		if(pos[2]>=0)selectedTrackable.zPos=pos[2]*model.xyToZ;
+		
+	}
+	
+	if(e.getClickCount()>1){
+		
+			 model.getTrackingChannel((int)pos[4]).optimizeFrame((int)pos[3], e.getButton()==MouseEvent.BUTTON1);
+		
+
+			model.makeChangesPublic();
+			
+				
+			
 		
 	}
 	

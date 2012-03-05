@@ -15,7 +15,9 @@ import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 
+import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction;
 import org.apache.commons.math.analysis.MultivariateRealFunction;
+import org.apache.commons.math.analysis.MultivariateVectorialFunction;
 
 import tools.ImglibTools;
 import frameWork.Trackable;
@@ -28,14 +30,15 @@ import frameWork.Trackable;
  * @author alex
  *
  */
-public class Blob extends Trackable implements MultivariateRealFunction {
+public class Blob extends Trackable implements DifferentiableMultivariateRealFunction {
 	public double xPos;
 	public double yPos;
 	public double zPos;
 	public double sigma;
 	public double sigmaZ;
-	public double pK=0.1;
+	public double pK=0.18;
 	public double pKAkku;
+	public int counter=0;
 	
 	
 	public double denominator=0;
@@ -49,10 +52,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	}
 	
 	public double pXunderK(int x, int y, int z){
-		
-		
 		return ImglibTools.gaussPixelIntegral(x, y, xPos, yPos, sigma)/denominator;
-		
 	}
 	
 	
@@ -71,7 +71,9 @@ public class Blob extends Trackable implements MultivariateRealFunction {
     		
     		if(a<0.0000001) continue;
     		result+=Math.log(a)*b;
+    		
     	}
+   // 	System.out.println("Result: "+result);
 		return result;
 	}
 	
@@ -159,6 +161,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		yPos = y;
 		zPos = z;
 		sigma = sig;
+		sigma=0.5;
 		sigmaZ = sigma * 2;
 	}
 
@@ -185,15 +188,18 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	}
 
 	@Override
-	public synchronized double value(double[] position) {
-		//if(position[2]<0) return Double.MIN_VALUE;
+	public double value(double[] position) {
+		counter++;
+		System.out.println("counter:"+ counter);
+		
+		if(position[2]<0) return Double.MIN_VALUE;
 		double xOld=xPos;
 		double yOld=yPos;
 		double sigmaOld=sigma;
 		
 		xPos=position[0];
 		yPos=position[1];
-		sigma=Math.abs(position[2]);
+		sigma=(position[2]);
 		double value=this.localLogLikelihood();
 		
 		xPos=xOld;
@@ -203,7 +209,18 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		return value;
 		
 	}
+
+	@Override
+	public MultivariateVectorialFunction gradient() {	
+		return new BlobGradientFunction(this);
+	}
+
+	@Override
+	public MultivariateRealFunction partialDerivative(int arg0) {
+		return new BlobPartialDerivative(this,arg0);
+	}
 	
 
 
 }
+

@@ -3,10 +3,7 @@ package frameWork;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 import net.imglib2.type.NativeType;
-
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 
@@ -20,7 +17,7 @@ protected TrackingFrame(int frameNum){
 	trackables= new ArrayList<T>();
 }
 
-public abstract void optimizeFrame();
+public abstract void optimizeFrame(boolean cheap);
 
 public void addTrackable(T trackable){
 

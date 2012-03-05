@@ -14,37 +14,39 @@ import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
 import org.apache.commons.math.optimization.GoalType;
-import org.apache.commons.math.optimization.direct.NelderMeadSimplex;
-import org.apache.commons.math.optimization.direct.SimplexOptimizer;
+import org.apache.commons.math.optimization.SimpleScalarValueChecker;
+import org.apache.commons.math.optimization.direct.PowellOptimizer;
 
 import tools.ImglibTools;
-import frameWork.TrackingFrame;
 import frameWork.MovieFrame;
+import frameWork.TrackingFrame;
 
 public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends TrackingFrame<Blob, IT>{
 	
-	private MovieFrame<IT> movieFrame;
-	private double backProb=0.9;
+	private final MovieFrame<IT> movieFrame;
+	private double backProb=0.1;
 	public BlobFrame(int frameNum, MovieFrame<IT> mv){
 		super(frameNum);
 		movieFrame=mv;
 	}
 
 	@Override
-	public void optimizeFrame() {
+	public synchronized void optimizeFrame(boolean cheap) {
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();	
 		for(Blob b:trackables)
 			b.expectedValues= imgFactory.create(movieFrame.getFrameView(), new FloatType());
 		
-			
-			
-			for(int i=0;i<10;i++){	
-				double ti= doEStep();
 				
-				double change=this.doMstep(ti);
-				System.out.println("change:" +change);			
-	//			if(change<0.01) break;
+			for(int i=0;i<100;i++){	
+					double ti= doEStep();
+					double change;
+					if(cheap) change=this.doMStepCheap(ti);
+					else change=this.doMstep(ti);
+					System.out.println("change:" +change);			
+					if(change<0.01) break;
 			}
+			
+		
 				
 	//	for(Blob b:trackables)
 	//		b.expectedValues= null;
@@ -82,9 +84,10 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	    		RandomAccess<FloatType> ra= b.expectedValues.randomAccess();
 	    		ra.setPosition(cursor);
 	    		ra.get().set((float)( value*b.pXandK(x, y, z)/pX ) );
-	    	
+	    		
 	    		
 	    	}
+	    	
 	    	
 	    		
 		}
@@ -111,6 +114,12 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			
 			long[] maxs=  {(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3 ),(long)
 					Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 )};
+			
+			mins[0]=this.movieFrame.getFrameView().min(0);
+			mins[1]=this.movieFrame.getFrameView().min(1);
+			
+			maxs[0]=this.movieFrame.getFrameView().max(0);
+			maxs[1]=this.movieFrame.getFrameView().max(1);
 			
 			b.expectedValuesRoi=new IterableRandomAccessibleInterval<FloatType>(Views.interval(b.expectedValues,mins,maxs ));
 			
@@ -157,6 +166,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	    	b.sigma=newSig;
 	//    	b.zPos=newZ/inten;
 	    	b.pK=inten/totalInten;
+	    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~pk: " +b.pK);
 	    	totalBlobsInten+=inten;
 	    
     	}
@@ -187,6 +197,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 					Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 )};
 			
 			b.expectedValuesRoi=new IterableRandomAccessibleInterval<FloatType>(Views.interval(b.expectedValues,mins,maxs ));
+		//	inten=totalInten*b.pK;
 			
     		Cursor<FloatType> cursor= b.expectedValuesRoi.cursor(); 
 	    	while ( cursor.hasNext() )	{    		
@@ -212,18 +223,22 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	    	newSig=Math.sqrt(newSig/(2*inten));
 	    	
 	
+	    //	NonLinearConjugateGradientOptimizer optimizer= new NonLinearConjugateGradientOptimizer(ConjugateGradientFormula.FLETCHER_REEVES);
 	    	
-	   // 	if(b.denominator>0.99) {
-    	//	PowellOptimizer optimizer = new PowellOptimizer(100,100);
-	    	
-	    	SimplexOptimizer optimizer = new SimplexOptimizer();
+	    	// 	if(b.denominator>0.99) {
+	    	b.counter=0;
+    		PowellOptimizer optimizer = new PowellOptimizer(100,100);
+    		optimizer.setConvergenceChecker(new SimpleScalarValueChecker() );
+	  //  	SimplexOptimizer optimizer = new SimplexOptimizer();
 	    		    	
     		double []startPoint={b.xPos,b.yPos,b.sigma};
+    	//	double []startPoint={newX,newY,newSig};
     		
     			
     		
-    		optimizer.setSimplex(new  NelderMeadSimplex(3));
-    		double []output = optimizer.optimize(10000, b, GoalType.MAXIMIZE, startPoint).getPoint();
+    	//	optimizer.setSimplex(new  NelderMeadSimplex(3));
+    		double []output = optimizer.optimize(100, b, GoalType.MAXIMIZE, startPoint).getPoint();
+    		
     		
     		newX=output[0];
     		newY=output[1];
@@ -250,12 +265,115 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	//    	b.zPos=newZ/inten;
 	    	b.pK=inten/totalInten;
 	    	totalBlobsInten+=inten;
-	    
+	    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~pk: " +b.pK);
+	    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~totalInten: " +totalInten);
+	     	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~inten: " +inten);
     	}
 		this.backProb=1-(totalBlobsInten/totalInten);
 		return change;
 	}
 
+private double doMstepGradientDes(double totalInten){
+		
+		
+		
+		
+		double change=0;
+		double totalBlobsInten=0;
+		for(Blob b:trackables){   
+	//		System.out.println(b.localLogLikelihood());
+	//		System.out.println(b.toString());
+			
+			double newX=0;
+			double newY=0;
+			double newSig=0;
+			double newZ=0;
+			double inten=0;
+			long[] mins=  {(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3 ),(long)
+					Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3 )};
+			
+			long[] maxs=  {(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3 ),(long)
+					Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 )};
+			
+			b.expectedValuesRoi=new IterableRandomAccessibleInterval<FloatType>(Views.interval(b.expectedValues,mins,maxs ));
+		//	inten=totalInten*b.pK;
+			
+    		Cursor<FloatType> cursor= b.expectedValuesRoi.cursor(); 
+	    	while ( cursor.hasNext() )	{    		
+		    	cursor.fwd();
+				int x=cursor.getIntPosition(0);
+		    	int y=cursor.getIntPosition(1);
+		    //	int z=cursor.getIntPosition(2);
+		    	int z=0;
+		    	
+		    	double value=cursor.get().get();
+		    	inten+=value;
+		    	newX+=value*x;
+		    	newY+=value*y;
+		    	newZ+=value*z;	
+		    	newSig+=value*((x-b.xPos)*(x-b.xPos) + (y-b.yPos)*(y-b.yPos));
+		
+		    	
+		    	
+	    	}
+	    	
+	    	newX=newX/inten;
+	    	newY=newY/inten;
+	    	newSig=Math.sqrt(newSig/(2*inten));
+	    	
+	    		    	
+    		double []startPoint={b.xPos,b.yPos,b.sigma};
+    		double value=1;
+    		while(value>0.0001){
+    			double v1=b.value(startPoint);
+    			double dx=b.partialDerivative(0).value(startPoint);
+    			double dy=b.partialDerivative(1).value(startPoint);
+    			double ds=b.partialDerivative(2).value(startPoint);
+    			double length =Math.sqrt(dx*dx+dy*dy+ds*ds);
+    			startPoint[0]-=0.1*dx/length;
+    			startPoint[1]-=0.1*dy/length;
+    			startPoint[2]-=0.1*ds/length;
+    			double v2=b.value(startPoint);
+    			value=(v1-v2)*(v1-v2);
+    			System.out.println("value:"+value);
+    		}
+    		
+    		
+    		double []output = startPoint;
+    		
+    		
+    		newX=output[0];
+    		newY=output[1];
+    		newSig=Math.abs(output[2]);
+    		
+	//    	}
+   		
+	    	change=Math.abs((newX-b.xPos)/b.sigma);
+	    	change=Math.max(Math.abs((newY-b.yPos)/b.sigma), change );
+	    	change=Math.max(Math.abs((newSig-b.sigma)/b.sigma)*10, change);
+	    	change=Math.max(Math.abs(((inten/totalInten)-b.pK)/b.pK), change);
+	/*    	
+	    	System.out.println("xdiff:"+ (newX-b.xPos));
+	    	System.out.println("ydiff:"+ (newY-b.yPos));
+	    	System.out.println("sdiff:"+ (newSig-b.sigma));
+	    	
+	    	System.out.println("xold:"+ (b.xPos)+ "new:"+ newX);
+	    	System.out.println("yold:"+ (b.yPos)+ "new:"+ newY);
+	    	System.out.println("sold:"+ (b.sigma)+ "new:"+ newSig);
+	*/    	
+	    	b.xPos=newX;
+	    	b.yPos=newY;
+	    	b.sigma=newSig;
+	//    	b.zPos=newZ/inten;
+	    	b.pK=inten/totalInten;
+	    	totalBlobsInten+=inten;
+	    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~pk: " +b.pK);
+	    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~totalInten: " +totalInten);
+	     	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~inten: " +inten);
+    	}
+		this.backProb=1-(totalBlobsInten/totalInten);
+		return change;
+	}
 	
 
 }
