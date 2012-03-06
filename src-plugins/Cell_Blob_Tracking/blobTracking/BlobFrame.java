@@ -25,6 +25,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	
 	private final MovieFrame<IT> movieFrame;
 	private double backProb=0.1;
+	private IterableInterval<IT> iterableFrame;
 	public BlobFrame(int frameNum, MovieFrame<IT> mv){
 		super(frameNum);
 		movieFrame=mv;
@@ -72,7 +73,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			System.out.println(" mins[0] after:"+ mins[0]);
 		}
 		
-		IterableInterval<IT> iterableFrame=new IterableRandomAccessibleInterval<IT>(Views.interval(movieFrame.getFrameView(),mins,maxs ));
+		 iterableFrame=new IterableRandomAccessibleInterval<IT>(Views.interval(movieFrame.getFrameView(),mins,maxs ));
 
 		for(Blob b:trackables)	
 			b.calcDenominator(iterableFrame);
@@ -206,13 +207,13 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			double newSig=0;
 			double newZ=0;
 			
-			long[] mins=  {(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3 ),(long)
-					Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3 )};
+			long[] mins=  {(long)Math.max(iterableFrame.min(0), b.xPos-b.sigma*3 ),(long)
+					Math.max(iterableFrame.min(1), b.yPos-b.sigma*3 )};
 			
 			System.out.println(" mins[0] mstep:"+ mins[0]);
 			
-			long[] maxs=  {(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3 ),(long)
-					Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 )};
+			long[] maxs=  {(long)Math.min(iterableFrame.max(0), b.xPos+b.sigma*3 ),(long)
+					Math.min(iterableFrame.max(1), b.yPos+b.sigma*3 )};
 			
 			//mins[0]=b.expectedValues.min(0);
 			//mins[1]=b.expectedValues.min(1);
