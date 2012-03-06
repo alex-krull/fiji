@@ -40,10 +40,10 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			for(int i=0;i<100;i++){	
 					double ti= doEStep();
 					double change;
-					if(cheap) change=this.doMStepCheap(ti);
-					else change=this.doMstep(ti);
+					
+					change=this.doMstep(ti);
 					System.out.println("change:" +change);			
-					if(change<0.01) break;
+					if(change<0.001) break;
 			}
 			
 		
@@ -56,14 +56,19 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	
 	private double doEStep(){
 		double totalInten=0;
-		for(Blob b:trackables)
+		for(Blob b:trackables){
+			
 			b.calcDenominator(movieFrame.getFrameView());
+			b.inten=0;
+		}
 		
 		IterableInterval<IT> iterableFrame= new IterableRandomAccessibleInterval<IT>(movieFrame.getFrameView());
 		Cursor<IT> cursor =iterableFrame.cursor();
 		
 		
 		double pX=0;
+		
+		
 		while ( cursor.hasNext() )	{
 	    	cursor.fwd();
 	    	pX=this.backProb/ImglibTools.getNumOfPixels(movieFrame.getFrameView()); // init with probability for background
@@ -83,8 +88,9 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	    	for(Blob b:trackables){    		    		
 	    		RandomAccess<FloatType> ra= b.expectedValues.randomAccess();
 	    		ra.setPosition(cursor);
-	    		ra.get().set((float)( value*b.pXandK(x, y, z)/pX ) );
-	    		
+	    		double currentInten=value*b.pXandK(x, y, z)/pX;
+	    		ra.get().set((float)(currentInten  ) );
+	    		b.inten+=currentInten;
 	    		
 	    	}
 	    	
@@ -93,7 +99,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		}
 		return totalInten;
 	}
-	
+/*	
 	private double doMStepCheap(double totalInten){
 	
 		
@@ -152,28 +158,21 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	    	change+=Math.abs((newY-b.yPos)/b.sigma);
 	    	change+=Math.abs((newSig-b.sigma)/b.sigma)*10;
 	    	change+=Math.abs(((inten/totalInten)-b.pK)/b.pK);
-	/*    	
-	    	System.out.println("xdiff:"+ (newX-b.xPos));
-	    	System.out.println("ydiff:"+ (newY-b.yPos));
-	    	System.out.println("sdiff:"+ (newSig-b.sigma));
-	    	
-	    	System.out.println("xold:"+ (b.xPos)+ "new:"+ newX);
-	    	System.out.println("yold:"+ (b.yPos)+ "new:"+ newY);
-	    	System.out.println("sold:"+ (b.sigma)+ "new:"+ newSig);
-	*/    	
+  	
 	    	b.xPos=newX;
 	    	b.yPos=newY;
-	    	b.sigma=newSig;
+	    	b.sigma=Math.min(2.0,newSig);
 	//    	b.zPos=newZ/inten;
 	    	b.pK=inten/totalInten;
 	    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~pk: " +b.pK);
 	    	totalBlobsInten+=inten;
 	    
     	}
+		
 		this.backProb=1-(totalBlobsInten/totalInten);
 		return change;
 	}
-	
+	*/
 	private double doMstep(double totalInten){
 		
 		
@@ -189,38 +188,45 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			double newY=0;
 			double newSig=0;
 			double newZ=0;
-			double inten=0;
+			
 			long[] mins=  {(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3 ),(long)
 					Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3 )};
 			
 			long[] maxs=  {(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3 ),(long)
 					Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 )};
 			
+			//mins[0]=b.expectedValues.min(0);
+			//mins[1]=b.expectedValues.min(1);
+			
+			//maxs[0]=b.expectedValues.max(0);
+			//maxs[1]=b.expectedValues.max(1);
+			
 			b.expectedValuesRoi=new IterableRandomAccessibleInterval<FloatType>(Views.interval(b.expectedValues,mins,maxs ));
 		//	inten=totalInten*b.pK;
 			
     		Cursor<FloatType> cursor= b.expectedValuesRoi.cursor(); 
-	    	while ( cursor.hasNext() )	{    		
+	   /* 	while ( cursor.hasNext() )	{    		
 		    	cursor.fwd();
 				int x=cursor.getIntPosition(0);
 		    	int y=cursor.getIntPosition(1);
 		    //	int z=cursor.getIntPosition(2);
-		    	int z=0;
+		    //	int z=0;
 		    	
 		    	double value=cursor.get().get();
 		    	inten+=value;
 		    	newX+=value*x;
 		    	newY+=value*y;
-		    	newZ+=value*z;	
+		   // 	newZ+=value*z;	
 		    	newSig+=value*((x-b.xPos)*(x-b.xPos) + (y-b.yPos)*(y-b.yPos));
 		
 		    	
 		    	
 	    	}
+	   */
 	    	
-	    	newX=newX/inten;
-	    	newY=newY/inten;
-	    	newSig=Math.sqrt(newSig/(2*inten));
+	   // 	newX=newX/inten;
+	   // 	newY=newY/inten;
+	   // 	newSig=Math.sqrt(newSig/(2*inten));
 	    	
 	
 	    //	NonLinearConjugateGradientOptimizer optimizer= new NonLinearConjugateGradientOptimizer(ConjugateGradientFormula.FLETCHER_REEVES);
@@ -231,7 +237,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
     		optimizer.setConvergenceChecker(new SimpleScalarValueChecker() );
 	  //  	SimplexOptimizer optimizer = new SimplexOptimizer();
 	    		    	
-    		double []startPoint={b.xPos,b.yPos,b.sigma};
+    		double []startPoint={b.xPos,b.yPos,b.sigma*b.sigma};
     	//	double []startPoint={newX,newY,newSig};
     		
     			
@@ -242,14 +248,14 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
     		
     		newX=output[0];
     		newY=output[1];
-    		newSig=Math.abs(output[2]);
+    		newSig=Math.min(2,Math.sqrt(output[2]) );
     		
 	//    	}
    		
 	    	change=Math.abs((newX-b.xPos)/b.sigma);
 	    	change=Math.max(Math.abs((newY-b.yPos)/b.sigma), change );
 	    	change=Math.max(Math.abs((newSig-b.sigma)/b.sigma)*10, change);
-	    	change=Math.max(Math.abs(((inten/totalInten)-b.pK)/b.pK), change);
+	    	change=Math.max(Math.abs(((b.inten/totalInten)-b.pK)/b.pK), change);
 	/*    	
 	    	System.out.println("xdiff:"+ (newX-b.xPos));
 	    	System.out.println("ydiff:"+ (newY-b.yPos));
@@ -261,119 +267,18 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	*/    	
 	    	b.xPos=newX;
 	    	b.yPos=newY;
-	    	b.sigma=newSig;
+	    	b.sigma=Math.min(2.0,newSig);
 	//    	b.zPos=newZ/inten;
-	    	b.pK=inten/totalInten;
-	    	totalBlobsInten+=inten;
+	    	b.pK=b.inten/totalInten;
+	    	totalBlobsInten+=b.inten;
+	    	
 	    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~pk: " +b.pK);
 	    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~totalInten: " +totalInten);
-	     	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~inten: " +inten);
+	     	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~inten: " +b.inten);
     	}
+		
 		this.backProb=1-(totalBlobsInten/totalInten);
 		return change;
 	}
-
-private double doMstepGradientDes(double totalInten){
-		
-		
-		
-		
-		double change=0;
-		double totalBlobsInten=0;
-		for(Blob b:trackables){   
-	//		System.out.println(b.localLogLikelihood());
-	//		System.out.println(b.toString());
-			
-			double newX=0;
-			double newY=0;
-			double newSig=0;
-			double newZ=0;
-			double inten=0;
-			long[] mins=  {(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3 ),(long)
-					Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3 )};
-			
-			long[] maxs=  {(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3 ),(long)
-					Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 )};
-			
-			b.expectedValuesRoi=new IterableRandomAccessibleInterval<FloatType>(Views.interval(b.expectedValues,mins,maxs ));
-		//	inten=totalInten*b.pK;
-			
-    		Cursor<FloatType> cursor= b.expectedValuesRoi.cursor(); 
-	    	while ( cursor.hasNext() )	{    		
-		    	cursor.fwd();
-				int x=cursor.getIntPosition(0);
-		    	int y=cursor.getIntPosition(1);
-		    //	int z=cursor.getIntPosition(2);
-		    	int z=0;
-		    	
-		    	double value=cursor.get().get();
-		    	inten+=value;
-		    	newX+=value*x;
-		    	newY+=value*y;
-		    	newZ+=value*z;	
-		    	newSig+=value*((x-b.xPos)*(x-b.xPos) + (y-b.yPos)*(y-b.yPos));
-		
-		    	
-		    	
-	    	}
-	    	
-	    	newX=newX/inten;
-	    	newY=newY/inten;
-	    	newSig=Math.sqrt(newSig/(2*inten));
-	    	
-	    		    	
-    		double []startPoint={b.xPos,b.yPos,b.sigma};
-    		double value=1;
-    		while(value>0.0001){
-    			double v1=b.value(startPoint);
-    			double dx=b.partialDerivative(0).value(startPoint);
-    			double dy=b.partialDerivative(1).value(startPoint);
-    			double ds=b.partialDerivative(2).value(startPoint);
-    			double length =Math.sqrt(dx*dx+dy*dy+ds*ds);
-    			startPoint[0]-=0.1*dx/length;
-    			startPoint[1]-=0.1*dy/length;
-    			startPoint[2]-=0.1*ds/length;
-    			double v2=b.value(startPoint);
-    			value=(v1-v2)*(v1-v2);
-    			System.out.println("value:"+value);
-    		}
-    		
-    		
-    		double []output = startPoint;
-    		
-    		
-    		newX=output[0];
-    		newY=output[1];
-    		newSig=Math.abs(output[2]);
-    		
-	//    	}
-   		
-	    	change=Math.abs((newX-b.xPos)/b.sigma);
-	    	change=Math.max(Math.abs((newY-b.yPos)/b.sigma), change );
-	    	change=Math.max(Math.abs((newSig-b.sigma)/b.sigma)*10, change);
-	    	change=Math.max(Math.abs(((inten/totalInten)-b.pK)/b.pK), change);
-	/*    	
-	    	System.out.println("xdiff:"+ (newX-b.xPos));
-	    	System.out.println("ydiff:"+ (newY-b.yPos));
-	    	System.out.println("sdiff:"+ (newSig-b.sigma));
-	    	
-	    	System.out.println("xold:"+ (b.xPos)+ "new:"+ newX);
-	    	System.out.println("yold:"+ (b.yPos)+ "new:"+ newY);
-	    	System.out.println("sold:"+ (b.sigma)+ "new:"+ newSig);
-	*/    	
-	    	b.xPos=newX;
-	    	b.yPos=newY;
-	    	b.sigma=newSig;
-	//    	b.zPos=newZ/inten;
-	    	b.pK=inten/totalInten;
-	    	totalBlobsInten+=inten;
-	    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~pk: " +b.pK);
-	    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~totalInten: " +totalInten);
-	     	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~inten: " +inten);
-    	}
-		this.backProb=1-(totalBlobsInten/totalInten);
-		return change;
-	}
-	
-
 }
+

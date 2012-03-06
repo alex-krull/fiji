@@ -38,6 +38,7 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 	public double sigmaZ;
 	public double pK=0.18;
 	public double pKAkku;
+	public double inten=0;
 	public int counter=0;
 	
 	
@@ -191,15 +192,17 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 	public double value(double[] position) {
 		counter++;
 		System.out.println("counter:"+ counter);
+		System.out.println("sigma:"+ sigma);
+		//if(position[2]<0.5) return Double.MIN_VALUE;
+	
 		
-		if(position[2]<0) return Double.MIN_VALUE;
 		double xOld=xPos;
 		double yOld=yPos;
 		double sigmaOld=sigma;
 		
 		xPos=position[0];
 		yPos=position[1];
-		sigma=(position[2]);
+		sigma=Math.max(0.5,Math.sqrt(position[2]) );
 		double value=this.localLogLikelihood();
 		
 		xPos=xOld;
