@@ -43,7 +43,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 					
 					change=this.doMstep(ti);
 					System.out.println("change:" +change);			
-					if(change<0.001) break;
+					if(change<0.01) break;
 			}
 			
 		
@@ -56,13 +56,28 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	
 	private double doEStep(){
 		double totalInten=0;
+		long[] mins=  {movieFrame.getFrameView().min(0),movieFrame.getFrameView().min(1)};		
+		long[] maxs=  {movieFrame.getFrameView().max(0),movieFrame.getFrameView().max(1)};
+		
+		
 		for(Blob b:trackables){
 			
-			b.calcDenominator(movieFrame.getFrameView());
+	
 			b.inten=0;
+			System.out.println(" mins[0]:"+ mins[0]);
+			mins[0]=Math.max(mins[0],(long) (b.xPos-b.sigma*3));
+			mins[1]=Math.max(mins[1],(long) (b.yPos-b.sigma*3));
+			maxs[0]=Math.min(maxs[0],(long) (b.xPos+b.sigma*3));
+			maxs[1]=Math.min(maxs[1],(long) (b.yPos+b.sigma*3));
+			System.out.println(" mins[0] after:"+ mins[0]);
 		}
 		
-		IterableInterval<IT> iterableFrame= new IterableRandomAccessibleInterval<IT>(movieFrame.getFrameView());
+		IterableInterval<IT> iterableFrame=new IterableRandomAccessibleInterval<IT>(Views.interval(movieFrame.getFrameView(),mins,maxs ));
+
+		for(Blob b:trackables)	
+			b.calcDenominator(iterableFrame);
+		
+	//	IterableInterval<IT> iterableFrame= new IterableRandomAccessibleInterval<IT>(movieFrame.getFrameView());
 		Cursor<IT> cursor =iterableFrame.cursor();
 		
 		
@@ -71,7 +86,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		
 		while ( cursor.hasNext() )	{
 	    	cursor.fwd();
-	    	pX=this.backProb/ImglibTools.getNumOfPixels(movieFrame.getFrameView()); // init with probability for background
+	    	pX=this.backProb/ImglibTools.getNumOfPixels(iterableFrame); // init with probability for background
 
 	    	int x=cursor.getIntPosition(0);
 	    	int y=cursor.getIntPosition(1);
@@ -173,6 +188,8 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		return change;
 	}
 	*/
+	
+	
 	private double doMstep(double totalInten){
 		
 		
@@ -191,6 +208,8 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			
 			long[] mins=  {(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3 ),(long)
 					Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3 )};
+			
+			System.out.println(" mins[0] mstep:"+ mins[0]);
 			
 			long[] maxs=  {(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3 ),(long)
 					Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 )};
