@@ -175,6 +175,11 @@ public void makeChangesPublic(){
 	notifyObservers();
 }
 
+public void makeChangesPublic(Integer frameNumber){
+	setChanged();
+	notifyObservers(frameNumber);
+}
+
 public MovieChannel<IT> getMovieChannel(int id){
 	return channels.get(id);
 }

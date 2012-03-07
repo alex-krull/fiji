@@ -8,16 +8,16 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 
-public abstract class ChannelController<T extends Trackable,  IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Runnable {
+public abstract class ChannelController<T extends Trackable,  IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
 	protected Model<IT> model;
 	public int selectedSequenceId;
 	protected T selectedTrackable;
 	protected TrackingChannel<T,IT> trackingChannel;
 	public abstract void click(long[] pos, MouseEvent e);
-	private int trackingFrame=0;
+	private boolean currentlyTracking=false;
 	public void optimizeFrame(int frameNumber){
 		trackingChannel.optimizeFrame(frameNumber,false);
-		model.makeChangesPublic();
+		model.makeChangesPublic(frameNumber);
 	}
 	
 	protected ChannelController( Model<IT> mod,TrackingChannel<T,IT> tc ){
@@ -25,27 +25,55 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		trackingChannel=tc;
 	}
 	
-	@Override
-	public void run(){
-		for(int i= trackingFrame; i<trackingChannel.getNumberOfFrames();i++){
-			System.out.println("trackingFrame:"+i);
-			optimizeFrame( i);
-			List<T> newTrackables= trackingChannel.getFrame(i).cloneTrackablesForFrame(i+1);
+	
+	private class TrackingThread extends Thread{
+		private final int startingFrame;
+		TrackingThread(int frameToStart){
+			startingFrame=frameToStart;
+		}
+		
+		@Override
+		public void run(){
 			
-			for(T t: newTrackables){
+			if(!currentlyTracking)	{
+			synchronized (trackingChannel){
+			
+			currentlyTracking=true;	
+			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames();i++){
+				System.out.println("trackingFrame:"+i);
+				optimizeFrame( i);
+				List<T> newTrackables= trackingChannel.getFrame(i).cloneTrackablesForFrame(i+1);
+				
+				for(T t: newTrackables){
+					
+					
+					trackingChannel.addTrackable(t);
+				}
 				
 				
-				trackingChannel.addTrackable(t);
-			}			
-			
+				if(!currentlyTracking) break;
+			}
+			currentlyTracking=false;
+			}
+			}
 		}
 	}
+	
 
-	protected void startTracking(int frameId){
-		trackingFrame=frameId;
-		Thread thread= new Thread(this);
+	public void startTracking(int frameId){
+		Thread thread= new TrackingThread(frameId);
 		thread.start();
 	}
+	
+	public void stopTracking(){
+		currentlyTracking=false;
+	}
+	
+	public boolean isTracking(){
+		return currentlyTracking;
+	}
+	
+	
 	
 	
 	

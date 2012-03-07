@@ -138,7 +138,16 @@ public long[] getPosition(){
 }
 
 public void mouseAtPosition(long [] pos, MouseEvent me){
-	if(me.isControlDown()) controller.StartTracking( currentFrameNumber, currentTrackingChannel);
+	if(me.isControlDown()){
+		
+		controller.StartTracking( currentFrameNumber, currentTrackingChannel);
+	}
+	
+	if(me.isShiftDown()){
+		
+		controller.StopTracking(currentTrackingChannel);
+	}
+
 	controller.click(pos, currentTrackingChannel, me);
 }
 
@@ -157,6 +166,8 @@ protected void upDateImages(int frame, int slice, int channel, boolean init){
 
 @Override
 public void update(Observable arg0, Object arg1) {
+	if(arg1!=null)
+		currentFrameNumber=(Integer)arg1;
 	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, false );
 }
 

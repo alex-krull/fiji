@@ -74,7 +74,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		currentChannelNumber=imp.getChannel()-1;
 		//imp.getWindow().close();
 		imp.setOpenAsHyperStack(true);
-		stackWindow= new MyStackWindow(imp);
+		stackWindow= new StackWindow(imp);
 		
 		stackWindow.getCanvas().addMouseListener(this);
 		stackWindow.getCanvas().addMouseMotionListener(this);
@@ -123,42 +123,43 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	}
 
 	@Override
-	public void imageUpdated(ImagePlus arg0) {
+public synchronized void imageUpdated(ImagePlus arg0) {
 		
 		
 		if(!arg0.equals(imp)) return;
 		
 		if(!model.hasSwitchedDimension()){
 		
-			
-				
-				viewModel.setPosition(3, imp.getFrame()-1);
+			if(currentFrameNumber != imp.getFrame()-1){
+				currentFrameNumber= imp.getFrame()-1;
+				viewModel.setPosition(3, currentFrameNumber);
 		
-			
+				return;
+			}
 		
-			
-				
-				viewModel.setPosition(2, imp.getSlice()-1);
+			if(currentSliceNumber!= imp.getSlice()-1){
+				currentSliceNumber= imp.getSlice()-1;
+				viewModel.setPosition(2, currentSliceNumber);
 		
-			
+				return;
+			}
 		
 		}else{
 			
-				
-					
-					viewModel.setPosition(3, imp.getSlice()-1);
-				
-			
+			if(currentFrameNumber!= imp.getSlice()-1){
+				currentFrameNumber=imp.getSlice()-1;
+				viewModel.setPosition(3, currentFrameNumber);
+			}
 		}
 		
 		
 		
-		
+		if(currentChannelNumber!= imp.getChannel()-1){
+			currentChannelNumber= imp.getChannel()-1;
+			viewModel.setPosition(4, currentChannelNumber);
 			
-			viewModel.setPosition(4, imp.getChannel()-1);
-			
-			
-		
+			return;
+		}
 			
 	
 		return;
