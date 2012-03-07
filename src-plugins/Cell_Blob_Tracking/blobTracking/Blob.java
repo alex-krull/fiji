@@ -196,8 +196,6 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 	@Override
 	public double value(double[] position) {
 		counter++;
-		System.out.println("counter:"+ counter);
-		System.out.println("sigma:"+ sigma);
 		//if(position[2]<0.5) return Double.MIN_VALUE;
 	
 		

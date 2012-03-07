@@ -27,9 +27,8 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		
 		@Override
 		public void adjustmentValueChanged(java.awt.event.AdjustmentEvent e){
+//		public void updateImage(ImagePlus imp){	
 			
-	
-						
 			if(!model.hasSwitchedDimension()){
 				
 					System.out.println("no SwitchedDimension");
@@ -54,7 +53,8 @@ implements ImageListener, MouseListener, MouseMotionListener{
 				
 		
 			//super.adjustmentValueChanged(e);
-			return;
+			
+			
 		}
 		
 	}
@@ -79,7 +79,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		stackWindow.getCanvas().addMouseListener(this);
 		stackWindow.getCanvas().addMouseMotionListener(this);
 		
-		//ImagePlus.addImageListener(this);
+		ImagePlus.addImageListener(this);
 	}
 
 	@Override
@@ -131,30 +131,31 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		if(!model.hasSwitchedDimension()){
 		
 			
-				currentFrameNumber= imp.getFrame()-1;
-				viewModel.setPosition(3, currentFrameNumber);
+				
+				viewModel.setPosition(3, imp.getFrame()-1);
 		
 			
 		
 			
-				currentSliceNumber= imp.getSlice()-1;
-				viewModel.setPosition(2, currentSliceNumber);
+				
+				viewModel.setPosition(2, imp.getSlice()-1);
 		
 			
 		
 		}else{
 			
-			
-				currentFrameNumber=imp.getSlice()-1;
-				viewModel.setPosition(3, currentFrameNumber);
+				
+					
+					viewModel.setPosition(3, imp.getSlice()-1);
+				
 			
 		}
 		
 		
 		
 		
-			currentChannelNumber= imp.getChannel()-1;
-			viewModel.setPosition(4, currentChannelNumber);
+			
+			viewModel.setPosition(4, imp.getChannel()-1);
 			
 			
 		

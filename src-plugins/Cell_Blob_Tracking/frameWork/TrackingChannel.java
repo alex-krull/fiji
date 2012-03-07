@@ -24,6 +24,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		frames=new ArrayList<TrackingFrame<T,IT>>();
 		for(int i=0;i<numOfFrames;i++){
 			frames.add(produceFrame(i));
+			System.out.println("producing frame:"+ i);
 		}
 		
 	}
@@ -57,7 +58,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	}
 
 	public void optimizeFrame(int frameId, boolean cheap){
-		TrackingFrame<T,IT> f= frames.get(frameId);
+		TrackingFrame<T,IT> f= this.getFrame(frameId);
 		f.optimizeFrame(cheap);
 	}
 
@@ -86,7 +87,8 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	}
 	
 	public TrackingFrame<T,IT> getFrame(int frameNumber) {	
-		return this.frames.get(frameNumber);
+		System.out.println("size:"+ frames.size()+ "   fn:"+frameNumber);
+		return frames.get(frameNumber);
 	}
 	
 	

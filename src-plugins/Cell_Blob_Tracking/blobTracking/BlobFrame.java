@@ -44,7 +44,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 					
 					change=this.doMstep(ti);
 					System.out.println("change:" +change);			
-					if(change<0.01) break;
+					if(change<0.1) break;
 			}
 			
 		
