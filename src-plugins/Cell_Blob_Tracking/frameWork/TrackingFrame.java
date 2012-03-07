@@ -20,7 +20,12 @@ protected TrackingFrame(int frameNum){
 public abstract void optimizeFrame(boolean cheap);
 
 public void addTrackable(T trackable){
-
+	for(T t:trackables){
+		if(t.sequenceId==trackable.sequenceId){
+			trackables.remove(t);
+			break;
+		}
+	}
 	trackables.add(trackable);
 }
 

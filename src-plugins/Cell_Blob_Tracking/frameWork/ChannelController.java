@@ -28,7 +28,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	@Override
 	public void run(){
 		while(trackingFrame<trackingChannel.getNumberOfFrames()){
-			optimizeFrame( trackingFrame);
+	//		optimizeFrame( trackingFrame);
 			List<T> newTrackables= trackingChannel.getFrame(trackingFrame).cloneTrackablesForFrame(trackingFrame+1);
 			
 			for(T t: newTrackables){
