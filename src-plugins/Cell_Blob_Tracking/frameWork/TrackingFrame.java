@@ -8,7 +8,7 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 
 
-public abstract class TrackingFrame<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
+public abstract class TrackingFrame<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>>{
 protected List <T> trackables;
 protected int frameNumber;
 
@@ -42,5 +42,17 @@ public int selectAt(int x, int y, int z){
 public List<T>getTrackables(){
 	return trackables;
 }
+
+public List<T> cloneTrackablesForFrame (int newFrame){
+	List<T> results = new ArrayList<T>();
+	for(T trackable:trackables){
+		T newTrackable= copy(trackable);		
+		newTrackable.frameId=newFrame;
+		results.add(newTrackable);
+	}
+	return results;
+}
+
+public abstract T copy(T toCopy);
 
 }

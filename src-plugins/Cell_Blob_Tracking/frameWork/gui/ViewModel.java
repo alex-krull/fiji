@@ -1,30 +1,21 @@
 package frameWork.gui;
 
-import frameWork.Controller;
-import frameWork.Model;
-import frameWork.Trackable;
-import frameWork.TrackingChannel;
-import ij.ImagePlus;
-
-
-
 import java.awt.event.MouseEvent;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
 import net.imglib2.RandomAccessibleInterval;
-
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
-
 import tools.ImglibTools;
+import frameWork.Controller;
+import frameWork.Model;
+import frameWork.Trackable;
+import frameWork.TrackingChannel;
 
 public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Observer{
 	
@@ -39,9 +30,11 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	protected int currentFrameNumber=0;
 	protected int currentSliceNumber=0;
 	protected int currentChannelNumber=0;
+	protected int currentTrackingChannel=0;
 	protected double mouseX=0;
 	protected double mouseY=0;
 	protected double mouseZ=0;
+	
 	
 	
 	protected Model<IT> model;
@@ -142,13 +135,11 @@ public void setPosition(int dim, int pos){
 public long[] getPosition(){
 	long[] result= {0,0,currentSliceNumber, currentFrameNumber, currentChannelNumber};
 	return result;
-
 }
 
 public void mouseAtPosition(long [] pos, MouseEvent me){
-	
-	
-	controller.click(pos, me);
+	if(me.isControlDown()) controller.StartTracking( currentFrameNumber, currentTrackingChannel);
+	controller.click(pos, currentTrackingChannel, me);
 }
 
 protected void upDateImages(int frame, int slice, int channel, boolean init){
@@ -161,6 +152,7 @@ protected void upDateImages(int frame, int slice, int channel, boolean init){
  
 				
 	}
+
 
 
 @Override

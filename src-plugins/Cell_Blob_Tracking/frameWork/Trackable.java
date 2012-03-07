@@ -1,15 +1,15 @@
 package frameWork;
 
-import java.awt.Color;
-
 import ij.gui.Overlay;
+
+import java.awt.Color;
 
 
 
 public abstract class Trackable {
 	public int sequenceId;
 	public int channel;
-	protected int frameId;
+	public int frameId;
 	
 	
 	protected Trackable(int seqId, int fId, int  chan){
@@ -19,7 +19,7 @@ public abstract class Trackable {
 		
 		
 	}
-	
+
 public abstract void addShapeZ(Overlay ov, boolean selected, Color c);
 public abstract void addShapeX(Overlay ov, boolean selected, Color c);
 public abstract void addShapeY(Overlay ov, boolean selected, Color c);

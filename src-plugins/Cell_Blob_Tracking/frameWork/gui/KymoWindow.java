@@ -2,14 +2,8 @@ package frameWork.gui;
 
 import java.awt.Scrollbar;
 import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.concurrent.LinkedBlockingQueue;
-
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
@@ -41,6 +35,7 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 	//	rePaint(viewModel.getPosition(),true);	
 	}
 	
+	@Override
 	public void rePaint(long[] position, boolean rePaintImage){
 	//	long time0= System.nanoTime();
 //		if(sb!=null){
@@ -66,10 +61,11 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 	public class MyListener implements  MouseWheelListener{
 
 
+		@Override
 		public synchronized void  mouseWheelMoved(MouseWheelEvent e) {
 			
 				if(e.isShiftDown()){
-					int newPos= (int)(viewModel.getPosition()[3]+ ((double)e.getWheelRotation()/timeScale)*20);
+					int newPos= (int)(viewModel.getPosition()[3]+ e.getWheelRotation());
 					newPos=Math.min(Math.max(newPos, 0), model.getNumberOfFrames()-1);
 					viewModel.setPosition(3,newPos);
 					return;

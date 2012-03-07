@@ -300,5 +300,13 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		this.backProb=1-(totalBlobsInten/totalInten);
 		return change;
 	}
+	
+	
+@Override
+public Blob copy(Blob toCopy){
+	Blob result=new Blob(toCopy.sequenceId, toCopy.frameId, toCopy.xPos, toCopy.yPos, toCopy.zPos, toCopy.sigma, toCopy.channel);
+	return result;
+}
+
 }
 

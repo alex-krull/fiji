@@ -35,9 +35,9 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		channelControllers.put(0, bc);
 		model.addTrackingChannel(tc,0);
 		
-		for(int j=0;j<tc.getNumberOfFrames();j++){
-			tc.addTrackable(new Blob(2,j,20 +Math.cos(j/15.0f)*25,70+ Math.sin(j/35.0f)*25,15,4, 0));			
-		}
+		//for(int j=0;j<tc.getNumberOfFrames();j++){
+			tc.addTrackable(new Blob(2,0,20 +Math.cos(0/15.0f)*25,70+ Math.sin(0/35.0f)*25,15,4, 0));			
+		//}
 	}
 	
 
@@ -48,13 +48,27 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
  * @param position the position of the event as vector in 5D 
  * @param e the original MouseEvent
  */
-public void click(long[] position, MouseEvent e){
-	ChannelController<? extends Trackable,IT> cc= channelControllers.get((int)position[4]);
+public void click(long[] position, int tChannel, MouseEvent e){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(tChannel);
 	System.out.println("click1");
 	if (cc!=null){
 		System.out.println("click2");
 		cc.click(position, e);
 	}
 }
+	
+public void optimizeFrame(int frameNumber , int tChannel){
+		ChannelController<? extends Trackable,IT> cc= channelControllers.get(tChannel);
+		if(cc!=null) cc.optimizeFrame(frameNumber);
+			
+}
+
+public void StartTracking(int frameNumber , int tChannel){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(tChannel);
+	if(cc!=null) cc.startTracking(frameNumber);
+		
+}
+
+
 
 }

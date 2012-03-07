@@ -37,7 +37,7 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 	public double sigma;
 	public double sigmaZ;
 	public double pK=0.18;
-	public double pKAkku;
+	public double pKAkku; 
 	public double inten=0;
 	public int counter=0;
 	
@@ -46,6 +46,27 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 	public Img<FloatType> expectedValues=null;
 	public IterableRandomAccessibleInterval <FloatType> expectedValuesRoi;
 
+	/**
+	 * Creates a new Blob
+	 * 
+	 * @param seqId the id of the Sequqnce the blob belongs to
+	 * @param FrameId the frame number the blob is in
+	 * @param x the x-position of the blob
+	 * @param y the y-position of the blob
+	 * @param z the z-position of the blob
+	 * @param sig the standard deviation of the blob
+	 * @param chan the channel the blob belongs to
+	 */
+	public Blob(int seqId, int FrameId, double x, double y, double z, double sig, int chan) {
+		super(seqId, FrameId, chan);
+		xPos = x;
+		yPos = y;
+		zPos = z;
+		sigma = sig;
+		
+		sigmaZ = sigma * 2;
+	}
+	
 	public double calcDenominator(Interval img){
 		denominator=ImglibTools.gaussIntegral(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5,xPos,yPos,sigma );
 //		System.out.println("denominator :" +denominator );
@@ -145,26 +166,7 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 	}
 	
 	
-	/**
-	 * Creates a new Blob
-	 * 
-	 * @param seqId the id of the Sequqnce the blob belongs to
-	 * @param FrameId the frame number the blob is in
-	 * @param x the x-position of the blob
-	 * @param y the y-position of the blob
-	 * @param z the z-position of the blob
-	 * @param sig the standard deviation of the blob
-	 * @param chan the channel the blob belongs to
-	 */
-	public Blob(int seqId, int FrameId, double x, double y, double z, double sig, int chan) {
-		super(seqId, FrameId, chan);
-		xPos = x;
-		yPos = y;
-		zPos = z;
-		sigma = sig;
-		sigma=0.5;
-		sigmaZ = sigma * 2;
-	}
+	
 
 	@Override
 	public double getDistanceTo(double x, double y, double z) {
@@ -181,10 +183,13 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 	@Override
 	public String toString(){
 		String result=
+				"_____________________"+
+				"frameID:"+this.frameId+
 				"x:"+xPos+
 				" y:"+yPos+
 				" z:"+zPos+
 				" pK:"+pK+"\n";
+		
 		return result;
 	}
 
@@ -222,6 +227,10 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 	public MultivariateRealFunction partialDerivative(int arg0) {
 		return new BlobPartialDerivative(this,arg0);
 	}
+
+
+
+
 	
 
 

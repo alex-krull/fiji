@@ -9,7 +9,6 @@ import frameWork.ChannelController;
 import frameWork.Model;
 import frameWork.TrackingChannel;
 
-
 public class BlobController < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > extends ChannelController<Blob, IT> {
 	
 
@@ -17,14 +16,7 @@ public BlobController(Model<IT> model, TrackingChannel<Blob,IT> tc){
 	super(model,tc);
 	
 	
-	for(int i=0;i<model.getNumberOfFrames();i++){
-
-	if(i%10>5) continue;
-	//model.addTrackable(new Blob(0,i,20 +Math.sin(i/15.0f)*25,20+ Math.sin(i/15.0f)*25,15,4, 0), );
-    //model.addTrackable(new Blob(1,i,70 +Math.sin(i/15.0f)*25,20+ Math.sin(i/45.0f)*25,15,4,0),0);
-    //model.addTrackable(new Blob(2,i,20 +Math.cos(i/15.0f)*25,70+ Math.sin(i/35.0f)*25,15,4, 0));
-    
- 	   
+	for(int i=0;i<model.getNumberOfFrames();i++){ 
     }
 	
 	
@@ -54,22 +46,18 @@ public void click(long[] pos, MouseEvent e){
 		
 	}
 	
-	if(e.getClickCount()>1){
+	
 		
-			 model.getTrackingChannel((int)pos[4]).optimizeFrame((int)pos[3], e.getButton()==MouseEvent.BUTTON1);
 		
 
 			model.makeChangesPublic();
 			
-				
-			
-		
-	}
-	
-	model.makeChangesPublic();
 	
 	return;
 }
+
+
+
 
 
 }

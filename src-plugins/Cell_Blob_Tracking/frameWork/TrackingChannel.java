@@ -67,7 +67,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	}
 
 	public void addTrackable(T trackable){
-		
+		if(trackable.frameId>=this.getNumberOfFrames()) return;
 		frames.get(trackable.frameId).addTrackable(trackable);
 		Sequence<T> sequence= Sequences.get(trackable.sequenceId);
 		if(sequence==null){
@@ -77,11 +77,16 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 			Sequences.put(trackable.sequenceId, sequence);
 		}
 		sequence.addTrackable(trackable);
+		
 	}
 	
 	public long getNumberOfFrames() {
 		
 		return numOfFrames;
+	}
+	
+	public TrackingFrame<T,IT> getFrame(int frameNumber) {	
+		return this.frames.get(frameNumber);
 	}
 	
 	
