@@ -61,7 +61,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 					eTime +=eTime1-eTime0;
 					
 					System.out.println("change:" +change);			
-					if(change<0.05) break;
+					if(change<0.1) break;
 			}
 			long time1= System.nanoTime();
 			long time= (time1-time0)/1000000;
