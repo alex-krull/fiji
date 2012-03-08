@@ -35,6 +35,8 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	protected double mouseY=0;
 	protected double mouseZ=0;
 	
+	protected boolean drawOverlays=true;
+	protected HotKeyListener hotKeyListener;
 	
 	
 	protected Model<IT> model;
@@ -70,7 +72,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	 **/
 	public ViewModel(Model<IT> mod, Controller<IT> contr){
 		
-	
+	hotKeyListener=new HotKeyListener(this);
 	   controller=contr;
 		
 	   model=mod;
@@ -92,7 +94,11 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
             return;
     }
 
-
+public void toggleDrawOverlays(){
+	drawOverlays=!drawOverlays;
+	System.out.println("drawOverlays:"+drawOverlays);
+	this.setPosition(-1,-1);
+}
 
 	/**
 	 * set the ViewModel to a different position
@@ -168,7 +174,7 @@ protected void upDateImages(int frame, int slice, int channel, boolean init){
 public void update(Observable arg0, Object arg1) {
 	if(arg1!=null)
 		currentFrameNumber=(Integer)arg1;
-	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, false );
+	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, arg1!=null );
 }
 
 public int getSelectedSequenceId(){
@@ -181,11 +187,16 @@ public int getCurrentChannelNumber(){
 
 public void addViewWindow( ViewWindow<IT> vw){
 	views.add(vw);
+	vw.addKeyListener(hotKeyListener);
 	this.upDateImages(0, 0, 0,true);
 }
 
 public List<TrackingChannel<? extends Trackable,IT>> getTCsToBeDisplayed(){
 	return this.tCsToBeDisplayed;
+}
+
+public boolean getDrawOverLays(){
+	return drawOverlays;
 }
 
 }

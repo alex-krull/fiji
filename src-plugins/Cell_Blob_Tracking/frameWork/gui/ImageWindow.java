@@ -11,6 +11,7 @@ import ij.gui.Overlay;
 import ij.plugin.ContrastEnhancer;
 
 import java.awt.Color;
+import java.awt.event.KeyListener;
 import java.util.List;
 import java.util.SortedMap;
 
@@ -43,6 +44,24 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 
 	protected RandomAccessibleInterval<IT> toDraw;
 	
+	@Override
+	public void addKeyListener(HotKeyListener keyListener){
+		KeyListener[] listeners= imp.getWindow().getKeyListeners();
+		for(int i=0;i<listeners.length;i++){
+			KeyListener kl=listeners[i];
+			imp.getWindow().removeKeyListener(kl);
+		}
+		
+		listeners= imp.getCanvas().getKeyListeners();
+		for(int i=0;i<listeners.length;i++){
+			KeyListener kl=listeners[i];
+			imp.getCanvas().removeKeyListener(kl);
+		}
+		
+		imp.getCanvas().addKeyListener(keyListener);
+		
+	}
+	
 	public ImageWindow(Model<IT> mod, RandomAccessibleInterval<IT> img, String title, ViewModel<IT> vm, ImagePlus imagePlus, int capacity){
 		super(mod, title,vm, capacity);
 		imp=imagePlus;
@@ -71,11 +90,18 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 			}
 	
 		}
-		imp.setOverlay(ov);
+		
+		upDateOverlay();
 		imp.updateAndDraw();
+		
     	
 	}
 
+	protected void upDateOverlay(){
+		if(viewModel.getDrawOverLays()) imp.setOverlay(ov);
+		else imp.setOverlay(null);	
+	}
+	
 	protected void clearOverlay(){
 		ov= new Overlay();
 	}

@@ -104,7 +104,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		
 		this.clearOverlay();
 		addZOverlayes((int)position[3]);
-		imp.setOverlay(ov);
+		this.upDateOverlay();
 		imp.updateAndDraw();
 
 	}

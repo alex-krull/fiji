@@ -1,9 +1,5 @@
 package frameWork.gui;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -67,6 +63,10 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		}
 	}
 	
+	public abstract void addKeyListener(HotKeyListener keyListener);
+	
+	
+	@Override
 	public void run(){
 		UpdateTask udt=null;
 		while(true){
