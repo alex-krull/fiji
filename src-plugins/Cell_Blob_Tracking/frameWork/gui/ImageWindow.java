@@ -119,7 +119,9 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 			SortedMap <Integer,? extends Sequence< ? extends Trackable>> seqs= tc.getSeqs();
 			if(seqs!=null) for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
 			Sequence<? extends Trackable> seq = seqs.get(i);
-			if(seq!=null) seq.getKymoOverlayX(ov,scaleX,scaleY, transX, transY);
+			if(seq!=null){			
+				seq.getKymoOverlayX(ov,scaleX,scaleY, transX, transY);
+			}
 			} 
 		}
 	}
@@ -136,7 +138,10 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 	
 		if(seqs!=null) for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
 			Sequence<? extends Trackable> seq = seqs.get(i);
-			if(seq!=null) seq.getKymoOverlayY(ov,scaleX,scaleY, transX, transY);
+			
+			if(seq!=null){			
+				seq.getKymoOverlayY(ov,scaleX,scaleY, transX, transY);
+			}
 		}
 		}
 	}
@@ -193,7 +198,7 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
 		 int selected =viewModel.getSelectedSequenceId();
 		 if(trackables!=null)for(Trackable t : trackables){	
-	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
+			//   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId, viewModel.getCurrentChannelNumber()).getColor();
 			   t.addShapeZ(ov,t.sequenceId==selected,c);
 			   

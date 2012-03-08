@@ -42,6 +42,8 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames();i++){
 				System.out.println("trackingFrame:"+i);
 				optimizeFrame( i);
+				if(!currentlyTracking) break;
+				
 				List<T> newTrackables= trackingChannel.getFrame(i).cloneTrackablesForFrame(i+1);
 				
 				for(T t: newTrackables){
@@ -51,7 +53,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 				}
 				
 				
-				if(!currentlyTracking) break;
+				
 			}
 			currentlyTracking=false;
 			}
@@ -73,6 +75,20 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		return currentlyTracking;
 	}
 	
+	public void splitSequnce(int frameNumber){
+		trackingChannel.splitSequenence(selectedSequenceId, model.getNextSequqnceId(), frameNumber);
+		model.makeChangesPublic();
+	}
+	
+	public void deleteSequence(){
+		trackingChannel.deleteSequence(selectedSequenceId);
+		model.makeChangesPublic();
+	}
+	public void trimSequence(int frameNumber){
+		trackingChannel.splitSequenence(selectedSequenceId, -1, frameNumber);
+		trackingChannel.deleteSequence(-1);
+		model.makeChangesPublic();
+	}
 	
 	
 	

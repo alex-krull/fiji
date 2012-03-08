@@ -17,11 +17,7 @@ public BlobController(Model<IT> model, TrackingChannel<Blob,IT> tc){
 	
 	
 	for(int i=0;i<model.getNumberOfFrames();i++){ 
-    }
-	
-	
-	
-	
+    }	
 	
 	
 }
@@ -31,25 +27,36 @@ public BlobController(Model<IT> model, TrackingChannel<Blob,IT> tc){
 public void click(long[] pos, MouseEvent e){
 	System.out.println("click!!!!");
 	
-	if(e.getID()==MouseEvent.MOUSE_CLICKED||e.getID()==MouseEvent.MOUSE_PRESSED)
-		selectedSequenceId=model.selectAt((int)pos[0],(int) pos[1],(int) pos[2],(int) pos[3],(int) pos[4]);
-	 
-		selectedTrackable=(Blob)model.getTrackable(selectedSequenceId, (int) pos[3], (int)pos[4] );
+	if(e.getID()==MouseEvent.MOUSE_PRESSED){
+		if(e.getClickCount()==1){
+		selectedSequenceId=model.selectAt((int)pos[0],(int) pos[1],(int) pos[2],(int) pos[3],(int) pos[4]);	 
+		System.out.println("        new selected Sequence ID:"+selectedSequenceId);
+		
+		}
+	}
 	
+	if(e.getID()==MouseEvent.MOUSE_CLICKED){
+		if(e.getButton()!=MouseEvent.BUTTON1 && e.getClickCount()==1){
+			trackingChannel.addTrackable(new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], pos[2], 1, trackingChannel.getId()));
+		}
+		
+		if(e.getClickCount()>1) trackingChannel.optimizeFrame((int)pos[3], false);
+		
+	}
 
 	
 	if(e.getID()==MouseEvent.MOUSE_DRAGGED){
-		if(selectedTrackable==null) return; 
+		selectedTrackable=trackingChannel.getTrackable(selectedSequenceId, (int)pos[3]);
+		if(selectedTrackable==null){
+			System.out.println("selectedTrackable==null");
+			return; 
+		}
 		if(pos[0]>=0)selectedTrackable.xPos=pos[0];
 		if(pos[1]>=0)selectedTrackable.yPos=pos[1];
 		if(pos[2]>=0)selectedTrackable.zPos=pos[2]*model.xyToZ;
 		
 	}
 	
-	
-		
-		
-
 			model.makeChangesPublic();
 			
 	

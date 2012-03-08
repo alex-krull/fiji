@@ -14,29 +14,42 @@ public class BlobSequence extends Sequence<Blob>{
 		super(ident, lab);		
 	}
 	
+	@Override
 	public void getKymoOverlayX(Overlay ov, double scaleX, double scaleY, double transX, double transY){	
 			
 		Blob b=null;
 		Blob lastB=null;
-		for(double i=(double)trackables.firstKey();i<=trackables.lastKey();i++){
+		for(double i=trackables.firstKey();i<=trackables.lastKey();i++){
 			lastB=b;
 			b=trackables.get((int)i);
-			if(lastB!=null&&b!=null)  ov.add(new Line((i-1+0.5)*scaleX-transX,(lastB.yPos+0.5)*scaleY-transY,(i+0.5)*scaleX-transX,(b.yPos+0.5)*scaleY-transY));
+			if(lastB!=null&&b!=null){
+				Line l=new Line((i-1+0.5)*scaleX-transX,(lastB.yPos+0.5)*scaleY-transY,(i+0.5)*scaleX-transX,(b.yPos+0.5)*scaleY-transY);
+				l.setStrokeColor(this.getColor());
+				ov.add(l);
+			}
 		}
 	
 	}
 	
+	@Override
 	public void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY){	
 	
 		Blob b=null;
 		Blob lastB=null;
-		for(double i=(double)trackables.firstKey();i<=trackables.lastKey();i++){
+		for(double i=trackables.firstKey();i<=trackables.lastKey();i++){
 			lastB=b;
 			b=trackables.get((int)i);
-			if(lastB!=null&&b!=null)  ov.add(new Line((lastB.xPos+0.5)*scaleX-transX,(i-1+0.5)*scaleY-transY,(b.xPos+0.5)*scaleX-transX,(i+0.5)*scaleY-transY));
+			
+			if(lastB!=null&&b!=null){
+				Line l =new Line((lastB.xPos+0.5)*scaleX-transX,(i-1+0.5)*scaleY-transY,(b.xPos+0.5)*scaleX-transX,(i+0.5)*scaleY-transY);
+				l.setStrokeColor(this.getColor());
+				ov.add(l);
+			}
 		}
 	
 	}
+	
+	
 	
 	
 

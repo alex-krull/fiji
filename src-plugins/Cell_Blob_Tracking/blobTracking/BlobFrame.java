@@ -38,19 +38,37 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	@Override
 	public synchronized void optimizeFrame(boolean cheap) {
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();	
-		for(Blob b:trackables)
+		this.backProb=1;
+		for(Blob b:trackables){
 			b.expectedValues= imgFactory.create(movieFrame.getFrameView(), new FloatType());
+			this.backProb-=b.pK;
+		}
 		
-				
+			long time0= System.nanoTime();	
+			long eTime=0;	
+			long mTime=0;
 			for(int i=0;i<100;i++){	
-				
+					long eTime0= System.nanoTime();
 					double ti= doEStep();
+					long eTime1= System.nanoTime();
 					double change;
 					
+					long mTime0= System.nanoTime();
 					change=this.doMstep(ti);
+					long mTime1= System.nanoTime();
+					
+					mTime +=mTime1-mTime0;
+					eTime +=eTime1-eTime0;
+					
 					System.out.println("change:" +change);			
-					if(change<0.01) break;
+					if(change<0.05) break;
 			}
+			long time1= System.nanoTime();
+			long time= (time1-time0)/1000000;
+			eTime/=1000000;
+			mTime/=1000000;
+			
+			System.out.println("totalTime:" +time+ "  fraction E:"+ ((double)eTime/(double)time)+ "  fraction M:"+ ((double)mTime/(double)time) );
 			
 		
 				
@@ -70,10 +88,10 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	
 			b.inten=0;
 			System.out.println(" mins[0]:"+ mins[0]);
-			mins[0]=Math.min(mins[0],(long) (b.xPos-b.sigma*3-5));
-			mins[1]=Math.min(mins[1],(long) (b.yPos-b.sigma*3-5));
-			maxs[0]=Math.max(maxs[0],(long) (b.xPos+b.sigma*3+5));
-			maxs[1]=Math.max(maxs[1],(long) (b.yPos+b.sigma*3+5));
+			mins[0]=Math.min(mins[0],(long) (b.xPos-b.sigma*3-3));
+			mins[1]=Math.min(mins[1],(long) (b.yPos-b.sigma*3-3));
+			maxs[0]=Math.max(maxs[0],(long) (b.xPos+b.sigma*3+3));
+			maxs[1]=Math.max(maxs[1],(long) (b.yPos+b.sigma*3+3));
 			System.out.println(" mins[0] after:"+ mins[0]);
 		}
 		
@@ -107,6 +125,15 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	    	int y=cursor.getIntPosition(1);
 	    //	int z=cursor.getIntPosition(2);
 	    	int z=0;
+	 /*   	
+	    	boolean isIn=false;
+	    	for(Blob b:trackables){
+	    		isIn=(b.getDistanceTo(x, y, 0)>(b.sigma*3+3)*(b.sigma*3+3));
+	    		if(isIn) break;
+	    	}
+	    	if(!isIn) continue;
+	  */  	
+	    	
 	    	float value= cursor.get().getRealFloat();
 	    	totalInten+=value;
 	    	
@@ -243,7 +270,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		
 		newX=output[0];
 		newY=output[1];
-		newSig=Math.min(2,Math.sqrt(output[2]) );
+		newSig=Math.max(0.5,Math.min(2,Math.sqrt(output[2]) ));
 		
 	
     	change=Math.max(Math.abs((newX-b.xPos)),change);
@@ -253,7 +280,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
  	
     	b.xPos=newX;
     	b.yPos=newY;
-    	b.sigma=Math.min(2.0,newSig);
+    	b.sigma=Math.min(3.0,newSig);
 //    	b.zPos=newZ/inten;
     	b.pK=b.inten/totalInten;
     	
@@ -290,16 +317,16 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		for(Blob b:trackables){   
 			MstepThread t= new MstepThread(b,totalInten);
 			threads.add(t);
-	//	t.start();
-			t.run();
+		t.start();
+	//		t.run();
 	//	change=Math.max(change, this.doMstepForBlob(b, totalInten));	
 	//		totalBlobsInten+=b.inten;
     	}
 		
 		for(MstepThread t:threads){
-	//		try{
-	//		t.join();
-	//		}catch(Exception e){}
+			try{
+			t.join();
+			}catch(Exception e){}
 			change=Math.max(change,t.localChange);
 			totalBlobsInten+=t.localChange;
 		}

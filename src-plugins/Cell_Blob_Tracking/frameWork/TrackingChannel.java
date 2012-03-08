@@ -16,7 +16,18 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	
 	private SortedMap <Integer, Sequence<T>> Sequences;
 	private	List<TrackingFrame <T,IT>> frames;
+	private final int id;
 	private long numOfFrames;
+	
+	protected TrackingChannel(int newID){
+		id=newID;
+	}
+	
+	public int getId(){
+		return id;
+	}
+	
+	
 	
 	protected void initialize(long numberOfFrames){
 		numOfFrames=numberOfFrames;		
@@ -37,7 +48,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	public T getTrackable(int seqId, int frameId){
 		Sequence<T> sequence= Sequences.get(seqId);	
 		if (sequence==null){
-			
+			System.out.println("sequence==null");
 			return null;
 		}
 		return sequence.getTrackableForFrame(frameId);
@@ -91,7 +102,27 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		return frames.get(frameNumber);
 	}
 	
+	public Sequence<T> splitSequenence(int SequenceId, int newSequqenceId,int frameNumber){
+		System.out.println("                         splitting sequqnce");
+		Sequence<T> s= Sequences.get(SequenceId);
+		if(s!=null){
+			Sequence<T> newS= s.splitSequence(frameNumber, produceSequence( newSequqenceId, Integer.toString(newSequqenceId)));		
+			if(newS!=null)	this.Sequences.put(newS.getId(), newS);
+			return newS;
+		}
+		return null;
+	}
 	
+	public void deleteSequence(int SequenceId){
+		Sequence<T> s= Sequences.get(SequenceId);
+		if(s!=null) {
+			for(int i=s.getFirstFrame();i<=s.getLastFrame();i++ ){
+			frames.get(i).removeTrackable(SequenceId);
+			}
+			Sequences.remove(s.getId());
+		}
+
+	}
 		
 	protected abstract TrackingFrame<T,IT> produceFrame(int frameNum);
 	protected abstract Sequence<T> produceSequence(int ident, String lab);

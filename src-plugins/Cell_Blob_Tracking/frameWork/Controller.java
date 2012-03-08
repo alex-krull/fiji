@@ -1,8 +1,5 @@
 package frameWork;
 
-
-
-
 import java.awt.event.MouseEvent;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -21,6 +18,7 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 	
 	protected double xyToZ=3.5;
 	public int selectedSequenceId;
+	public int selectedTCId;
 	
 	protected Model<IT> model;
 	private final SortedMap <Integer, ChannelController <? extends Trackable,IT> > channelControllers;
@@ -30,10 +28,11 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		model =mod;
 		channelControllers=	new TreeMap<Integer, ChannelController<? extends Trackable,IT>>();
 		
-		TrackingChannel<Blob,IT> tc= new BlobTrackingChannel<IT>(model.getMovieChannel(0) );
+		TrackingChannel<Blob,IT> tc= new BlobTrackingChannel<IT>(model.getMovieChannel(0),model.getNextTCId() );
 		BlobController<IT> bc= new BlobController<IT>(model,tc);
-		channelControllers.put(0, bc);
+		channelControllers.put(tc.getId(), bc);
 		model.addTrackingChannel(tc,0);
+		selectedTCId=tc.getId();
 		
 		//for(int j=0;j<tc.getNumberOfFrames();j++){
 			tc.addTrackable(new Blob(2,500,20 +Math.cos(0/15.0f)*25,70+ Math.sin(0/35.0f)*25,15,4, 0));
@@ -52,31 +51,50 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
  */
 public void click(long[] position, int tChannel, MouseEvent e){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(tChannel);
-	System.out.println("click1");
+	
 	if (cc!=null){
-		System.out.println("click2");
-		cc.click(position, e);
 		
-		if(e.getClickCount()>1)cc.optimizeFrame((int)position[3]);
+		cc.click(position, e);
 	}
 }
 	
-public void optimizeFrame(int frameNumber , int tChannel){
-		ChannelController<? extends Trackable,IT> cc= channelControllers.get(tChannel);
+public void optimizeFrame(int frameNumber ){
+		ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 		if(cc!=null) cc.optimizeFrame(frameNumber);
 			
 }
 
-public void StartTracking(int frameNumber , int tChannel){
-	ChannelController<? extends Trackable,IT> cc= channelControllers.get(tChannel);	
+public void StartTracking(int frameNumber ){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.startTracking(frameNumber);
 }
 
-public void StopTracking( int tChannel){
-	ChannelController<? extends Trackable,IT> cc= channelControllers.get(tChannel);	
+public void StopTracking(){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.stopTracking();
 }
 
+public void toggleTracking(int frameId){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
+	if(cc!=null)
+		if(!cc.isTracking()) cc.startTracking(frameId);
+		else cc.stopTracking();
+}
+
+public void splitSequence(int frameId){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
+	if(cc!=null) cc.splitSequnce(frameId);
+}
+
+public void deleteSequence(){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
+	if(cc!=null) cc.deleteSequence();
+}
+
+public void trimSequence(int frameId){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
+	if(cc!=null) cc.trimSequence(frameId);
+}
 
 
 }

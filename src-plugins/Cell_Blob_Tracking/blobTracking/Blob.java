@@ -88,8 +88,8 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 		Cursor<FloatType> cursor= expectedValuesRoi.cursor();	
     	while ( cursor.hasNext() )	{
     		cursor.fwd();
-    		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1),0 );
     		double b=(cursor.get().get());
+    		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1),0 );  		
     		
     		if(a<0.0000001) continue;
     		result+=Math.log(a)*b;
@@ -109,7 +109,7 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 					0.5+yPos, 1);
 			
 			roiS.setStrokeColor(new Color(255,255,255,100));
-			roiS.setStrokeWidth(5);
+			roiS.setStrokeWidth(2);
 			ov.add(roiS);
 		}
 		
@@ -117,7 +117,7 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 				0.5+yPos, 1);
 		
 		roi.setStrokeColor(c);
-		roi.setStrokeWidth(1);
+		roi.setStrokeWidth(0.5);
 		ov.add(roi);
 		
 		
@@ -205,7 +205,7 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 		
 		xPos=position[0];
 		yPos=position[1];
-		sigma=Math.max(0.5,Math.sqrt(position[2]) );
+		sigma=Math.max(0.8,Math.min(3.0,Math.sqrt(position[2]) ) );
 		double value=this.localLogLikelihood();
 		
 		xPos=xOld;

@@ -20,11 +20,7 @@ import frameWork.TrackingChannel;
 public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Observer{
 	
 
-	protected RandomAccessibleInterval<IT> image;
-	
-	
-	
-	
+	protected RandomAccessibleInterval<IT> image;	
 	
 			
 	protected int currentFrameNumber=0;
@@ -144,15 +140,7 @@ public long[] getPosition(){
 }
 
 public void mouseAtPosition(long [] pos, MouseEvent me){
-	if(me.isControlDown()){
-		
-		controller.StartTracking( currentFrameNumber, currentTrackingChannel);
-	}
-	
-	if(me.isShiftDown()){
-		
-		controller.StopTracking(currentTrackingChannel);
-	}
+
 
 	controller.click(pos, currentTrackingChannel, me);
 }
@@ -198,5 +186,23 @@ public List<TrackingChannel<? extends Trackable,IT>> getTCsToBeDisplayed(){
 public boolean getDrawOverLays(){
 	return drawOverlays;
 }
+
+public void toggleTracking(){
+	controller.toggleTracking(currentFrameNumber);
+}
+
+public void deleteSequence(){
+	controller.deleteSequence();
+}
+
+public void trimSequence(){
+	controller.trimSequence(currentFrameNumber);
+}
+
+public void splitSequence(){
+	controller.splitSequence(currentFrameNumber);
+}
+
+
 
 }

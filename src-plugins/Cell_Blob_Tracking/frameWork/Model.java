@@ -35,6 +35,18 @@ private final int numberOfSlices;
 private	RandomAccessibleInterval<IT> image;
 private final SortedMap <Integer, MovieChannel <IT> > channels;
 private final SortedMap <Integer, TrackingChannel <? extends Trackable,IT> > trackingChannels;
+private int nextSequqnceId=0;
+private int nextTCId=0;
+
+public synchronized int getNextSequqnceId(){
+	nextSequqnceId++;
+	return nextSequqnceId-1;
+}
+
+public synchronized int getNextTCId(){
+	nextTCId++;
+	return nextTCId-1;
+}
 
 public void setVolume(boolean isVolume) {
 	this.isVolume = isVolume;
@@ -154,8 +166,14 @@ public Trackable getTrackable(int seqId, int frameId, int channel){
 
 public Sequence<? extends Trackable> getSequence(int id, int channel){
 	TrackingChannel<? extends Trackable, IT> tc=trackingChannels.get(channel);
-	if(tc==null) return null;
-	else return trackingChannels.get(channel).getSequence(id);
+	if(tc==null){
+		
+		return null;
+	}
+	else{
+		
+		return tc.getSequence(id);
+	}
 }
 
 public MovieFrame<IT> getFrame(int frame, int channel){
@@ -200,5 +218,7 @@ public List<TrackingChannel<? extends Trackable,IT>> getTCsAssociatedWithChannel
 	}
 	return result;
 }
+
+
 
 }

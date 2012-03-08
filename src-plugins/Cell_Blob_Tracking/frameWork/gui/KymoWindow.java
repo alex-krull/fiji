@@ -64,7 +64,7 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 		@Override
 		public synchronized void  mouseWheelMoved(MouseWheelEvent e) {
 			
-				if(e.isShiftDown()){
+				if(!e.isShiftDown()){
 					int newPos= (int)(viewModel.getPosition()[3]+ e.getWheelRotation());
 					newPos=Math.min(Math.max(newPos, 0), model.getNumberOfFrames()-1);
 					viewModel.setPosition(3,newPos);
@@ -78,21 +78,9 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 					tics=0;
 			//		return;
 				}
-				//timeScale=baseTimeScale*Math.pow(1.1, tics);
-				
-				//timeScale=timeScale*Math.pow(1.1, e.getWheelRotation());
-				//rePaint(viewModel.getPosition(),true);
-				//image = ImglibTools.scaleByFactor(this.originalImage,1,this.timeScale);
+		
 				timeScale=baseTimeScale*Math.pow(1.1, tics);
-				viewModel.setPosition(-1, -1);
-				
-				//long[] pos= {0,0,0,0,0};
-				
-				//if(viewModel.getMutex()){
-				//	rePaint(pos);
-				//	viewModel.releaseMutex();
-				//}
-				
+				viewModel.setPosition(-1, -1);				
 				
 				System.out.println("baseTimeScale:"+baseTimeScale);
 				System.out.println("timeScale:"+timeScale);

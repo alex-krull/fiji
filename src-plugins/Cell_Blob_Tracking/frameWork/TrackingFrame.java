@@ -20,13 +20,18 @@ protected TrackingFrame(int frameNum){
 public abstract void optimizeFrame(boolean cheap);
 
 public void addTrackable(T trackable){
+	removeTrackable(trackable.sequenceId);
+	trackables.add(trackable);
+}
+
+public void removeTrackable(int id){
 	for(T t:trackables){
-		if(t.sequenceId==trackable.sequenceId){
+		if(t.sequenceId==id){
 			trackables.remove(t);
 			break;
 		}
 	}
-	trackables.add(trackable);
+	
 }
 
 public int selectAt(int x, int y, int z){
