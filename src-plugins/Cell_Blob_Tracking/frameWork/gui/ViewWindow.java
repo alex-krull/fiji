@@ -2,7 +2,7 @@ package frameWork.gui;
 
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.type.numeric.NumericType;;
+import net.imglib2.type.numeric.NumericType;
 import frameWork.Model;
 
 public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Runnable{

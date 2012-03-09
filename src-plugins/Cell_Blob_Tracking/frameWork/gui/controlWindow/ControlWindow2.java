@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -31,6 +33,8 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
@@ -39,6 +43,7 @@ import frameWork.Model;
 import frameWork.gui.HotKeyListener;
 import frameWork.gui.ViewModel;
 import frameWork.gui.ViewWindow;
+
 
 
 
@@ -63,9 +68,9 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 	JPanel rightPanel;
 	JList visList;
 	
-	JSpinner frameSpinner;
-	JSpinner zSpinner;
-	JSpinner cSpinner;
+	volatile JSpinner frameSpinner;
+	volatile JSpinner zSpinner;
+	volatile JSpinner cSpinner;
 /*
 	public static void main(String[] args) {
 		ControlWindow2 window = new ControlWindow2();
@@ -128,6 +133,8 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 		SpinnerModel model1 = new SpinnerNumberModel();
 		frameSpinner = new JSpinner(model1);
+		
+		
 
 		JLabel label1 = new JLabel("Stack #");
 		label1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -141,6 +148,8 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 		SpinnerModel model2 = new SpinnerNumberModel();
 		zSpinner = new JSpinner(model2);
+		
+		
 		zSpinner.setPreferredSize(labelDim2);
 		zSpinner.setMaximumSize(labelDim);
 		JLabel label2 = new JLabel("Z #");
@@ -150,6 +159,8 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 		SpinnerModel model3 = new SpinnerNumberModel(20, 0, 40, 1);
 		cSpinner = new JSpinner(model3);
+
+		
 		cSpinner.setPreferredSize(labelDim2);
 		cSpinner.setMaximumSize(labelDim);
 		JLabel label3 = new JLabel("Channel #");
@@ -298,6 +309,9 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		frame.setVisible(true);
 
 
+		frameSpinner.addChangeListener(new FrameSpinnerListener());
+		zSpinner.addChangeListener(new ZSpinnerListener());
+	    cSpinner.addChangeListener(new CSpinnerListener());
 
 	}
 
@@ -388,22 +402,58 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 	}
 
+	public class FrameSpinnerListener implements ChangeListener {
 
-	@Override
-	public void rePaint(long[] position, boolean rePaintImage) {
-		System.out.println("updating Spinners !!!!!!!!!!!");
-		this.zSpinner.setValue(position[2]+1);
-		this.frameSpinner.setValue(position[3]+1);
-		this.cSpinner.setValue(position[4]+1);
+		@Override
+		public void stateChanged(ChangeEvent arg0) {
+			int number=( (SpinnerNumberModel)frameSpinner.getModel()).getNumber().intValue()-1;
+			System.out.println("                       number:"+number);
+			viewModel.setPosition(3,number);	
+		}
+		
+		
+	}
+	
+	public class ZSpinnerListener implements ChangeListener {
+
+		@Override
+		public void stateChanged(ChangeEvent a) {
+			
+			//viewModel.setPosition(2,((SpinnerNumberModel)zSpinner.getModel()).getNumber().intValue()-1);
+			
+		}
+
+		
+		
+	}
+	
+	public class CSpinnerListener implements ChangeListener {
+
+		@Override
+		public void stateChanged(ChangeEvent a) {
+			
+			//viewModel.setPosition(4,((SpinnerNumberModel)cSpinner.getModel()).getNumber().intValue()-1);
+			
+		}
+
+	
+		
 	}
 
-
-
+	@Override
+	public synchronized void rePaint(long[] position, boolean rePaintImage) {
+		System.out.println("updating Spinners !!!!!!!!!!!");
+		
+		zSpinner.setValue(position[2]+1);
+		frameSpinner.setValue(position[3]+1);
+		cSpinner.setValue(position[4]+1);
+	}
 
 
 	@Override
 	public void addKeyListener(HotKeyListener keyListener) {
-		// TODO Auto-generated method stub
-		
+		frame.addKeyListener(keyListener);
 	}
+	
+
 }
