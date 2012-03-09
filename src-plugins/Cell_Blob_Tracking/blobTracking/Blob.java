@@ -205,7 +205,7 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 		
 		xPos=position[0];
 		yPos=position[1];
-		sigma=Math.max(0.8,Math.min(3.0,Math.sqrt(position[2]) ) );
+		if(position.length>2) sigma=Math.max(0.8,Math.min(3.0,Math.sqrt(position[2]) ) );
 		double value=this.localLogLikelihood();
 		
 		xPos=xOld;

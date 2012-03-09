@@ -61,7 +61,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 					eTime +=eTime1-eTime0;
 					
 					System.out.println("change:" +change);			
-					if(change<0.1) break;
+					if(change<0.01) break;
 			}
 			long time1= System.nanoTime();
 			long time= (time1-time0)/1000000;
@@ -259,8 +259,19 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		optimizer.setConvergenceChecker(new SimpleScalarValueChecker() );
   //  	SimplexOptimizer optimizer = new SimplexOptimizer();
     		    	
-		double []startPoint={b.xPos,b.yPos,b.sigma*b.sigma};
-	//	double []startPoint={newX,newY,newSig};
+		boolean findSigma=false;
+		double []startPoint;
+	    if(findSigma){
+	    	startPoint=new double [3];
+	    	startPoint[0]=b.xPos;
+	    	startPoint[1]=	b.yPos;
+	    	startPoint[2]=	b.sigma*b.sigma;
+	    }else{
+	    	startPoint=new double [2];
+	    	startPoint[0]=b.xPos;
+	    	startPoint[1]=	b.yPos;
+	    }
+		
 		
 			
 		
@@ -270,17 +281,17 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		
 		newX=output[0];
 		newY=output[1];
-		newSig=Math.max(0.5,Math.min(2,Math.sqrt(output[2]) ));
+		if(findSigma) newSig=Math.max(0.5,Math.min(2,Math.sqrt(output[2]) ));
 		
 	
     	change=Math.max(Math.abs((newX-b.xPos)),change);
     	change=Math.max(Math.abs((newY-b.yPos)), change );
-    	change=Math.max(Math.abs((newSig*newSig-b.sigma*b.sigma)), change);
+    	if(findSigma) change=Math.max(Math.abs((newSig*newSig-b.sigma*b.sigma)), change);
     	change=Math.max(Math.abs(((b.inten/totalInten)-b.pK)/b.pK), change);
  	
     	b.xPos=newX;
     	b.yPos=newY;
-    	b.sigma=Math.min(3.0,newSig);
+    	if(findSigma) b.sigma=newSig;
 //    	b.zPos=newZ/inten;
     	b.pK=b.inten/totalInten;
     	
