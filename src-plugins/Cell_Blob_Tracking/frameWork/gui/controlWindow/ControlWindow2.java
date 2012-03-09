@@ -63,6 +63,9 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 	JPanel rightPanel;
 	JList visList;
 	
+	JSpinner frameSpinner;
+	JSpinner zSpinner;
+	JSpinner cSpinner;
 /*
 	public static void main(String[] args) {
 		ControlWindow2 window = new ControlWindow2();
@@ -124,35 +127,35 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 
 		SpinnerModel model1 = new SpinnerNumberModel();
-		JSpinner spinner1 = new JSpinner(model1);
+		frameSpinner = new JSpinner(model1);
 
 		JLabel label1 = new JLabel("Stack #");
 		label1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 
 
 		rightPanel.add(label1);
-		rightPanel.add(spinner1);
+		rightPanel.add(frameSpinner);
 
-		spinner1.setPreferredSize(labelDim2);
-		spinner1.setMaximumSize(labelDim);
+		frameSpinner.setPreferredSize(labelDim2);
+		frameSpinner.setMaximumSize(labelDim);
 
 		SpinnerModel model2 = new SpinnerNumberModel();
-		JSpinner spinner2 = new JSpinner(model2);
-		spinner2.setPreferredSize(labelDim2);
-		spinner2.setMaximumSize(labelDim);
+		zSpinner = new JSpinner(model2);
+		zSpinner.setPreferredSize(labelDim2);
+		zSpinner.setMaximumSize(labelDim);
 		JLabel label2 = new JLabel("Z #");
 		label2.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		rightPanel.add(label2);
-		rightPanel.add(spinner2);
+		rightPanel.add(zSpinner);
 
 		SpinnerModel model3 = new SpinnerNumberModel(20, 0, 40, 1);
-		JSpinner spinner3 = new JSpinner(model3);
-		spinner3.setPreferredSize(labelDim2);
-		spinner3.setMaximumSize(labelDim);
+		cSpinner = new JSpinner(model3);
+		cSpinner.setPreferredSize(labelDim2);
+		cSpinner.setMaximumSize(labelDim);
 		JLabel label3 = new JLabel("Channel #");
 		label3.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		rightPanel.add(label3);
-		rightPanel.add(spinner3);
+		rightPanel.add(cSpinner);
 
 		//Create the tracking method pair.
 
@@ -388,8 +391,10 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 	@Override
 	public void rePaint(long[] position, boolean rePaintImage) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("updating Spinners !!!!!!!!!!!");
+		this.zSpinner.setValue(position[2]+1);
+		this.frameSpinner.setValue(position[3]+1);
+		this.cSpinner.setValue(position[4]+1);
 	}
 
 

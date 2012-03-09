@@ -41,11 +41,10 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	        }
 	        
 	        ControlWindow2<IT> cw= new ControlWindow2<IT>(model, "Control Window",viewModel);
-	        
+	        cw.go();
 	        viewModel.addViewWindow(cw);
 			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel));		
-			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel));
-			cw.go();   
+			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel));				
 			
 	    }
 	}
