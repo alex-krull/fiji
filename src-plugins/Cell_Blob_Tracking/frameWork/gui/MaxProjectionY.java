@@ -19,17 +19,18 @@ implements MouseListener, MouseMotionListener {
 					//ImglibTools.scaleByFactor(
 							null,
 					//1,mod.xyToZ)
-					"max-Y-projection",vm,null, 100);
+					"max-Y-projection",vm,null);
 			this.scaleY=model.xyToZ;
 			imp.getCanvas().addMouseListener(this);
 			imp.getCanvas().addMouseMotionListener(this);
 		}
 		
+		@Override
 		public void rePaint(long[] position, boolean rePaintImage){
 			this.clearOverlay();
 			
 			this.addYOverlayes((int)position[3]);
-			this.addYLineOverlay((double)position[2]);
+			this.addYLineOverlay(position[2]);
 			int frameNumber= (int)position[3];
 			toDraw=model.getFrame(frameNumber, viewModel.getCurrentChannelNumber()).getYProjections();
 			reDraw( position ,rePaintImage);
@@ -39,11 +40,11 @@ implements MouseListener, MouseMotionListener {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			
-			int x=(int)((double)imp.getCanvas().offScreenX(e.getX())/this.scaleX);
-			int y=(int)((double)imp.getCanvas().offScreenY(e.getY())/this.scaleY);
+			int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
+			int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);
 			
 			System.out.println("x:"+ x +"  y:"+y);
-			if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(2,(int)((double)y));
+			if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(2,(int)y);
 			else{
 				if(e.getButton()==MouseEvent.BUTTON1) viewModel.mouseAtPosition(positionFromEvent(e), e);
 			}
@@ -88,8 +89,8 @@ implements MouseListener, MouseMotionListener {
 		}
 		
 		private long[] positionFromEvent(MouseEvent e){
-			int x=(int)((double)imp.getCanvas().offScreenX(e.getX())/this.scaleX);
-			int y=(int)((double)imp.getCanvas().offScreenY(e.getY())/this.scaleY);
+			int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
+			int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);
 			System.out.println("x:"+ x +"  y:"+y);
 			
 			

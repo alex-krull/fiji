@@ -62,8 +62,8 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		
 	}
 	
-	public ImageWindow(Model<IT> mod, RandomAccessibleInterval<IT> img, String title, ViewModel<IT> vm, ImagePlus imagePlus, int capacity){
-		super(mod, title,vm, capacity);
+	public ImageWindow(Model<IT> mod, RandomAccessibleInterval<IT> img, String title, ViewModel<IT> vm, ImagePlus imagePlus){
+		super(mod, title,vm);
 		imp=imagePlus;
 		
 		ov= new Overlay();

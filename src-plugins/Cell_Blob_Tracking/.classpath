@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/commons-math.jar"/>
+	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/ij.jar"/>
+	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/imglib2.jar"/>
+	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/imglib2-ij.jar"/>
+	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/imglib2-io.jar"/>
+	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/imglib2-ui.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

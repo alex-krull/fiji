@@ -3,6 +3,7 @@ package frameWork.gui;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -13,11 +14,12 @@ public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & Rea
 implements MouseListener, MouseMotionListener {
 	
 	public MaxProjectionZ(Model<IT> mod, ViewModel<IT> vm){
-		super(mod, null, "max-Z-projection", vm, null,100);
+		super(mod, null, "max-Z-projection", vm, null);
 		imp.getCanvas().addMouseListener(this);
 		imp.getCanvas().addMouseMotionListener(this);
 	}
 	
+	@Override
 	public void rePaint(long[] position, boolean rePaintImage){	
 		
 		this.clearOverlay();
@@ -72,8 +74,8 @@ implements MouseListener, MouseMotionListener {
 	}
 	
 	private long[] positionFromEvent(MouseEvent e){
-		int x=(int)((double)imp.getCanvas().offScreenX(e.getX())/this.scaleX);
-		int y=(int)((double)imp.getCanvas().offScreenY(e.getY())/this.scaleY);
+		int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
+		int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);
 		System.out.println("x:"+ x +"  y:"+y);
 		
 		

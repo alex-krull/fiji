@@ -21,7 +21,7 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 	protected volatile Scrollbar sb;
 	
 	public KymoWindow(Model<IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<IT> vm){
-		super(mod, img, "kymograph", vm, null, 5);
+		super(mod, img, "kymograph", vm, null);
 		
 		timeScale=1;
 		originalImage=img;

@@ -1,8 +1,8 @@
 package frameWork.gui;
 
 import net.imglib2.type.NativeType;
-import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.NumericType;;
 import frameWork.Model;
 
 public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Runnable{
@@ -11,7 +11,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	protected ViewModel<IT> viewModel;
 	protected Thread thread;
 	protected volatile UpdateTask currentUpdateTask=null;
-	protected ViewWindow(Model<IT> mod, String title, ViewModel<IT> vm, int capacity){
+	protected ViewWindow(Model<IT> mod, String title, ViewModel<IT> vm){
 		
 		
 		

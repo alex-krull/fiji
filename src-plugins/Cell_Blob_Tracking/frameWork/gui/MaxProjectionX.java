@@ -17,7 +17,7 @@ import frameWork.Model;
 		public MaxProjectionX(Model<IT> mod, ViewModel<IT> vm){
 			super(mod, 
 				     null,		
-					"max-X-projection",vm, null, 100);
+					"max-X-projection",vm, null);
 			this.scaleX=model.xyToZ;
 		//	xSize=(int)model.getFrame(0, viewModel.getCurrentChannelNumber()).getXProjections().max(0);
 		//	ySize=(int)model.getFrame(0, viewModel.getCurrentChannelNumber()).getXProjections().max(1);
@@ -26,11 +26,12 @@ import frameWork.Model;
 			imp.getCanvas().addMouseMotionListener(this);
 		}
 		
+		@Override
 		public void rePaint(long[] position, boolean rePaintImage){
 			this.clearOverlay();
 			
 			this.addXOverlayes((int)position[3]);
-			this.addXLineOverlay(((double)position[2]));
+			this.addXLineOverlay(position[2]);
 			
 			int frameNumber= (int)position[3];
 			toDraw=model.getFrame(frameNumber, viewModel.getCurrentChannelNumber()).getXProjections();
@@ -39,10 +40,10 @@ import frameWork.Model;
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			int x=(int)((double)imp.getCanvas().offScreenX(e.getX())/this.scaleX);
-			int y=(int)((double)imp.getCanvas().offScreenY(e.getY())/this.scaleY);
+			int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
+			int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);
 			System.out.println("x:"+ x +"  y:"+y);
-			if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(2,(int)((double)x));
+			if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(2,(int)x);
 			
 			if(e.getButton()==MouseEvent.BUTTON1) viewModel.mouseAtPosition(positionFromEvent(e), e);
 			
@@ -88,8 +89,8 @@ import frameWork.Model;
 		}
 		
 		private long[] positionFromEvent(MouseEvent e){
-			int x=(int)((double)imp.getCanvas().offScreenX(e.getX())/this.scaleX);
-			int y=(int)((double)imp.getCanvas().offScreenY(e.getY())/this.scaleY);
+			int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
+			int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);
 			System.out.println("x:"+ x +"  y:"+y);
 			
 			

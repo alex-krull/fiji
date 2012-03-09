@@ -66,7 +66,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	private int currentChannelNumber;
 		
 	public MainWindow(ImagePlus imagePlus, Model< IT> mod, ViewModel< IT> vm) {
-		super(mod, mod.getImage(), imagePlus.getWindow().getTitle(), vm, imagePlus, 1);
+		super(mod, mod.getImage(), imagePlus.getWindow().getTitle(), vm, imagePlus);
 		
 		
 		currentFrameNumber= imp.getFrame()-1;
