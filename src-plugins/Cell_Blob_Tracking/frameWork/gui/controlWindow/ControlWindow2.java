@@ -32,6 +32,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 import frameWork.gui.HotKeyListener;
 import frameWork.gui.ViewModel;
@@ -40,9 +43,9 @@ import frameWork.gui.ViewWindow;
 
 
 
-public class ControlWindow2 extends ViewWindow {
+public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ViewWindow<IT> {
 
-	protected ControlWindow2(Model mod, String title, ViewModel vm) {
+	public ControlWindow2(Model <IT>mod, String title, ViewModel <IT> vm) {
 		super(mod, title, vm);
 		// TODO Auto-generated constructor stub
 	}

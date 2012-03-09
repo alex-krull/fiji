@@ -1,5 +1,11 @@
 
 
+import ij.IJ;
+import ij.ImagePlus;
+import ij.plugin.PlugIn;
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.RealType;
 import frameWork.Controller;
 import frameWork.Model;
 import frameWork.gui.KymographX;
@@ -9,12 +15,7 @@ import frameWork.gui.MaxProjectionX;
 import frameWork.gui.MaxProjectionY;
 import frameWork.gui.MaxProjectionZ;
 import frameWork.gui.ViewModel;
-import ij.IJ;
-import ij.ImagePlus;
-import ij.plugin.PlugIn;
-import net.imglib2.type.NativeType;
-import net.imglib2.type.numeric.NumericType;
-import net.imglib2.type.numeric.RealType;
+import frameWork.gui.controlWindow.ControlWindow2;
 
 public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>> implements PlugIn{
 
@@ -39,9 +40,12 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 			viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel));
 	        }
 	        
+	        ControlWindow2<IT> cw= new ControlWindow2<IT>(model, "Control Window",viewModel);
+	        
+	        viewModel.addViewWindow(cw);
 			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel));		
 			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel));
-		       
+			cw.go();   
 			
 	    }
 	}
