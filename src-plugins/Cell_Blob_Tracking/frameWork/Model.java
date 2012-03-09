@@ -83,8 +83,7 @@ public Model(ImagePlus imp){
 	image=ImagePlusAdapter.wrap(imp);
 	
 
-	numberOfChannels=imp.getNChannels();
-	numberOfSlices=imp.getNSlices();
+	
 	
 	setTimeSequence(imp.getNFrames()>1);
 	setMultiChannel(imp.getNChannels()>1);
@@ -99,6 +98,10 @@ public Model(ImagePlus imp){
  	   System.out.println("SWITCHING DIMENSIONS");
     }
 	
+	if(isMultiChannel)numberOfChannels=imp.getNChannels();
+	else numberOfChannels=1;
+	
+	
 	
 	if(isMultiChannel()){
        image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,image.numDimensions()-1),2) );
@@ -109,8 +112,14 @@ public Model(ImagePlus imp){
 	channels=new TreeMap<Integer,MovieChannel <IT> >();
 	trackingChannels= new TreeMap<Integer, TrackingChannel <? extends Trackable,IT> >();
 	
-	if(!switchedDimensions)numberOfFrames=imp.getNFrames();
-	else numberOfFrames=imp.getNSlices();
+	if(!switchedDimensions){
+		numberOfFrames=imp.getNFrames();
+		numberOfSlices=imp.getNSlices();
+	}
+	else {
+		numberOfFrames=imp.getNSlices();
+		numberOfSlices=imp.getNFrames();
+	}
 	
 	if(isMultiChannel){
 		for(int i=0;i<numberOfChannels;i++){

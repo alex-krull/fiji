@@ -111,22 +111,25 @@ public void setPosition(int dim, int pos){
 	
 	if(dim==2){
 		if(currentSliceNumber==pos) return;
-		this.currentSliceNumber= pos;	
+		this.currentSliceNumber= Math.min(Math.max(pos,0), model.getNumberOfSlices()-1);
+		
 	}
 	if(dim==3){
 		if(currentFrameNumber==pos) return;
-		this.currentFrameNumber= pos;
+		this.currentFrameNumber= Math.min(Math.max(pos,0), model.getNumberOfFrames()-1);
 	}
 	if(dim==4){
 		if(currentChannelNumber==pos) return;
-		this.currentChannelNumber= pos;
+		this.currentChannelNumber= Math.min(Math.max(pos,0), model.getNumberOfChannels()-1);
 		tCsToBeDisplayed.clear();
 		tCsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);
 	}
+	
+	System.out.println("]]]]]]]]]]]]]]]]]]new FrameNumber:"+currentFrameNumber);
 	upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, true );
 
 	//long time1= System.nanoTime();
-	//System.out.println("]]]]]]]]]]]]]]]]]]Time taken to set position:"+((time1-time0)/1000));
+	
 }
 
 /**
@@ -148,6 +151,7 @@ public void mouseAtPosition(long [] pos, MouseEvent me){
 protected void upDateImages(int frame, int slice, int channel, boolean init){
 
 	long[] pos= {0,0,slice, frame, channel};
+	System.out.println("]]]]]]]]]]]]]]]]]]new FrameNumber update:"+pos[3]);
 	for(ViewWindow<IT> vw:views){	
 		vw.upDate(pos, init);
 		

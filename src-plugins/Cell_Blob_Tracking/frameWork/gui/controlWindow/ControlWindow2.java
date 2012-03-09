@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -407,7 +405,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		@Override
 		public void stateChanged(ChangeEvent arg0) {
 			int number=( (SpinnerNumberModel)frameSpinner.getModel()).getNumber().intValue()-1;
-			System.out.println("                       number:"+number);
+		
 			viewModel.setPosition(3,number);	
 		}
 		
@@ -419,7 +417,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		@Override
 		public void stateChanged(ChangeEvent a) {
 			
-			//viewModel.setPosition(2,((SpinnerNumberModel)zSpinner.getModel()).getNumber().intValue()-1);
+			viewModel.setPosition(2,((SpinnerNumberModel)zSpinner.getModel()).getNumber().intValue()-1);
 			
 		}
 
@@ -432,7 +430,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		@Override
 		public void stateChanged(ChangeEvent a) {
 			
-			//viewModel.setPosition(4,((SpinnerNumberModel)cSpinner.getModel()).getNumber().intValue()-1);
+			viewModel.setPosition(4,((SpinnerNumberModel)cSpinner.getModel()).getNumber().intValue()-1);
 			
 		}
 
@@ -443,6 +441,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 	@Override
 	public synchronized void rePaint(long[] position, boolean rePaintImage) {
 		System.out.println("updating Spinners !!!!!!!!!!!");
+		System.out.println("position[3]+1: "+(position[3]+1));
 		
 		zSpinner.setValue(position[2]+1);
 		frameSpinner.setValue(position[3]+1);

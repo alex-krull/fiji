@@ -1,8 +1,8 @@
 package frameWork.gui;
 
 import net.imglib2.type.NativeType;
-import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 
 public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Runnable{
@@ -46,7 +46,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param rePaintImage if true, the image in the View will be redrawn.
 	 **/
 	public void upDate(long[] position, boolean rePaintImage){
-
+		rePaint( position,  rePaintImage);
 		UpdateTask udt= new UpdateTask(position,rePaintImage);
 		synchronized( this){
 			currentUpdateTask=udt;
@@ -68,30 +68,20 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	
 	@Override
 	public void run(){
+		int counter=1;
 		UpdateTask udt=null;
 		while(true){
 			
 			synchronized( this){
-			if (currentUpdateTask!=null){
-				
-			
-				udt=currentUpdateTask;
-				currentUpdateTask=null;
-			
-			}else{
-				try {
-		//			long time0= System.nanoTime();
-					wait();
-		//			long time1= System.nanoTime();
-		//			System.out.println("]]]]]]]]]]]]]]]]]]Time sleeping:"+((time1-time0)/1000));
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				while (currentUpdateTask!=null){
+					try {	wait();	} catch (InterruptedException e) { 	e.printStackTrace();}		
+					udt=currentUpdateTask;					
 				}
+				if(udt!=null)rePaint(udt.position,udt.rePaintImage);
+				currentUpdateTask=null;
+				System.out.println("counter: "+counter);
+				counter++;
 			}
-			
-			}
-			if(udt!=null)rePaint(udt.position,udt.rePaintImage);
 		}
 	}
 	
