@@ -117,7 +117,7 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		
 			if(tc==null) return;
 			SortedMap <Integer,? extends Sequence< ? extends Trackable>> seqs= tc.getSeqs();
-			if(seqs!=null) for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
+			if(seqs!=null&& !seqs.isEmpty()) for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
 			Sequence<? extends Trackable> seq = seqs.get(i);
 			if(seq!=null){			
 				seq.getKymoOverlayX(ov,scaleX,scaleY, transX, transY);
@@ -136,7 +136,7 @@ public abstract class ImageWindow  < IT extends  NumericType<IT> & NativeType<IT
 		if(tc==null) return;
 		SortedMap <Integer,? extends Sequence< ? extends Trackable>> seqs= tc.getSeqs();
 	
-		if(seqs!=null) for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
+		if(seqs!=null && !seqs.isEmpty()) for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
 			Sequence<? extends Trackable> seq = seqs.get(i);
 			
 			if(seq!=null){			
