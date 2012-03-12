@@ -32,6 +32,9 @@
 
 /*
  * TableSort.java requires no other files.
+ * 
+ * Edited by Damien 12.3.2012
+ * 
  */
 
 package frameWork.gui.controlWindow;
@@ -46,6 +49,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+//import TableSort.MyTableModel;
+
 
 public class TableSort extends JPanel {
     private final boolean DEBUG = false;
@@ -53,7 +58,31 @@ public class TableSort extends JPanel {
     public TableSort() {
         super(new GridLayout(1,0));
 
-        JTable table = new JTable(new MyTableModel());
+        MyTableModel tableModel = new MyTableModel();
+        
+        
+        Object[][] temp = {
+       		    {"Blob 10", new Color(255, 0, 0),
+       		     "Session 1", "Blob", new Integer(5)},
+       		    {"Blob 2", new Color(150, 0, 0),
+       		     "Session 1", "Blob", new Integer(10)},
+       		    {"Cell 1", new Color(0, 150, 0),
+       		     "Session 1", "Cell", new Integer(15)},
+       		    {"Cell 2", new Color(0, 255, 0),
+       		     "Session 1", "Cell", new Integer(30)},
+       		    {"Cell 3", Color.pink,
+       		     "Session 1", "Cell", new Integer(12)}
+       	        };
+        
+        
+        tableModel.setTableData(temp);
+        
+        JTable table = new JTable(tableModel);
+        
+        
+        //JTable table = new JTable(new MyTableModel());
+        
+        
         table.setPreferredScrollableViewportSize(new Dimension(500, 200));
         table.setFillsViewportHeight(true);
         table.setAutoCreateRowSorter(true);
@@ -79,7 +108,7 @@ public class TableSort extends JPanel {
                                         "Session",
                                         "Tracking Method",
                                         "Trace Length"};
-        private final Object[][] data = {
+        public Object[][] data = {
 	    {"Blob 1", new Color(255, 0, 0),
 	     "Session 1", "Blob", new Integer(5)},
 	    {"Blob 2", new Color(150, 0, 0),
@@ -91,6 +120,15 @@ public class TableSort extends JPanel {
 	    {"Cell 3", Color.pink,
 	     "Session 1", "Cell", new Integer(12)}
         };
+        
+
+        public void setTableData(Object[][] temp){
+        	
+
+       	
+       			
+       	data = temp;
+       }
 
         @Override
 		public int getColumnCount() {

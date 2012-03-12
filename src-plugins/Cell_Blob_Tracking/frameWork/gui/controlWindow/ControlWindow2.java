@@ -109,6 +109,8 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		JButton delete = new JButton("Delete");
 		JButton jump = new JButton("Go to  ");
 		JButton split = new JButton("Spilt");
+		split.addActionListener(new NewSessionListener());
+		//split.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		JButton trim = new JButton("Trim");
 
 
@@ -223,7 +225,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 
 
-		JLabel label5 = new JLabel("Visable Sessions");
+		JLabel label5 = new JLabel("Visible Sessions");
 		label5.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		rightPanel.add(label5);
 
@@ -273,7 +275,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 		TableSort newContentPane = new TableSort();
 		newContentPane.setOpaque(true);
-
+		
 
 
 		centerPanel.add(newContentPane);
@@ -454,5 +456,16 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		frame.addKeyListener(keyListener);
 	}
 	
+	
+	public class splitListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// Split Stuff
+			viewModel.splitSequence();
+			
+		}
+		
+	}
 
 }
