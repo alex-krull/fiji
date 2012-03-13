@@ -63,6 +63,8 @@ public abstract class Sequence<T extends Trackable> {
 		return secondPart;
 	}
 	
+	public abstract String getTypeName();
+	
 	public int getId(){
 		return id;
 	}

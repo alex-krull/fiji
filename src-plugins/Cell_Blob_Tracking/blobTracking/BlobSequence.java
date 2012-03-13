@@ -48,6 +48,11 @@ public class BlobSequence extends Sequence<Blob>{
 		}
 	
 	}
+
+	@Override
+	public String getTypeName() {
+		return "Blob";
+	}
 	
 	
 	
