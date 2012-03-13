@@ -14,7 +14,7 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 
 
-public class MainWindow  < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<IT> 
+public class MainWindow  < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageView<IT> 
 implements ImageListener, MouseListener, MouseMotionListener{
 	
 	private class MyStackWindow extends StackWindow{	
@@ -74,8 +74,8 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		currentChannelNumber=imp.getChannel()-1;
 		//imp.getWindow().close();
 		imp.setOpenAsHyperStack(true);
-		stackWindow= new StackWindow(imp);
-		
+		//stackWindow= new StackWindow(imp);
+		stackWindow=(StackWindow)imp.getWindow();
 		stackWindow.getCanvas().addMouseListener(this);
 		stackWindow.getCanvas().addMouseMotionListener(this);
 		

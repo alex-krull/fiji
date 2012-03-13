@@ -12,7 +12,7 @@ import frameWork.Model;
 
 
 
-	public class MaxProjectionX < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<IT> implements MouseListener, MouseMotionListener{
+	public class MaxProjectionX < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageView<IT> implements MouseListener, MouseMotionListener{
 		
 		public MaxProjectionX(Model<IT> mod, ViewModel<IT> vm){
 			super(mod, 

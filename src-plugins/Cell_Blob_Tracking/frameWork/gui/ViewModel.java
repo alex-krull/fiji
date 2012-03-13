@@ -176,10 +176,12 @@ public int getCurrentChannelNumber(){
 	return currentChannelNumber;
 }
 
-public void addViewWindow( ViewWindow<IT> vw){
+public void addViewWindow( ViewWindow<IT> vw, double initialZoom){
 	views.add(vw);
 	vw.addKeyListener(hotKeyListener);
+	
 	this.upDateImages(0, 0, 0,true);
+	vw.setZoom(initialZoom);
 }
 
 public List<TrackingChannel<? extends Trackable,IT>> getTCsToBeDisplayed(){

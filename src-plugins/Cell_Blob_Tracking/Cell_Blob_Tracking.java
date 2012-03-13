@@ -1,11 +1,5 @@
 
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.plugin.PlugIn;
-import net.imglib2.type.NativeType;
-import net.imglib2.type.numeric.NumericType;
-import net.imglib2.type.numeric.RealType;
 import frameWork.Controller;
 import frameWork.Model;
 import frameWork.gui.KymographX;
@@ -16,14 +10,22 @@ import frameWork.gui.MaxProjectionY;
 import frameWork.gui.MaxProjectionZ;
 import frameWork.gui.ViewModel;
 import frameWork.gui.controlWindow.ControlWindow2;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.plugin.PlugIn;
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.RealType;
 
 public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>> implements PlugIn{
 
 	public class AddingViewsThread extends Thread{
 		private final Model <IT> model;
 		private final ViewModel<IT> viewModel;
+		private final ImagePlus imp;
 		
-		AddingViewsThread(ViewModel<IT> vm, Model<IT> mod){
+		AddingViewsThread(ViewModel<IT> vm, Model<IT> mod, ImagePlus im){
+			imp=im;
 			model= mod;
 			viewModel=vm;
 		}
@@ -31,20 +33,23 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		public void run() {
 			
 			System.out.println("iv:" + model.isVolume()+ "  its:" +model.isTimeSequence() + "  imc:"+ model.isMultiChannel() );
+			double initZoom=imp.getCanvas().getMagnification();
+			viewModel.addViewWindow(new MainWindow<IT>(imp, model, viewModel),initZoom);
 			
 	        if(model.isVolume()){
 	        
 	        System.out.println("adding projections");
-			viewModel.addViewWindow(new MaxProjectionX<IT>(model, viewModel));
-			viewModel.addViewWindow(new MaxProjectionY<IT>(model, viewModel));
-			viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel));
+			viewModel.addViewWindow(new MaxProjectionX<IT>(model, viewModel),initZoom);
+			viewModel.addViewWindow(new MaxProjectionY<IT>(model, viewModel),initZoom);
+			viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel),initZoom);
 	        }
 	        
 	        ControlWindow2<IT> cw= new ControlWindow2<IT>(model, "Control Window",viewModel);
 	        cw.go();
-	        viewModel.addViewWindow(cw);
-			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel));		
-			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel));				
+	        viewModel.addViewWindow(cw,initZoom);
+			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel),initZoom);		
+			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel),initZoom);		
+			
 			
 	    }
 	}
@@ -67,8 +72,8 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		model.addObserver(vm);
 		System.out.println("Time taken:"+((time1-time0)/1000000));
 		
-		vm.addViewWindow(new MainWindow<IT>(imp, model, vm));
-		AddingViewsThread awt= new AddingViewsThread(vm,model);
+		
+		AddingViewsThread awt= new AddingViewsThread(vm,model, imp);
 		awt.start();
 	}
 

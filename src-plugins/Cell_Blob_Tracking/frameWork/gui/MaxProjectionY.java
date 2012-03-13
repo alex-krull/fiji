@@ -11,7 +11,7 @@ import frameWork.Model;
 
 
 
-public class MaxProjectionY < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<IT> 
+public class MaxProjectionY < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageView<IT> 
 implements MouseListener, MouseMotionListener {
 		
 		public MaxProjectionY(Model<IT> mod, ViewModel<IT> vm){

@@ -38,8 +38,7 @@ public class BlobSequence extends Sequence<Blob>{
 		Blob lastB=null;
 		for(double i=trackables.firstKey();i<=trackables.lastKey();i++){
 			lastB=b;
-			b=trackables.get((int)i);
-			
+			b=trackables.get((int)i);		
 			if(lastB!=null&&b!=null){
 				Line l =new Line((lastB.xPos+0.5)*scaleX-transX,(i-1+0.5)*scaleY-transY,(b.xPos+0.5)*scaleX-transX,(i+0.5)*scaleY-transY);
 				l.setStrokeColor(this.getColor());

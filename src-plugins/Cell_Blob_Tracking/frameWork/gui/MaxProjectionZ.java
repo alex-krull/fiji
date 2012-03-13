@@ -10,7 +10,7 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 
 
-public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageWindow<IT> 
+public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageView<IT> 
 implements MouseListener, MouseMotionListener {
 	
 	public MaxProjectionZ(Model<IT> mod, ViewModel<IT> vm){

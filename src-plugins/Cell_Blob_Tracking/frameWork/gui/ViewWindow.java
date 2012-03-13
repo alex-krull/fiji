@@ -85,4 +85,8 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		}
 	}
 	
+	public void setZoom(double newZoom){
+		
+	}
+	
 }
