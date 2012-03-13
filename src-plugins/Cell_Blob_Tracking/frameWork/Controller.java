@@ -57,7 +57,12 @@ public void click(long[] position, int tChannel, MouseEvent e){
 		cc.click(position, e);
 	}
 }
-	
+
+public boolean isTracking(){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	return cc.isTracking();
+}
+
 public void optimizeFrame(int frameNumber ){
 		ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 		if(cc!=null) cc.optimizeFrame(frameNumber);

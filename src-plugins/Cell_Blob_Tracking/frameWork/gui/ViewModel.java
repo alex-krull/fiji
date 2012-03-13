@@ -14,6 +14,7 @@ import net.imglib2.type.numeric.RealType;
 import tools.ImglibTools;
 import frameWork.Controller;
 import frameWork.Model;
+import frameWork.Sequence;
 import frameWork.Trackable;
 import frameWork.TrackingChannel;
 
@@ -106,8 +107,6 @@ public void toggleDrawOverlays(){
 	 **/
 public void setPosition(int dim, int pos){
 	//long time0= System.nanoTime();
-	
-	
 	
 	if(dim==2){
 		if(currentSliceNumber==pos) return;
@@ -207,6 +206,16 @@ public void splitSequence(){
 	controller.splitSequence(currentFrameNumber);
 }
 
+public boolean isTracking(){
+return controller.isTracking();
+}
 
+ public  List <Sequence<? extends Trackable>> getVisibleSequences(){
+	List <Sequence<? extends Trackable>> results = new ArrayList <Sequence<? extends Trackable>>();
+	for(TrackingChannel<? extends Trackable ,IT> tc: tCsToBeDisplayed){
+		results.addAll(tc.getSeqsCollection());
+	}
+	return results;
+}
 
 }

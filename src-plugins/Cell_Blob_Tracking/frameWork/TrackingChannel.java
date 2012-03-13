@@ -60,7 +60,6 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	}
 	
 	public Collection <? extends Sequence<T>> getSeqsCollection(){
-		
 		return Sequences.values();
 	}
 
