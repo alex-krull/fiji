@@ -453,6 +453,12 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		zSpinner.setValue(position[2]+1);
 		frameSpinner.setValue(position[3]+1);
 		cSpinner.setValue(position[4]+1);
+		
+		if (viewModel.isTracking()){
+			start.setText("Stop Tracking");
+		} else {
+			start.setText("Start Tracking");
+		}
 	}
 
 
@@ -502,13 +508,9 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 			viewModel.toggleTracking();
 			
 			
-			String text=start.getText();
 			
-			if (text.startsWith("Start")){
-				start.setText("Stop Tracking");
-			} else {
-				start.setText("Start Tracking");
-			}
+			
+			
 			
 			
 		}

@@ -68,7 +68,7 @@ public class TableSort extends JPanel {
        		     "Session 1", "Blob", new Integer(10)},
        		    {"Cell 1", new Color(0, 150, 0),
        		     "Session 1", "Cell", new Integer(15)},
-       		    {"Cell 2", new Color(0, 255, 0),
+       		    {"Cell 200", new Color(155, 255, 0),
        		     "Session 1", "Cell", new Integer(30)},
        		    {"Cell 3", Color.pink,
        		     "Session 1", "Cell", new Integer(12)}
@@ -102,6 +102,9 @@ public class TableSort extends JPanel {
         add(scrollPane);
     }
 
+    public void updateData(){
+    	
+    }
     class MyTableModel extends AbstractTableModel {
         private final String[] columnNames = {"Trace Name",
                                         "Color",
