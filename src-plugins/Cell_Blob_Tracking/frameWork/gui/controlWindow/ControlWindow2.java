@@ -65,6 +65,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 	JFrame frame;
 	JPanel rightPanel;
 	JList visList;
+	JButton start;
 	
 	volatile JSpinner frameSpinner;
 	volatile JSpinner zSpinner;
@@ -107,11 +108,14 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		//This controls the left Panel
 		JButton merge = new JButton("Merge");
 		JButton delete = new JButton("Delete");
+		delete.addActionListener(new DeleteListener());
+		
 		JButton jump = new JButton("Go to  ");
 		JButton split = new JButton("Spilt");
-		split.addActionListener(new NewSessionListener());
+		split.addActionListener(new splitListener());
 		//split.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		JButton trim = new JButton("Trim");
+		trim.addActionListener(new TrimListener());
 
 
 
@@ -245,8 +249,9 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		
 		rightPanel.add(visScroller);
 		
-		JButton start = new JButton("Start Tracking");
+		start = new JButton("Start Tracking");
 		start.setAlignmentX(JButton.CENTER_ALIGNMENT);
+		start.addActionListener(new StartListener());
 		rightPanel.add(start);
 
 		JButton newSession = new JButton("New Session");
@@ -467,5 +472,46 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		}
 		
 	}
+	
+	public class TrimListener implements ActionListener {
 
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// Trims trace
+			viewModel.trimSequence();
+		}
+		
+	}
+	
+	public class DeleteListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// Deletes tace
+			viewModel.deleteSequence();
+			
+		}
+		
+	}
+
+	public class StartListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// Start Tracking
+			viewModel.toggleTracking();
+			
+			
+			String text=start.getText();
+			
+			if (text.startsWith("Start")){
+				start.setText("Stop Tracking");
+			} else {
+				start.setText("Start Tracking");
+			}
+			
+			
+		}
+		
+	}
 }
