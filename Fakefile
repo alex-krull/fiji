@@ -231,6 +231,7 @@ PLUGIN_TARGETS=plugins/Jython_Interpreter.jar \
 	plugins/Reconstruct_Reader.jar \
 	jars/fiji-compat.jar \
 	plugins/Cell_Blob_Tracking.jar \
+	plugins/Blob_Simulator.jar \
 	plugins/Fiji_Package_Maker.jar
 
 LEGACYLAUNCHER=fiji
