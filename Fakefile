@@ -324,6 +324,8 @@ plugins/Image_5D.jar <- modules/image5d/
 
 CLASSPATH(plugins/Cell_Blob_Tracking.jar)=jars/ij.jar:jars/imglib2.jar:jars/imglib2-io.jar:jars/imglib2-ij.jar:jars/imglib2-ui.jar:jars/commons-math.jar
 
+CLASSPATH(plugins/Blob_Simulator.jar)=jars/ij.jar:jars/imglib2.jar:jars/imglib2-io.jar:jars/imglib2-ij.jar:jars/imglib2-ui.jar:jars/commons-math.jar
+
 # From source
 libs[] <- jars/test-fiji.jar jars/zs.jar jars/VIB-lib.jar jars/Jama.jar \
 	jars/fiji-scripting.jar jars/fiji-lib.jar jars/jep.jar \
