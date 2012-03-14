@@ -1,5 +1,7 @@
 package frameWork.gui.controlWindow;
 
+import ij.gui.GenericDialog;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -41,6 +43,7 @@ import frameWork.Model;
 import frameWork.gui.HotKeyListener;
 import frameWork.gui.ViewModel;
 import frameWork.gui.ViewWindow;
+import ij.*;
 
 
 
@@ -341,24 +344,26 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
+		String[] trackingMethods = {"Blob", "Cell"};
 
 
+
+		GenericDialog gd = new GenericDialog("New Session");
+		gd.addStringField("Enter new session name: ", "");
+		gd.addChoice("Pick tracking method", trackingMethods, null);
+		gd.showDialog();
+
+		String temp = gd.getNextString();
+		sessionList.add((Object)temp);
+
+		String choices = gd.getNextChoice();
 		
-		Object selection = JOptionPane.showInputDialog(null, "Enter new session name:","Create new session",
-				 JOptionPane.PLAIN_MESSAGE);
-		currentMethod.setText((String) selection);
-		sessionList.add(selection);
-
+		currentMethod.setText(choices);
+		
 		String[] newValues = new String[sessionList.size()];
 		sessionList.toArray(newValues);
-		
 		visList.setListData(newValues);
-		/*JButton test = new JButton("test");
-		rightPanel.add(test);
-		frame.validate();
-		frame.repaint();*/
-		//Object[] possibilities = {"ham", "spam", "yam"};
-		//String s = (String)JOptionPane.showInputDialog(frame);
+		
 
 	} 
 
