@@ -226,6 +226,19 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 		return new BlobPartialDerivative(this,arg0);
 	}
 
+	@Override
+	public String toSaveString() {
+		String result;
+		result= this.sequenceId + "\t"
+				+ this.frameId + "\t"
+				+ this.xPos+ "\t"
+				+ this.yPos+ "\t"
+				+ this.zPos+ "\t"
+				+ this.sigma+ "\t"
+				+ this.sigmaZ;
+		return result;
+	}
+
 
 
 

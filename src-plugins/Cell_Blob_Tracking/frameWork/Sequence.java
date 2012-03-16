@@ -3,6 +3,8 @@ package frameWork;
 import ij.gui.Overlay;
 
 import java.awt.Color;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -68,6 +70,25 @@ public abstract class Sequence<T extends Trackable> {
 	public int getId(){
 		return id;
 	}
+	
+	public boolean writeToFile(String fName){
+	try{
+		FileWriter fileWriter= new FileWriter(fName);
+		
+		for(T trackable: trackables.values()){	
+			fileWriter.write(trackable.toSaveString()+"\n");
+		}
+		
+		fileWriter.flush();
+	}catch(IOException e){
+		return false;
+	}
+	
+	
+	
+	return true;
+	}
+	
 	
 	public abstract void getKymoOverlayX(Overlay ov, double scaleX, double scaleY, double transX, double transY);
 	public abstract void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY);

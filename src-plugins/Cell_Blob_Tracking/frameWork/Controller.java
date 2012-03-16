@@ -1,6 +1,8 @@
 package frameWork;
 
+
 import java.awt.event.MouseEvent;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -13,18 +15,21 @@ import blobTracking.BlobTrackingChannel;
 
 
 public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > {
-
-
+	
+	
 	
 	protected double xyToZ=3.5;
 	public int selectedSequenceId;
 	public int selectedTCId;
 	
 	protected Model<IT> model;
+
 	private final SortedMap <Integer, ChannelController <? extends Trackable,IT> > channelControllers;
 
 	 
 	public Controller( Model<IT> mod){
+		
+		
 		model =mod;
 		channelControllers=	new TreeMap<Integer, ChannelController<? extends Trackable,IT>>();
 		
@@ -99,6 +104,14 @@ public void deleteSequence(){
 public void trimSequence(int frameId){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.trimSequence(frameId);
+}
+
+public void saveAll(){
+List <Sequence<? extends Trackable >> list =model.getAllSequencies();
+for(Sequence<? extends Trackable > seq: list){
+	seq.writeToFile("seq"+seq.getId()+".txt");
+}
+
 }
 
 
