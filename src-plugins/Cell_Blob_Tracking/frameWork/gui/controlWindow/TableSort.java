@@ -54,11 +54,14 @@ import javax.swing.table.AbstractTableModel;
 
 public class TableSort extends JPanel {
     private final boolean DEBUG = false;
-
+    private MyTableModel tableModel;
+    private JTable table;
+    
+    
     public TableSort() {
         super(new GridLayout(1,0));
 
-        MyTableModel tableModel = new MyTableModel();
+        tableModel = new MyTableModel();
         
         
         Object[][] temp = {
@@ -77,7 +80,7 @@ public class TableSort extends JPanel {
         
         tableModel.setTableData(temp);
         
-        JTable table = new JTable(tableModel);
+        table = new JTable(tableModel);
         
         
         //JTable table = new JTable(new MyTableModel());
@@ -102,9 +105,12 @@ public class TableSort extends JPanel {
         add(scrollPane);
     }
 
-    public void updateData(){
-    	
+    public void updateData(Object[][] data){
+    	tableModel.setTableData(data);
+    	table.repaint();
     }
+    
+    
     class MyTableModel extends AbstractTableModel {
         private final String[] columnNames = {"Trace Name",
                                         "Color",
@@ -126,9 +132,7 @@ public class TableSort extends JPanel {
         
 
         public void setTableData(Object[][] temp){
-        	
-
-       	
+        	    	
        			
        	data = temp;
        }

@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -40,6 +41,8 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
+import frameWork.Sequence;
+import frameWork.Trackable;
 import frameWork.gui.HotKeyListener;
 import frameWork.gui.ViewModel;
 import frameWork.gui.ViewWindow;
@@ -65,10 +68,13 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 	JTextField currentSession;
 	JTextField currentMethod;
 	ArrayList<Object> sessionList = new ArrayList();
+	ArrayList<Object> tableData = new ArrayList();
 	JFrame frame;
 	JPanel rightPanel;
 	JList visList;
 	JButton start;
+	JTextArea text;
+	TableSort trackerTable;
 	
 	volatile JSpinner frameSpinner;
 	volatile JSpinner zSpinner;
@@ -97,7 +103,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		//Bottom Area
 		bottomPanel.setBackground(Color.LIGHT_GRAY);
 
-		JTextArea text = new JTextArea(5,5);
+		text = new JTextArea(5,5);
 
 		text.setLineWrap(true);
 
@@ -143,11 +149,11 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		
 		
 
-		JLabel label1 = new JLabel("Stack #");
-		label1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		JLabel frameLabel = new JLabel("Frame #");
+		frameLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 
 
-		rightPanel.add(label1);
+		rightPanel.add(frameLabel);
 		rightPanel.add(frameSpinner);
 
 		frameSpinner.setPreferredSize(labelDim2);
@@ -281,12 +287,12 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 
 
-		TableSort newContentPane = new TableSort();
-		newContentPane.setOpaque(true);
+		trackerTable = new TableSort();
+		trackerTable.setOpaque(true);
+		
 		
 
-
-		centerPanel.add(newContentPane);
+		centerPanel.add(trackerTable);
 
 		JTextArea details = new JTextArea("Place holder");
 		Border raisedetched = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
@@ -363,6 +369,13 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		String[] newValues = new String[sessionList.size()];
 		sessionList.toArray(newValues);
 		visList.setListData(newValues);
+		
+		
+		
+	     
+/*		text.selectAll();
+		text.append((String) trace[2][0] + "\n");*/
+		
 		
 
 	} 
@@ -464,6 +477,30 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		} else {
 			start.setText("Start Tracking");
 		}
+		
+		//This will get visible
+
+		List<Sequence<? extends Trackable>> test = viewModel.getVisibleSequences();
+		
+		
+		
+		 
+		Object[][]trace = new Object[test.size()][5];
+		int i = 0;
+		for(Sequence<? extends Trackable> seq : test){
+			
+			trace[i][0]=seq.getId();
+			trace[i][1]=new Color(255, 0, 0);
+			trace[i][2]=seq.getTypeName();
+			trace[i][3]=seq.getTypeName();
+			trace[i][4]=seq.getLastFrame()-seq.getFirstFrame()+1;
+			i++;
+		}
+		
+		trackerTable.updateData(trace);
+		
+		
+		//viewModel.getTCsToBeDisplayed();
 	}
 
 
