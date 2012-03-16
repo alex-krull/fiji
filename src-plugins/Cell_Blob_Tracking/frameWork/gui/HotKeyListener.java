@@ -35,6 +35,10 @@ public class HotKeyListener implements KeyListener {
 		  case KeyEvent.VK_D:			  
 			  viewModel.deleteSequence();		 
 		      return;
+		      
+		  case KeyEvent.VK_A:			  
+			  viewModel.saveAll();		 
+		      return;
 		  
 		        
 		}

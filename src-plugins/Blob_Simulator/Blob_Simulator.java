@@ -77,6 +77,9 @@ public class Blob_Simulator implements PlugIn{
 		int nop=(int) image.dimension(0)*(int)image.dimension(1);
 		double pixelBackFlux=backFlux/nop;
 		double normBlobFlux		=flux/ImglibTools.gaussIntegral(image.min(0)-0.5,image.min(1)-0.5,image.max(0)+0.5,image.max(1)+0.5,posX,posY,sig );
+		Random r= new Random(1);
+		
+		
 		while(it.hasNext()){
 			it.fwd();
 			double mean=ImglibTools.gaussPixelIntegral(it.getIntPosition(0), it.getIntPosition(1), posX, posY, sig)*normBlobFlux +pixelBackFlux;
@@ -85,13 +88,16 @@ public class Blob_Simulator implements PlugIn{
 			int sample=0;
 			mean=Math.max(0, mean);
 			
-			Random r= new Random();
-			if(mean<0.00000000000001) sample=0;
+			
+			PoissonDistributionImpl poissonDist= new PoissonDistributionImpl(mean);				
+			poissonDist.reseedRandomGenerator(r.nextLong());
+			
+			if(0>=mean) sample=0;
+			
+			
 			else{
 				
-				PoissonDistributionImpl poissonDist= new PoissonDistributionImpl(mean);	
 				
-				poissonDist.reseedRandomGenerator(r.nextLong());
 				
 				try {
 					

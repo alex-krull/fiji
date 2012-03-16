@@ -16,12 +16,11 @@ public abstract class Trackable {
 		sequenceId=seqId;
 		frameId=fId;
 		channel=chan;
-		
-		
 	}
 
 public abstract void addShapeZ(Overlay ov, boolean selected, Color c);
 public abstract void addShapeX(Overlay ov, boolean selected, Color c);
 public abstract void addShapeY(Overlay ov, boolean selected, Color c);
 public abstract double getDistanceTo(double x, double y, double z);
+public abstract String toSaveString();
 }

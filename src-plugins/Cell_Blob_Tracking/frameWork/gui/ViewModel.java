@@ -212,6 +212,10 @@ public boolean isTracking(){
 return controller.isTracking();
 }
 
+public void saveAll(){
+	controller.saveAll();
+}
+
  public  List <Sequence<? extends Trackable>> getVisibleSequences(){
 	List <Sequence<? extends Trackable>> results = new ArrayList <Sequence<? extends Trackable>>();
 	for(TrackingChannel<? extends Trackable ,IT> tc: tCsToBeDisplayed){
