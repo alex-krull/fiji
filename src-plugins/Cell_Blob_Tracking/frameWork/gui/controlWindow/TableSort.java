@@ -110,6 +110,17 @@ public class TableSort extends JPanel {
     	table.repaint();
     }
     
+    public Color[] getColor(){
+    	Color[] userColor = new Color[table.getModel().getRowCount()];
+    	
+    	for (int i=0; i< table.getModel().getRowCount(); i++){
+    		userColor[i]=(Color) table.getModel().getValueAt(i, 1);
+
+
+    	}
+    	return userColor;
+    }
+    
     
     class MyTableModel extends AbstractTableModel {
         private final String[] columnNames = {"Trace Name",
