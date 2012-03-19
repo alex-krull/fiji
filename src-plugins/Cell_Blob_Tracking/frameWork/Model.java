@@ -232,7 +232,7 @@ public List<Sequence<? extends Trackable>> getAllSequencies(){
 	List <Sequence<? extends Trackable>>results=new ArrayList<Sequence<? extends Trackable>>();
 	for(TrackingChannel<? extends Trackable,IT> tc: this.trackingChannels.values()){
 		results.addAll(tc.getSeqsCollection());
-	}
+	}	
 	return results;
 }
 

@@ -103,21 +103,13 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 	@Override
 	public void addShapeZ(Overlay ov, boolean selected, Color c){
 		Font f=new Font(null,Font.PLAIN,8);
-		
-		if(selected){
-			Roi roiS=new EllipseRoi(0.5+xPos + sigma * 2,0.5+ yPos,0.5+ xPos - sigma * 2,
-					0.5+yPos, 1);
 			
-			roiS.setStrokeColor(new Color(255,255,255,100));
-			roiS.setStrokeWidth(2);
-			ov.add(roiS);
-		}
-		
 		Roi roi = new EllipseRoi(0.5+xPos + sigma * 2,0.5+ yPos,0.5+ xPos - sigma * 2,
 				0.5+yPos, 1);
 		
 		roi.setStrokeColor(c);
 		roi.setStrokeWidth(0.5);
+		if(selected) roi.setStrokeWidth(2);
 		ov.add(roi);
 		
 		
@@ -131,37 +123,26 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 	
 	@Override
 	public void addShapeY(Overlay ov, boolean selected, Color c){
-		if(selected){
-			Roi roiS=new EllipseRoi(xPos , zPos-2*sigmaZ, xPos ,
-					zPos+2*sigmaZ, sigma / sigmaZ);		
-			roiS.setStrokeColor(new Color(255,255,255,100));
-			roiS.setStrokeWidth(5);
-			ov.add(roiS);
-		}
+		
 		
 		Roi roi=new EllipseRoi(xPos , zPos-2*sigmaZ, xPos ,
 				zPos+2*sigmaZ, sigma / sigmaZ);
 		roi.setStrokeColor(c);
-		roi.setStrokeWidth(1);
+		roi.setStrokeWidth(0.5);
+		if(selected) roi.setStrokeWidth(2);
 		ov.add(roi);
 	}
 
 	
 	@Override
 	public void addShapeX(Overlay ov, boolean selected, Color c){
-		if(selected){
-			Roi roiS=new EllipseRoi(zPos + sigmaZ * 2, yPos, zPos - sigmaZ * 2,
-					yPos, sigma / sigmaZ);
-			
-			roiS.setStrokeColor(new Color(255,255,255,100));
-			roiS.setStrokeWidth(5);
-			ov.add(roiS);
-		}
+		
 		
 		Roi roi = new EllipseRoi(zPos + sigmaZ * 2, yPos, zPos - sigmaZ * 2,
 				yPos, sigma / sigmaZ);
 		roi.setStrokeColor(c);
-		roi.setStrokeWidth(1);
+		roi.setStrokeWidth(0.5);
+		if(selected) roi.setStrokeWidth(2);
 		ov.add(roi);
 	}
 	

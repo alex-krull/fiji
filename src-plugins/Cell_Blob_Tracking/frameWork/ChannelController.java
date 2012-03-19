@@ -14,8 +14,13 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	protected int selectedSequenceId;
 	protected T selectedTrackable;
 	protected TrackingChannel<T,IT> trackingChannel;
+	protected List <Integer> selectedIds;
+	
 	public abstract void click(long[] pos, MouseEvent e);
+	
 	private boolean currentlyTracking=false;
+	
+	
 	public void optimizeFrame(int frameNumber){
 		trackingChannel.optimizeFrame(frameNumber,false);
 		model.makeChangesPublic(frameNumber);

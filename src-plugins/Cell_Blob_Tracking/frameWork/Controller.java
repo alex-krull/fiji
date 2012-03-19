@@ -133,4 +133,8 @@ public boolean isSeletced(int sId, int cId){
 	return cc.isSelected(sId);
 }
 
+public void loadSequqnceFromFile(String fileName){
+	
+}
+
 }

@@ -123,7 +123,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 			if(seqs!=null&& !seqs.isEmpty()) for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
 			Sequence<? extends Trackable> seq = seqs.get(i);
 			if(seq!=null){			
-				seq.getKymoOverlayX(ov,scaleX,scaleY, transX, transY);
+				seq.getKymoOverlayX(ov,scaleX,scaleY, transX, transY, viewModel.isSelected(seq.getId(), tc.getId()));
 			}
 			} 
 		}
@@ -143,7 +143,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 			Sequence<? extends Trackable> seq = seqs.get(i);
 			
 			if(seq!=null){			
-				seq.getKymoOverlayY(ov,scaleX,scaleY, transX, transY);
+				seq.getKymoOverlayY(ov,scaleX,scaleY, transX, transY, viewModel.isSelected(seq.getId(), tc.getId()));
 			}
 		}
 		}
@@ -217,8 +217,10 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 */
 	protected void addYLineOverlay(double position){
 		   
-		
-		   ov.add(new Line(0*scaleX,(position+0.5)*scaleY-transY,this.model.getImage().dimension(0)*scaleX ,(position+0.5)*scaleY-transY));		  			   
+		Line l= new Line(0*scaleX,(position+0.5)*scaleY-transY,this.model.getImage().dimension(0)*scaleX ,(position+0.5)*scaleY-transY);
+		l.setStrokeWidth(1);
+		l.setStrokeColor(new Color (255,255,0));
+		ov.add(l);		  			   
 		   
 	}
 	
@@ -227,9 +229,10 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param position the y-position of the line
 	 */
 	protected void addXLineOverlay(double position){
-		 
-		
-		   ov.add(new Line((position+0.5)*scaleX-transX,0*scaleY,(position+0.5)*scaleX-transX,model.getImage().dimension(1) *scaleY) );		  			   
+		Line l= new Line((position+0.5)*scaleX-transX,0*scaleY,(position+0.5)*scaleX-transX,model.getImage().dimension(1) *scaleY) ;
+		l.setStrokeWidth(1);
+		l.setStrokeColor(new Color (255,255,0));
+		   ov.add(l);		  			   
 		  
 	}
 	

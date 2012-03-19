@@ -126,6 +126,8 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	protected abstract TrackingFrame<T,IT> produceFrame(int frameNum);
 	protected abstract Sequence<T> produceSequence(int ident, String lab);
 	protected abstract boolean isAssociatedWithMovieChannel(int id);
+	public abstract T loadTrackableFromString(String s);
+		
 	
 	
 }
