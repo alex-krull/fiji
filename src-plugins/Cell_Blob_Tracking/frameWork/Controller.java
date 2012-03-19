@@ -127,5 +127,10 @@ public void setColor(Color c){
 	model.makeChangesPublic();
 }
 
+public boolean isSeletced(int sId, int cId){
+	if(cId!=this.selectedTCId) return false;
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	return cc.isSelected(sId);
+}
 
 }

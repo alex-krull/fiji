@@ -159,11 +159,11 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
 		for(TrackingChannel<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
-		   int selected =viewModel.getSelectedSequenceId();
+		   
 		   if(trackables!=null) for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId,viewModel.getCurrentChannelNumber()).getColor();
-			   t.addShapeX(ov,t.sequenceId==selected,c);
+			   t.addShapeX(ov,viewModel.isSelected(t.sequenceId, t.channel),c);
 			   
 		   }
 		   
@@ -180,11 +180,11 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
 		for(TrackingChannel<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
-		 int selected =viewModel.getSelectedSequenceId();
+		
 		 if(trackables!=null) for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId, viewModel.getCurrentChannelNumber()).getColor();
-			   t.addShapeY(ov,t.sequenceId==selected,c);
+			   t.addShapeY(ov,viewModel.isSelected(t.sequenceId, t.channel),c);
 			   
 		   }
 		}
@@ -199,11 +199,11 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
 		for(TrackingChannel<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
-		 int selected =viewModel.getSelectedSequenceId();
+		 
 		 if(trackables!=null)for(Trackable t : trackables){	
 			//   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId, viewModel.getCurrentChannelNumber()).getColor();
-			   t.addShapeZ(ov,t.sequenceId==selected,c);
+			   t.addShapeZ(ov,viewModel.isSelected(t.sequenceId, t.channel),c);
 			   
 		   }
 		} 

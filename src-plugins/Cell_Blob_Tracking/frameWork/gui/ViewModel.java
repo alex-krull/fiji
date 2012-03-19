@@ -169,8 +169,12 @@ public void update(Observable arg0, Object arg1) {
 	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, arg1!=null );
 }
 
-public int getSelectedSequenceId(){
-	return this.controller.getSelectedSeqId();
+//public int getSelectedSequenceId(){
+//	return this.controller.getSelectedSeqId();
+//}
+
+public boolean isSelected(int sId, int cId){
+	return controller.isSeletced(sId, cId);
 }
 
 public int getCurrentChannelNumber(){

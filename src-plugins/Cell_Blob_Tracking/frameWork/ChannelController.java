@@ -89,6 +89,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		trackingChannel.deleteSequence(selectedSequenceId);
 		model.makeChangesPublic();
 	}
+	
 	public void trimSequence(int frameNumber){
 		trackingChannel.splitSequenence(selectedSequenceId, -1, frameNumber);
 		trackingChannel.deleteSequence(-1);
@@ -99,8 +100,9 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		trackingChannel.getSequence(this.selectedSequenceId).setColor(color);
 	}
 	
-	
-	
+	public boolean isSelected(int sId){
+		return sId==this.selectedSequenceId;
+	}
 	
 	
 }
