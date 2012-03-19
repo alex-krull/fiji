@@ -170,7 +170,7 @@ public void update(Observable arg0, Object arg1) {
 }
 
 public int getSelectedSequenceId(){
-	return this.controller.selectedSequenceId;
+	return this.controller.getSelectedSeqId();
 }
 
 public int getCurrentChannelNumber(){

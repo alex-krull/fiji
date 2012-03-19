@@ -1,6 +1,7 @@
 package frameWork;
 
 
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import net.imglib2.type.numeric.RealType;
 
 public abstract class ChannelController<T extends Trackable,  IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
 	protected Model<IT> model;
-	public int selectedSequenceId;
+	protected int selectedSequenceId;
 	protected T selectedTrackable;
 	protected TrackingChannel<T,IT> trackingChannel;
 	public abstract void click(long[] pos, MouseEvent e);
@@ -18,6 +19,10 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	public void optimizeFrame(int frameNumber){
 		trackingChannel.optimizeFrame(frameNumber,false);
 		model.makeChangesPublic(frameNumber);
+	}
+	
+	protected int getSelectedSeqId(){
+		return selectedSequenceId;
 	}
 	
 	protected ChannelController( Model<IT> mod,TrackingChannel<T,IT> tc ){
@@ -88,6 +93,10 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		trackingChannel.splitSequenence(selectedSequenceId, -1, frameNumber);
 		trackingChannel.deleteSequence(-1);
 		model.makeChangesPublic();
+	}
+	
+	public void setColor(Color color){
+		trackingChannel.getSequence(this.selectedSequenceId).setColor(color);
 	}
 	
 	

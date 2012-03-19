@@ -2,9 +2,9 @@ package frameWork.gui;
 
 import ij.IJ;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
 public class HotKeyListener implements KeyListener {
  
 	private final ViewModel viewModel;
@@ -39,6 +39,11 @@ public class HotKeyListener implements KeyListener {
 		  case KeyEvent.VK_A:			  
 			  viewModel.saveAll();		 
 		      return;
+		      
+		    
+		  case KeyEvent.VK_C:			  
+			  viewModel.setColor(new Color(255,255,0));		 
+		      return;     
 		  
 		        
 		}

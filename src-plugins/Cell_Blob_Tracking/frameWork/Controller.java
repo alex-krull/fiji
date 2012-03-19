@@ -20,7 +20,6 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 	
 	
 	protected double xyToZ=3.5;
-	public int selectedSequenceId;
 	public int selectedTCId;
 	
 	protected Model<IT> model;
@@ -117,8 +116,14 @@ for(Sequence<? extends Trackable > seq: list){
 
 }
 
+public int getSelectedSeqId(){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	return cc.getSelectedSeqId();
+}
+
 public void setColor(Color c){
-	model.getSequence(selectedSequenceId,this.selectedSequenceId).setColor(c);
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	cc.setColor(c);
 	model.makeChangesPublic();
 }
 
