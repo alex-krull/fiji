@@ -1,6 +1,7 @@
 package frameWork;
 
 
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.SortedMap;
@@ -112,6 +113,13 @@ for(Sequence<? extends Trackable > seq: list){
 	seq.writeToFile("seq"+seq.getId()+".txt");
 }
 
+
+
+}
+
+public void setColor(Color c){
+	model.getSequence(selectedSequenceId,this.selectedSequenceId).setColor(c);
+	model.makeChangesPublic();
 }
 
 
