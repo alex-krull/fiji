@@ -505,7 +505,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 			
 			
 			seq.setColor(tempColor[i]);
-
+			i++;
 		}
 		
 		
