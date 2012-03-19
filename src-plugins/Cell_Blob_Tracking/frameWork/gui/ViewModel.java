@@ -1,5 +1,6 @@
 package frameWork.gui;
 
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -214,6 +215,10 @@ return controller.isTracking();
 
 public void saveAll(){
 	controller.saveAll();
+}
+
+public void setColor(Color c){
+	controller.setColor(c);
 }
 
  public  List <Sequence<? extends Trackable>> getVisibleSequences(){
