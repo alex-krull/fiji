@@ -490,7 +490,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		for(Sequence<? extends Trackable> seq : test){
 			
 			trace[i][0]=seq.getId();
-			trace[i][1]=new Color(0, 0, 255);
+			trace[i][1]=seq.getColor();
 			trace[i][2]=seq.getTypeName();
 			trace[i][3]=seq.getTypeName();
 			trace[i][4]=seq.getLastFrame()-seq.getFirstFrame()+1;
@@ -505,12 +505,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 			
 			
 			seq.setColor(tempColor[i]);
-			trace[i][0]=seq.getId();
-			trace[i][1]=new Color(0, 0, 255);
-			trace[i][2]=seq.getTypeName();
-			trace[i][3]=seq.getTypeName();
-			trace[i][4]=seq.getLastFrame()-seq.getFirstFrame()+1;
-			i++;
+
 		}
 		
 		
