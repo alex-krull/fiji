@@ -137,4 +137,9 @@ public void loadSequqnceFromFile(String fileName){
 	
 }
 
+public void setSelectionList(List <Integer> selectedIds){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	cc.setSelectionList(selectedIds);
+}
+
 }

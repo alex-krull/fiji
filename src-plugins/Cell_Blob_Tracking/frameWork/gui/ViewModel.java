@@ -225,12 +225,16 @@ public void setColor(Color c){
 	controller.setColor(c);
 }
 
- public  List <Sequence<? extends Trackable>> getVisibleSequences(){
+public  List <Sequence<? extends Trackable>> getVisibleSequences(){
 	List <Sequence<? extends Trackable>> results = new ArrayList <Sequence<? extends Trackable>>();
 	for(TrackingChannel<? extends Trackable ,IT> tc: tCsToBeDisplayed){
 		results.addAll(tc.getSeqsCollection());
 	}
 	return results;
+}
+ 
+public void setSelectionList(List <Integer> selectedIds){
+	controller.setSelectionList(selectedIds);
 }
 
 }

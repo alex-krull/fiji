@@ -236,6 +236,4 @@ public List<Sequence<? extends Trackable>> getAllSequencies(){
 	return results;
 }
 
-
-
 }

@@ -58,8 +58,8 @@ import javax.swing.table.AbstractTableModel;
 
 public class TableSort extends JPanel {
     private final boolean DEBUG = false;
-    private MyTableModel tableModel;
-    private JTable table;
+    private final MyTableModel tableModel;
+    private final JTable table;
     private int tableSelected = 0;
     
     public TableSort() {
@@ -131,7 +131,8 @@ public class TableSort extends JPanel {
 public class SelectionListener implements ListSelectionListener{
 
 		
-    	public void valueChanged(ListSelectionEvent e) {
+    	@Override
+		public void valueChanged(ListSelectionEvent e) {
     		
     		tableSelected++;
     		//System.out.println(tableSelected);
@@ -152,6 +153,7 @@ public class SelectionListener implements ListSelectionListener{
                 // The mouse button has not yet been released
             }*/
         }
+    	
     	
     }
     

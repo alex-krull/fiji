@@ -20,6 +20,12 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	
 	private boolean currentlyTracking=false;
 	
+	public void setSelectionList(List <Integer> selectedIds){
+		if(selectedIds.size()>0)
+			selectedSequenceId=selectedIds.get(0);
+		else
+			selectedSequenceId=-1;
+	}
 	
 	public void optimizeFrame(int frameNumber){
 		trackingChannel.optimizeFrame(frameNumber,false);
