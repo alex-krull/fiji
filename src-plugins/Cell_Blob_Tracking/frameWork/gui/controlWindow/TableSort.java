@@ -42,6 +42,8 @@ package frameWork.gui.controlWindow;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -50,6 +52,8 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+
+import frameWork.gui.ViewModel;
 
 
 
@@ -61,9 +65,12 @@ public class TableSort extends JPanel {
     private final MyTableModel tableModel;
     private final JTable table;
     private int tableSelected = 0;
+    private final ViewModel<?> viewModel;
+  
     
-    public TableSort() {
+    public TableSort(ViewModel<?> vm) {
         super(new GridLayout(1,0));
+        viewModel=vm;
 
         tableModel = new MyTableModel();
         
@@ -89,6 +96,7 @@ public class TableSort extends JPanel {
         //Makes a selection listener
         SelectionListener listener = new SelectionListener();
         table.getSelectionModel().addListSelectionListener(listener);
+        
         table.getColumnModel().getSelectionModel().addListSelectionListener(listener);
         //JTable table = new JTable(new MyTableModel());
         
@@ -113,8 +121,22 @@ public class TableSort extends JPanel {
     }
 
     public void updateData(Object[][] data){
+    	synchronized (viewModel){
+    	
     	tableModel.setTableData(data);
     	//table.setRowSelectionInterval(0, 0);
+    	int cnt = 0;
+    	table.clearSelection();
+    	for(int i=0; i<table.getRowCount();i++){
+    		
+			int currentId=(Integer)table.getValueAt(i, 0);
+			if(viewModel.isSelected( currentId,0)){					
+					table.addRowSelectionInterval(i, i);
+			}
+		}
+    	
+    	}
+			
     	table.repaint();
     }
     
@@ -134,9 +156,21 @@ public class SelectionListener implements ListSelectionListener{
     	@Override
 		public void valueChanged(ListSelectionEvent e) {
     		
+    		
+    	synchronized (viewModel){	
+    		if(e.getValueIsAdjusting()) return;
+    		List <Integer> results = new ArrayList<Integer>();
+    		for(int i=0; i<table.getRowCount();i++){
+    			if(table.isRowSelected(i)){
+    				results.add((Integer)table.getModel().getValueAt(i, 0));
+    			}
+    				
+    		}
+    		viewModel.setSelectionList(results);
     		tableSelected++;
+    	}
     		//System.out.println(tableSelected);
-/*            // If cell selection is enabled, both row and column change events are fired
+/*           // If cell selection is enabled, both row and column change events are fired
             if (e.getSource() == table.getSelectionModel()
                   && table.getRowSelectionAllowed()) {
             	// Row selection changed
@@ -286,9 +320,9 @@ public class SelectionListener implements ListSelectionListener{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.
-        TableSort newContentPane = new TableSort();
+        /*TableSort newContentPane = new TableSort(viewModel);
         newContentPane.setOpaque(true); //content panes must be opaque
-        frame.setContentPane(newContentPane);
+        frame.setContentPane(newContentPane);*/
 
         //Display the window.
         frame.pack();

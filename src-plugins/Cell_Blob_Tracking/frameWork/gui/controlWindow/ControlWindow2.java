@@ -46,7 +46,6 @@ import frameWork.Trackable;
 import frameWork.gui.HotKeyListener;
 import frameWork.gui.ViewModel;
 import frameWork.gui.ViewWindow;
-import ij.*;
 
 
 
@@ -290,7 +289,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 
 
-		trackerTable = new TableSort();
+		trackerTable = new TableSort(viewModel);
 		trackerTable.setOpaque(true);
 		
 		
@@ -363,7 +362,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		gd.showDialog();
 
 		String temp = gd.getNextString();
-		sessionList.add((Object)temp);
+		sessionList.add(temp);
 
 		String choices = gd.getNextChoice();
 		

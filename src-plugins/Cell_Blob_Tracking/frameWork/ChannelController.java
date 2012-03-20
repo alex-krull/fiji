@@ -98,6 +98,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	
 	public void deleteSequence(){
 		trackingChannel.deleteSequence(selectedSequenceId);
+		selectedSequenceId=-1;
 		model.makeChangesPublic();
 	}
 	
