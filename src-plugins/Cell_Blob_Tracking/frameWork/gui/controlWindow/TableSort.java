@@ -47,7 +47,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+
+
 
 //import TableSort.MyTableModel;
 
@@ -56,7 +60,7 @@ public class TableSort extends JPanel {
     private final boolean DEBUG = false;
     private MyTableModel tableModel;
     private JTable table;
-    
+    private int tableSelected = 0;
     
     public TableSort() {
         super(new GridLayout(1,0));
@@ -82,7 +86,10 @@ public class TableSort extends JPanel {
         
         table = new JTable(tableModel);
         
-        
+        //Makes a selection listener
+        SelectionListener listener = new SelectionListener();
+        table.getSelectionModel().addListSelectionListener(listener);
+        table.getColumnModel().getSelectionModel().addListSelectionListener(listener);
         //JTable table = new JTable(new MyTableModel());
         
         
@@ -107,6 +114,7 @@ public class TableSort extends JPanel {
 
     public void updateData(Object[][] data){
     	tableModel.setTableData(data);
+    	//table.setRowSelectionInterval(0, 0);
     	table.repaint();
     }
     
@@ -119,6 +127,32 @@ public class TableSort extends JPanel {
 
     	}
     	return userColor;
+    }
+public class SelectionListener implements ListSelectionListener{
+
+		
+    	public void valueChanged(ListSelectionEvent e) {
+    		
+    		tableSelected++;
+    		//System.out.println(tableSelected);
+/*            // If cell selection is enabled, both row and column change events are fired
+            if (e.getSource() == table.getSelectionModel()
+                  && table.getRowSelectionAllowed()) {
+            	// Row selection changed
+                int first = e.getFirstIndex();
+                int last = e.getLastIndex();
+            } else if (e.getSource() == table.getColumnModel().getSelectionModel()
+                   && table.getColumnSelectionAllowed() ){
+            	// Column selection changed
+                int first = e.getFirstIndex();
+                int last = e.getLastIndex();
+            }
+
+            if (e.getValueIsAdjusting()) {
+                // The mouse button has not yet been released
+            }*/
+        }
+    	
     }
     
     

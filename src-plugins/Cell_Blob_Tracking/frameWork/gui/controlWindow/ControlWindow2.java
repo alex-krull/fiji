@@ -120,12 +120,14 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		delete.addActionListener(new DeleteListener());
 		
 		JButton jump = new JButton("Go to  ");
-		JButton split = new JButton("Spilt");
+		JButton split = new JButton("Split");
 		split.addActionListener(new splitListener());
 		//split.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		JButton trim = new JButton("Trim");
 		trim.addActionListener(new TrimListener());
 
+		JButton saveAll = new JButton("Save All");
+		saveAll.addActionListener(new SaveAllListener());
 
 
 		leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -137,6 +139,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		leftPanel.add(trim);
 		leftPanel.add(delete);
 		leftPanel.add(jump);
+		leftPanel.add(saveAll);
 
 
 		// The controls on the right
@@ -480,6 +483,10 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		
 		//This will get visible
 
+		
+		if (viewModel.isTracking()==false){
+			
+		
 		List<Sequence<? extends Trackable>> test = viewModel.getVisibleSequences();
 		
 		
@@ -498,15 +505,15 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		}
 		
 		trackerTable.updateData(trace);
-		
-		 i = 0;
+		}
+/*		 i = 0;
 		Color[] tempColor = trackerTable.getColor();
 		for(Sequence<? extends Trackable> seq : test){
 			
 			
 			seq.setColor(tempColor[i]);
 			i++;
-		}
+		}*/
 		
 		
 		//viewModel.getTCsToBeDisplayed();
@@ -557,12 +564,17 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		public void actionPerformed(ActionEvent arg0) {
 			// Start Tracking
 			viewModel.toggleTracking();
-			
-			
-			
-			
-			
-			
+														
+						
+		}
+		
+	}
+	public class SaveAllListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Saves all traces
+			viewModel.saveAll();
 			
 		}
 		

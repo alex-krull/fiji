@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="/Users/ramunno/Java/fiji/jars/imglib2-io.jar"/>
 	<classpathentry kind="lib" path="/Users/ramunno/Java/fiji/jars/imglib2-ij.jar"/>
 	<classpathentry kind="lib" path="/fiji/jars/ij.jar"/>
+	<classpathentry kind="lib" path="/Users/ramunno/Java/fiji/jars/ij.jar" sourcepath="/Users/ramunno/Java/fiji"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
