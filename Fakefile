@@ -470,6 +470,8 @@ CLASSPATH(plugins/Fiji_Package_Maker.jar)=jars/ij.jar:plugins/Fiji_Updater.jar:j
 
 CLASSPATH(plugins/Cell_Blob_Tracking.jar)=jars/ij.jar:jars/alternateImglib/imglib2.jar:jars/alternateImglib/imglib2-io.jar:jars/alternateImglib/imglib2-ij.jar:jars/alternateImglib/imglib2-ui.jar:jars/commons-math.jar
 
+CLASSPATH(plugins/Blob_Simulator.jar)=jars/ij.jar:jars/alternateImglib/imglib2.jar:jars/alternateImglib/imglib2-io.jar:jars/alternateImglib/imglib2-ij.jar:jars/alternateImglib/imglib2-ui.jar:jars/commons-math.jar:plugins/Cell_Blob_Tracking.jar
+
 # pom.xml sub-projects
 
 jars/VIB-lib.jar <- src-plugins/VIB-lib/pom.xml
