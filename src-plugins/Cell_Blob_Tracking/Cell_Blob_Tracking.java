@@ -21,7 +21,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 
 	public class AddingViewsThread extends Thread{
 		private final Model <IT> model;
-		private final ViewModel<IT> viewModel;
+		private final ViewModel<IT> viewModel; 
 		private final ImagePlus imp;
 		
 		AddingViewsThread(ViewModel<IT> vm, Model<IT> mod, ImagePlus im){

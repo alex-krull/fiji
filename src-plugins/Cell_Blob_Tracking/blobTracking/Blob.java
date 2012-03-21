@@ -15,9 +15,7 @@ import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 
-import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction;
 import org.apache.commons.math.analysis.MultivariateRealFunction;
-import org.apache.commons.math.analysis.MultivariateVectorialFunction;
 
 import tools.ImglibTools;
 import frameWork.Trackable;
@@ -30,7 +28,7 @@ import frameWork.Trackable;
  * @author alex
  *
  */
-public class Blob extends Trackable implements DifferentiableMultivariateRealFunction {
+public class Blob extends Trackable implements MultivariateRealFunction {
 	public double xPos;
 	public double yPos;
 	public double zPos;
@@ -197,16 +195,7 @@ public class Blob extends Trackable implements DifferentiableMultivariateRealFun
 		
 	}
 
-	@Override
-	public MultivariateVectorialFunction gradient() {	
-		return new BlobGradientFunction(this);
-	}
-
-	@Override
-	public MultivariateRealFunction partialDerivative(int arg0) {
-		return new BlobPartialDerivative(this,arg0);
-	}
-
+	
 	@Override
 	public String toSaveString() {
 		String result;

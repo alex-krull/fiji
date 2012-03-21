@@ -18,8 +18,10 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	private	List<TrackingFrame <T,IT>> frames;
 	private final int id;
 	private long numOfFrames;
+	private final TrackingPolicy <T,IT> policy;
 	
-	protected TrackingChannel(int newID){
+	protected TrackingChannel(int newID, TrackingPolicy <T,IT> tp){
+		policy =tp;
 		id=newID;
 	}
 	
@@ -34,7 +36,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		Sequences= new TreeMap<Integer, Sequence<T>>();
 		frames=new ArrayList<TrackingFrame<T,IT>>();
 		for(int i=0;i<numOfFrames;i++){
-			frames.add(produceFrame(i));
+			frames.add(policy.produceFrame(i));
 			System.out.println("producing frame:"+ i);
 		}
 		
@@ -83,7 +85,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		Sequence<T> sequence= Sequences.get(trackable.sequenceId);
 		if(sequence==null){
 			
-			sequence=produceSequence(trackable.sequenceId, Integer.toString(trackable.sequenceId));
+			sequence=policy.produceSequence(trackable.sequenceId, Integer.toString(trackable.sequenceId));
 			System.out.println("Adding Seq!");
 			Sequences.put(trackable.sequenceId, sequence);
 		}
@@ -105,7 +107,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		System.out.println("                         splitting sequqnce");
 		Sequence<T> s= Sequences.get(SequenceId);
 		if(s!=null){
-			Sequence<T> newS= s.splitSequence(frameNumber, produceSequence( newSequqenceId, Integer.toString(newSequqenceId)));		
+			Sequence<T> newS= s.splitSequence(frameNumber, policy.produceSequence( newSequqenceId, Integer.toString(newSequqenceId)));		
 			if(newS!=null)	this.Sequences.put(newS.getId(), newS);
 			return newS;
 		}
@@ -122,11 +124,10 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		}
 
 	}
+	
+	public abstract boolean isAssociatedWithMovieChannel(int id);
 		
-	protected abstract TrackingFrame<T,IT> produceFrame(int frameNum);
-	protected abstract Sequence<T> produceSequence(int ident, String lab);
-	protected abstract boolean isAssociatedWithMovieChannel(int id);
-	public abstract T loadTrackableFromString(String s);
+	
 		
 	
 	

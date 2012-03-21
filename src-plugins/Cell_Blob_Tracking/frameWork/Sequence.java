@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public abstract class Sequence<T extends Trackable> {
+public class Sequence<T extends Trackable> {
 	protected int id;
 	protected String label;
 	protected SortedMap <Integer,T> trackables;
 	protected List<List<T>> pieces;
 	protected Color color;
+	protected TrackingPolicy<T,?> policy; 
 	
 	public int getFirstFrame(){
 		return trackables.firstKey();
@@ -32,7 +33,8 @@ public abstract class Sequence<T extends Trackable> {
 		this.color = color;
 	}
 
-	public Sequence(int ident, String lab){
+	public Sequence(int ident, String lab, TrackingPolicy<T,?> tp){
+		policy=tp;
 		color=new Color(255,0,0,255);
 		id = ident;
 		label=lab;
@@ -65,7 +67,6 @@ public abstract class Sequence<T extends Trackable> {
 		return secondPart;
 	}
 	
-	public abstract String getTypeName();
 	
 	public int getId(){
 		return id;
@@ -89,9 +90,19 @@ public abstract class Sequence<T extends Trackable> {
 	return true;
 	}
 	
+	public String getTypeName(){
+		return policy.getTypeName();
+	}
 	
-	public abstract void getKymoOverlayX(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected);
-	public abstract void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected);
+	public void getKymoOverlayX(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected){
+		policy.getKymoOverlayX( ov,  scaleX,  scaleY,  transX,  transY,  selected, trackables);
+	}
+	public void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected){
+		policy.getKymoOverlayY( ov,  scaleX,  scaleY,  transX,  transY,  selected, trackables);
+	}
+
 	
+	
+		
 
 }

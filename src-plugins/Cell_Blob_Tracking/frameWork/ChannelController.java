@@ -15,8 +15,11 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	protected T selectedTrackable;
 	protected TrackingChannel<T,IT> trackingChannel;
 	protected List <Integer> selectedIds;
+	protected TrackingPolicy <T,IT> policy;
 	
-	public abstract void click(long[] pos, MouseEvent e);
+	public void click(long[] pos, MouseEvent e){
+		
+	}
 	
 	private boolean currentlyTracking=false;
 	
@@ -36,7 +39,8 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		return selectedSequenceId;
 	}
 	
-	protected ChannelController( Model<IT> mod,TrackingChannel<T,IT> tc ){
+	protected ChannelController( Model<IT> mod,TrackingChannel<T,IT> tc, TrackingPolicy <T,IT> tp){
+		policy= tp;
 		model =mod;
 		trackingChannel=tc;
 	}
