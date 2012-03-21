@@ -1,0 +1,25 @@
+#!/bin/sh
+/*/. 2>/dev/null; exec "$(dirname "$0")"/../ImageJ "$0" "$@" # exec with fiji */
+
+import fiji.updater.logic.Checksummer;
+import fiji.updater.logic.PluginCollection;
+import fiji.updater.logic.PluginObject;
+
+import fiji.updater.util.StderrProgress;
+
+import java.util.Arrays;
+
+dbPath = System.getProperty("ij.dir") + "/db.xml.gz";
+
+plugins = new PluginCollection();
+progress = new StderrProgress();
+checksummer = new Checksummer(plugins, progress);
+
+if (bsh.args.length > 0) {
+	checksummer.updateFromLocal(Arrays.asList(bsh.args));
+}
+else
+	checksummer.updateFromLocal();
+plugins.sort();
+for (PluginObject plugin : plugins)
+	print(plugin + " " + plugin.current.checksum);
