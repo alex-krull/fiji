@@ -321,3 +321,4 @@ hs_err*.log
 /modules/jsch/dist/
 /modules/jsch/jsch.jar
 /plugins/Cell_Blob_Tracking.jar
+/plugins/Blob_Simulator.jar

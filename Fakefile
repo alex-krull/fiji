@@ -231,6 +231,7 @@ PLUGIN_TARGETS=plugins/Jython_Interpreter.jar \
 	plugins/Reconstruct_Reader.jar \
 	jars/fiji-compat.jar \
 	plugins/Cell_Blob_Tracking.jar \
+	plugins/Blob_Simulator.jar \
 	plugins/Fiji_Package_Maker.jar
 
 LEGACYLAUNCHER=fiji
@@ -467,7 +468,7 @@ CLASSPATH(plugins/Threshold_Colour.jar)=jars/ij.jar
 CLASSPATH(plugins/Helmholtz_Analysis.jar)=jars/ij.jar
 CLASSPATH(plugins/Fiji_Package_Maker.jar)=jars/ij.jar:plugins/Fiji_Updater.jar:jars/fiji-lib.jar
 
-CLASSPATH(plugins/Cell_Blob_Tracking.jar)=jars/ij.jar:jars/imglib2.jar:jars/imglib2-io.jar:jars/imglib2-ij.jar:jars/imglib2-ui.jar:jars/commons-math.jar
+CLASSPATH(plugins/Cell_Blob_Tracking.jar)=jars/ij.jar:jars/alternateImglib/imglib2.jar:jars/alternateImglib/imglib2-io.jar:jars/alternateImglib/imglib2-ij.jar:jars/alternateImglib/imglib2-ui.jar:jars/commons-math.jar
 
 # pom.xml sub-projects
 
