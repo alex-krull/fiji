@@ -17,7 +17,7 @@ public BlobController(Model<IT> model, TrackingChannel<Blob,IT> tc){
 	
 	
 	for(int i=0;i<model.getNumberOfFrames();i++){ 
-    }	
+    }
 	
 	
 }
