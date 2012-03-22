@@ -1,5 +1,11 @@
 
 
+import ij.IJ;
+import ij.ImagePlus;
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.RealType;
+import fiji.tool.AbstractTool;
 import frameWork.Controller;
 import frameWork.Model;
 import frameWork.gui.KymographX;
@@ -10,14 +16,8 @@ import frameWork.gui.MaxProjectionY;
 import frameWork.gui.MaxProjectionZ;
 import frameWork.gui.ViewModel;
 import frameWork.gui.controlWindow.ControlWindow2;
-import ij.IJ;
-import ij.ImagePlus;
-import ij.plugin.PlugIn;
-import net.imglib2.type.NativeType;
-import net.imglib2.type.numeric.NumericType;
-import net.imglib2.type.numeric.RealType;
 
-public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>> implements PlugIn{
+public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>>extends AbstractTool{
 
 	public class AddingViewsThread extends Thread{
 		private final Model <IT> model;
@@ -31,6 +31,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		}
 		@Override
 		public void run() {
+			//super.run();
 			
 			System.out.println("iv:" + model.isVolume()+ "  its:" +model.isTimeSequence() + "  imc:"+ model.isMultiChannel() );
 			double initZoom=imp.getCanvas().getMagnification();
@@ -55,8 +56,10 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	}
 	
 	@Override
+	
 	public void run(String arg0) {
-		// TODO Auto-generated method stub
+		super.run(arg0);
+		
 		long time0= System.nanoTime();
 		ImagePlus imp=IJ.getImage();
 		System.out.println("creating Model...");

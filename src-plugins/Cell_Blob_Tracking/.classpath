@@ -9,5 +9,7 @@
 	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/alternateImglib/imglib2-io.jar"/>
 	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/alternateImglib/imglib2-ui.jar"/>
 	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/ij.jar"/>
+	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/Fiji.jar"/>
+	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/fiji-lib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

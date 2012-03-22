@@ -97,7 +97,7 @@ public class TableSort extends JPanel {
         MouseListener listener = new SelectionListener();
         table.addMouseListener(listener);
         
-     //   table.getColumnModel().getSelectionModel().addListSelectionListener(listener);
+        //table.getColumnModel().getSelectionModel().addListSelectionListener(listener);
         //JTable table = new JTable(new MyTableModel());
         
         
