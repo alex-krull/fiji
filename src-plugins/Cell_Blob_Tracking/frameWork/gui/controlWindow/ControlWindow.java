@@ -86,7 +86,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 */
 	
 	public void go(){
-		frame = new JFrame();
+		frame = new JFrame("Control Window");
+		
 		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
@@ -105,6 +106,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		text = new JTextArea(5,5);
 
 		text.setLineWrap(true);
+		text.setText("Ready to start tracking!");
+		text.append("\n");
 
 		JScrollPane scroller = new JScrollPane(text);
 		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -504,6 +507,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 		
 		trackerTable.updateData(trace);
+		} else {
+			//This section puts frame number in console area
+			Long frameNumber = (Long) frameSpinner.getModel().getValue();
+			
+			text.selectAll();
+			text.append((String) "Tracking Frame " + frameNumber + "\n");
 		}
 /*		 i = 0;
 		Color[] tempColor = trackerTable.getColor();
@@ -516,6 +525,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		
 		//viewModel.getTCsToBeDisplayed();
+		
+		
+		
 	}
 
 

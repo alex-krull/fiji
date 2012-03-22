@@ -80,18 +80,7 @@ public class TableSort extends JPanel {
         tableModel = new MyTableModel();
         
         
-        Object[][] temp = {
-       		    {"Blob 10", new Color(255, 0, 0),
-       		     "Session 1", "Blob", new Integer(5)},
-       		    {"Blob 2", new Color(150, 0, 0),
-       		     "Session 1", "Blob", new Integer(10)},
-       		    {"Cell 1", new Color(0, 150, 0),
-       		     "Session 1", "Cell", new Integer(15)},
-       		    {"Cell 200", new Color(155, 255, 0),
-       		     "Session 1", "Cell", new Integer(30)},
-       		    {"Cell 3", Color.pink,
-       		     "Session 1", "Cell", new Integer(12)}
-       	        };
+        Object[][] temp = {};
         
         
         tableModel.setTableData(temp);
