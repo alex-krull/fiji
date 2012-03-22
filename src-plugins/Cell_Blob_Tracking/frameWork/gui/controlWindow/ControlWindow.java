@@ -51,9 +51,9 @@ import frameWork.gui.ViewWindow;
 
 
 
-public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ViewWindow<IT> {
+public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ViewWindow<IT> {
 
-	public ControlWindow2(Model <IT>mod, String title, ViewModel <IT> vm) {
+	public ControlWindow(Model <IT>mod, String title, ViewModel <IT> vm) {
 		super(mod, title, vm);
 		// TODO Auto-generated constructor stub
 	}
@@ -289,7 +289,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 
 
-		trackerTable = new TableSort(viewModel);
+		trackerTable = new TableSort(viewModel, model);
 		trackerTable.setOpaque(true);
 		
 		
@@ -522,6 +522,7 @@ public class ControlWindow2 < IT extends  NumericType<IT> & NativeType<IT> & Rea
 	@Override
 	public void addKeyListener(HotKeyListener keyListener) {
 		frame.addKeyListener(keyListener);
+		
 	}
 	
 	

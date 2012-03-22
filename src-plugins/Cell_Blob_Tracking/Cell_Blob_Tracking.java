@@ -15,7 +15,7 @@ import frameWork.gui.MaxProjectionX;
 import frameWork.gui.MaxProjectionY;
 import frameWork.gui.MaxProjectionZ;
 import frameWork.gui.ViewModel;
-import frameWork.gui.controlWindow.ControlWindow2;
+import frameWork.gui.controlWindow.ControlWindow;
 
 public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>>extends AbstractTool{
 
@@ -45,7 +45,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 			viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel),initZoom);
 	        }
 	        
-	        ControlWindow2<IT> cw= new ControlWindow2<IT>(model, "Control Window",viewModel);
+	        ControlWindow<IT> cw= new ControlWindow<IT>(model, "Control Window",viewModel);
 	        cw.go();
 	        viewModel.addViewWindow(cw,initZoom);
 			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel),initZoom);		

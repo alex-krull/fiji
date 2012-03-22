@@ -236,4 +236,11 @@ public List<Sequence<? extends Trackable>> getAllSequencies(){
 	return results;
 }
 
+public Sequence<? extends Trackable> getSequence(int id) {
+	for(TrackingChannel<? extends Trackable, IT> tc:trackingChannels.values()){
+		if(tc.getSequence(id)!=null) return tc.getSequence(id);
+	}
+	return null;
+}
+
 }

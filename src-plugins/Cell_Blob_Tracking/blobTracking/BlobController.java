@@ -36,7 +36,7 @@ public void click(long[] pos, MouseEvent e){
 	}
 	
 	if(e.getID()==MouseEvent.MOUSE_CLICKED){
-		if(e.getButton()!=MouseEvent.BUTTON1 && e.getClickCount()==1){
+		if(e.isShiftDown() && e.getClickCount()==1){
 			trackingChannel.addTrackable(new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], pos[2], 1, trackingChannel.getId()));
 		}
 		

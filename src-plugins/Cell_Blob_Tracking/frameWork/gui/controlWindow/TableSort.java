@@ -53,6 +53,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import frameWork.Model;
+import frameWork.Sequence;
+import frameWork.Trackable;
 import frameWork.gui.ViewModel;
 
 
@@ -66,11 +69,13 @@ public class TableSort extends JPanel {
     private final JTable table;
     private int tableSelected = 0;
     private final ViewModel<?> viewModel;
+    private final Model<?> model;
   
     
-    public TableSort(ViewModel<?> vm) {
+    public TableSort(ViewModel<?> vm, Model m) {
         super(new GridLayout(1,0));
         viewModel=vm;
+        model=m;
 
         tableModel = new MyTableModel();
         
@@ -157,8 +162,8 @@ public class SelectionListener implements MouseListener{
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			// TODO Auto-generated method stub
 			
+	   		
 		}
 
 		@Override
@@ -170,7 +175,7 @@ public class SelectionListener implements MouseListener{
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			
-    		List <Integer> results = new ArrayList<Integer>();
+			List <Integer> results = new ArrayList<Integer>();
     		for(int i=0; i<table.getRowCount();i++){
     			if(table.isRowSelected(i)){
     				results.add((Integer)table.getModel().getValueAt(i, 0));
@@ -179,7 +184,15 @@ public class SelectionListener implements MouseListener{
     		}
     		viewModel.setSelectionList(results);
     		tableSelected++;
-			
+    		
+    		
+    		// assuming if you double click you only select one entry
+    		if(e.getClickCount()>1 && !results.isEmpty()){
+    			int selected= results.get(0);
+    			Sequence<? extends Trackable> seq= model.getSequence(selected);
+    			viewModel.setPosition(3, seq.getFirstFrame());
+    			
+    		}
 		}
 
 		@Override
