@@ -42,6 +42,8 @@ package frameWork.gui.controlWindow;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,8 +51,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import frameWork.gui.ViewModel;
@@ -94,10 +94,10 @@ public class TableSort extends JPanel {
         table = new JTable(tableModel);
         
         //Makes a selection listener
-        SelectionListener listener = new SelectionListener();
-        table.getSelectionModel().addListSelectionListener(listener);
+        MouseListener listener = new SelectionListener();
+        table.addMouseListener(listener);
         
-        table.getColumnModel().getSelectionModel().addListSelectionListener(listener);
+     //   table.getColumnModel().getSelectionModel().addListSelectionListener(listener);
         //JTable table = new JTable(new MyTableModel());
         
         
@@ -150,15 +150,26 @@ public class TableSort extends JPanel {
     	}
     	return userColor;
     }
-public class SelectionListener implements ListSelectionListener{
+public class SelectionListener implements MouseListener{
 
 		
-    	@Override
-		public void valueChanged(ListSelectionEvent e) {
-    		
-    		
-    	synchronized (viewModel){	
-    		if(e.getValueIsAdjusting()) return;
+    
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			
     		List <Integer> results = new ArrayList<Integer>();
     		for(int i=0; i<table.getRowCount();i++){
     			if(table.isRowSelected(i)){
@@ -168,25 +179,20 @@ public class SelectionListener implements ListSelectionListener{
     		}
     		viewModel.setSelectionList(results);
     		tableSelected++;
-    	}
-    		//System.out.println(tableSelected);
-/*           // If cell selection is enabled, both row and column change events are fired
-            if (e.getSource() == table.getSelectionModel()
-                  && table.getRowSelectionAllowed()) {
-            	// Row selection changed
-                int first = e.getFirstIndex();
-                int last = e.getLastIndex();
-            } else if (e.getSource() == table.getColumnModel().getSelectionModel()
-                   && table.getColumnSelectionAllowed() ){
-            	// Column selection changed
-                int first = e.getFirstIndex();
-                int last = e.getLastIndex();
-            }
+			
+		}
 
-            if (e.getValueIsAdjusting()) {
-                // The mouse button has not yet been released
-            }*/
-        }
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
     	
     	
     }
