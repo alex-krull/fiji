@@ -28,9 +28,20 @@ public void click(long[] pos, MouseEvent e){
 	System.out.println("click!!!!");
 	
 	if(e.getID()==MouseEvent.MOUSE_PRESSED){
+		
 		if(e.getClickCount()==1){
+			
 		selectedSequenceId=model.selectAt((int)pos[0],(int) pos[1],(int) pos[2],(int) pos[3],(int) pos[4]);	 
 		System.out.println("        new selected Sequence ID:"+selectedSequenceId);
+		if(!e.isControlDown()){
+			selectedIdList.clear();			
+		}
+		if(this.selectedIdList.contains(selectedSequenceId)){
+			selectedIdList.remove(new Integer( selectedSequenceId));	
+		}else {
+			selectedIdList.add(new Integer( selectedSequenceId));
+		}
+		
 		
 		}
 	}
