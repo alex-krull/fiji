@@ -134,7 +134,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 				t.sequenceId=newSid;
 				trackingChannel.addTrackable(t);
 				System.out.println("adding frame:"+ t.frameId);
-			}			
+			}		
 		}
 		model.makeChangesPublic();	
 	}

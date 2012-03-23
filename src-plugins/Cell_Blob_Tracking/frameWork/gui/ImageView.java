@@ -9,7 +9,6 @@ import ij.gui.ImageCanvas;
 import ij.gui.Line;
 import ij.gui.Overlay;
 import ij.gui.Roi;
-import ij.plugin.ContrastEnhancer;
 
 import java.awt.Color;
 import java.awt.event.ComponentEvent;
@@ -119,8 +118,8 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 			
 			RandomAccessibleInterval<IT> temp = ImglibTools.scaleAndShift(toDraw, transX, transY, scaleX, scaleY, xSize, ySize);
 			ImagePlus impl=ImageJFunctions.wrap( temp , caption);
-			ContrastEnhancer ce= new ContrastEnhancer();
-			ce.stretchHistogram(impl.getProcessor(), 0.5); 
+	//		ContrastEnhancer ce= new ContrastEnhancer();
+	//		ce.stretchHistogram(impl.getProcessor(), 0.5); 
 			this.imp.setProcessor(impl.getProcessor());
 			}
 	
