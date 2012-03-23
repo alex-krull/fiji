@@ -70,6 +70,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	ArrayList<Object> tableData = new ArrayList();
 	JFrame frame;
 	JPanel rightPanel;
+	JPanel centerPanel;
+	JPanel leftPanel;
+	JPanel bottomPanel;
 	JList visList;
 	JButton start;
 	JTextArea text;
@@ -92,9 +95,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		rightPanel = new JPanel();
-		JPanel leftPanel = new JPanel();
-		JPanel centerPanel = new JPanel();
-		JPanel bottomPanel = new JPanel();
+		leftPanel = new JPanel();
+		centerPanel = new JPanel();
+		bottomPanel = new JPanel();
 		// Some constants
 		Dimension labelDim = new Dimension(60, 28);
 		Dimension labelDim2 = new Dimension(60, 19);
@@ -310,6 +313,10 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		JMenuItem newMenuItem = new JMenuItem("New");
 		fileMenu.add(newMenuItem);
+		JMenuItem saveAllMenu = new JMenuItem("Save all");
+		saveAllMenu.addActionListener(new SaveAllListener());
+		fileMenu.add(saveAllMenu);
+		
 		menuBar.add(fileMenu);
 		menuBar.setBackground(Color.white);
 		menuBar.setForeground(Color.BLACK);
@@ -326,7 +333,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		frame.getContentPane().add(BorderLayout.WEST, leftPanel);
 		frame.setSize(1000,600);
 		frame.setVisible(true);
-
+		
+		//frame.setFocusable(true);
+		//HotKeyListener keyListener = new HotKeyListener(viewModel);
+		//frame.addKeyListener(keyListener);
+		//trackerTable.addKeyListener(keyListener);
+		//trackerTable.setFocusable(true);
 
 		frameSpinner.addChangeListener(new FrameSpinnerListener());
 		zSpinner.addChangeListener(new ZSpinnerListener());
@@ -534,6 +546,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	@Override
 	public void addKeyListener(HotKeyListener keyListener) {
 		frame.addKeyListener(keyListener);
+		trackerTable.addKeyListener(keyListener);
+		centerPanel.addKeyListener(keyListener);
+		rightPanel.addKeyListener(keyListener);
+		bottomPanel.addKeyListener(keyListener);
+		leftPanel.addKeyListener(keyListener);
+		
 		
 	}
 	
