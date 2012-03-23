@@ -95,19 +95,28 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	}
 	
 	public void splitSequnce(int frameNumber){
-		trackingChannel.splitSequenence(selectedSequenceId, model.getNextSequqnceId(), frameNumber);
+		for(Integer seqId: this.selectedIdList){
+			trackingChannel.splitSequenence(seqId, model.getNextSequqnceId(), frameNumber);
+		}
+		
+		
 		model.makeChangesPublic();
 	}
 	
 	public void deleteSequence(){
-		trackingChannel.deleteSequence(selectedSequenceId);
+		for(Integer seqId: this.selectedIdList){
+			trackingChannel.deleteSequence(seqId);
+		}
+		
 		selectedSequenceId=-1;
 		model.makeChangesPublic();
 	}
 	
 	public void trimSequence(int frameNumber){
-		trackingChannel.splitSequenence(selectedSequenceId, -1, frameNumber);
-		trackingChannel.deleteSequence(-1);
+		for(Integer seqId: this.selectedIdList){
+			trackingChannel.splitSequenence(seqId, -1, frameNumber);
+			trackingChannel.deleteSequence(-1);
+		}
 		model.makeChangesPublic();
 	}
 	
