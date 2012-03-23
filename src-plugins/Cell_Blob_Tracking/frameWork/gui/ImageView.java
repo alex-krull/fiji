@@ -8,9 +8,12 @@ import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.Line;
 import ij.gui.Overlay;
+import ij.gui.Roi;
 import ij.plugin.ContrastEnhancer;
 
 import java.awt.Color;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyListener;
 import java.util.List;
 import java.util.SortedMap;
@@ -22,6 +25,7 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 import tools.ImglibTools;
+
 
 
 /**
@@ -43,6 +47,34 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	protected int ySize=-1;
 
 	protected RandomAccessibleInterval<IT> toDraw;
+	
+	public class myPropChangeListener implements ComponentListener {
+
+		@Override
+		public void componentResized(ComponentEvent e) {
+			upDateOverlay();	
+			
+		}
+
+		@Override
+		public void componentMoved(ComponentEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void componentShown(ComponentEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void componentHidden(ComponentEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 	
 	@Override
 	public void addKeyListener(HotKeyListener keyListener){
@@ -69,6 +101,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		ov= new Overlay();
 		image=img;
 	 	if(imp==null) rePaint(vm.getPosition(),true);
+	 	imp.getCanvas().addComponentListener(new myPropChangeListener());
 	 	
 	}
 	
@@ -101,8 +134,15 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	}
 
 	protected void upDateOverlay(){
-		if(viewModel.getDrawOverLays()) imp.setOverlay(ov);
+		if(viewModel.getDrawOverLays()){
+			for(int i=0;i<ov.size();i++){
+				Roi roi=ov.get(i);
+				roi.setStrokeWidth(roi.getStrokeWidth()/imp.getCanvas().getMagnification());
+			}
+			imp.setOverlay(ov);
+		}
 		else imp.setOverlay(null);	
+		
 	}
 	
 	protected void clearOverlay(){
