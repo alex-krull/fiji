@@ -122,6 +122,23 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		model.makeChangesPublic();
 	}
 	
+	
+	public void mergeSequenences(){
+		int newSid=model.getNextSequqnceId();
+		for(Integer sid: this.selectedIdList){
+			Sequence<T> s=trackingChannel.getSequence(sid);
+			for(int i= s.getFirstFrame();i<=s.getLastFrame();i++){
+				
+				TrackingFrame<T,IT> tf= trackingChannel.getFrame(0);
+				T t=tf.copy( s.getTrackableForFrame(i) );
+				t.sequenceId=newSid;
+				trackingChannel.addTrackable(t);
+				System.out.println("adding frame:"+ t.frameId);
+			}			
+		}
+		model.makeChangesPublic();	
+	}
+	
 	public void setColor(Color color){
 		trackingChannel.getSequence(this.selectedSequenceId).setColor(color);
 	}

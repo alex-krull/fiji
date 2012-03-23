@@ -43,7 +43,13 @@ public class HotKeyListener implements KeyListener {
 		    
 		  case KeyEvent.VK_C:			  
 			  viewModel.setColor(new Color(255,255,0));		 
-		      return;     
+		      return;
+		      
+		  case KeyEvent.VK_M:			  
+			  viewModel.mergeSequenences();		 
+		      return; 
+		      
+		      
 		  
 		        
 		}
