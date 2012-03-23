@@ -112,8 +112,13 @@ for(Sequence<? extends Trackable > seq: list){
 	seq.writeToFile("seq"+seq.getId()+".txt");
 }
 
+	
+	
+}
 
-
+public void mergeSequenences(){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	cc.mergeSequenences();
 }
 
 //public int getSelectedSeqId(){

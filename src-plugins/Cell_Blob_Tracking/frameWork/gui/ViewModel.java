@@ -237,4 +237,8 @@ public void setSelectionList(List <Integer> selectedIds){
 	controller.setSelectionList(selectedIds);
 }
 
+public void mergeSequenences(){
+	controller.mergeSequenences();
+}
+
 }
