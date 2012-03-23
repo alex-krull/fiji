@@ -35,12 +35,15 @@ private final int numberOfSlices;
 private	RandomAccessibleInterval<IT> image;
 private final SortedMap <Integer, MovieChannel <IT> > channels;
 private final SortedMap <Integer, TrackingChannel <? extends Trackable,IT> > trackingChannels;
-private int nextSequqnceId=0;
+private final int nextSequqnceId=0;
 private int nextTCId=0;
 
 public synchronized int getNextSequqnceId(){
-	nextSequqnceId++;
-	return nextSequqnceId-1;
+	for(int i=1;i<10000;i++){
+		if(this.getSequence(i)==null)
+			return i;
+	}
+	return -1;
 }
 
 public synchronized int getNextTCId(){
