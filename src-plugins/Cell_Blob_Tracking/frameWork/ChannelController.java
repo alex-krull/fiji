@@ -107,6 +107,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		for(Integer seqId: this.selectedIdList){
 			trackingChannel.deleteSequence(seqId);
 		}
+		selectedIdList.clear();
 		
 		selectedSequenceId=-1;
 		model.makeChangesPublic();
@@ -114,6 +115,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	
 	public void trimSequence(int frameNumber){
 		for(Integer seqId: this.selectedIdList){
+			
 			trackingChannel.splitSequenence(seqId, -1, frameNumber);
 			trackingChannel.deleteSequence(-1);
 		}
