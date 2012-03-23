@@ -16,7 +16,7 @@ public BlobController(Model<IT> model, TrackingChannel<Blob,IT> tc){
 	super(model,tc);
 	
 	
-	for(int i=0;i<model.getNumberOfFrames();i++){ 
+	for(int i=0;i<model.getNumberOfFrames();i++){
     }	
 	
 	

@@ -3,6 +3,7 @@ package frameWork;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.imglib2.type.NativeType;
@@ -14,7 +15,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	protected int selectedSequenceId;
 	protected T selectedTrackable;
 	protected TrackingChannel<T,IT> trackingChannel;
-	protected List <Integer> selectedIds;
+	protected List <Integer> selectedIdList;
 	
 	public abstract void click(long[] pos, MouseEvent e);
 	
@@ -25,6 +26,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 			selectedSequenceId=selectedIds.get(0);
 		else
 			selectedSequenceId=-1;
+		selectedIdList=selectedIds;
 	}
 	
 	public void optimizeFrame(int frameNumber){
@@ -32,11 +34,12 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		model.makeChangesPublic(frameNumber);
 	}
 	
-	protected int getSelectedSeqId(){
-		return selectedSequenceId;
-	}
+//	protected int getSelectedSeqId(){
+//		return selectedSequenceId;
+//	}
 	
 	protected ChannelController( Model<IT> mod,TrackingChannel<T,IT> tc ){
+		selectedIdList=new ArrayList<Integer>();
 		model =mod;
 		trackingChannel=tc;
 	}
@@ -113,7 +116,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	}
 	
 	public boolean isSelected(int sId){
-		return sId==this.selectedSequenceId;
+		return this.selectedIdList.contains(sId);
 	}
 	
 	

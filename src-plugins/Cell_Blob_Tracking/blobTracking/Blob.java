@@ -106,8 +106,8 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 				0.5+yPos, 1);
 		
 		roi.setStrokeColor(c);
-		roi.setStrokeWidth(0.5);
-		if(selected) roi.setStrokeWidth(2);
+		roi.setStrokeWidth(1);
+		if(selected) roi.setStrokeWidth(4);
 		ov.add(roi);
 		
 		
@@ -126,8 +126,8 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		Roi roi=new EllipseRoi(xPos , zPos-2*sigmaZ, xPos ,
 				zPos+2*sigmaZ, sigma / sigmaZ);
 		roi.setStrokeColor(c);
-		roi.setStrokeWidth(0.5);
-		if(selected) roi.setStrokeWidth(2);
+		roi.setStrokeWidth(1);
+		if(selected) roi.setStrokeWidth(4);
 		ov.add(roi);
 	}
 
@@ -139,8 +139,8 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		Roi roi = new EllipseRoi(zPos + sigmaZ * 2, yPos, zPos - sigmaZ * 2,
 				yPos, sigma / sigmaZ);
 		roi.setStrokeColor(c);
-		roi.setStrokeWidth(0.5);
-		if(selected) roi.setStrokeWidth(2);
+		roi.setStrokeWidth(1);
+		if(selected) roi.setStrokeWidth(4);
 		ov.add(roi);
 	}
 	

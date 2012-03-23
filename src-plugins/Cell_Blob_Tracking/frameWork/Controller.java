@@ -116,10 +116,10 @@ for(Sequence<? extends Trackable > seq: list){
 
 }
 
-public int getSelectedSeqId(){
-	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
-	return cc.getSelectedSeqId();
-}
+//public int getSelectedSeqId(){
+//	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+//	return cc.getSelectedSeqId();
+//}
 
 public void setColor(Color c){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
