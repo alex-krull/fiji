@@ -1,6 +1,8 @@
 package frameWork;
 
 
+import ij.IJ;
+
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -8,6 +10,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +55,8 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 //			tc.addTrackable(new Blob(3,500,20 +Math.cos(0/15.0f)*25,70+ Math.sin(0/35.0f)*25,15,4, 0));
 		//}
 		
-		readFile("/home/alex/Desktop/test.txt");
+		//readFile("/home/alex/Desktop/test.txt");
+		processFile("/home/alex/workspace/fiji/seq1.txt");
 	}
 	
 private List <String> getFilesFromDirectory(String directory){
@@ -75,7 +79,10 @@ private List <String> getFilesFromDirectory(String directory){
 	return results;
 }
 
-private void readFile(String fName){
+private void processFile(String fName){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	
+	
 	try{
 		  // Open the file that is the first 
 		  // command line parameter
@@ -86,14 +93,15 @@ private void readFile(String fName){
 		  String strLine;
 		  //Read File Line By Line
 		  while ((strLine = br.readLine()) != null)   {
-		  // Print the content on the console
-		  System.out.println (strLine);
+			  cc.processLineFromFile(strLine);
+			  System.out.println (strLine);
 		  }
 		  //Close the input stream
 		  in.close();
-		    }catch (Exception e){//Catch exception if any
-		  System.err.println("Error: " + e.getMessage());
+		    }catch (IOException e){//Catch exception if any
+		  IJ.error("Error: " + e.getMessage());
 		  }
+	model.makeChangesPublic();
 }
 
 

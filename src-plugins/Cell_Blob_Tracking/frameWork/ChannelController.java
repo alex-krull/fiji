@@ -147,5 +147,9 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		return this.selectedIdList.contains(sId);
 	}
 	
+	public void processLineFromFile(String line){
+		trackingChannel.addTrackable(trackingChannel.loadTrackableFromString(line));
+	}
+	
 	
 }
