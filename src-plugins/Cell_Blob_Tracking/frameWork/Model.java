@@ -35,8 +35,35 @@ private final int numberOfSlices;
 private	RandomAccessibleInterval<IT> image;
 private final SortedMap <Integer, MovieChannel <IT> > channels;
 private final SortedMap <Integer, TrackingChannel <? extends Trackable,IT> > trackingChannels;
-private final int nextSequqnceId=0;
 private int nextTCId=0;
+private String imageFileName;
+
+public String getImageFileName() {
+	return imageFileName;
+}
+
+public void setImageFileName(String imageFileName) {
+	this.imageFileName = imageFileName;
+}
+
+public String getImageDrirectory() {
+	return imageDrirectory;
+}
+
+public void setImageDrirectory(String imageDrirectory) {
+	this.imageDrirectory = imageDrirectory;
+}
+
+private String imageDrirectory;
+private String projectDirectory;
+
+public String getProjectDirectory() {
+	return projectDirectory;
+}
+
+public void setProjectDirectory(String projectDirectory) {
+	this.projectDirectory = projectDirectory;
+}
 
 public synchronized int getNextSequqnceId(){
 	for(int i=1;i<10000;i++){
@@ -83,10 +110,10 @@ public void setMultiChannel(boolean isMultiChannel) {
 
 public Model(ImagePlus imp){
 	
-	image=ImagePlusAdapter.wrap(imp);
-	
-
-	
+	imageFileName=imp.getOriginalFileInfo().fileName;
+	imageDrirectory=imp.getOriginalFileInfo().directory;
+	projectDirectory=imageDrirectory; // default projectDirectory is fileDirectory
+	image=ImagePlusAdapter.wrap(imp);	
 	
 	setTimeSequence(imp.getNFrames()>1);
 	setMultiChannel(imp.getNChannels()>1);

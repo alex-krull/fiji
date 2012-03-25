@@ -3,6 +3,13 @@ package frameWork;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -40,13 +47,57 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		selectedTCId=tc.getId();
 		
 		//for(int j=0;j<tc.getNumberOfFrames();j++){
-			tc.addTrackable(new Blob(2,500,20 +Math.cos(0/15.0f)*25,70+ Math.sin(0/35.0f)*25,15,4, 0));
+//			tc.addTrackable(new Blob(2,500,20 +Math.cos(0/15.0f)*25,70+ Math.sin(0/35.0f)*25,15,4, 0));
 //			tc.addTrackable(new Blob(1,500,20 +Math.cos(0/15.0f)*25,70+ Math.sin(0/35.0f)*25,15,4, 0));
 //			tc.addTrackable(new Blob(3,500,20 +Math.cos(0/15.0f)*25,70+ Math.sin(0/35.0f)*25,15,4, 0));
 		//}
+		
+		readFile("/home/alex/Desktop/test.txt");
 	}
 	
+private List <String> getFilesFromDirectory(String directory){
+	File dir = new File(directory);
+	
+	FilenameFilter filter = new FilenameFilter() {
+	    public boolean accept(File dir, String name) {
+	        if (name.startsWith(".")) return false;
+	        return name.endsWith(".trc");
+	    }
+	};
+	
+	String[] listOfFiles= dir.list(filter);
+	
+	
+	List <String> results= new ArrayList<String>();
+	for(int i=0;i<listOfFiles.length;i++)
+		results.add(listOfFiles[i]);
+	
+	return results;
+}
 
+private void readFile(String fName){
+	try{
+		  // Open the file that is the first 
+		  // command line parameter
+		  FileInputStream fstream = new FileInputStream(fName);
+		  // Get the object of DataInputStream
+		  DataInputStream in = new DataInputStream(fstream);
+		  BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		  String strLine;
+		  //Read File Line By Line
+		  while ((strLine = br.readLine()) != null)   {
+		  // Print the content on the console
+		  System.out.println (strLine);
+		  }
+		  //Close the input stream
+		  in.close();
+		    }catch (Exception e){//Catch exception if any
+		  System.err.println("Error: " + e.getMessage());
+		  }
+}
+
+
+	
 
 /**
  * Processes a MoseEvent generated at one of the ViewWindows 
