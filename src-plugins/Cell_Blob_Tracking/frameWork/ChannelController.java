@@ -3,8 +3,13 @@ package frameWork;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
+import tools.OtherTools;
 
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
@@ -150,6 +155,31 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	public void processLineFromFile(String line){
 		trackingChannel.addTrackable(trackingChannel.loadTrackableFromString(line));
 	}
+	
+	public void saveSequence(Sequence<T> seq){
+		
+		try {
+			FileWriter fileWriter= new FileWriter("seq"+seq.getId()+".txt");
+			fileWriter.write("%-session properties-\n");
+			OtherTools.writeProperties(fileWriter, trackingChannel.getProperties(new Properties()));	
+			
+			
+			
+			seq.writeToFile(fileWriter);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveAll(){
+		
+		for(Sequence<T> seq: trackingChannel.getSeqsCollection()){
+			saveSequence(seq);
+		}
+	}
+	
+	
 	
 	
 }

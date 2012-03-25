@@ -12,8 +12,11 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -92,7 +95,43 @@ private void processFile(String fName){
 		  BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		  String strLine;
 		  //Read File Line By Line
-		  while ((strLine = br.readLine()) != null)   {
+		  
+		  while ((strLine = br.readLine()) != null&& strLine.startsWith("%")){
+			  if(strLine.equals("%-session properties-")) break;	//skip through initial comments
+			  System.out.println(strLine);
+		  }
+		  
+		  
+		  Properties sessionProbs= new Properties();	//Get SessionProperties
+		  String forReader="";
+		  while ((strLine = br.readLine()) != null&& strLine.startsWith("%")){
+			  if(strLine.equals("%-sequence properties-")) break;
+			  forReader= forReader+ strLine.replace("%","")+"\n";  
+			  System.out.println(strLine);
+		  }
+		  Reader reader= new StringReader(forReader);
+		  sessionProbs.load(reader);
+		  IJ.error(forReader);
+		  IJ.error(sessionProbs.toString());
+	  
+		  Properties sequenceProbs= new Properties();	//Get SequenceProperties
+		  forReader="";
+		  while ((strLine = br.readLine()) != null&& strLine.startsWith("%")){
+			  if(strLine.equals("%-data-")) break;
+			  forReader= forReader+ strLine.replace("%","")+"\n";
+			  System.out.println(strLine);
+		  }
+		  reader= new StringReader(forReader);
+		  sequenceProbs.load(reader);
+		  IJ.error(forReader);
+		  IJ.error(sequenceProbs.toString());
+		  
+		  
+		  System.out.println(sessionProbs.toString());
+		  System.out.println(sequenceProbs.toString());
+		  		  
+		  
+		  while ((strLine = br.readLine()) != null)   {	// get data		  
 			  cc.processLineFromFile(strLine);
 			  System.out.println (strLine);
 		  }
@@ -166,13 +205,9 @@ public void trimSequence(int frameId){
 }
 
 public void saveAll(){
-List <Sequence<? extends Trackable >> list =model.getAllSequencies();
-for(Sequence<? extends Trackable > seq: list){
-	seq.writeToFile("seq"+seq.getId()+".txt");
-}
-
-	
-	
+	for(ChannelController<? extends Trackable,IT> cc: this.channelControllers.values()){
+		cc.saveAll();
+	}
 }
 
 public void mergeSequenences(){

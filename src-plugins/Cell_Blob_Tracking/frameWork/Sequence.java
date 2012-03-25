@@ -3,18 +3,25 @@ package frameWork;
 import ij.gui.Overlay;
 
 import java.awt.Color;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import tools.OtherTools;
 
 public abstract class Sequence<T extends Trackable> {
 	protected int id;
 	protected String label;
 	protected SortedMap <Integer,T> trackables;
-	protected List<List<T>> pieces;
+
 	protected Color color;
+	protected Properties properties;
 	
 	public int getFirstFrame(){
 		return trackables.firstKey();
@@ -37,7 +44,11 @@ public abstract class Sequence<T extends Trackable> {
 		id = ident;
 		label=lab;
 		trackables=new TreeMap<Integer,T>();
-	//	pieces= getPieces();
+		properties=new Properties();
+		properties.setProperty("this", "property");
+		properties.setProperty("is", "property");
+		properties.setProperty("a", "property");
+		properties.setProperty("test", "property");
 		
 	}
 	
@@ -71,24 +82,28 @@ public abstract class Sequence<T extends Trackable> {
 		return id;
 	}
 	
-	public boolean writeToFile(String fName){
-	try{
-		FileWriter fileWriter= new FileWriter(fName);
-		
-		for(T trackable: trackables.values()){	
+	public boolean writeToFile(FileWriter fileWriter) throws IOException{
+		fileWriter.write("%-sequence properties-\n");
+		OtherTools.writeProperties(fileWriter, getProperties(new Properties()));		
+		fileWriter.write("%-data-\n");
+		for(T trackable: trackables.values()){
 			fileWriter.write(trackable.toSaveString()+"\n");
 		}
 		
 		fileWriter.flush();
-	}catch(IOException e){
-		return false;
-	}
+	
 	
 	
 	
 	return true;
 	}
 	
+	public Properties getProperties(Properties props){
+		props.setProperty("sessionProp1", "test1");
+		props.setProperty("sessionProp2", "test2");
+		props.setProperty("seqId:",String.valueOf(getId()));
+		return props;
+	}
 	
 	public abstract void getKymoOverlayX(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected);
 	public abstract void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected);
