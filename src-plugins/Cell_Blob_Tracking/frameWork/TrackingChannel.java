@@ -20,6 +20,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	private final int id;
 	private long numOfFrames;
 	private String label;
+	protected Policy<T,IT> policy;
 	
 	public String getLabel() {
 		return label;
@@ -29,7 +30,8 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		this.label = label;
 	}
 
-	protected TrackingChannel(int newID){
+	protected TrackingChannel(int newID, Policy<T,IT> pol){
+		policy=pol;
 		id=newID;
 		label="session-"+String.valueOf(id);
 	}
@@ -135,7 +137,8 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 
 	}
 	
-	public Properties getProperties(Properties props){
+	public Properties getProperties(){
+		Properties props= new Properties();
 		props.setProperty("sessionProp1", "test1");
 		props.setProperty("sessionProp2", "test2");
 		props.setProperty("sessionId:",String.valueOf(getId()));
@@ -146,8 +149,12 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		return produceSequence(-1,"").getTypeName();
 	}
 	
+	protected Sequence<T> produceSequence(int ident, String lab){
+		return policy.produceSequence(ident, lab);
+	}
+	
 	protected abstract TrackingFrame<T,IT> produceFrame(int frameNum);
-	protected abstract Sequence<T> produceSequence(int ident, String lab);
+	
 	protected abstract boolean isAssociatedWithMovieChannel(int id);
 	public abstract T loadTrackableFromString(String s);
 		

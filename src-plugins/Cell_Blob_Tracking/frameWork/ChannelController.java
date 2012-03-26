@@ -161,7 +161,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		try {
 			FileWriter fileWriter= new FileWriter(model.getProjectDirectory()+"/seq"+seq.getId()+".trcT");
 			fileWriter.write("%-session properties-\n");
-			OtherTools.writeProperties(fileWriter, trackingChannel.getProperties(new Properties()));	
+			OtherTools.writeProperties(fileWriter, trackingChannel.getProperties());	
 			
 			
 			

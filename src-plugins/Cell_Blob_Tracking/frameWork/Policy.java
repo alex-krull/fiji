@@ -1,6 +1,10 @@
 package frameWork;
 
+import ij.gui.Overlay;
+
+import java.awt.Color;
 import java.util.Properties;
+import java.util.SortedMap;
 
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
@@ -19,4 +23,9 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 	public abstract ChannelController<T,IT> produceControllerAndChannel(Properties sessionProps, Model <IT> model);
 	public abstract String getTypeName();
 	protected abstract Sequence<T> produceSequence(int ident, String lab);
+	
+	public abstract void getKymoOverlayX(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected,
+			SortedMap <Integer,T> trackables, Color color);
+	public abstract void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected,
+			SortedMap <Integer,T> trackables, Color color);
 }

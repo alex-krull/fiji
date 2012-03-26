@@ -11,13 +11,14 @@ import java.util.TreeMap;
 
 import tools.OtherTools;
 
-public abstract class Sequence<T extends Trackable> {
+public class Sequence<T extends Trackable> {
 	protected int id;
 	protected String label;
 	protected SortedMap <Integer,T> trackables;
 
 	protected Color color;
 	protected Properties properties;
+	protected Policy<T,?> policy;
 	
 	public int getFirstFrame(){
 		return trackables.firstKey();
@@ -35,7 +36,8 @@ public abstract class Sequence<T extends Trackable> {
 		this.color = color;
 	}
 
-	public Sequence(int ident, String lab){
+	public Sequence(int ident, String lab, Policy<T,?> pol){
+		policy=pol;
 		color=new Color(255,0,0,255);
 		id = ident;
 		label=lab;
@@ -72,7 +74,9 @@ public abstract class Sequence<T extends Trackable> {
 		return secondPart;
 	}
 	
-	public abstract String getTypeName();
+	public String getTypeName(){
+		return policy.getTypeName();
+	}
 	
 	public int getId(){
 		return id;
@@ -80,7 +84,7 @@ public abstract class Sequence<T extends Trackable> {
 	
 	public boolean writeToFile(FileWriter fileWriter) throws IOException{
 		fileWriter.write("%-sequence properties-\n");
-		OtherTools.writeProperties(fileWriter, getProperties(new Properties()));		
+		OtherTools.writeProperties(fileWriter, getProperties());		
 		fileWriter.write("%-data-\n");
 		for(T trackable: trackables.values()){
 			fileWriter.write(trackable.toSaveString()+"\n");
@@ -94,15 +98,21 @@ public abstract class Sequence<T extends Trackable> {
 	return true;
 	}
 	
-	public Properties getProperties(Properties props){
-		props.setProperty("sessionProp1", "test1");
-		props.setProperty("sessionProp2", "test2");
+	public Properties getProperties(){
+		Properties props= new Properties();
 		props.setProperty("seqId:",String.valueOf(getId()));
 		return props;
 	}
 	
-	public abstract void getKymoOverlayX(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected);
-	public abstract void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected);
+	
+	
+	public void getKymoOverlayX(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected){
+		policy.getKymoOverlayX(ov, scaleX, scaleY, transX, transY, selected, trackables, color);
+	}
+	
+	public void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected){
+		policy.getKymoOverlayY(ov, scaleX, scaleY, transX, transY, selected, trackables, color);
+	}
 	
 
 }

@@ -1,10 +1,13 @@
 package blobTracking;
 
 
+import java.util.Properties;
+
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.MovieChannel;
+import frameWork.Policy;
 import frameWork.Sequence;
 import frameWork.TrackingChannel;
 import frameWork.TrackingFrame;
@@ -12,15 +15,16 @@ import frameWork.TrackingFrame;
 public class BlobTrackingChannel  <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends TrackingChannel <Blob, IT> {
 
 	private final MovieChannel<IT> mChannel;
-	public BlobTrackingChannel( MovieChannel<IT> mv, int iD){
-		super(iD);
+	public BlobTrackingChannel( MovieChannel<IT> mv, int iD, Policy<Blob,IT> pol){
+		
+		super(iD,pol);
 		mChannel=mv;
 		initialize(mv.getNumberOfFrames());
 	}
 	
 	@Override
 	public Sequence<Blob> produceSequence(int ident, String lab) {
-		return new BlobSequence( ident,  lab);
+		return new Sequence<Blob>( ident,  lab, policy);
 	}
 	
 	@Override
@@ -53,8 +57,13 @@ public class BlobTrackingChannel  <IT extends NumericType<IT> & NativeType<IT> &
 		
 		return new Blob(sId, fNum, x, y, z, sigma, this.getId());
 	}
-
 	
+	@Override
+	public Properties getProperties(){
+		Properties props=super.getProperties();
+		//props.setProperty(, value);
+		return props;
+	}
 	
 
 }
