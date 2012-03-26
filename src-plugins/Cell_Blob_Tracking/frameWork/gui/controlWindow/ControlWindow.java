@@ -367,8 +367,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
-		String[] trackingMethods = {"Blob", "Cell"};
-
+		//String[] trackingMethods = {"Blob", "Cell"};
+		String[] trackingMethods = viewModel.getController().getPossibleSessionTypes();
 
 
 		GenericDialog gd = new GenericDialog("New Session");
@@ -394,7 +394,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		text.append((String) trace[2][0] + "\n");*/
 		
 		
-
+		viewModel.getController().addSession(choices, temp);
 	} 
 
 	public void changeSessionDialog() {
@@ -524,7 +524,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			Long frameNumber = (Long) frameSpinner.getModel().getValue();
 			
 			text.selectAll();
-			text.append((String) "Tracking Frame " + frameNumber + "\n");
+			text.append("Tracking Frame " + frameNumber + "\n");
 		}
 /*		 i = 0;
 		Color[] tempColor = trackerTable.getColor();

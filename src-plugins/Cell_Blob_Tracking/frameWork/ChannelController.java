@@ -20,6 +20,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	protected T selectedTrackable;
 	protected TrackingChannel<T,IT> trackingChannel;
 	protected List <Integer> selectedIdList;
+	protected Policy <T,IT> policy;
 	
 	public abstract void click(long[] pos, MouseEvent e);
 	
@@ -176,6 +177,20 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		for(Sequence<T> seq: trackingChannel.getSeqsCollection()){
 			saveSequence(seq);
 		}
+	}
+	
+	public boolean CheckOrCreateSequence(Properties seqProps){
+		int id=Integer.valueOf(seqProps.getProperty("id"));
+		Sequence<T> seq= trackingChannel.getSequence(id);
+		if (seq==null){
+			
+			return false;
+		}
+		return true;
+	}
+	
+	public int getId(){
+		return trackingChannel.getId();
 	}
 	
 	

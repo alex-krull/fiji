@@ -35,7 +35,6 @@ private final int numberOfSlices;
 private	RandomAccessibleInterval<IT> image;
 private final SortedMap <Integer, MovieChannel <IT> > channels;
 private final SortedMap <Integer, TrackingChannel <? extends Trackable,IT> > trackingChannels;
-private int nextTCId=0;
 private String imageFileName;
 private String imageDrirectory;
 private String projectDirectory;
@@ -74,8 +73,11 @@ public synchronized int getNextSequqnceId(){
 }
 
 public synchronized int getNextTCId(){
-	nextTCId++;
-	return nextTCId-1;
+	for(int i=0;i<10000;i++){
+		if(this.getTrackingChannel(i)==null)
+			return i;
+	}
+	return -1;
 }
 
 public void setVolume(boolean isVolume) {

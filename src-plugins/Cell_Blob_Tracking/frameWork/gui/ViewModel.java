@@ -241,4 +241,8 @@ public void mergeSequenences(){
 	controller.mergeSequenences();
 }
 
+public Controller<IT> getController(){
+	return controller;
+}
+
 }

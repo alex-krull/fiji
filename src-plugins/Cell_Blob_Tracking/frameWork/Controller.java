@@ -17,6 +17,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -66,6 +67,7 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 
 	public void addPolicy(Policy<? extends Trackable,IT> policy){
 		policies.put(policy.getTypeName(), policy);
+		
 	}
 	
 private List <String> getFilesFromDirectory(String directory){
@@ -90,9 +92,7 @@ private List <String> getFilesFromDirectory(String directory){
 }
 
 private void processFile(String fName){
-	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
-	
-	
+		
 	try{
 		  // Open the file that is the first 
 		  // command line parameter
@@ -109,8 +109,8 @@ private void processFile(String fName){
 		  }
 		  
 		  
-		  Properties sessionProbs= new Properties();	//Get SessionProperties
-		  this.createSessionIfRequired(sessionProbs);
+		  Properties sessionProps= new Properties();	//Get SessionProperties
+		 
 		  String forReader="";
 		  while ((strLine = br.readLine()) != null&& strLine.startsWith("%")){
 			  if(strLine.equals("%-sequence properties-")) break;
@@ -118,10 +118,10 @@ private void processFile(String fName){
 			  System.out.println(strLine);
 		  }
 		  Reader reader= new StringReader(forReader);
-		  sessionProbs.load(reader);
-	
+		  sessionProps.load(reader);
+		  ChannelController<? extends Trackable, IT> cc = this.findOrCreateController(sessionProps);
 	  
-		  Properties sequenceProbs= new Properties();	//Get SequenceProperties
+		  Properties sequenceProps= new Properties();	//Get SequenceProperties
 		  forReader="";
 		  while ((strLine = br.readLine()) != null&& strLine.startsWith("%")){
 			  if(strLine.equals("%-data-")) break;
@@ -129,9 +129,8 @@ private void processFile(String fName){
 			  System.out.println(strLine);
 		  }
 		  reader= new StringReader(forReader);
-		  sequenceProbs.load(reader);
-		 
-		 
+		  sequenceProps.load(reader);
+		  cc.CheckOrCreateSequence(sequenceProps);
 		  		  
 		  
 		  while ((strLine = br.readLine()) != null)   {	// get data		  
@@ -146,7 +145,7 @@ private void processFile(String fName){
 	model.makeChangesPublic();
 }
 
-private <T extends Trackable> void createSessionIfRequired(Properties sessionProps){
+private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCreateController(Properties sessionProps){
 	int id=Integer.valueOf(sessionProps.getProperty("id"));
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(id);
 	if(cc==null){
@@ -154,6 +153,7 @@ private <T extends Trackable> void createSessionIfRequired(Properties sessionPro
 		cc=policy.produceControllerAndChannel(sessionProps, model);
 		this.channelControllers.put(cc.trackingChannel.getId(), cc); 
 	}
+	return cc;
 	
 }
 
@@ -259,6 +259,27 @@ public void setSelectionList(List <Integer> selectedIds){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	cc.setSelectionList(selectedIds);
 	model.makeChangesPublic();
+}
+
+public void addSession(String typeName, String label){
+	Properties sessionProps= new Properties();
+	sessionProps.setProperty("typeName", typeName);
+	sessionProps.setProperty("label", label);
+	sessionProps.setProperty("id", String.valueOf(model.getNextTCId()));
+	ChannelController <? extends Trackable,IT> cc= this.findOrCreateController(sessionProps);
+	this.channelControllers.put(cc.getId(), cc);
+	
+}
+
+public String[] getPossibleSessionTypes(){
+	Set<String> keySet=policies.keySet();
+	String[] results= new String[keySet.size()];
+	int c=0;
+	for(String key:keySet){
+		results[c]=key;
+		c++;
+	}
+	return results;
 }
 
 }

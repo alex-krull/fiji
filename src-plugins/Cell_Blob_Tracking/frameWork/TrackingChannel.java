@@ -19,15 +19,24 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	private	List<TrackingFrame <T,IT>> frames;
 	private final int id;
 	private long numOfFrames;
+	private String label;
 	
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
 	protected TrackingChannel(int newID){
 		id=newID;
+		label="session-"+String.valueOf(id);
 	}
 	
 	public int getId(){
 		return id;
 	}
-	
 	
 	
 	protected void initialize(long numberOfFrames){

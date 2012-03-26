@@ -8,6 +8,7 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.ChannelController;
 import frameWork.Model;
 import frameWork.Policy;
+import frameWork.Sequence;
 
 public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends Policy<Blob, IT>{
 
@@ -25,8 +26,13 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		int sid= Integer.valueOf(sessionProps.getProperty("sessionId"));
 		BlobTrackingChannel<IT> btc=  new BlobTrackingChannel<IT>(model.getMovieChannel(cid), sid);
 		model.addTrackingChannel(btc, btc.getId());
-		
 		return new BlobController<IT>(model,btc);
+	}
+
+	
+	@Override
+	public Sequence<Blob> produceSequence(int ident, String lab) {
+		return new BlobSequence( ident,  lab);
 	}
 
 }
