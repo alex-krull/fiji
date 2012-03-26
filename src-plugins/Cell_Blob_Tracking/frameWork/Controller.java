@@ -38,13 +38,14 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 	protected Model<IT> model;
 
 	private final SortedMap <Integer, ChannelController <? extends Trackable,IT> > channelControllers;
-
+	private final SortedMap<String,Policy<? extends Trackable,IT>> policies;
 	 
 	public Controller( Model<IT> mod){
-		
+		policies= new TreeMap<String,Policy<? extends Trackable,IT>>();
 		
 		model =mod;
 		channelControllers=	new TreeMap<Integer, ChannelController<? extends Trackable,IT>>();
+		
 		
 		TrackingChannel<Blob,IT> tc= new BlobTrackingChannel<IT>(model.getMovieChannel(0),model.getNextTCId() );
 		BlobController<IT> bc= new BlobController<IT>(model,tc);
@@ -60,7 +61,11 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		
 		//readFile("/home/alex/Desktop/test.txt");
 		//processFile("/home/alex/workspace/fiji/seq1.txt");
-		this.processDirectory(model.getProjectDirectory());
+		//this.processDirectory(model.getProjectDirectory());
+	}
+
+	public void addPolicy(Policy<? extends Trackable,IT> policy){
+		policies.put(policy.getTypeName(), policy);
 	}
 	
 private List <String> getFilesFromDirectory(String directory){
@@ -105,6 +110,7 @@ private void processFile(String fName){
 		  
 		  
 		  Properties sessionProbs= new Properties();	//Get SessionProperties
+		  this.createSessionIfRequired(sessionProbs);
 		  String forReader="";
 		  while ((strLine = br.readLine()) != null&& strLine.startsWith("%")){
 			  if(strLine.equals("%-sequence properties-")) break;
@@ -138,6 +144,17 @@ private void processFile(String fName){
 		  IJ.error("Error: " + e.getMessage());
 		  }
 	model.makeChangesPublic();
+}
+
+private <T extends Trackable> void createSessionIfRequired(Properties sessionProps){
+	int id=Integer.valueOf(sessionProps.getProperty("id"));
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(id);
+	if(cc==null){
+		Policy<?, IT> policy= policies.get(sessionProps.getProperty("typeName"));
+		cc=policy.produceControllerAndChannel(sessionProps, model);
+		this.channelControllers.put(cc.trackingChannel.getId(), cc); 
+	}
+	
 }
 
 

@@ -53,6 +53,7 @@ public class BlobTrackingChannel  <IT extends NumericType<IT> & NativeType<IT> &
 		
 		return new Blob(sId, fNum, x, y, z, sigma, this.getId());
 	}
+
 	
 	
 

@@ -133,6 +133,10 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		return props;
 	}
 	
+	public String getTypeName(){
+		return produceSequence(-1,"").getTypeName();
+	}
+	
 	protected abstract TrackingFrame<T,IT> produceFrame(int frameNum);
 	protected abstract Sequence<T> produceSequence(int ident, String lab);
 	protected abstract boolean isAssociatedWithMovieChannel(int id);

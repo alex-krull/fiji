@@ -3,12 +3,8 @@ package frameWork;
 import ij.gui.Overlay;
 
 import java.awt.Color;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;

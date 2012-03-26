@@ -14,7 +14,6 @@ public class BlobController < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 public BlobController(Model<IT> model, TrackingChannel<Blob,IT> tc){
 	super(model,tc);
-	
 }
 
 

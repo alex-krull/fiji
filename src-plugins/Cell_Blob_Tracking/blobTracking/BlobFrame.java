@@ -27,6 +27,7 @@ import frameWork.TrackingFrame;
 
 public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends TrackingFrame<Blob, IT>{
 	
+	private static final int constBackground = 100;
 	private final MovieFrame<IT> movieFrame;
 	private double backProb=0.1;
 	private IterableInterval<IT> iterableFrame;
@@ -134,7 +135,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	    	if(!isIn) continue;
 	  */  	
 	    	
-	    	float value= cursor.get().getRealFloat();
+	    	float value= Math.max(0,cursor.get().getRealFloat()- BlobFrame.constBackground); 
 	    	totalInten+=value;
 	    	
 	    	for(Blob b:trackables){    		    		
