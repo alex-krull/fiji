@@ -23,17 +23,15 @@ import org.apache.commons.math.optimization.direct.PowellOptimizer;
 
 import tools.ImglibTools;
 import frameWork.MovieFrame;
-import frameWork.TrackingFrame;
+import frameWork.SingleChannelTrackingFrame;
 
-public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends TrackingFrame<Blob, IT>{
+public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends SingleChannelTrackingFrame<Blob, IT>{
 	
 	private static final int constBackground = 100;
-	private final MovieFrame<IT> movieFrame;
 	private double backProb=0.1;
 	private IterableInterval<IT> iterableFrame;
 	public BlobFrame(int frameNum, MovieFrame<IT> mv){
-		super(frameNum);
-		movieFrame=mv;
+		super(frameNum,mv);
 	}
 
 	@Override

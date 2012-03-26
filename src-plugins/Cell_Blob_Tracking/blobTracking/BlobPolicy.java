@@ -15,7 +15,7 @@ import frameWork.Model;
 import frameWork.Policy;
 import frameWork.Sequence;
 
-public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends Policy<Blob, IT>{
+public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends Policy<Blob, BlobFrame<IT>, IT>{
 
 
 	@Override
@@ -29,12 +29,12 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			Properties sessionProps, Model<IT> model) {
 		int cid= Integer.valueOf(sessionProps.getProperty("channelId"));
 		int sid= Integer.valueOf(sessionProps.getProperty("sessionId"));
-		BlobTrackingChannel<IT> btc=  new BlobTrackingChannel<IT>(model.getMovieChannel(cid), sid,this);
+		SingleChannelSession<IT> btc=  new SingleChannelSession<IT>(model.getMovieChannel(cid), sid,this);
 		model.addTrackingChannel(btc, btc.getId());
 		return new BlobController<IT>(model,btc);
 	}
 
-	
+	 
 	@Override
 	public Sequence<Blob> produceSequence(int ident, String lab) {
 		return new Sequence<Blob>( ident,  lab, this);

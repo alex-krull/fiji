@@ -12,7 +12,7 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 
-public abstract class TrackingChannel<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
+public abstract class TrackingChannel<T extends Trackable, TF extends TrackingFrame<T,IT>,IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
 	
 	
 	private SortedMap <Integer, Sequence<T>> Sequences;
@@ -20,7 +20,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	private final int id;
 	private long numOfFrames;
 	private String label;
-	protected Policy<T,IT> policy;
+	protected Policy<T,TF,IT> policy;
 	
 	public String getLabel() {
 		return label;
@@ -30,7 +30,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		this.label = label;
 	}
 
-	protected TrackingChannel(int newID, Policy<T,IT> pol){
+	protected TrackingChannel(int newID, Policy<T,TF,IT> pol){
 		policy=pol;
 		id=newID;
 		label="session-"+String.valueOf(id);

@@ -18,7 +18,7 @@ public class Sequence<T extends Trackable> {
 
 	protected Color color;
 	protected Properties properties;
-	protected Policy<T,?> policy;
+	protected Policy<T,TrackingFrame<T,?>,?> policy;
 	
 	public int getFirstFrame(){
 		return trackables.firstKey();
@@ -36,7 +36,7 @@ public class Sequence<T extends Trackable> {
 		this.color = color;
 	}
 
-	public Sequence(int ident, String lab, Policy<T,?> pol){
+	public Sequence(int ident, String lab, Policy<T,TrackingFrame<T,?>,?> pol){
 		policy=pol;
 		color=new Color(255,0,0,255);
 		id = ident;

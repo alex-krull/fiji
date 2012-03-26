@@ -9,13 +9,14 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.MovieChannel;
 import frameWork.Policy;
 import frameWork.Sequence;
+import frameWork.SingleChannelTrackingFrame;
 import frameWork.TrackingChannel;
 import frameWork.TrackingFrame;
 
-public class BlobTrackingChannel  <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends TrackingChannel <Blob, IT> {
+public class SingleChannelSession  <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends TrackingChannel <Blob, SingleChannelTrackingFrame<Blob,IT>,IT> {
 
 	private final MovieChannel<IT> mChannel;
-	public BlobTrackingChannel( MovieChannel<IT> mv, int iD, Policy<Blob,IT> pol){
+	public SingleChannelSession( MovieChannel<IT> mv, int iD, Policy<Blob,SingleChannelTrackingFrame<Blob,IT>,IT> pol){
 		
 		super(iD,pol);
 		mChannel=mv;
@@ -24,11 +25,11 @@ public class BlobTrackingChannel  <IT extends NumericType<IT> & NativeType<IT> &
 	
 	@Override
 	public Sequence<Blob> produceSequence(int ident, String lab) {
-		return new Sequence<Blob>( ident,  lab, policy);
+		return policy.produceSequence(ident, lab);
 	}
 	
 	@Override
-	public TrackingFrame<Blob,IT> produceFrame(int frameNum) {		
+	public TrackingFrame<Blob,IT> produceFrame(int frameNum) {
 		return new BlobFrame<IT>(frameNum, mChannel.getMovieFrame(frameNum));
 	}
 	
