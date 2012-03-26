@@ -37,6 +37,8 @@ private final SortedMap <Integer, MovieChannel <IT> > channels;
 private final SortedMap <Integer, TrackingChannel <? extends Trackable,IT> > trackingChannels;
 private int nextTCId=0;
 private String imageFileName;
+private String imageDrirectory;
+private String projectDirectory;
 
 public String getImageFileName() {
 	return imageFileName;
@@ -54,8 +56,6 @@ public void setImageDrirectory(String imageDrirectory) {
 	this.imageDrirectory = imageDrirectory;
 }
 
-private String imageDrirectory;
-private String projectDirectory;
 
 public String getProjectDirectory() {
 	return projectDirectory;

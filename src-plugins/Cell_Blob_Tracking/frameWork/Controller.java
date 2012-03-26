@@ -59,16 +59,18 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		//}
 		
 		//readFile("/home/alex/Desktop/test.txt");
-		processFile("/home/alex/workspace/fiji/seq1.txt");
+		//processFile("/home/alex/workspace/fiji/seq1.txt");
+		this.processDirectory(model.getProjectDirectory());
 	}
 	
 private List <String> getFilesFromDirectory(String directory){
 	File dir = new File(directory);
 	
 	FilenameFilter filter = new FilenameFilter() {
-	    public boolean accept(File dir, String name) {
+	    @Override
+		public boolean accept(File dir, String name) {
 	        if (name.startsWith(".")) return false;
-	        return name.endsWith(".trc");
+	        return name.endsWith(".trcT");
 	    }
 	};
 	
@@ -111,8 +113,7 @@ private void processFile(String fName){
 		  }
 		  Reader reader= new StringReader(forReader);
 		  sessionProbs.load(reader);
-		  IJ.error(forReader);
-		  IJ.error(sessionProbs.toString());
+	
 	  
 		  Properties sequenceProbs= new Properties();	//Get SequenceProperties
 		  forReader="";
@@ -123,12 +124,8 @@ private void processFile(String fName){
 		  }
 		  reader= new StringReader(forReader);
 		  sequenceProbs.load(reader);
-		  IJ.error(forReader);
-		  IJ.error(sequenceProbs.toString());
-		  
-		  
-		  System.out.println(sessionProbs.toString());
-		  System.out.println(sequenceProbs.toString());
+		 
+		 
 		  		  
 		  
 		  while ((strLine = br.readLine()) != null)   {	// get data		  
@@ -232,8 +229,13 @@ public boolean isSeletced(int sId, int cId){
 	return cc.isSelected(sId);
 }
 
-public void loadSequqnceFromFile(String fileName){
-	
+public void processDirectory(String directory){
+	String dir=directory;
+	if(!dir.endsWith("/")) dir=dir+"/";
+	List <String> files= getFilesFromDirectory(dir);
+	for(String fName: files){
+		this.processFile(dir+fName);
+	}
 }
 
 public void setSelectionList(List <Integer> selectedIds){

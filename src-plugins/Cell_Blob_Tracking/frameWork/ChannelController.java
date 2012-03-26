@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import tools.OtherTools;
-
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
+import tools.OtherTools;
 
 public abstract class ChannelController<T extends Trackable,  IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
 	protected Model<IT> model;
@@ -159,7 +158,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	public void saveSequence(Sequence<T> seq){
 		
 		try {
-			FileWriter fileWriter= new FileWriter("seq"+seq.getId()+".txt");
+			FileWriter fileWriter= new FileWriter(model.getProjectDirectory()+"/seq"+seq.getId()+".trcT");
 			fileWriter.write("%-session properties-\n");
 			OtherTools.writeProperties(fileWriter, trackingChannel.getProperties(new Properties()));	
 			
