@@ -4,6 +4,8 @@ import frameWork.Model;
 import frameWork.Sequence;
 import frameWork.Trackable;
 import frameWork.TrackingChannel;
+import ij.IJ;
+import ij.ImageListener;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.Line;
@@ -12,7 +14,6 @@ import ij.gui.Roi;
 
 import java.awt.Color;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyListener;
 import java.util.List;
 import java.util.SortedMap;
@@ -47,29 +48,62 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 
 	protected RandomAccessibleInterval<IT> toDraw;
 	
-	public class myPropChangeListener implements ComponentListener {
-
-		@Override
+	public class myPropChangeListener implements ImageListener {
+		ImagePlus imp;
+		double lastMagnification;
+		
+		public myPropChangeListener(ImagePlus im){
+			imp=im;
+			lastMagnification=imp.getCanvas().getMagnification();
+		}
+		
 		public void componentResized(ComponentEvent e) {
+			IJ.error("updating");
 			upDateOverlay();	
 			
 		}
 
-		@Override
+		
 		public void componentMoved(ComponentEvent e) {
 			// TODO Auto-generated method stub
 			
 		}
 
-		@Override
+		
 		public void componentShown(ComponentEvent e) {
 			// TODO Auto-generated method stub
 			
 		}
 
-		@Override
+	
 		public void componentHidden(ComponentEvent e) {
 			// TODO Auto-generated method stub
+			
+		}
+
+		
+
+
+		@Override
+		public void imageClosed(ImagePlus arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+		@Override
+		public void imageOpened(ImagePlus arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+		@Override
+		public void imageUpdated(ImagePlus arg0) {
+			
+			if(lastMagnification!=imp.getCanvas().getMagnification()) upDateOverlay();	
+			System.out.println("lastMag:"+ lastMagnification + "    newMagnification:"+imp.getCanvas().getMagnification());
+			lastMagnification=imp.getCanvas().getMagnification();
 			
 		}
 		
@@ -100,7 +134,10 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		ovTemplate= new Overlay();
 		image=img;
 	 	if(imp==null) rePaint(vm.getPosition(),true);
-	 	imp.getCanvas().addComponentListener(new myPropChangeListener());
+	 	//imp.getCanvas().addComponentListener(new myPropChangeListener());
+	// 	imp.getCanvas().addPropertyChangeListener(new myPropChangeListener());
+	
+	// 	imp.addImageListener(new myPropChangeListener(imp));
 	 	
 	}
 	
@@ -137,7 +174,8 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 			Overlay ov=ovTemplate.duplicate();
 			for(int i=0;i<ov.size();i++){
 				Roi roi=ov.get(i);
-				roi.setStrokeWidth(roi.getStrokeWidth()/imp.getCanvas().getMagnification());
+	//			roi.setStrokeWidth(roi.getStrokeWidth()/imp.getCanvas().getMagnification());
+				roi.setStrokeWidth(roi.getStrokeWidth()/2);
 			}
 			imp.setOverlay(ov);
 		}
