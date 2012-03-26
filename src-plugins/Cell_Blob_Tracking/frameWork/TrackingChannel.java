@@ -4,6 +4,7 @@ package frameWork;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -124,7 +125,14 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		}
 
 	}
-		
+	
+	public Properties getProperties(Properties props){
+		props.setProperty("sessionProp1", "test1");
+		props.setProperty("sessionProp2", "test2");
+		props.setProperty("sessionId:",String.valueOf(getId()));
+		return props;
+	}
+	
 	protected abstract TrackingFrame<T,IT> produceFrame(int frameNum);
 	protected abstract Sequence<T> produceSequence(int ident, String lab);
 	protected abstract boolean isAssociatedWithMovieChannel(int id);

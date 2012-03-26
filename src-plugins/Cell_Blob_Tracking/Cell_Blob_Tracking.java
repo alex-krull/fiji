@@ -2,6 +2,7 @@
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.io.FileInfo;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -62,6 +63,13 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		long time0= System.nanoTime();
 		ImagePlus imp=IJ.getImage();
+		FileInfo fi= imp.getOriginalFileInfo();
+		
+		
+		System.out.println(fi.directory);
+		System.out.println(fi.fileName);
+		
+		
 		System.out.println("creating Model...");
 		Model< IT> model= new Model<IT>(imp);
 				System.out.println("creating Controller...");
@@ -78,6 +86,8 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		AddingViewsThread awt= new AddingViewsThread(vm,model, imp);
 		awt.start();
+		
+		
 	}
 
 }
