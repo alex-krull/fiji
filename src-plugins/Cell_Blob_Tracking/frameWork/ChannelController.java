@@ -145,7 +145,10 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	}
 	
 	public void setColor(Color color){
-		trackingChannel.getSequence(this.selectedSequenceId).setColor(color);
+		for(Integer i: this.selectedIdList){
+		Sequence<T>seq=trackingChannel.getSequence(i);
+		if(seq!=null) seq.setColor(color);
+		}
 	}
 	
 	public boolean isSelected(int sId){
@@ -180,12 +183,13 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	}
 	
 	public boolean CheckOrCreateSequence(Properties seqProps){
-		int id=Integer.valueOf(seqProps.getProperty("id"));
+		int id=Integer.valueOf(seqProps.getProperty("seqId"));
 		Sequence<T> seq= trackingChannel.getSequence(id);
 		if (seq==null){
-			
-			return false;
+			seq=trackingChannel.produceSequence(id, "");
+			trackingChannel.addSequence(seq);
 		}
+		seq.setProperties(seqProps);
 		return true;
 	}
 	
