@@ -268,7 +268,8 @@ public void addSession(String typeName, String label){
 	Properties sessionProps= new Properties();
 	sessionProps.setProperty("typeName", typeName);
 	sessionProps.setProperty("label", label);
-	sessionProps.setProperty("id", String.valueOf(model.getNextTCId()));
+	sessionProps.setProperty("sessionId", String.valueOf(model.getNextTCId()));
+	sessionProps.setProperty("channelId", String.valueOf(0));
 	ChannelController <? extends Trackable,IT> cc= this.findOrCreateController(sessionProps);
 	this.channelControllers.put(cc.getId(), cc);
 	

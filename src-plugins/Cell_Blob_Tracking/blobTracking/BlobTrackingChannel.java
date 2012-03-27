@@ -61,7 +61,7 @@ public class BlobTrackingChannel  <IT extends NumericType<IT> & NativeType<IT> &
 	@Override
 	public Properties getProperties(){
 		Properties props=super.getProperties();
-		//props.setProperty(, value);
+		props.setProperty("channelId", String.valueOf(this.mChannel.getId()));
 		return props;
 	}
 	
