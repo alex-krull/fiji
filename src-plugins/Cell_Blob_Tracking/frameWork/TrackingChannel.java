@@ -136,14 +136,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		}
 
 	}
-	
-	public Properties getProperties(){
-		Properties props= new Properties();
-		props.setProperty("sessionProp1", "test1");
-		props.setProperty("sessionProp2", "test2");
-		props.setProperty("sessionId",String.valueOf(getId()));
-		return props;
-	}
+
 	
 	public String getTypeName(){
 		return produceSequence(-1,"").getTypeName();
@@ -162,6 +155,19 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	protected abstract boolean isAssociatedWithMovieChannel(int id);
 	public abstract T loadTrackableFromString(String s);
 		
+	public void setProperties(Properties props){
+		String s;
+		s= props.getProperty("sessionLabel"); if(s!=null) this.label=s;
+	}
 	
+	public Properties getProperties(){
+		Properties props= new Properties();
+		
+		props.setProperty("sessionId",String.valueOf(getId()));
+		props.setProperty("sessionLabel", this.getLabel());
+		props.setProperty("typeName", this.getTypeName());
+		props.setProperty("numberOfFrames", String.valueOf(this.getNumberOfFrames()));
+		return props;
+	}
 	
 }

@@ -148,8 +148,6 @@ private void processFile(String fName){
 
 private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCreateController(Properties sessionProps){
 	String s=sessionProps.getProperty("sessionId");
-	IJ.error(sessionProps.toString());
-	IJ.error(s);
 	int id=Integer.valueOf(s);
 	
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(id);

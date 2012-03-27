@@ -149,7 +149,6 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 		Sequence<T>seq=trackingChannel.getSequence(i);
 		if(seq!=null) seq.setColor(color);
 		}
-		
 	}
 	
 	public boolean isSelected(int sId){
