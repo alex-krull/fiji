@@ -98,9 +98,25 @@ public class Sequence<T extends Trackable> {
 	return true;
 	}
 	
+	public void setProperties(Properties props){
+		String s;
+		int red=255; int green=0; int blue=0;
+		s= props.getProperty("seqId"); if(s!=null) this.id=Integer.valueOf(s);
+		s= props.getProperty("label"); if(s!=null) this.label=s;
+		s= props.getProperty("color-red"); if(s!=null) red=Integer.valueOf(s);
+		s= props.getProperty("color-green"); if(s!=null) green=Integer.valueOf(s);
+		s= props.getProperty("color-blue"); if(s!=null) blue=Integer.valueOf(s);
+		this.color=new Color(red,green,blue);
+	}
+	
 	public Properties getProperties(){
 		Properties props= new Properties();
-		props.setProperty("seqId:",String.valueOf(getId()));
+		props.setProperty("seqId",String.valueOf(getId()));
+		props.setProperty("label",String.valueOf(this.label));
+		props.setProperty("color-red",String.valueOf(color.getRed()));
+		props.setProperty("color-green",String.valueOf(color.getGreen()));
+		props.setProperty("color-blue",String.valueOf(color.getBlue()));
+		
 		return props;
 	}
 	

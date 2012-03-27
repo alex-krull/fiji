@@ -63,7 +63,7 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		
 		//readFile("/home/alex/Desktop/test.txt");
 		//processFile("/home/alex/workspace/fiji/seq1.txt");
-		//this.processDirectory(model.getProjectDirectory());
+		this.processDirectory(model.getProjectDirectory());
 	}
 
 	public void addPolicy(Policy<? extends Trackable,IT> policy){
@@ -147,7 +147,11 @@ private void processFile(String fName){
 }
 
 private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCreateController(Properties sessionProps){
-	int id=Integer.valueOf(sessionProps.getProperty("id"));
+	String s=sessionProps.getProperty("sessionId");
+	IJ.error(sessionProps.toString());
+	IJ.error(s);
+	int id=Integer.valueOf(s);
+	
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(id);
 	if(cc==null){
 		Policy<?, IT> policy= policies.get(sessionProps.getProperty("typeName"));

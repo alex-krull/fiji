@@ -141,7 +141,7 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 		Properties props= new Properties();
 		props.setProperty("sessionProp1", "test1");
 		props.setProperty("sessionProp2", "test2");
-		props.setProperty("sessionId:",String.valueOf(getId()));
+		props.setProperty("sessionId",String.valueOf(getId()));
 		return props;
 	}
 	
@@ -151,6 +151,10 @@ public abstract class TrackingChannel<T extends Trackable, IT extends NumericTyp
 	
 	protected Sequence<T> produceSequence(int ident, String lab){
 		return policy.produceSequence(ident, lab);
+	}
+	
+	public void addSequence(Sequence <T> seq){
+		this.Sequences.put(seq.getId(), seq);
 	}
 	
 	protected abstract TrackingFrame<T,IT> produceFrame(int frameNum);
