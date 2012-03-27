@@ -50,6 +50,8 @@ import javax.swing.JDialog;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
+import frameWork.gui.ViewModel;
+
 public class ColorEditor extends AbstractCellEditor
                          implements TableCellEditor,
 			            ActionListener {
@@ -58,12 +60,14 @@ public class ColorEditor extends AbstractCellEditor
     JColorChooser colorChooser;
     JDialog dialog;
     protected static final String EDIT = "edit";
+    private ViewModel<?> viewModel;
 
-    public ColorEditor() {
+    public ColorEditor(ViewModel<?> vm) {
         //Set up the editor (from the table's point of view),
         //which is a button.
         //This button brings up the color chooser dialog,
         //which is the editor from the user's point of view.
+    	viewModel=vm;
         button = new JButton();
         button.setActionCommand(EDIT);
         button.addActionListener(this);
@@ -97,6 +101,7 @@ public class ColorEditor extends AbstractCellEditor
 
         } else { //User pressed dialog's "OK" button.
             currentColor = colorChooser.getColor();
+            viewModel.setColor(currentColor);
         }
     }
 

@@ -72,7 +72,7 @@ public class TableSort extends JPanel {
     private final Model<?> model;
   
     
-    public TableSort(ViewModel<?> vm, Model m) {
+    public TableSort(ViewModel<?> vm, Model<?> m) {
         super(new GridLayout(1,0));
         viewModel=vm;
         model=m;
@@ -109,7 +109,7 @@ public class TableSort extends JPanel {
         table.setDefaultRenderer(Color.class,
                                  new ColorRenderer(true));
         table.setDefaultEditor(Color.class,
-                               new ColorEditor());
+                               new ColorEditor(viewModel));
         //Add the scroll pane to this panel.
         add(scrollPane);
     }
