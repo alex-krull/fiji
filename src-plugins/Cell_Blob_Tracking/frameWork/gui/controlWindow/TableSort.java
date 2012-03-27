@@ -202,21 +202,14 @@ public class SelectionListener implements MouseListener{
     
     class MyTableModel extends AbstractTableModel {
         private final String[] columnNames = {"Trace Name",
-                                        "Color",
+                                        "Color", "Trace Label",
                                         "Session",
                                         "Tracking Method",
                                         "Trace Length"};
         public Object[][] data = {
-	    {"Blob 1", new Color(255, 0, 0),
+	    {"Blob 1", new Color(255, 0, 0), "Place holder",
 	     "Session 1", "Blob", new Integer(5)},
-	    {"Blob 2", new Color(150, 0, 0),
-	     "Session 1", "Blob", new Integer(10)},
-	    {"Cell 1", new Color(0, 150, 0),
-	     "Session 1", "Cell", new Integer(15)},
-	    {"Cell 2", new Color(0, 255, 0),
-	     "Session 1", "Cell", new Integer(30)},
-	    {"Cell 3", Color.pink,
-	     "Session 1", "Cell", new Integer(12)}
+
         };
         
 
@@ -265,7 +258,7 @@ public class SelectionListener implements MouseListener{
 		public boolean isCellEditable(int row, int col) {
             //Note that the data/cell address is constant,
             //no matter where the cell appears onscreen.
-            if (col < 2) {
+            if (col > 0 && col < 3) {
                 return true;
             } else {
                 return false;

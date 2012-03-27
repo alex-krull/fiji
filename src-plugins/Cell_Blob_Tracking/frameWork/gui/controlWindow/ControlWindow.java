@@ -5,8 +5,11 @@ import ij.gui.GenericDialog;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +18,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -72,12 +76,16 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	JPanel rightPanel;
 	JPanel centerPanel;
 	JPanel leftPanel;
+	
 	JPanel bottomPanel;
+	JPanel urlPanel;
 	JList visList;
 	JButton start;
 	JTextArea text;
 	TableSort trackerTable;
-	
+	File currentFolder;
+	String currentFolderString;
+	JTextField workingFolder;
 	volatile JSpinner frameSpinner;
 	volatile JSpinner zSpinner;
 	volatile JSpinner cSpinner;
@@ -95,9 +103,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		rightPanel = new JPanel();
-		leftPanel = new JPanel();
+		leftPanel = new JPanel(new GridLayout(16, 0));
+		
 		centerPanel = new JPanel();
 		bottomPanel = new JPanel();
+		urlPanel = new JPanel(new FlowLayout());
 		// Some constants
 		Dimension labelDim = new Dimension(60, 28);
 		Dimension labelDim2 = new Dimension(60, 19);
@@ -133,19 +143,28 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		JButton saveAll = new JButton("Save All");
 		saveAll.addActionListener(new SaveAllListener());
+		
+		JButton loadAll = new JButton("Load All");
+		
+		
 
 
-		leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+		//leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		//leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 
-
+		leftPanel.add(new JLabel());
+		leftPanel.add(new JLabel());
+		leftPanel.add(new JLabel());
+		leftPanel.add(new JLabel());	
+		leftPanel.add(new JLabel());
 		leftPanel.add(merge);
 		leftPanel.add(split);
 		leftPanel.add(trim);
 		leftPanel.add(delete);
 		leftPanel.add(jump);
 		leftPanel.add(saveAll);
-
+		leftPanel.add(loadAll);
+		
 
 		// The controls on the right
 
@@ -202,6 +221,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		currentMethod.setHorizontalAlignment(JTextField.CENTER);
 		currentMethod.setMaximumSize(new Dimension(1000, 30));
 		currentMethod.setEditable(false);
+		
 
 
 		rightPanel.add(currentMethod);
@@ -288,7 +308,25 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		rightPanel.add(changeSession);
 
 		//This controls the center panel
-
+		JButton changeWorking = new JButton("Change Working Directory");
+		changeWorking.addActionListener(new changeWorkspaceListener());
+		workingFolder = new JTextField();
+		workingFolder.setPreferredSize(new Dimension(450, 20));
+		try{
+			currentFolder = new File (".");
+			currentFolderString = currentFolder.getCanonicalPath();
+			workingFolder.setText(currentFolderString);
+			workingFolder.setEditable(false);
+			
+		}catch(Exception e){
+			 System.out.println("Exceptione is ="+e.getMessage());
+		}
+		
+		
+		urlPanel.add(workingFolder);
+		urlPanel.add(changeWorking);
+		//urlPanel.setBackground(Color.blue);
+		
 		centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 
@@ -299,7 +337,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		trackerTable.setOpaque(true);
 		
 		
-
+		centerPanel.add(urlPanel);
 		centerPanel.add(trackerTable);
 
 		JTextArea details = new JTextArea("Place holder");
@@ -506,16 +544,19 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		
 		 
-		Object[][]trace = new Object[test.size()][5];
+		Object[][]trace = new Object[test.size()][6];
 		int i = 0;
 		for(Sequence<? extends Trackable> seq : test){
 			
 			trace[i][0]=seq.getId();
 			trace[i][1]=seq.getColor();
-			trace[i][2]=seq.getTypeName();
+			trace[i][2]="Trace Name";
 			trace[i][3]=seq.getTypeName();
-			trace[i][4]=seq.getLastFrame()-seq.getFirstFrame()+1;
+			trace[i][4]=seq.getTypeName();
+			trace[i][5]=seq.getLastFrame()-seq.getFirstFrame()+1;
 			i++;
+			
+
 		}
 		
 		trackerTable.updateData(trace);
@@ -599,11 +640,35 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 		
 	}
+	
+	public class changeWorkspaceListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			   JFileChooser workspace = new JFileChooser();
+			   workspace.setCurrentDirectory(new java.io.File("."));
+			   workspace.setDialogTitle("Pick Workspace");
+			   workspace.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			   workspace.setAcceptAllFileFilterUsed(false);
+			   workspace.showDialog(workspace, "Okay");
+			   File workspaceName = workspace.getSelectedFile();
+			   workspaceName.toString();
+			   workingFolder.setText(workspaceName.toString());
+		}
+		
+	}
 	public class SaveAllListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Saves all traces
+			   JFileChooser chooser = new JFileChooser();
+			    chooser.setCurrentDirectory(new java.io.File("."));
+			    chooser.setDialogTitle("Pick Location to Save FIle");
+			    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			    chooser.setAcceptAllFileFilterUsed(false);
+			    chooser.showDialog(chooser, "Okay");
 			viewModel.saveAll();
 			
 		}
