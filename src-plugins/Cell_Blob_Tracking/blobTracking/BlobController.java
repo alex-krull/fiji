@@ -9,10 +9,10 @@ import frameWork.ChannelController;
 import frameWork.Model;
 import frameWork.TrackingChannel;
 
-public class BlobController < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > extends ChannelController<Blob, IT> {
+public class BlobController < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > extends ChannelController<Blob, BlobFrame<IT>, IT> {
 	
 
-public BlobController(Model<IT> model, TrackingChannel<Blob,IT> tc){
+public BlobController(Model<IT> model, TrackingChannel<Blob, BlobFrame <IT>,IT> tc){
 	super(model,tc);
 }
 

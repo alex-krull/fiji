@@ -14,13 +14,13 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import tools.OtherTools;
 
-public abstract class ChannelController<T extends Trackable,  IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
+public abstract class ChannelController<T extends Trackable, TF extends TrackingFrame <T,IT>,  IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
 	protected Model<IT> model;
 	protected int selectedSequenceId;
 	protected T selectedTrackable;
-	protected TrackingChannel<T,IT> trackingChannel;
+	protected TrackingChannel<T,TF,IT> trackingChannel;
 	protected List <Integer> selectedIdList;
-	protected Policy <T,IT> policy;
+	protected Policy <T,TF,IT> policy;
 	
 	public abstract void click(long[] pos, MouseEvent e);
 	
@@ -43,7 +43,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 //		return selectedSequenceId;
 //	}
 	
-	protected ChannelController( Model<IT> mod,TrackingChannel<T,IT> tc ){
+	protected ChannelController( Model<IT> mod,TrackingChannel<T,TF,IT> tc ){
 		selectedIdList=new ArrayList<Integer>();
 		model =mod;
 		trackingChannel=tc;

@@ -24,7 +24,6 @@ import java.util.TreeMap;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
-import blobTracking.Blob;
 import blobTracking.BlobController;
 import blobTracking.BlobPolicy;
 import blobTracking.SingleChannelSession;
@@ -39,17 +38,17 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 	
 	protected Model<IT> model;
 
-	private final SortedMap <Integer, ChannelController <? extends Trackable,IT> > channelControllers;
-	private final SortedMap<String,Policy<? extends Trackable,IT>> policies;
+	private final SortedMap <Integer, ChannelController <? extends Trackable, ? extends TrackingFrame< ? extends Trackable,IT>,IT> > channelControllers;
+	private final SortedMap<String,Policy<? extends Trackable, ? extends TrackingFrame<? extends Trackable, IT> ,IT>> policies;
 	 
 	public Controller( Model<IT> mod){
-		policies= new TreeMap<String,Policy<? extends Trackable,IT>>();
+		policies= new TreeMap<String,Policy<? extends Trackable, ? extends TrackingFrame<? extends Trackable, IT>,IT>>();
 		
 		model =mod;
-		channelControllers=	new TreeMap<Integer, ChannelController<? extends Trackable,IT>>();
+		channelControllers=	new TreeMap<Integer, ChannelController<? extends Trackable, ? extends TrackingFrame<? extends Trackable, IT> ,IT>>();
 		
 		
-		TrackingChannel<Blob,IT> tc= new SingleChannelSession<IT>(model.getMovieChannel(0),model.getNextTCId(), new BlobPolicy<IT>() );
+		SingleChannelSession<IT> tc= new SingleChannelSession<IT>(model.getMovieChannel(0),model.getNextTCId(), new BlobPolicy<IT>() );
 		BlobController<IT> bc= new BlobController<IT>(model,tc);
 		channelControllers.put(tc.getId(), bc);
 		model.addTrackingChannel(tc,0);
