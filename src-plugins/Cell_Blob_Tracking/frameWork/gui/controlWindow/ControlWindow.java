@@ -76,6 +76,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	JPanel rightPanel;
 	JPanel centerPanel;
 	JPanel leftPanel;
+	JPanel rightButtonPanel;
 	
 	JPanel bottomPanel;
 	JPanel urlPanel;
@@ -141,10 +142,17 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		JButton trim = new JButton("Trim");
 		trim.addActionListener(new TrimListener());
 
-		JButton saveAll = new JButton("Save All");
-		saveAll.addActionListener(new SaveAllListener());
+		JButton saveTo = new JButton("Save To");
+		saveTo.addActionListener(new SaveToListener());
 		
-		JButton loadAll = new JButton("Load All");
+		JButton loadTo = new JButton("Load From");
+		loadTo.addActionListener(new LoadToListener());
+		
+		JButton saveAll = new JButton("Save");
+		saveAll.addActionListener(new SaveAllListener());
+		JButton loadAll = new JButton("Load");
+		loadAll.addActionListener(new LoadAllListener());
+		
 		
 		
 
@@ -155,22 +163,24 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		leftPanel.add(new JLabel());
 		leftPanel.add(new JLabel());
 		leftPanel.add(new JLabel());
-		leftPanel.add(new JLabel());	
-		leftPanel.add(new JLabel());
+
 		leftPanel.add(merge);
 		leftPanel.add(split);
 		leftPanel.add(trim);
 		leftPanel.add(delete);
 		leftPanel.add(jump);
 		leftPanel.add(saveAll);
+		leftPanel.add(saveTo);
+		
 		leftPanel.add(loadAll);
+		leftPanel.add(loadTo);
 		
 
 		// The controls on the right
 
 		rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-
+		//rightPanel.setLayout(new GridLayout(16, 0));
 		SpinnerModel model1 = new SpinnerNumberModel();
 		frameSpinner = new JSpinner(model1);
 		
@@ -282,36 +292,43 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		JScrollPane visScroller = new JScrollPane(visList);
 		visScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		visScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		visScroller.setMaximumSize(new Dimension(1000, 100));
+		//visScroller.setMaximumSize(new Dimension(1000, 100));
 		
 		rightPanel.add(visScroller);
+		
+		rightButtonPanel = new JPanel(new GridLayout(4,0));
 		
 		start = new JButton("Start Tracking");
 		start.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		start.addActionListener(new StartListener());
-		rightPanel.add(start);
+		
 
 		JButton newSession = new JButton("New Session");
 		newSession.addActionListener(new NewSessionListener());
 		newSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
-		rightPanel.add(newSession);
+		
 
 		JButton deleteSession = new JButton("Delete Session");
 		//deleteSession.addActionListener(new NewSessionListener());
 		deleteSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
-		rightPanel.add(deleteSession);
+		
 
 		JButton changeSession = new JButton("Change Session");
 		//deleteSession.addActionListener(new NewSessionListener());
 		changeSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		changeSession.addActionListener(new ChangeSessionListener());
-		rightPanel.add(changeSession);
+		
 
+		rightButtonPanel.add(start);
+		rightButtonPanel.add(newSession);
+		rightButtonPanel.add(deleteSession);
+		rightButtonPanel.add(changeSession);
+		rightPanel.add(rightButtonPanel);
 		//This controls the center panel
 		JButton changeWorking = new JButton("Change Working Directory");
 		changeWorking.addActionListener(new changeWorkspaceListener());
 		workingFolder = new JTextField();
-		workingFolder.setPreferredSize(new Dimension(450, 20));
+		workingFolder.setPreferredSize(new Dimension(300, 20));
 		try{
 			currentFolder = new File (".");
 			currentFolderString = currentFolder.getCanonicalPath();
@@ -658,20 +675,58 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 		
 	}
-	public class SaveAllListener implements ActionListener{
+	public class SaveToListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Saves all traces
-			   JFileChooser chooser = new JFileChooser();
-			    chooser.setCurrentDirectory(new java.io.File("."));
-			    chooser.setDialogTitle("Pick Location to Save FIle");
-			    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			    chooser.setAcceptAllFileFilterUsed(false);
-			    chooser.showDialog(chooser, "Okay");
+			   JFileChooser saveLocation = new JFileChooser();
+			    saveLocation.setCurrentDirectory(new java.io.File("."));
+			    saveLocation.setDialogTitle("Pick Location to Save Files");
+			    saveLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			    saveLocation.setAcceptAllFileFilterUsed(false);
+			    saveLocation.showDialog(saveLocation, "Okay");
 			viewModel.saveAll();
 			
 		}
 		
 	}
+	
+	public class SaveAllListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			viewModel.saveAll();
+		}
+		
+	}
+	public class LoadAllListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			viewModel.getController();
+		}
+		
+	}
+	
+	
+	public class LoadToListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Saves all traces
+			   JFileChooser loadLocation = new JFileChooser();
+			    loadLocation.setCurrentDirectory(new java.io.File("."));
+			    loadLocation.setDialogTitle("Pick Location to Load Files From");
+			    loadLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			    loadLocation.setAcceptAllFileFilterUsed(false);
+			    loadLocation.showDialog(loadLocation, "Okay");
+			viewModel.saveAll();
+			
+		}
+		
+	}
+	
 }
