@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -46,6 +47,7 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 import frameWork.Sequence;
+import frameWork.Session;
 import frameWork.Trackable;
 import frameWork.gui.HotKeyListener;
 import frameWork.gui.ViewModel;
@@ -80,7 +82,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	
 	JPanel bottomPanel;
 	JPanel urlPanel;
-	JList visList;
+	JList selectSessionList;
 	JButton start;
 	JTextArea text;
 	TableSort trackerTable;
@@ -285,12 +287,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 
 		
-		visList = new JList(vis);
+		selectSessionList = new JList(vis);
 		//visList.setVisibleRowCount(3);
 		//visList.setBorder(BorderFactory.createLineBorder(Color.black));
-		visList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		selectSessionList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		JScrollPane visScroller = new JScrollPane(visList);
+		JScrollPane visScroller = new JScrollPane(selectSessionList);
 		visScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		visScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		//visScroller.setMaximumSize(new Dimension(1000, 100));
@@ -437,16 +439,20 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		gd.addChoice("Pick channel to track", channelList, null);
 		gd.showDialog();
 
-		String trackingMethod = gd.getNextString();
-		sessionList.add(trackingMethod);
+		String userSessionName = gd.getNextString();
+		
+		
+		//sessionList.add(userSessionName);
 
-		String choices = gd.getNextChoice();
 		
-		currentMethod.setText(choices);
+		String methodChoice = gd.getNextChoice();
+		int channelChoice =Integer.valueOf(gd.getNextChoice());
 		
-		String[] newValues = new String[sessionList.size()];
-		sessionList.toArray(newValues);
-		visList.setListData(newValues);
+		currentMethod.setText(methodChoice);
+		
+		//String[] newValues = new String[sessionList.size()];
+		//sessionList.toArray(newValues);
+		//visList.setListData(newValues);
 		
 		
 		
@@ -455,7 +461,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		text.append((String) trace[2][0] + "\n");*/
 		
 		
-		viewModel.getController().addSession(choices, trackingMethod);
+		viewModel.getController().addSession(methodChoice, userSessionName, channelChoice-1);
 	} 
 
 	public void changeSessionDialog() {
@@ -592,19 +598,20 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			text.selectAll();
 			text.append("Tracking Frame " + frameNumber + "\n");
 		}
-/*		 i = 0;
-		Color[] tempColor = trackerTable.getColor();
-		for(Sequence<? extends Trackable> seq : test){
-			
-			
-			seq.setColor(tempColor[i]);
+
+		
+		
+		Collection<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
+		String[] sessionNamesList = new String[tempSessionList.size()];
+		
+		int i=0;
+		
+		for(Session<? extends Trackable, IT> session : tempSessionList){
+			sessionNamesList[i]=session.getLabel();
 			i++;
-		}*/
+		}
 		
-		
-		//viewModel.getTCsToBeDisplayed();
-		
-		
+		selectSessionList.setListData(sessionNamesList);
 		
 	}
 
@@ -715,7 +722,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
-			viewModel.getController();
+			viewModel.getController().load();
 		}
 		
 	}

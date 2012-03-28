@@ -153,6 +153,7 @@ private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCr
 	if(cc==null){
 		Policy<?, IT> policy= policies.get(sessionProps.getProperty("typeName"));
 		cc=policy.produceControllerAndChannel(sessionProps, model);
+		
 		this.channelControllers.put(cc.trackingChannel.getId(), cc); 
 	}
 	return cc;
@@ -263,14 +264,15 @@ public void setSelectionList(List <Integer> selectedIds){
 	model.makeChangesPublic();
 }
 
-public void addSession(String typeName, String label){
+public void addSession(String typeName, String label, int channelID){
 	Properties sessionProps= new Properties();
 	sessionProps.setProperty("typeName", typeName);
-	sessionProps.setProperty("label", label);
+	sessionProps.setProperty("sessionLabel", label);
 	sessionProps.setProperty("sessionId", String.valueOf(model.getNextTCId()));
-	sessionProps.setProperty("channelId", String.valueOf(0));
+	sessionProps.setProperty("channelId", String.valueOf(channelID));
 	ChannelController <? extends Trackable,IT> cc= this.findOrCreateController(sessionProps);
 	this.channelControllers.put(cc.getId(), cc);
+	model.makeChangesPublic();
 	
 }
 
@@ -296,6 +298,12 @@ public void setWorkspace(String path){
 
 public Collection<Session<? extends Trackable, IT>> getSessions(){
 	return model.getSessions();
+}
+
+public void load(){
+	channelControllers.clear();
+	model.clearSessions();
+	this.processDirectory(model.getProjectDirectory());
 }
 
 

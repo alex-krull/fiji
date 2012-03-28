@@ -279,4 +279,8 @@ public Collection< Session <? extends Trackable,IT> > getSessions(){
 	return this.trackingChannels.values();
 }
 
+public void clearSessions(){
+	this.trackingChannels.clear();
+}
+
 }
