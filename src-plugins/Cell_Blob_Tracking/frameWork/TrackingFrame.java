@@ -11,10 +11,12 @@ import net.imglib2.type.numeric.RealType;
 public abstract class TrackingFrame<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>>{
 protected List <T> trackables;
 protected int frameNumber;
+protected Policy<T,IT> policy;
 
-protected TrackingFrame(int frameNum){
+protected TrackingFrame(int frameNum, Policy <T,IT> pol){
 	frameNumber=frameNum;
 	trackables= new ArrayList<T>();
+	policy=pol;
 }
 
 public abstract void optimizeFrame(boolean cheap);
@@ -56,13 +58,12 @@ public List<T>getTrackables(){
 public List<T> cloneTrackablesForFrame (int newFrame){
 	List<T> results = new ArrayList<T>();
 	for(T trackable:trackables){
-		T newTrackable= copy(trackable);		
+		T newTrackable= policy.copy(trackable);	
 		newTrackable.frameId=newFrame;
 		results.add(newTrackable);
 	}
 	return results;
 }
 
-public abstract T copy(T toCopy);
 
 }

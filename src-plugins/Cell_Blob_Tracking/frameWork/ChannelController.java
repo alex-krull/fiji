@@ -139,7 +139,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			for(int i= s.getFirstFrame();i<=s.getLastFrame();i++){
 				
 				TrackingFrame<T,IT> tf= trackingChannel.getFrame(0);
-				T t=tf.copy( s.getTrackableForFrame(i) );
+				T t=policy.copy( s.getTrackableForFrame(i) );
 				t.sequenceId=newSid;
 				trackingChannel.addTrackable(t);
 				System.out.println("adding frame:"+ t.frameId);

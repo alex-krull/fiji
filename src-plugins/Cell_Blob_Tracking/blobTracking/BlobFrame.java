@@ -32,7 +32,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	private double backProb=0.1;
 	private IterableInterval<IT> iterableFrame;
 	public BlobFrame(int frameNum, MovieFrame<IT> mv){
-		super(frameNum);
+		super(frameNum, new BlobPolicy<IT>());
 		movieFrame=mv;
 	}
 
@@ -347,12 +347,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	}
 	
 	
-@Override
-public Blob copy(Blob toCopy){
-	Blob result=new Blob(toCopy.sequenceId, toCopy.frameId, toCopy.xPos, toCopy.yPos, toCopy.zPos, toCopy.sigma, toCopy.channel);
-	result.pK=toCopy.pK;
-	return result;
-}
+
 
 }
 
