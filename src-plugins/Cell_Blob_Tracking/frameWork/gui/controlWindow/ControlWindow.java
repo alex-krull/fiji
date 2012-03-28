@@ -329,15 +329,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		changeWorking.addActionListener(new changeWorkspaceListener());
 		workingFolder = new JTextField();
 		workingFolder.setPreferredSize(new Dimension(300, 20));
-		try{
-			currentFolder = new File (".");
-			currentFolderString = currentFolder.getCanonicalPath();
-			workingFolder.setText(currentFolderString);
-			workingFolder.setEditable(false);
+		workingFolder.setEditable(false);
+		
 			
-		}catch(Exception e){
-			 System.out.println("Exceptione is ="+e.getMessage());
-		}
+			
+	
 		
 		
 		urlPanel.add(workingFolder);
@@ -540,6 +536,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		System.out.println("updating Spinners !!!!!!!!!!!");
 		System.out.println("position[3]+1: "+(position[3]+1));
 		
+		workingFolder.setText(viewModel.getController().getWorkspace());
+		
 		zSpinner.setValue(position[2]+1);
 		frameSpinner.setValue(position[3]+1);
 		cSpinner.setValue(position[4]+1);
@@ -670,8 +668,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			   workspace.setAcceptAllFileFilterUsed(false);
 			   workspace.showDialog(workspace, "Okay");
 			   File workspaceName = workspace.getSelectedFile();
-			   workspaceName.toString();
-			   workingFolder.setText(workspaceName.toString());
+			   
+			   viewModel.getController().setWorkspace(workspaceName.toString());
 		}
 		
 	}
