@@ -111,7 +111,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		urlPanel = new JPanel(new FlowLayout());
 		// Some constants
 		Dimension labelDim = new Dimension(60, 28);
-		Dimension labelDim2 = new Dimension(60, 19);
+		Dimension labelDim2 = new Dimension(60, 22);
 
 
 		//Bottom Area
@@ -135,7 +135,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		JButton delete = new JButton("Delete");
 		delete.addActionListener(new DeleteListener());
 		
-		JButton jump = new JButton("Go to  ");
+		//JButton jump = new JButton("Go to  ");
 		JButton split = new JButton("Split");
 		split.addActionListener(new splitListener());
 		//split.setAlignmentX(JButton.CENTER_ALIGNMENT);
@@ -145,21 +145,22 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		JButton saveTo = new JButton("Save To");
 		saveTo.addActionListener(new SaveToListener());
 		
-		JButton loadTo = new JButton("Load From");
+		JButton loadTo = new JButton("Reload From");
 		loadTo.addActionListener(new LoadToListener());
 		
 		JButton saveAll = new JButton("Save");
 		saveAll.addActionListener(new SaveAllListener());
-		JButton loadAll = new JButton("Load");
+		JButton loadAll = new JButton("Reload");
 		loadAll.addActionListener(new LoadAllListener());
 		
 		
 		
 
 
-		//leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		//leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 
+		leftPanel.add(new JLabel());
 		leftPanel.add(new JLabel());
 		leftPanel.add(new JLabel());
 		leftPanel.add(new JLabel());
@@ -168,7 +169,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		leftPanel.add(split);
 		leftPanel.add(trim);
 		leftPanel.add(delete);
-		leftPanel.add(jump);
+		//leftPanel.add(jump);
 		leftPanel.add(saveAll);
 		leftPanel.add(saveTo);
 		
@@ -196,19 +197,19 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		frameSpinner.setPreferredSize(labelDim2);
 		frameSpinner.setMaximumSize(labelDim);
 
-		SpinnerModel model2 = new SpinnerNumberModel();
-		zSpinner = new JSpinner(model2);
+		SpinnerModel zSpinnerModel = new SpinnerNumberModel();
+		zSpinner = new JSpinner(zSpinnerModel);
 		
 		
 		zSpinner.setPreferredSize(labelDim2);
 		zSpinner.setMaximumSize(labelDim);
-		JLabel label2 = new JLabel("Z #");
-		label2.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-		rightPanel.add(label2);
+		JLabel zLabel = new JLabel("Z #");
+		zLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		rightPanel.add(zLabel);
 		rightPanel.add(zSpinner);
 
-		SpinnerModel model3 = new SpinnerNumberModel(20, 0, 40, 1);
-		cSpinner = new JSpinner(model3);
+		SpinnerModel cSpinnerModel = new SpinnerNumberModel(20, 0, 40, 1);
+		cSpinner = new JSpinner(cSpinnerModel);
 
 		
 		cSpinner.setPreferredSize(labelDim2);
@@ -327,6 +328,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		//This controls the center panel
 		JButton changeWorking = new JButton("Change Working Directory");
 		changeWorking.addActionListener(new changeWorkspaceListener());
+		
+		
 		workingFolder = new JTextField();
 		workingFolder.setPreferredSize(new Dimension(300, 20));
 		workingFolder.setEditable(false);
@@ -421,15 +424,21 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		//String[] trackingMethods = {"Blob", "Cell"};
 		String[] trackingMethods = viewModel.getController().getPossibleSessionTypes();
-
-
+		int channelNumber = model.getNumberOfChannels();
+		String[] channelList = new  String[channelNumber];
+		Integer i;
+		for (i=1; i <= channelNumber; i++ ){
+			channelList[i-1]= i +"";
+		}
+		
 		GenericDialog gd = new GenericDialog("New Session");
 		gd.addStringField("Enter new session name: ", "");
 		gd.addChoice("Pick tracking method", trackingMethods, null);
+		gd.addChoice("Pick channel to track", channelList, null);
 		gd.showDialog();
 
-		String temp = gd.getNextString();
-		sessionList.add(temp);
+		String trackingMethod = gd.getNextString();
+		sessionList.add(trackingMethod);
 
 		String choices = gd.getNextChoice();
 		
@@ -446,7 +455,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		text.append((String) trace[2][0] + "\n");*/
 		
 		
-		viewModel.getController().addSession(choices, temp);
+		viewModel.getController().addSession(choices, trackingMethod);
 	} 
 
 	public void changeSessionDialog() {
