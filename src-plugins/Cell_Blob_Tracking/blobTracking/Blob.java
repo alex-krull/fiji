@@ -111,8 +111,10 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		ov.add(roi);
 		
 		
-		roi = new TextRoi((int)xPos,(int)yPos,Integer.toString(this.sequenceId),f);
-		ov.add(roi);
+		TextRoi troi = new TextRoi((int)xPos,(int)yPos,Integer.toString(this.sequenceId));
+		troi.setStrokeColor(c);
+		troi.setStrokeWidth(1);
+		ov.add(troi);
 	}
 	
 	

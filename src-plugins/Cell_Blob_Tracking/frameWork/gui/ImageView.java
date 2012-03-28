@@ -4,7 +4,6 @@ import frameWork.Model;
 import frameWork.Sequence;
 import frameWork.Trackable;
 import frameWork.TrackingChannel;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageWindow;
@@ -13,7 +12,6 @@ import ij.gui.Overlay;
 import ij.gui.Roi;
 
 import java.awt.Color;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
 import java.util.SortedMap;
@@ -48,17 +46,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 
 	protected RandomAccessibleInterval<IT> toDraw;
 	
-	private class myImageWindow extends ImageWindow{
-
-		public myImageWindow(ImagePlus arg0) {
-			super(arg0);
-			this.ic= new myCanvas(imp);
-			ic.setVisible(true);
-		}
-		
-	}
-	
-	private class myCanvas extends ImageCanvas{
+	private class MyCanvas extends ImageCanvas{
 		
 		
 		/**
@@ -66,14 +54,13 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		 */
 		private static final long serialVersionUID = 1L;
 
-		public myCanvas(ImagePlus arg0) {
+		public MyCanvas(ImagePlus arg0) {
 			super(arg0);
 		}
-
-		public void componentResized(ComponentEvent e) {
-			IJ.error("updating");
-			upDateOverlay();	
-			
+		@ Override
+		public void setMagnification(double mag) {
+			super.setMagnification(mag);
+			upDateOverlay();
 		}
 
 		
@@ -106,6 +93,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		image=img;
 	 	if(imp==null) reFresh(vm.getPosition(),true);
 	 	ImageWindow imw= imp.getWindow();
+	 	new ImageWindow(imp, new MyCanvas(imp));
 	 	
 	 	//imp.getCanvas().addComponentListener(new myPropChangeListener());
 	// 	imp.getCanvas().addPropertyChangeListener(new myPropChangeListener());
@@ -147,8 +135,8 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 			Overlay ov=ovTemplate.duplicate();
 			for(int i=0;i<ov.size();i++){
 				Roi roi=ov.get(i);
-	//			roi.setStrokeWidth(roi.getStrokeWidth()/imp.getCanvas().getMagnification());
-				roi.setStrokeWidth(roi.getStrokeWidth()/2);
+				roi.setStrokeWidth(Math.min(3, roi.getStrokeWidth()/imp.getCanvas().getMagnification() ));
+	//			roi.setStrokeWidth(roi.getStrokeWidth()/2);
 			}
 			imp.setOverlay(ov);
 		}

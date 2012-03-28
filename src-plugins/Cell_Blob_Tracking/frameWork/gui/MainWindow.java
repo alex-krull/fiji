@@ -3,6 +3,7 @@ package frameWork.gui;
 import frameWork.Model;
 import ij.ImageListener;
 import ij.ImagePlus;
+import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
 
 import java.awt.event.MouseEvent;
@@ -74,8 +75,10 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		currentChannelNumber=imp.getChannel()-1;
 		//imp.getWindow().close();
 		imp.setOpenAsHyperStack(true);
-		//stackWindow= new StackWindow(imp);
-		stackWindow=(StackWindow)imp.getWindow();
+		ImageCanvas ic=imp.getCanvas();
+		ic.setVisible(true);
+		stackWindow= new StackWindow(imp, ic);
+		//stackWindow=(StackWindow)imp.getWindow();
 		stackWindow.getCanvas().addMouseListener(this);
 		stackWindow.getCanvas().addMouseMotionListener(this);
 		
