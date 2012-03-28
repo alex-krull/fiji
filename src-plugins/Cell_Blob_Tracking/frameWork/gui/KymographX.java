@@ -38,7 +38,7 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		
 	}
 	
-	public void rePaint(long[] position, boolean rePaintImage){
+	public void reFresh(long[] position, boolean rePaintImage){
 		scaleX=timeScale;
 		transX=(int)Math.min(Math.max(0,(int)(scaleX*position[3])-xSize/2),(1+model.getXTProjections((int)position[4]).max(0))*scaleX-xSize);
 		System.out.println("timeScale:"+timeScale);
@@ -47,7 +47,7 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		this.addKymoXOverlayes();
 		this.addXLineOverlay(position[3]);
 		toDraw=model.getXTProjections((int)position[4]);
-		super.rePaint(position, rePaintImage);
+		super.reFresh(position, rePaintImage);
 		//imp.updateAndDraw();
 		
 	}

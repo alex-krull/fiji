@@ -519,7 +519,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	}
 
 	@Override
-	public synchronized void rePaint(long[] position, boolean rePaintImage) {
+	public synchronized void reFresh(long[] position, boolean rePaintImage) {
 		System.out.println("updating Spinners !!!!!!!!!!!");
 		System.out.println("position[3]+1: "+(position[3]+1));
 		

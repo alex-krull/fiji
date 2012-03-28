@@ -34,7 +34,7 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	//	sb.setOrientation(Scrollbar.VERTICAL);
 	}
 	
-	public void rePaint(long[] position, boolean rePaintImage){
+	public void reFresh(long[] position, boolean rePaintImage){
 		
 		scaleY=timeScale;	
 		transY=Math.max(0,(int)(scaleY*position[3])-ySize/2);
@@ -45,7 +45,7 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	    this.addKymoYOverlayes();
 		this.addYLineOverlay(position[3]);
 		toDraw=model.getYTProjections((int)position[4]);
-		super.rePaint(position, rePaintImage);
+		super.reFresh(position, rePaintImage);
 	}
 
 	@Override

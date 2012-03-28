@@ -5,7 +5,6 @@ import frameWork.Sequence;
 import frameWork.Trackable;
 import frameWork.TrackingChannel;
 import ij.IJ;
-import ij.ImageListener;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.Line;
@@ -48,14 +47,8 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 
 	protected RandomAccessibleInterval<IT> toDraw;
 	
-	public class myPropChangeListener implements ImageListener {
-		ImagePlus imp;
-		double lastMagnification;
+	public class myPropChangeListener {
 		
-		public myPropChangeListener(ImagePlus im){
-			imp=im;
-			lastMagnification=imp.getCanvas().getMagnification();
-		}
 		
 		public void componentResized(ComponentEvent e) {
 			IJ.error("updating");
@@ -63,49 +56,6 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 			
 		}
 
-		
-		public void componentMoved(ComponentEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		
-		public void componentShown(ComponentEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-	
-		public void componentHidden(ComponentEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		
-
-
-		@Override
-		public void imageClosed(ImagePlus arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-
-
-		@Override
-		public void imageOpened(ImagePlus arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-
-
-		@Override
-		public void imageUpdated(ImagePlus arg0) {
-			
-			if(lastMagnification!=imp.getCanvas().getMagnification()) upDateOverlay();	
-			System.out.println("lastMag:"+ lastMagnification + "    newMagnification:"+imp.getCanvas().getMagnification());
-			lastMagnification=imp.getCanvas().getMagnification();
-			
-		}
 		
 	}
 	
@@ -124,6 +74,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		}
 		
 		imp.getCanvas().addKeyListener(keyListener);
+		imp.getWindow().addKeyListener(keyListener);
 		
 	}
 	
@@ -133,7 +84,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		
 		ovTemplate= new Overlay();
 		image=img;
-	 	if(imp==null) rePaint(vm.getPosition(),true);
+	 	if(imp==null) reFresh(vm.getPosition(),true);
 	 	//imp.getCanvas().addComponentListener(new myPropChangeListener());
 	// 	imp.getCanvas().addPropertyChangeListener(new myPropChangeListener());
 	

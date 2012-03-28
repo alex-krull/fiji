@@ -148,8 +148,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	    		ra.setPosition(cursor);
 	    		double currentInten=value*b.pXandK(x, y, z)/pX;
 	    		ra.get().set((float)(currentInten  ) );
-	    		b.inten+=currentInten;
-	    		
+	    		b.inten+=currentInten;    		
 	    	}
 	    	
 	    	

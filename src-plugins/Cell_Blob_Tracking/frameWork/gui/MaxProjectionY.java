@@ -26,7 +26,7 @@ implements MouseListener, MouseMotionListener {
 		}
 		
 		@Override
-		public void rePaint(long[] position, boolean rePaintImage){
+		public void reFresh(long[] position, boolean rePaintImage){
 			this.clearOverlay();
 			
 			this.addYOverlayes((int)position[3]);

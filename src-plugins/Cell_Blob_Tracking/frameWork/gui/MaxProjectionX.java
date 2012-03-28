@@ -27,7 +27,7 @@ import frameWork.Model;
 		}
 		
 		@Override
-		public void rePaint(long[] position, boolean rePaintImage){
+		public void reFresh(long[] position, boolean rePaintImage){
 			this.clearOverlay();
 			
 			this.addXOverlayes((int)position[3]);

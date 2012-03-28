@@ -83,7 +83,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	}
 
 	@Override
-	public void rePaint(long[] position, boolean rePaintImage) {
+	public void reFresh(long[] position, boolean rePaintImage) {
 	
 		
 		currentFrameNumber= (int)position[3];

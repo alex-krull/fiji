@@ -34,7 +34,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param position The position the ViewWindow should switch to.
 	 * @param rePaintImage if true, the image in the View will be redrawn.
 	 **/
-	public abstract void rePaint(long[] position, boolean rePaintImage) ;
+	public abstract void reFresh(long[] position, boolean rePaintImage) ;
 	
 	
 	/**
@@ -46,7 +46,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param rePaintImage if true, the image in the View will be redrawn.
 	 **/
 	public void upDate(long[] position, boolean rePaintImage){
-		rePaint( position,  rePaintImage);
+		reFresh( position,  rePaintImage);
 		UpdateTask udt= new UpdateTask(position,rePaintImage);
 		synchronized( this){
 			currentUpdateTask=udt;
@@ -77,7 +77,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 					try {	wait();	} catch (InterruptedException e) { 	e.printStackTrace();}		
 					udt=currentUpdateTask;					
 				}
-				if(udt!=null)rePaint(udt.position,udt.rePaintImage);
+				if(udt!=null)reFresh(udt.position,udt.rePaintImage);
 				currentUpdateTask=null;
 				System.out.println("counter: "+counter);
 				counter++;
