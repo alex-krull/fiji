@@ -153,7 +153,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 * add the Overlays of the traces for the x-projection-kymographs
 	 */
 	protected void addKymoXOverlayes(){
-		List <Session<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 	
 		for(Session<? extends Trackable,IT> tc: tcs){
 		
@@ -172,7 +172,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 * add the Overlays of the traces for the y-projection-kymographs
 	 */
 	protected void addKymoYOverlayes(){
-		List <Session<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		
 		for(Session<? extends Trackable,IT> tc: tcs){
 		if(tc==null) return;
@@ -195,7 +195,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addXOverlayes(int frameNumber){
-		List <Session<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		for(Session<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
 		   
@@ -216,7 +216,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addYOverlayes(int frameNumber){
-		List <Session<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		for(Session<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
 		
@@ -235,7 +235,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addZOverlayes(int frameNumber){
-		List <Session<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		for(Session<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
 		 
