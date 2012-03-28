@@ -1,6 +1,7 @@
 package frameWork;
 
 
+import frameWork.gui.ViewModel;
 import ij.IJ;
 
 import java.awt.Color;
@@ -142,7 +143,7 @@ private void processFile(String fName){
 		    }catch (IOException e){//Catch exception if any
 		  IJ.error("Error: " + e.getMessage());
 		  }
-	model.makeChangesPublic();
+	
 }
 
 private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCreateController(Properties sessionProps){
@@ -180,13 +181,15 @@ public void click(long[] position, int tChannel, MouseEvent e){
 
 public boolean isTracking(){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
-	return cc.isTracking();
+	if(cc!=null) return cc.isTracking();
+	return false;
 }
 
 public void optimizeFrame(int frameNumber ){
+	synchronized (model){
 		ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
-		if(cc!=null) cc.optimizeFrame(frameNumber);
-			
+		if(cc!=null) cc.optimizeFrame(frameNumber);		
+	}
 }
 
 public void StartTracking(int frameNumber ){
@@ -207,18 +210,27 @@ public void toggleTracking(int frameId){
 }
 
 public void splitSequence(int frameId){
+	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.splitSequnce(frameId);
+	model.makeChangesPublic();
+	}
 }
 
 public void deleteSequence(){
+	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.deleteSequence();
+	model.makeChangesPublic();
+	}
 }
 
 public void trimSequence(int frameId){
+	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.trimSequence(frameId);
+	model.makeChangesPublic();
+	}
 }
 
 public void saveAll(){
@@ -228,8 +240,11 @@ public void saveAll(){
 }
 
 public void mergeSequenences(){
+	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	cc.mergeSequenences();
+	model.makeChangesPublic();	
+	}
 }
 
 //public int getSelectedSeqId(){
@@ -256,15 +271,18 @@ public void processDirectory(String directory){
 	for(String fName: files){
 		this.processFile(dir+fName);
 	}
+	if(this.selectedTCId==-1 && !this.channelControllers.isEmpty()) selectedTCId=0;
 }
 
 public void setSelectionList(List <Integer> selectedIds){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	cc.setSelectionList(selectedIds);
 	model.makeChangesPublic();
+	
 }
 
 public void addSession(String typeName, String label, int channelID){
+	synchronized (model){
 	Properties sessionProps= new Properties();
 	sessionProps.setProperty("typeName", typeName);
 	sessionProps.setProperty("sessionLabel", label);
@@ -272,6 +290,8 @@ public void addSession(String typeName, String label, int channelID){
 	sessionProps.setProperty("channelId", String.valueOf(channelID));
 	ChannelController <? extends Trackable,IT> cc= this.findOrCreateController(sessionProps);
 	this.channelControllers.put(cc.getId(), cc);
+	if(this.selectedTCId==-1) this.selectedTCId=cc.getId();
+	}
 	model.makeChangesPublic();
 	
 }
@@ -292,18 +312,29 @@ public String getWorkspace(){
 }
 
 public void setWorkspace(String path){
+	synchronized (model){
 	model.setProjectDirectory(path);
 	model.makeChangesPublic();
+	}
 }
 
 public Collection<Session<? extends Trackable, IT>> getSessions(){
 	return model.getSessions();
 }
 
-public void load(){
+public void load(ViewModel<IT> viewModel){
+	synchronized (model){
 	channelControllers.clear();
+	int a= model.getSessions().size();
 	model.clearSessions();
+	a= model.getSessions().size();
+	System.out.println(a);
+	this.selectedTCId=-1;
+	
 	this.processDirectory(model.getProjectDirectory());
+	viewModel.reFreashSessionToBeDisplayed();
+	model.makeChangesPublic();
+	}
 }
 
 

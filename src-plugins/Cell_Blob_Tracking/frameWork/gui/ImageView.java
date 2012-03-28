@@ -2,8 +2,8 @@ package frameWork.gui;
 
 import frameWork.Model;
 import frameWork.Sequence;
-import frameWork.Trackable;
 import frameWork.Session;
+import frameWork.Trackable;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageWindow;
@@ -241,7 +241,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		 
 		 if(trackables!=null)for(Trackable t : trackables){	
 			//   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
-			   Color c= model.getSequence(t.sequenceId, viewModel.getCurrentChannelNumber()).getColor();
+			   Color c= model.getSequence(t.sequenceId).getColor();
 			   t.addShapeZ(ovTemplate,viewModel.isSelected(t.sequenceId, t.channel),c);
 			   
 		   }

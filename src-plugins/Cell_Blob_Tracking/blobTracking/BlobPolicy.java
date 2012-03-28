@@ -32,9 +32,12 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	@Override
 	public ChannelController<Blob, IT> produceControllerAndChannel(
 			Properties sessionProps, Model<IT> model) {
-		int cid= Integer.valueOf(sessionProps.getProperty("channelId"));
-		int sid= Integer.valueOf(sessionProps.getProperty("sessionId"));
+		Integer cid= Integer.valueOf(sessionProps.getProperty("channelId"));
+		if(cid==null)cid=0;
+		Integer sid= Integer.valueOf(sessionProps.getProperty("sessionId"));
+		if(sid==null)sid=model.getNextTCId();
 		Session<Blob, IT> btc=  new Session<Blob, IT>(sid, this, model.getMovieChannel(cid));
+		
 		btc.setProperties(sessionProps);
 		model.addTrackingChannel(btc, btc.getId());
 		return new ChannelController<Blob,IT>(model,btc, this);
@@ -161,11 +164,10 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		}
 		
 				model.makeChangesPublic();
-				
-		
 		return;
 	}
 	
+	@Override
 	public Blob copy(Blob toCopy){
 		Blob result=new Blob(toCopy.sequenceId, toCopy.frameId, toCopy.xPos, toCopy.yPos, toCopy.zPos, toCopy.sigma, toCopy.channel);
 		result.pK=toCopy.pK;
