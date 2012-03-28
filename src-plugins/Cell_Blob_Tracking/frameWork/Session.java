@@ -12,7 +12,7 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 
-public abstract class Session<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
+public class Session<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
 	
 	
 	private SortedMap <Integer, Sequence<T>> Sequences;
@@ -21,6 +21,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 	private long numOfFrames;
 	private String label;
 	protected Policy<T,IT> policy;
+	protected MovieChannel<IT> mChannel;
 	
 	public String getLabel() {
 		return label;
@@ -30,10 +31,12 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 		this.label = label;
 	}
 
-	protected Session(int newID, Policy<T,IT> pol){
+	public Session(int newID, Policy<T,IT> pol, MovieChannel<IT> mc){
+		mChannel=mc;
 		policy=pol;
 		id=newID;
 		label="session-"+String.valueOf(id);
+		initialize(mc.getNumberOfFrames());
 	}
 	
 	public int getId(){
@@ -46,7 +49,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 		Sequences= new TreeMap<Integer, Sequence<T>>();
 		frames=new ArrayList<TrackingFrame<T,IT>>();
 		for(int i=0;i<numOfFrames;i++){
-			frames.add(produceFrame(i));
+			frames.add(policy.produceFrame(i, mChannel));
 			System.out.println("producing frame:"+ i);
 		}
 		
@@ -149,11 +152,12 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 	public void addSequence(Sequence <T> seq){
 		this.Sequences.put(seq.getId(), seq);
 	}
+
+	public boolean isAssociatedWithMovieChannel(int id){
+		return (mChannel.getId()==id);
+	}
 	
-	protected abstract TrackingFrame<T,IT> produceFrame(int frameNum);
 	
-	protected abstract boolean isAssociatedWithMovieChannel(int id);
-	public abstract T loadTrackableFromString(String s);
 		
 	public void setProperties(Properties props){
 		String s;
@@ -167,6 +171,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 		props.setProperty("sessionLabel", this.getLabel());
 		props.setProperty("typeName", this.getTypeName());
 		props.setProperty("numberOfFrames", String.valueOf(this.getNumberOfFrames()));
+		props.setProperty("channelId", String.valueOf(this.mChannel.getId()));
 		return props;
 	}
 	
