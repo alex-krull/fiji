@@ -7,6 +7,7 @@ import frameWork.TrackingChannel;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
+import ij.gui.ImageWindow;
 import ij.gui.Line;
 import ij.gui.Overlay;
 import ij.gui.Roi;
@@ -47,9 +48,28 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 
 	protected RandomAccessibleInterval<IT> toDraw;
 	
-	public class myPropChangeListener {
+	private class myImageWindow extends ImageWindow{
+
+		public myImageWindow(ImagePlus arg0) {
+			super(arg0);
+			this.ic= new myCanvas(imp);
+			ic.setVisible(true);
+		}
+		
+	}
+	
+	private class myCanvas extends ImageCanvas{
 		
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public myCanvas(ImagePlus arg0) {
+			super(arg0);
+		}
+
 		public void componentResized(ComponentEvent e) {
 			IJ.error("updating");
 			upDateOverlay();	
@@ -85,6 +105,8 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		ovTemplate= new Overlay();
 		image=img;
 	 	if(imp==null) reFresh(vm.getPosition(),true);
+	 	ImageWindow imw= imp.getWindow();
+	 	
 	 	//imp.getCanvas().addComponentListener(new myPropChangeListener());
 	// 	imp.getCanvas().addPropertyChangeListener(new myPropChangeListener());
 	
