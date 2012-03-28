@@ -663,7 +663,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
 			   JFileChooser workspace = new JFileChooser();
-			   workspace.setCurrentDirectory(new java.io.File("."));
+			   workspace.setCurrentDirectory(new java.io.File(viewModel.getController().getWorkspace()));
 			   workspace.setDialogTitle("Pick Workspace");
 			   workspace.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			   workspace.setAcceptAllFileFilterUsed(false);
@@ -680,11 +680,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		public void actionPerformed(ActionEvent e) {
 			// TODO Saves all traces
 			   JFileChooser saveLocation = new JFileChooser();
-			    saveLocation.setCurrentDirectory(new java.io.File("."));
+			    saveLocation.setCurrentDirectory(new java.io.File(viewModel.getController().getWorkspace()));
 			    saveLocation.setDialogTitle("Pick Location to Save Files");
 			    saveLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			    saveLocation.setAcceptAllFileFilterUsed(false);
 			    saveLocation.showDialog(saveLocation, "Okay");
+			    viewModel.getController().setWorkspace(saveLocation.getSelectedFile().toString());
 			viewModel.saveAll();
 			
 		}
@@ -717,7 +718,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		public void actionPerformed(ActionEvent e) {
 			// TODO Saves all traces
 			   JFileChooser loadLocation = new JFileChooser();
-			    loadLocation.setCurrentDirectory(new java.io.File("."));
+			    loadLocation.setCurrentDirectory(new java.io.File(viewModel.getController().getWorkspace()));
 			    loadLocation.setDialogTitle("Pick Location to Load Files From");
 			    loadLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			    loadLocation.setAcceptAllFileFilterUsed(false);
