@@ -292,6 +292,7 @@ public String getWorspace(){
 
 public void setWorspace(String path){
 	model.setProjectDirectory(path);
+	model.makeChangesPublic();
 }
 
 }
