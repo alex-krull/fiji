@@ -27,7 +27,7 @@ import net.imglib2.type.numeric.RealType;
 import blobTracking.Blob;
 import blobTracking.BlobController;
 import blobTracking.BlobPolicy;
-import blobTracking.BlobTrackingChannel;
+import blobTracking.BlobSession;
 
 
 public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > {
@@ -49,7 +49,7 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		channelControllers=	new TreeMap<Integer, ChannelController<? extends Trackable,IT>>();
 		
 		
-		TrackingChannel<Blob,IT> tc= new BlobTrackingChannel<IT>(model.getMovieChannel(0),model.getNextTCId(), new BlobPolicy<IT>() );
+		Session<Blob,IT> tc= new BlobSession<IT>(model.getMovieChannel(0),model.getNextTCId(), new BlobPolicy<IT>() );
 		BlobController<IT> bc= new BlobController<IT>(model,tc);
 		channelControllers.put(tc.getId(), bc);
 		model.addTrackingChannel(tc,0);
@@ -294,6 +294,7 @@ public void setWorkspace(String path){
 	model.setProjectDirectory(path);
 	model.makeChangesPublic();
 }
+
 
 
 

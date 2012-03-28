@@ -18,7 +18,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	protected Model<IT> model;
 	protected int selectedSequenceId;
 	protected T selectedTrackable;
-	protected TrackingChannel<T,IT> trackingChannel;
+	protected Session<T,IT> trackingChannel;
 	protected List <Integer> selectedIdList;
 	protected Policy <T,IT> policy;
 	
@@ -43,7 +43,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 //		return selectedSequenceId;
 //	}
 	
-	protected ChannelController( Model<IT> mod,TrackingChannel<T,IT> tc ){
+	protected ChannelController( Model<IT> mod,Session<T,IT> tc ){
 		selectedIdList=new ArrayList<Integer>();
 		model =mod;
 		trackingChannel=tc;

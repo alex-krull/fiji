@@ -34,7 +34,7 @@ private int numberOfFrames;
 private final int numberOfSlices;
 private	RandomAccessibleInterval<IT> image;
 private final SortedMap <Integer, MovieChannel <IT> > channels;
-private final SortedMap <Integer, TrackingChannel <? extends Trackable,IT> > trackingChannels;
+private final SortedMap <Integer, Session <? extends Trackable,IT> > trackingChannels;
 private String imageFileName;
 private String imageDrirectory;
 private String projectDirectory;
@@ -142,7 +142,7 @@ public Model(ImagePlus imp){
     }   
 	   
 	channels=new TreeMap<Integer,MovieChannel <IT> >();
-	trackingChannels= new TreeMap<Integer, TrackingChannel <? extends Trackable,IT> >();
+	trackingChannels= new TreeMap<Integer, Session <? extends Trackable,IT> >();
 	
 	if(!switchedDimensions){
 		numberOfFrames=imp.getNFrames();
@@ -206,7 +206,7 @@ public Trackable getTrackable(int seqId, int frameId, int channel){
 }
 
 public Sequence<? extends Trackable> getSequence(int id, int channel){
-	TrackingChannel<? extends Trackable, IT> tc=trackingChannels.get(channel);
+	Session<? extends Trackable, IT> tc=trackingChannels.get(channel);
 	if(tc==null){
 		
 		return null;
@@ -243,18 +243,18 @@ public MovieChannel<IT> getMovieChannel(int id){
 	return channels.get(id);
 }
 
-public TrackingChannel<? extends Trackable, IT> getTrackingChannel(int id){
+public Session<? extends Trackable, IT> getTrackingChannel(int id){
 	return trackingChannels.get(id);
 }
 
-public void addTrackingChannel(TrackingChannel<? extends Trackable,IT> tc, int key){
+public void addTrackingChannel(Session<? extends Trackable,IT> tc, int key){
 	trackingChannels.put(key, tc);
 }
 
-public List<TrackingChannel<? extends Trackable,IT>> getTCsAssociatedWithChannel(int id){
-	List<TrackingChannel<? extends Trackable,IT>> result= new ArrayList<TrackingChannel<? extends Trackable,IT>>();
-	Collection <TrackingChannel<? extends Trackable,IT>> coll= this.trackingChannels.values();
-	for(TrackingChannel<? extends Trackable,IT> tc: coll){
+public List<Session<? extends Trackable,IT>> getTCsAssociatedWithChannel(int id){
+	List<Session<? extends Trackable,IT>> result= new ArrayList<Session<? extends Trackable,IT>>();
+	Collection <Session<? extends Trackable,IT>> coll= this.trackingChannels.values();
+	for(Session<? extends Trackable,IT> tc: coll){
 		if(tc.isAssociatedWithMovieChannel(id)) result.add(tc);
 	}
 	return result;
@@ -262,14 +262,14 @@ public List<TrackingChannel<? extends Trackable,IT>> getTCsAssociatedWithChannel
 
 public List<Sequence<? extends Trackable>> getAllSequencies(){
 	List <Sequence<? extends Trackable>>results=new ArrayList<Sequence<? extends Trackable>>();
-	for(TrackingChannel<? extends Trackable,IT> tc: this.trackingChannels.values()){
+	for(Session<? extends Trackable,IT> tc: this.trackingChannels.values()){
 		results.addAll(tc.getSeqsCollection());
 	}	
 	return results;
 }
 
 public Sequence<? extends Trackable> getSequence(int id) {
-	for(TrackingChannel<? extends Trackable, IT> tc:trackingChannels.values()){
+	for(Session<? extends Trackable, IT> tc:trackingChannels.values()){
 		if(tc.getSequence(id)!=null) return tc.getSequence(id);
 	}
 	return null;
