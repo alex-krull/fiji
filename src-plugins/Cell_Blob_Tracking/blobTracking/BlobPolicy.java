@@ -29,7 +29,7 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			Properties sessionProps, Model<IT> model) {
 		int cid= Integer.valueOf(sessionProps.getProperty("channelId"));
 		int sid= Integer.valueOf(sessionProps.getProperty("sessionId"));
-		BlobTrackingChannel<IT> btc=  new BlobTrackingChannel<IT>(model.getMovieChannel(cid), sid,this);
+		BlobSession<IT> btc=  new BlobSession<IT>(model.getMovieChannel(cid), sid,this);
 		model.addTrackingChannel(btc, btc.getId());
 		return new BlobController<IT>(model,btc);
 	}

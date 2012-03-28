@@ -3,7 +3,7 @@ package frameWork.gui;
 import frameWork.Model;
 import frameWork.Sequence;
 import frameWork.Trackable;
-import frameWork.TrackingChannel;
+import frameWork.Session;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageWindow;
@@ -153,9 +153,9 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 * add the Overlays of the traces for the x-projection-kymographs
 	 */
 	protected void addKymoXOverlayes(){
-		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		List <Session<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
 	
-		for(TrackingChannel<? extends Trackable,IT> tc: tcs){
+		for(Session<? extends Trackable,IT> tc: tcs){
 		
 			if(tc==null) return;
 			SortedMap <Integer,? extends Sequence< ? extends Trackable>> seqs= tc.getSeqs();
@@ -172,9 +172,9 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 * add the Overlays of the traces for the y-projection-kymographs
 	 */
 	protected void addKymoYOverlayes(){
-		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		List <Session<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
 		
-		for(TrackingChannel<? extends Trackable,IT> tc: tcs){
+		for(Session<? extends Trackable,IT> tc: tcs){
 		if(tc==null) return;
 		SortedMap <Integer,? extends Sequence< ? extends Trackable>> seqs= tc.getSeqs();
 	
@@ -195,8 +195,8 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addXOverlayes(int frameNumber){
-		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
-		for(TrackingChannel<? extends Trackable,IT> tc: tcs){	
+		List <Session<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		for(Session<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
 		   
 		   if(trackables!=null) for(Trackable t : trackables){	
@@ -216,8 +216,8 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addYOverlayes(int frameNumber){
-		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
-		for(TrackingChannel<? extends Trackable,IT> tc: tcs){	
+		List <Session<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		for(Session<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
 		
 		 if(trackables!=null) for(Trackable t : trackables){	
@@ -235,8 +235,8 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addZOverlayes(int frameNumber){
-		List <TrackingChannel<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
-		for(TrackingChannel<? extends Trackable,IT> tc: tcs){	
+		List <Session<? extends Trackable,IT>> tcs = viewModel.getTCsToBeDisplayed();
+		for(Session<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
 		 
 		 if(trackables!=null)for(Trackable t : trackables){	

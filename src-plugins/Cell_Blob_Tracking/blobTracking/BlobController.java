@@ -7,12 +7,12 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.ChannelController;
 import frameWork.Model;
-import frameWork.TrackingChannel;
+import frameWork.Session;
 
 public class BlobController < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>  > extends ChannelController<Blob, IT> {
 	
 
-public BlobController(Model<IT> model, TrackingChannel<Blob,IT> tc){
+public BlobController(Model<IT> model, Session<Blob,IT> tc){
 	super(model,tc);
 }
 

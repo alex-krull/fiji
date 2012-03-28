@@ -17,7 +17,7 @@ import frameWork.Controller;
 import frameWork.Model;
 import frameWork.Sequence;
 import frameWork.Trackable;
-import frameWork.TrackingChannel;
+import frameWork.Session;
 
 public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Observer{
 	
@@ -39,7 +39,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	protected Model<IT> model;
 	protected Controller<IT> controller;
-	private List<TrackingChannel<? extends Trackable,IT>> tCsToBeDisplayed;
+	private List<Session<? extends Trackable,IT>> tCsToBeDisplayed;
 	
 	protected List <ViewWindow<IT>> views;
 	
@@ -189,7 +189,7 @@ public void addViewWindow( ViewWindow<IT> vw, double initialZoom){
 	vw.setZoom(initialZoom);
 }
 
-public List<TrackingChannel<? extends Trackable,IT>> getTCsToBeDisplayed(){
+public List<Session<? extends Trackable,IT>> getTCsToBeDisplayed(){
 	return this.tCsToBeDisplayed;
 }
 
@@ -227,7 +227,7 @@ public void setColor(Color c){
 
 public  List <Sequence<? extends Trackable>> getVisibleSequences(){
 	List <Sequence<? extends Trackable>> results = new ArrayList <Sequence<? extends Trackable>>();
-	for(TrackingChannel<? extends Trackable ,IT> tc: tCsToBeDisplayed){
+	for(Session<? extends Trackable ,IT> tc: tCsToBeDisplayed){
 		results.addAll(tc.getSeqsCollection());
 	}
 	return results;
