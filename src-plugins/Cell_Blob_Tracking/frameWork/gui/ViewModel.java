@@ -16,8 +16,8 @@ import tools.ImglibTools;
 import frameWork.Controller;
 import frameWork.Model;
 import frameWork.Sequence;
-import frameWork.Trackable;
 import frameWork.Session;
+import frameWork.Trackable;
 
 public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > implements Observer{
 	
@@ -39,7 +39,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	protected Model<IT> model;
 	protected Controller<IT> controller;
-	private List<Session<? extends Trackable,IT>> tCsToBeDisplayed;
+	private List<Session<? extends Trackable,IT>> sessionsToBeDisplayed;
 	
 	protected List <ViewWindow<IT>> views;
 	
@@ -74,7 +74,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	   controller=contr;
 		
 	   model=mod;
-   	   tCsToBeDisplayed=model.getTCsAssociatedWithChannel(0);     
+   	   sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(0);     
             
        image = model.getImage();
        
@@ -121,8 +121,8 @@ public void setPosition(int dim, int pos){
 	if(dim==4){
 		if(currentChannelNumber==pos) return;
 		this.currentChannelNumber= Math.min(Math.max(pos,0), model.getNumberOfChannels()-1);
-		tCsToBeDisplayed.clear();
-		tCsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);
+		sessionsToBeDisplayed.clear();
+		sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);
 	}
 	
 	System.out.println("]]]]]]]]]]]]]]]]]]new FrameNumber:"+currentFrameNumber);
@@ -189,8 +189,8 @@ public void addViewWindow( ViewWindow<IT> vw, double initialZoom){
 	vw.setZoom(initialZoom);
 }
 
-public List<Session<? extends Trackable,IT>> getTCsToBeDisplayed(){
-	return this.tCsToBeDisplayed;
+public List<Session<? extends Trackable,IT>> getSessionsToBeDisplayed(){
+	return this.sessionsToBeDisplayed;
 }
 
 public boolean getDrawOverLays(){
@@ -227,7 +227,7 @@ public void setColor(Color c){
 
 public  List <Sequence<? extends Trackable>> getVisibleSequences(){
 	List <Sequence<? extends Trackable>> results = new ArrayList <Sequence<? extends Trackable>>();
-	for(Session<? extends Trackable ,IT> tc: tCsToBeDisplayed){
+	for(Session<? extends Trackable ,IT> tc: sessionsToBeDisplayed){
 		results.addAll(tc.getSeqsCollection());
 	}
 	return results;

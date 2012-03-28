@@ -275,4 +275,8 @@ public Sequence<? extends Trackable> getSequence(int id) {
 	return null;
 }
 
+public Collection< Session <? extends Trackable,IT> > getSessions(){
+	return this.trackingChannels.values();
+}
+
 }
