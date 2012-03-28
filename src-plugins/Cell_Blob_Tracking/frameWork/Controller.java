@@ -286,11 +286,11 @@ public String[] getPossibleSessionTypes(){
 	return results;
 }
 
-public String getWorspace(){
+public String getWorkspace(){
 	return model.getProjectDirectory();
 }
 
-public void setWorspace(String path){
+public void setWorkspace(String path){
 	model.setProjectDirectory(path);
 	model.makeChangesPublic();
 }
