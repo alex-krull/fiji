@@ -26,9 +26,7 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import blobTracking.Blob;
-import blobTracking.BlobController;
 import blobTracking.BlobPolicy;
-import blobTracking.BlobSession;
 
 
 public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > {
@@ -50,8 +48,8 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		channelControllers=	new TreeMap<Integer, ChannelController<? extends Trackable,IT>>();
 		
 		
-		Session<Blob,IT> tc= new BlobSession<IT>(model.getMovieChannel(0),model.getNextTCId(), new BlobPolicy<IT>() );
-		BlobController<IT> bc= new BlobController<IT>(model,tc);
+		Session<Blob,IT> tc= new Session<Blob, IT>(model.getNextTCId(),new BlobPolicy<IT>(), model.getMovieChannel(0) );
+		ChannelController<Blob,IT> bc= new ChannelController<Blob,IT>(model,tc, new BlobPolicy<IT>());
 		channelControllers.put(tc.getId(), bc);
 		model.addTrackingChannel(tc,0);
 		selectedTCId=tc.getId();

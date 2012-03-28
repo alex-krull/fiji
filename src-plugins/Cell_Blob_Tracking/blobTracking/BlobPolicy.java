@@ -4,6 +4,8 @@ import ij.gui.Line;
 import ij.gui.Overlay;
 
 import java.awt.Color;
+import java.awt.event.MouseEvent;
+import java.util.List;
 import java.util.Properties;
 import java.util.SortedMap;
 
@@ -12,8 +14,11 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.ChannelController;
 import frameWork.Model;
+import frameWork.MovieChannel;
 import frameWork.Policy;
 import frameWork.Sequence;
+import frameWork.Session;
+import frameWork.TrackingFrame;
 
 public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends Policy<Blob, IT>{
 
@@ -29,9 +34,9 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			Properties sessionProps, Model<IT> model) {
 		int cid= Integer.valueOf(sessionProps.getProperty("channelId"));
 		int sid= Integer.valueOf(sessionProps.getProperty("sessionId"));
-		BlobSession<IT> btc=  new BlobSession<IT>(model.getMovieChannel(cid), sid,this);
+		Session<Blob, IT> btc=  new Session<Blob, IT>(sid, this, model.getMovieChannel(cid));
 		model.addTrackingChannel(btc, btc.getId());
-		return new BlobController<IT>(model,btc);
+		return new ChannelController<Blob,IT>(model,btc, this);
 	}
 
 	
@@ -79,6 +84,85 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 				
 			}
 		}
+	}
+	
+	@Override
+	public TrackingFrame<Blob,IT> produceFrame(int frameNum, MovieChannel<IT> mChannel) {		
+		return new BlobFrame<IT>(frameNum, mChannel.getMovieFrame(frameNum));
+	}
+	
+	@Override
+	public Blob loadTrackableFromString(String s, int sessionId) {
+		System.out.println(s);
+	
+		String[] values=s.split("\t");
+		System.out.println(values.length);
+		
+		System.out.println(values[1]);
+		System.out.println(values[2]);
+		System.out.println(values[0]);
+		int sId= Integer.valueOf(values[0]);
+		int fNum= Integer.valueOf(values[1]);
+		double x= Double.valueOf(values[2]);
+		double y= Double.valueOf(values[3]);
+		double z= Double.valueOf(values[4]);
+		double sigma= Double.valueOf(values[5]);
+		double sigmaZ= Double.valueOf(values[6]);
+		
+		return new Blob(sId, fNum, x, y, z, sigma, sessionId);
+	}
+	
+	@Override
+	public void click(long[] pos, MouseEvent e, Model<IT> model, List<Integer>  selectedIdList, Session<Blob,IT> trackingChannel){
+		System.out.println("click!!!!");
+		int selectedSequenceId=-1;
+		Blob selectedTrackable;
+		
+		if(e.getID()==MouseEvent.MOUSE_PRESSED){
+			
+			if(e.getClickCount()==1){
+				
+			selectedSequenceId=model.selectAt((int)pos[0],(int) pos[1],(int) pos[2],(int) pos[3],(int) pos[4]);	 
+			System.out.println("        new selected Sequence ID:"+selectedSequenceId);
+			if(!e.isControlDown()){
+				selectedIdList.clear();			
+			}
+			if(selectedIdList.contains(selectedSequenceId)){
+				selectedIdList.remove(new Integer( selectedSequenceId));	
+			}else {
+				selectedIdList.add(new Integer( selectedSequenceId));
+			}
+			
+			
+			}
+		}
+		
+		if(e.getID()==MouseEvent.MOUSE_CLICKED){
+			if(e.isShiftDown() && e.getClickCount()==1){
+				trackingChannel.addTrackable(new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], pos[2], 1, trackingChannel.getId()));
+			}
+			
+			if(e.getClickCount()>1) trackingChannel.optimizeFrame((int)pos[3], false);
+			
+		}
+
+		
+		if(e.getID()==MouseEvent.MOUSE_DRAGGED){
+			selectedTrackable=trackingChannel.getTrackable(selectedSequenceId, (int)pos[3]);
+			if(selectedTrackable==null){
+				System.out.println("selectedTrackable==null");
+				return; 
+			}
+			if(pos[0]>=0)selectedTrackable.xPos=pos[0];
+			if(pos[1]>=0)selectedTrackable.yPos=pos[1];
+			if(pos[2]>=0)selectedTrackable.zPos=pos[2]*model.xyToZ;
+			
+		}
+		
+				model.makeChangesPublic();
+				
+		
+		return;
 	}
 
 

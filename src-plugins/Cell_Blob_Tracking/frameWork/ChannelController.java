@@ -14,7 +14,7 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import tools.OtherTools;
 
-public abstract class ChannelController<T extends Trackable,  IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
+public class ChannelController<T extends Trackable,  IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
 	protected Model<IT> model;
 	protected int selectedSequenceId;
 	protected T selectedTrackable;
@@ -22,7 +22,10 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	protected List <Integer> selectedIdList;
 	protected Policy <T,IT> policy;
 	
-	public abstract void click(long[] pos, MouseEvent e);
+	public void click(long[] pos, MouseEvent e){
+		policy.click(pos, e, model, selectedIdList, trackingChannel);
+		return;
+	}
 	
 	private boolean currentlyTracking=false;
 	
@@ -43,10 +46,11 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 //		return selectedSequenceId;
 //	}
 	
-	protected ChannelController( Model<IT> mod,Session<T,IT> tc ){
+	public ChannelController( Model<IT> mod,Session<T,IT> tc, Policy<T,IT> pol ){
 		selectedIdList=new ArrayList<Integer>();
 		model =mod;
 		trackingChannel=tc;
+		policy=pol;
 	}
 	
 	
@@ -156,7 +160,7 @@ public abstract class ChannelController<T extends Trackable,  IT extends  Numeri
 	}
 	
 	public void processLineFromFile(String line){
-		trackingChannel.addTrackable(trackingChannel.loadTrackableFromString(line));
+		trackingChannel.addTrackable(policy.loadTrackableFromString(line, this.getId()));
 	}
 	
 	public void saveSequence(Sequence<T> seq){
