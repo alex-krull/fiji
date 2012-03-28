@@ -384,6 +384,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		frame.getContentPane().add(BorderLayout.WEST, leftPanel);
 		frame.setSize(1000,600);
 		frame.setVisible(true);
+		frame.setMinimumSize(new Dimension(850, 600));
 		
 		//frame.setFocusable(true);
 		//HotKeyListener keyListener = new HotKeyListener(viewModel);
