@@ -9,6 +9,7 @@ import ij.gui.StackWindow;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowListener;
 
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
@@ -226,14 +227,16 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 	
 
 	@Override
-	public void open() {
+	public void initWindow() {
 		synchronized (this){
+			WindowListener [] wListeners=imp.getWindow().getWindowListeners();
+			for(int i=0;i<wListeners.length;i++)
+				imp.getWindow().removeWindowListener(wListeners[0]);
+			
 			new StackWindow(imp,new MyCanvas(imp));	
 			imp.getWindow().addWindowListener(new MyWindowListener());
 		}
 		}
 
-	public boolean showInWindowList(){
-		return false;
-	}
+
 }

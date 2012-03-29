@@ -777,7 +777,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	}
 
 	@Override
-	public void open() {
+	public void initWindow() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -822,8 +822,19 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	}
 	
+	@Override
 	public boolean showInWindowList(){
 		return false;
+	}
+
+
+
+
+
+	@Override
+	public void open() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

@@ -468,9 +468,9 @@ CLASSPATH(plugins/Threshold_Colour.jar)=jars/ij.jar
 CLASSPATH(plugins/Helmholtz_Analysis.jar)=jars/ij.jar
 CLASSPATH(plugins/Fiji_Package_Maker.jar)=jars/ij.jar:plugins/Fiji_Updater.jar:jars/fiji-lib.jar
 
-CLASSPATH(plugins/Cell_Blob_Tracking.jar)=jars/ij.jar:jars/alternateImglib/imglib2.jar:jars/alternateImglib/imglib2-io.jar:jars/alternateImglib/imglib2-ij.jar:jars/alternateImglib/imglib2-ui.jar:jars/commons-math.jar:jars/Fiji.jar:jars/fiji-lib.jar
+CLASSPATH(plugins/Cell_Blob_Tracking.jar)=jars/ij.jar:jars/imglib2.jar:jars/imglib2-io.jar:jars/imglib2-ij.jar:jars/imglib2-ui.jar:jars/commons-math.jar:jars/Fiji.jar:jars/fiji-lib.jar
 
-CLASSPATH(plugins/Blob_Simulator.jar)=jars/ij.jar:jars/alternateImglib/imglib2.jar:jars/alternateImglib/imglib2-io.jar:jars/alternateImglib/imglib2-ij.jar:jars/alternateImglib/imglib2-ui.jar:jars/commons-math.jar:plugins/Cell_Blob_Tracking.jar
+CLASSPATH(plugins/Blob_Simulator.jar)=jars/ij.jar:jars/imglib2.jar:jars/imglib2-io.jar:jars/imglib2-ij.jar:jars/imglib2-ui.jar:jars/commons-math.jar:plugins/Cell_Blob_Tracking.jar
 
 # pom.xml sub-projects
 

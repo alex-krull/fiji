@@ -1,6 +1,7 @@
 package frameWork;
 
 
+import ij.IJ;
 import ij.ImagePlus;
 
 import java.util.ArrayList;
@@ -28,11 +29,11 @@ public double xyToZ=3.5;
 private boolean isVolume=false;
 private boolean isTimeSequence=false;
 private boolean isMultiChannel=false;
-private boolean switchedDimensions=false;
+private final boolean switchedDimensions=false;
 private final int numberOfChannels;
 private int numberOfFrames;
 private final int numberOfSlices;
-private	RandomAccessibleInterval<IT> image;
+private final	RandomAccessibleInterval<IT> image;
 private final SortedMap <Integer, MovieChannel <IT> > channels;
 private final SortedMap <Integer, Session <? extends Trackable,IT> > trackingChannels;
 private String imageFileName;
@@ -127,23 +128,33 @@ public Model(ImagePlus imp){
 	
 	System.out.println("iv:" + isVolume+ "  its:" +isTimeSequence + "  imc:"+ isMultiChannel);
 	
+	/*
 	if(isVolume&&!isTimeSequence && !imp.isHyperStack()){
  	   isVolume=false;
  	   isTimeSequence=true;
  	  switchedDimensions=true;
  	   System.out.println("SWITCHING DIMENSIONS");
-    }
+    }*/
 	
 	if(isMultiChannel)numberOfChannels=imp.getNChannels();
 	else numberOfChannels=1;
 	
 	
-	
+	/*
 	if(isMultiChannel()){
+		for(int i=0;i<image.numDimensions();i++)
+			IJ.error(String.valueOf(i)+":"+image.dimension(i));
+		
        image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,image.numDimensions()-1),2) );
+	
     if(image.numDimensions()==5)  	   
-       image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,3),2 ));  
-    }   
+       image = Views.zeroMin(Views.invertAxis(Views.rotate(image,2,3),2 ));
+    	
+    
+    }  */ 
+	
+	for(int i=0;i<image.numDimensions();i++)
+		IJ.error(String.valueOf(i)+":"+image.dimension(i));
 	   
 	channels=new TreeMap<Integer,MovieChannel <IT> >();
 	trackingChannels= new TreeMap<Integer, Session <? extends Trackable,IT> >();
@@ -159,7 +170,9 @@ public Model(ImagePlus imp){
 	
 	if(isMultiChannel){
 		for(int i=0;i<numberOfChannels;i++){
-			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i),i,numberOfFrames );
+//			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i),i,numberOfFrames );
+			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, 2, i),i,numberOfFrames );
+
 			channels.put(i, chann);
 				
 			

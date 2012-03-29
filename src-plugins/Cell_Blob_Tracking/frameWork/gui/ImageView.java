@@ -61,12 +61,12 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 
 		@Override
 		public void windowClosing(WindowEvent e) {
-			
+			close();
 		}
 
 		@Override
 		public void windowClosed(WindowEvent e) {
-			viewModel.setPosition(-1, -1);
+			
 		}
 
 		@Override
@@ -143,9 +143,8 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		ovTemplate= new Overlay();
 		image=img;
 	 	if(imp==null) reFresh(vm.getPosition(),true);
-	 	ImageWindow imw= imp.getWindow();
-	 	ImageWindow newImw=  new ImageWindow(imp, new MyCanvas(imp));
-	 	imp.getWindow().addWindowListener(new MyWindowListener());
+	 	
+	 	initWindow();
 	 	
 	 	//imp.getCanvas().addComponentListener(new myPropChangeListener());
 	// 	imp.getCanvas().addPropertyChangeListener(new myPropChangeListener());
@@ -350,22 +349,34 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	}
 	
 	@Override
-	public void open() {
+	public void initWindow() {
 		synchronized (this){
 		new ImageWindow(imp,new MyCanvas(imp));	
+		WindowListener [] wListeners=imp.getWindow().getWindowListeners();
+		for(int i=0;i<wListeners.length;i++)
+			imp.getWindow().removeWindowListener(wListeners[0]);
+		
 		imp.getWindow().addWindowListener(new MyWindowListener());
 		viewModel.setPosition(-1, -1);		}
+	
 	}
-
-
-
+	
+	@Override
+	public void open(){
+		if(imp.getWindow()==null)
+			initWindow();
+		imp.getWindow().setVisible(true);
+		viewModel.setPosition(-1, -1);
+	}
+	
 
 
 	@Override
 	public void close() {
 		synchronized (this){
 			if(!this.isOpen()) return;
-		imp.getWindow().close();
+		imp.getWindow().setVisible(false);
+		viewModel.setPosition(-1, -1);
 		}
 	}
 
@@ -376,6 +387,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	@Override
 	public boolean isOpen() {
 		return (imp.getWindow()!=null && imp.getWindow().isVisible());
+		
 	}
 	
 

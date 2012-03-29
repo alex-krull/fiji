@@ -99,8 +99,9 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		
 	}
 	
-	public abstract void open();
+	public abstract void initWindow();
 	public abstract void close();
+	public abstract void open();
 	public abstract boolean isOpen();
 	public boolean showInWindowList(){
 		return true;
