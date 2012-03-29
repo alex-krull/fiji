@@ -23,7 +23,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	protected Policy <T,IT> policy;
 	
 	public void click(long[] pos, MouseEvent e){
-		policy.click(pos, e, model, selectedIdList, trackingChannel);
+		selectedSequenceId= policy.click(pos, e, model, selectedIdList, trackingChannel, selectedSequenceId);
 		return;
 	}
 	

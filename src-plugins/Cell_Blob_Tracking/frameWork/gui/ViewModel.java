@@ -125,7 +125,6 @@ public void setPosition(int dim, int pos){
 		sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);
 	}
 	
-	System.out.println("]]]]]]]]]]]]]]]]]]new FrameNumber:"+currentFrameNumber);
 	upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, true );
 
 	//long time1= System.nanoTime();
@@ -151,7 +150,6 @@ public void mouseAtPosition(long [] pos, MouseEvent me){
 protected void upDateImages(int frame, int slice, int channel, boolean init){
 	
 	long[] pos= {0,0,slice, frame, channel};
-	System.out.println("]]]]]]]]]]]]]]]]]]new FrameNumber update:"+pos[3]);
 	for(ViewWindow<IT> vw:views){	
 		vw.upDate(pos, init);
 	}

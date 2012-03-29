@@ -35,7 +35,7 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 	public abstract void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected,
 			SortedMap <Integer,T> trackables, Color color);
 	
-	public abstract void click(long[] pos, MouseEvent e, Model<IT> model, List<Integer>  selectedIdList, Session<T,IT> trackingChannel);
+	public abstract int click(long[] pos, MouseEvent e, Model<IT> model, List<Integer>  selectedIdList, Session<T,IT> trackingChannel, int selectedSequenceId);
 
 	public abstract T copy(T toCopy);
 }

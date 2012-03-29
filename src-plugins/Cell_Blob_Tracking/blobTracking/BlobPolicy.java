@@ -97,14 +97,14 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	
 	@Override
 	public Blob loadTrackableFromString(String s, int sessionId) {
-		System.out.println(s);
+	//	System.out.println(s);
 	
 		String[] values=s.split("\t");
-		System.out.println(values.length);
+	//	System.out.println(values.length);
 		
-		System.out.println(values[1]);
-		System.out.println(values[2]);
-		System.out.println(values[0]);
+	//	System.out.println(values[1]);
+	//	System.out.println(values[2]);
+	//	System.out.println(values[0]);
 		int sId= Integer.valueOf(values[0]);
 		int fNum= Integer.valueOf(values[1]);
 		double x= Double.valueOf(values[2]);
@@ -117,9 +117,9 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	}
 	
 	@Override
-	public void click(long[] pos, MouseEvent e, Model<IT> model, List<Integer>  selectedIdList, Session<Blob,IT> trackingChannel){
-		System.out.println("click!!!!");
-		int selectedSequenceId=-1;
+	public int click(long[] pos, MouseEvent e, Model<IT> model, List<Integer>  selectedIdList, Session<Blob,IT> trackingChannel, int selectedSequenceId){
+		
+		
 		Blob selectedTrackable;
 		
 		if(e.getID()==MouseEvent.MOUSE_PRESSED){
@@ -127,7 +127,7 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			if(e.getClickCount()==1){
 				
 			selectedSequenceId=model.selectAt((int)pos[0],(int) pos[1],(int) pos[2],(int) pos[3],(int) pos[4]);	 
-			System.out.println("        new selected Sequence ID:"+selectedSequenceId);
+		//	System.out.println("        new selected Sequence ID:"+selectedSequenceId);
 			if(!e.isControlDown()){
 				selectedIdList.clear();			
 			}
@@ -154,8 +154,8 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		if(e.getID()==MouseEvent.MOUSE_DRAGGED){
 			selectedTrackable=trackingChannel.getTrackable(selectedSequenceId, (int)pos[3]);
 			if(selectedTrackable==null){
-				System.out.println("selectedTrackable==null");
-				return; 
+	//			System.out.println("selectedTrackable==null");
+				return selectedSequenceId; 
 			}
 			if(pos[0]>=0)selectedTrackable.xPos=pos[0];
 			if(pos[1]>=0)selectedTrackable.yPos=pos[1];
@@ -164,7 +164,7 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		}
 		
 				model.makeChangesPublic();
-		return;
+		return selectedSequenceId;
 	}
 	
 	@Override
