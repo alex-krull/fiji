@@ -11,13 +11,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -95,6 +95,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	volatile JSpinner cSpinner;
 	JMenu windowMenu;
 	JScrollPane tableScroll;
+	JComboBox changeSession;
 	
 	List<ViewWindow<IT>> windowList;
 	
@@ -246,21 +247,16 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		rightPanel.add(currentMethod);
-
-		JLabel labelSession = new JLabel("Current Session");
-		labelSession.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-		rightPanel.add(labelSession);
-
-		String currentS = "";
-
-		currentSession = new JTextField();
-		currentSession.setText(currentS);
-		currentSession.setHorizontalAlignment(JTextField.CENTER);
-		currentSession.setMaximumSize(new Dimension(1000, 30));
-		currentSession.setEditable(false);
-
-
-		rightPanel.add(currentSession);
+		
+		
+		
+		changeSession = new JComboBox();
+		changeSession.addActionListener(new ChangeSessionListener());
+		
+		JLabel changeLabel = new JLabel("Current Session");
+		changeLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		rightPanel.add(changeLabel);
+		rightPanel.add(changeSession);
 
 		/*JLabel labelWhich = new JLabel("Pick Session ");
 		labelWhich.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -324,16 +320,16 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		deleteSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		
 
-		JButton changeSession = new JButton("Change Session");
+		/*JButton changeSession = new JButton("Change Session");
 		//deleteSession.addActionListener(new NewSessionListener());
 		changeSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
-		changeSession.addActionListener(new ChangeSessionListener());
+		changeSession.addActionListener(new ChangeSessionListener());*/
 		
 
 		rightButtonPanel.add(start);
 		rightButtonPanel.add(newSession);
 		rightButtonPanel.add(deleteSession);
-		rightButtonPanel.add(changeSession);
+		//rightButtonPanel.add(changeSession);
 		rightPanel.add(rightButtonPanel);
 		//This controls the center panel
 		JButton changeWorking = new JButton("Change Working Directory");
@@ -517,10 +513,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	public class ChangeSessionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent s) {
-			changeSessionDialog();
-
-
-
+			int index= changeSession.getSelectedIndex();
+			List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
+			Session<? extends Trackable, IT> session = tempSessionList.get(index);
+			viewModel.getController().setCurrentSession(session.getId());
+			
 		}
 
 	}
@@ -629,7 +626,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		
 		
-		Collection<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
+		List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
 		String[] sessionNamesList = new String[tempSessionList.size()];
 		
 		int i=0;
@@ -654,6 +651,17 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			tempMenu.addActionListener(new KymographListener(aViewWindow));
 			
 			windowMenu.add(tempMenu);
+		}
+		
+		
+		//Change Session drop menu
+		changeSession.removeAllItems();
+		int count=0;
+		for(Session<? extends Trackable, IT> session : tempSessionList){
+			changeSession.addItem(session.getLabel());
+			if(session.getId()==viewModel.getController().getCurrentSession())
+				changeSession.setSelectedIndex(count);
+			count++;
 		}
 		
 	}

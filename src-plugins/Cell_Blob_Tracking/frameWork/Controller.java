@@ -16,7 +16,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -318,8 +317,8 @@ public void setWorkspace(String path){
 	}
 }
 
-public Collection<Session<? extends Trackable, IT>> getSessions(){
-	return model.getSessions();
+public List<Session<? extends Trackable, IT>> getSessions(){
+	return new ArrayList<Session<? extends Trackable, IT>> (model.getSessions());
 }
 
 public void load(ViewModel<IT> viewModel){
@@ -335,6 +334,16 @@ public void load(ViewModel<IT> viewModel){
 	viewModel.reFreashSessionToBeDisplayed();
 	model.makeChangesPublic();
 	}
+}
+
+public void setCurrentSession(int id){
+	selectedTCId=id;
+	model.makeChangesPublic();
+}
+
+public int getCurrentSession(){
+	return selectedTCId;
+
 }
 
 
