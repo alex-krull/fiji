@@ -354,9 +354,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		trackerTable = new TableSort(viewModel, model);
 		trackerTable.setOpaque(true);
 		
+		JScrollPane tableScroll = new JScrollPane(trackerTable);
+		tableScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
 		
 		centerPanel.add(urlPanel);
-		centerPanel.add(trackerTable);
+		centerPanel.add(tableScroll);
 
 		JTextArea details = new JTextArea("Place holder");
 		Border raisedetched = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
