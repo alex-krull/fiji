@@ -23,7 +23,7 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	private boolean buisy =false;
 	
 	public KymographX(Model<IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<IT> vm) {
-		super(mod, img,vm);
+		super(mod, img,vm, "Kymograph X");
 		xSize=(int)model.getXTProjections(0).dimension(0);
 		
 		if(xSize>500) xSize=500;

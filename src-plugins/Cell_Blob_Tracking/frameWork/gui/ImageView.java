@@ -61,12 +61,12 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 
 		@Override
 		public void windowClosing(WindowEvent e) {
-				
+			
 		}
 
 		@Override
 		public void windowClosed(WindowEvent e) {
-			viewModel.update(null, null);
+			viewModel.setPosition(-1, -1);
 		}
 
 		@Override
@@ -351,8 +351,10 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	
 	@Override
 	public void open() {
+		synchronized (this){
 		new ImageWindow(imp,new MyCanvas(imp));	
 		imp.getWindow().addWindowListener(new MyWindowListener());
+		viewModel.setPosition(-1, -1);		}
 	}
 
 
@@ -361,8 +363,10 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 
 	@Override
 	public void close() {
+		synchronized (this){
+			if(!this.isOpen()) return;
 		imp.getWindow().close();
-		
+		}
 	}
 
 

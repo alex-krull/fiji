@@ -128,7 +128,7 @@ public class TableSort extends JPanel {
 		}
     	
     	}
-			
+		table.revalidate();	
     	table.repaint();
     }
     

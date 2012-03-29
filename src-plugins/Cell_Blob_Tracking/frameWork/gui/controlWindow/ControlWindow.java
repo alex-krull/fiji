@@ -17,6 +17,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -92,6 +93,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	volatile JSpinner frameSpinner;
 	volatile JSpinner zSpinner;
 	volatile JSpinner cSpinner;
+	JMenu windowMenu;
+	JScrollPane tableScroll;
+	
+	List<ViewWindow<IT>> windowList;
+	
 /*
 	public static void main(String[] args) {
 		ControlWindow2 window = new ControlWindow2();
@@ -354,7 +360,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		trackerTable = new TableSort(viewModel, model);
 		trackerTable.setOpaque(true);
 		
-		JScrollPane tableScroll = new JScrollPane(trackerTable);
+		tableScroll = new JScrollPane(trackerTable);
 		tableScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -370,6 +376,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		// The is the menu bar area
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
+		windowMenu = new JMenu("Windows");
+		
+	
 
 		JMenuItem newMenuItem = new JMenuItem("New");
 		fileMenu.add(newMenuItem);
@@ -378,6 +387,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		fileMenu.add(saveAllMenu);
 		
 		menuBar.add(fileMenu);
+		menuBar.add(windowMenu);
 		menuBar.setBackground(Color.white);
 		menuBar.setForeground(Color.BLACK);
 
@@ -595,6 +605,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 		
 		trackerTable.updateData(trace);
+		
+
 		} else {
 			//This section puts frame number in console area
 			Long frameNumber = (Long) frameSpinner.getModel().getValue();
@@ -616,6 +628,21 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 		
 		selectSessionList.setListData(sessionNamesList);
+		
+		//Make Window list
+		windowList = viewModel.getViewWindows();
+		
+		
+		windowMenu.removeAll();
+		for(ViewWindow<IT> aViewWindow : windowList){
+			
+			if(!aViewWindow.showInWindowList()) continue;
+			JCheckBoxMenuItem tempMenu = new JCheckBoxMenuItem(aViewWindow.getCaption());
+			tempMenu.setState(aViewWindow.isOpen());
+			tempMenu.addActionListener(new KymographListener(aViewWindow));
+			
+			windowMenu.add(tempMenu);
+		}
 		
 	}
 
@@ -778,6 +805,25 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 
+	public class KymographListener implements ActionListener{
+		ViewWindow<IT> viewWindow;
+		public KymographListener(ViewWindow<IT> aViewWindow){
+			viewWindow = aViewWindow;
+		}
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			if(viewWindow.isOpen()){
+				viewWindow.close();
+			}else{
+				viewWindow.open();
+			}
+		}
 
+	}
+	
+	public boolean showInWindowList(){
+		return false;
+	}
 	
 }
