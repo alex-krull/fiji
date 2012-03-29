@@ -62,7 +62,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	}
 	
 
-	private final StackWindow stackWindow;
+
 	private int currentFrameNumber;
 	private int currentSliceNumber;
 	private int currentChannelNumber;
@@ -78,10 +78,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		imp.setOpenAsHyperStack(true);
 		ImageCanvas ic=imp.getCanvas();
 		ic.setVisible(true);
-		stackWindow= new StackWindow(imp, ic);
-		//stackWindow=(StackWindow)imp.getWindow();
-		stackWindow.getCanvas().addMouseListener(this);
-		stackWindow.getCanvas().addMouseMotionListener(this);
+		initWindow();
 		
 		ImagePlus.addImageListener(this);
 	}
@@ -235,6 +232,8 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 			
 			new StackWindow(imp,new MyCanvas(imp));	
 			imp.getWindow().addWindowListener(new MyWindowListener());
+			imp.getCanvas().addMouseListener(this);
+			imp.getCanvas().addMouseMotionListener(this);
 		}
 		}
 
