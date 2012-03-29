@@ -1,7 +1,6 @@
 package frameWork.gui;
 
 import frameWork.Model;
-import ij.IJ;
 import ij.ImageListener;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
@@ -235,7 +234,6 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 			
 			WindowListener [] wListeners=imp.getWindow().getWindowListeners();
 			for(int i=0;i<wListeners.length;i++){
-				IJ.error(wListeners[i].getClass().getName());
 				imp.getWindow().removeWindowListener(wListeners[i]);
 			}
 				

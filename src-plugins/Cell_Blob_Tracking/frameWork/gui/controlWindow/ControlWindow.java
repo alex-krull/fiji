@@ -557,8 +557,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			viewModel.setPosition(2,((SpinnerNumberModel)zSpinner.getModel()).getNumber().intValue()-1);
 			
 		}
-
-		
 		
 	}
 	

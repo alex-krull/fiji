@@ -4,7 +4,6 @@ import frameWork.Model;
 import frameWork.Sequence;
 import frameWork.Session;
 import frameWork.Trackable;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageWindow;
@@ -356,7 +355,6 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 			new ImageWindow(imp,new MyCanvas(imp));
 		WindowListener [] wListeners=imp.getWindow().getWindowListeners();
 		for(int i=0;i<wListeners.length;i++){
-			IJ.error(wListeners[i].getClass().getName());
 			imp.getWindow().removeWindowListener(wListeners[i]);
 		}
 		
