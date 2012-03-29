@@ -34,7 +34,7 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 	
 	
 	protected double xyToZ=3.5;
-	public int selectedTCId;
+	private int selectedTCId;
 	
 	protected Model<IT> model;
 
@@ -337,11 +337,15 @@ public void load(ViewModel<IT> viewModel){
 }
 
 public void setCurrentSession(int id){
+	IJ.error("old:"+String.valueOf(selectedTCId));
 	selectedTCId=id;
-	model.makeChangesPublic();
+	IJ.error("new:"+String.valueOf(selectedTCId));
+//	model.makeChangesPublic();
+	
 }
 
 public int getCurrentSession(){
+	IJ.error("asking:"+String.valueOf(selectedTCId));
 	return selectedTCId;
 
 }

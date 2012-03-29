@@ -251,7 +251,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		
 		changeSession = new JComboBox();
-		changeSession.addActionListener(new ChangeSessionListener());
+	//	changeSession.addActionListener(new ChangeSessionListener());
 		
 		JLabel changeLabel = new JLabel("Current Session");
 		changeLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -513,17 +513,20 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	public class ChangeSessionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent s) {
-			/*int index= changeSession.getSelectedIndex();
+			synchronized (changeSession){
+			int index= changeSession.getSelectedIndex();
 		    if(index<0){
-		    	viewModel.getController().setCurrentSession(-1);
+		//    	viewModel.getController().setCurrentSession(-1);
 		    	return;
 		    }
 			List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
 			Session<? extends Trackable, IT> session = tempSessionList.get(index);
-			//viewModel.getController().setCurrentSession(session.getId());
-*/			
+			int temp=session.getId();
+			viewModel.getController().setCurrentSession(session.getId());
+			int temp2=viewModel.getController().getCurrentSession();
+			
 		}
-
+		}
 	}
 
 
@@ -657,16 +660,30 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			windowMenu.add(tempMenu);
 		}
 		
-		
+		synchronized (changeSession){
 		//Change Session drop menu
+		if(changeSession.getActionListeners().length>0)	changeSession.removeActionListener(changeSession.getActionListeners()[0]);
 		changeSession.removeAllItems();
+		int index=0;
 		int count=0;
+		int getID=-1;
+		int cId=-1;
 		for(Session<? extends Trackable, IT> session : tempSessionList){
 			changeSession.addItem(session.getLabel());
-			if(session.getId()==viewModel.getController().getCurrentSession())
-				changeSession.setSelectedIndex(count);
+			 getID=session.getId();
+			 cId=viewModel.getController().getCurrentSession();
+			 System.out.println(getID+" "+ cId);
+			if(session.getId()==viewModel.getController().getCurrentSession()){
+				index=count;
+			}
+				
 			count++;
 		}
+		cId=changeSession.getSelectedIndex();
+		if(index!=changeSession.getSelectedIndex())
+			changeSession.setSelectedIndex(index);
+		}
+		changeSession.addActionListener(new ChangeSessionListener());
 		
 	}
 
