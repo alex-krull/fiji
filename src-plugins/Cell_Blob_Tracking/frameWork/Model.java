@@ -73,9 +73,13 @@ public synchronized int getNextSequqnceId(){
 }
 
 public synchronized int getNextTCId(){
+	
 	for(int i=0;i<10000;i++){
-		if(this.getTrackingChannel(i)==null)
+		if(this.getTrackingChannel(i)==null){
+			this.trackingChannels.put(new Integer(i), null);
 			return i;
+		}
+			
 	}
 	return -1;
 }

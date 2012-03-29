@@ -23,7 +23,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	protected Policy <T,IT> policy;
 	
 	public void click(long[] pos, MouseEvent e){
-		policy.click(pos, e, model, selectedIdList, trackingChannel);
+		selectedSequenceId= policy.click(pos, e, model, selectedIdList, trackingChannel, selectedSequenceId);
 		return;
 	}
 	
@@ -109,7 +109,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		}
 		
 		
-		model.makeChangesPublic();
+		
 	}
 	
 	public void deleteSequence(){
@@ -119,7 +119,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		selectedIdList.clear();
 		
 		selectedSequenceId=-1;
-		model.makeChangesPublic();
+		
 	}
 	
 	public void trimSequence(int frameNumber){
@@ -128,7 +128,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			trackingChannel.splitSequenence(seqId, -1, frameNumber);
 			trackingChannel.deleteSequence(-1);
 		}
-		model.makeChangesPublic();
+		
 	}
 	
 	
@@ -145,7 +145,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 				System.out.println("adding frame:"+ t.frameId);
 			}		
 		}
-		model.makeChangesPublic();	
+		
 	}
 	
 	public void setColor(Color color){

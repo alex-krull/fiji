@@ -224,10 +224,11 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 		return pos;
 	}
 	
-	//public void UpDate(long[] position, boolean rePaintImage){
-	//	rePaint(position, rePaintImage);
-	//}
 
-
+	@Override
+	public void open() {
+		new StackWindow(imp,new MyCanvas(imp));	
+		imp.getWindow().addWindowListener(new MyWindowListener());
+	}
 
 }

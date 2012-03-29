@@ -39,7 +39,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	protected Model<IT> model;
 	protected Controller<IT> controller;
-	private List<Session<? extends Trackable,IT>> sessionsToBeDisplayed;
+	public List<Session<? extends Trackable,IT>> sessionsToBeDisplayed;
 	
 	protected List <ViewWindow<IT>> views;
 	
@@ -74,7 +74,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	   controller=contr;
 		
 	   model=mod;
-   	   sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(0);     
+	   sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(this.currentChannelNumber);   
             
        image = model.getImage();
        
@@ -125,7 +125,6 @@ public void setPosition(int dim, int pos){
 		sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);
 	}
 	
-	System.out.println("]]]]]]]]]]]]]]]]]]new FrameNumber:"+currentFrameNumber);
 	upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, true );
 
 	//long time1= System.nanoTime();
@@ -149,12 +148,10 @@ public void mouseAtPosition(long [] pos, MouseEvent me){
 }
 
 protected void upDateImages(int frame, int slice, int channel, boolean init){
-
+	
 	long[] pos= {0,0,slice, frame, channel};
-	System.out.println("]]]]]]]]]]]]]]]]]]new FrameNumber update:"+pos[3]);
 	for(ViewWindow<IT> vw:views){	
 		vw.upDate(pos, init);
-		
 	}
  
 				
@@ -245,4 +242,11 @@ public Controller<IT> getController(){
 	return controller;
 }
 
+public void reFreashSessionToBeDisplayed(){
+	sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(this.currentChannelNumber);  
+}
+
+public List<ViewWindow<IT>> getViewWindows(){
+	return this.views;
+}
 }

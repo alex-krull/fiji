@@ -11,6 +11,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	protected ViewModel<IT> viewModel;
 	protected Thread thread;
 	protected volatile UpdateTask currentUpdateTask=null;
+	protected int viewId;
 	protected ViewWindow(Model<IT> mod, String title, ViewModel<IT> vm){
 		
 		
@@ -46,11 +47,13 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param rePaintImage if true, the image in the View will be redrawn.
 	 **/
 	public void upDate(long[] position, boolean rePaintImage){
-		reFresh( position,  rePaintImage);
-		UpdateTask udt= new UpdateTask(position,rePaintImage);
-		synchronized( this){
-			currentUpdateTask=udt;
-			notify();
+		synchronized (model){
+			reFresh( position,  rePaintImage);
+			UpdateTask udt= new UpdateTask(position,rePaintImage);
+			synchronized( this){
+				currentUpdateTask=udt;
+				notify();
+			}
 		}
 	}
 	
@@ -85,8 +88,15 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		}
 	}
 	
+	public String getCaption(){
+		return caption;
+	}
+	
 	public void setZoom(double newZoom){
 		
 	}
 	
+	public abstract void open();
+	public abstract void close();
+	public abstract boolean isOpen();
 }

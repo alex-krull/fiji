@@ -47,6 +47,7 @@ public class Sequence<T extends Trackable> {
 		properties.setProperty("is", "property");
 		properties.setProperty("a", "property");
 		properties.setProperty("test", "property");
+		color=OtherTools.colorFromIndex(id);
 		
 	}
 	
