@@ -227,8 +227,13 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 
 	@Override
 	public void open() {
-		new StackWindow(imp,new MyCanvas(imp));	
-		imp.getWindow().addWindowListener(new MyWindowListener());
-	}
+		synchronized (this){
+			new StackWindow(imp,new MyCanvas(imp));	
+			imp.getWindow().addWindowListener(new MyWindowListener());
+		}
+		}
 
+	public boolean showInWindowList(){
+		return false;
+	}
 }

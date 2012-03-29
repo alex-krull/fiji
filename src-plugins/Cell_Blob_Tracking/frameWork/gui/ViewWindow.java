@@ -47,6 +47,8 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param rePaintImage if true, the image in the View will be redrawn.
 	 **/
 	public void upDate(long[] position, boolean rePaintImage){
+		synchronized (this){
+			if(!this.isOpen()) return;
 		synchronized (model){
 			reFresh( position,  rePaintImage);
 			UpdateTask udt= new UpdateTask(position,rePaintImage);
@@ -54,6 +56,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 				currentUpdateTask=udt;
 				notify();
 			}
+		}
 		}
 	}
 	
@@ -99,4 +102,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	public abstract void open();
 	public abstract void close();
 	public abstract boolean isOpen();
+	public boolean showInWindowList(){
+		return true;
+	}
 }

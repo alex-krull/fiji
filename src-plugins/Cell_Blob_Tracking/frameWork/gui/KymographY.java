@@ -21,7 +21,7 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	private boolean buisy=false;
 	
 	public KymographY(Model< IT> mod, RandomAccessibleInterval<IT> img, ViewModel<IT> vm) {
-		super(mod, img,vm);
+		super(mod, img,vm, "Kymograph Y");
 		ySize=(int)model.getYTProjections(0).dimension(1);
 		if(ySize>500) ySize=500;
 		if(ySize<100) ySize=100;
