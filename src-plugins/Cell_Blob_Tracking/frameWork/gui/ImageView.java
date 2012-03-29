@@ -4,6 +4,7 @@ import frameWork.Model;
 import frameWork.Sequence;
 import frameWork.Session;
 import frameWork.Trackable;
+import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageWindow;
@@ -54,7 +55,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 
 		@Override
 		public void windowOpened(WindowEvent e) {
-			
+			imp.getWindow().windowOpened(e);
 			
 			
 		}
@@ -66,30 +67,30 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 
 		@Override
 		public void windowClosed(WindowEvent e) {
-			
+			imp.getWindow().windowClosed(e);
 		}
 
 		@Override
 		public void windowIconified(WindowEvent e) {
-			// TODO Auto-generated method stub
+			imp.getWindow().windowIconified(e);
 			
 		}
 
 		@Override
 		public void windowDeiconified(WindowEvent e) {
-			// TODO Auto-generated method stub
+			imp.getWindow().windowDeiconified(e);
 			
 		}
 
 		@Override
 		public void windowActivated(WindowEvent e) {
-			// TODO Auto-generated method stub
+			imp.getWindow().windowActivated(e);
 			
 		}
 
 		@Override
 		public void windowDeactivated(WindowEvent e) {
-			// TODO Auto-generated method stub
+			imp.getWindow().windowDeactivated(e);
 			
 		}
 		
@@ -351,10 +352,13 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	@Override
 	public void initWindow() {
 		synchronized (this){
-		new ImageWindow(imp,new MyCanvas(imp));	
+	//	new ImageWindow(imp,new MyCanvas(imp));	
+			new ImageWindow(imp,new MyCanvas(imp));
 		WindowListener [] wListeners=imp.getWindow().getWindowListeners();
-		for(int i=0;i<wListeners.length;i++)
-			imp.getWindow().removeWindowListener(wListeners[0]);
+		for(int i=0;i<wListeners.length;i++){
+			IJ.error(wListeners[i].getClass().getName());
+			imp.getWindow().removeWindowListener(wListeners[i]);
+		}
 		
 		imp.getWindow().addWindowListener(new MyWindowListener());
 		viewModel.setPosition(-1, -1);		}
@@ -363,8 +367,8 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	
 	@Override
 	public void open(){
-		if(imp.getWindow()==null)
-			initWindow();
+	//	if(imp.getWindow()==null)
+	//		initWindow();
 		imp.getWindow().setVisible(true);
 		viewModel.setPosition(-1, -1);
 	}

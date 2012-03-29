@@ -1,6 +1,7 @@
 package frameWork.gui;
 
 import frameWork.Model;
+import ij.IJ;
 import ij.ImageListener;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
@@ -78,9 +79,10 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		imp.setOpenAsHyperStack(true);
 		ImageCanvas ic=imp.getCanvas();
 		ic.setVisible(true);
-		initWindow();
+		
 		
 		ImagePlus.addImageListener(this);
+		initWindow();
 	}
 
 	@Override
@@ -226,11 +228,18 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 	@Override
 	public void initWindow() {
 		synchronized (this){
-			WindowListener [] wListeners=imp.getWindow().getWindowListeners();
-			for(int i=0;i<wListeners.length;i++)
-				imp.getWindow().removeWindowListener(wListeners[0]);
+			
+			
 			
 			new StackWindow(imp,new MyCanvas(imp));	
+			
+			WindowListener [] wListeners=imp.getWindow().getWindowListeners();
+			for(int i=0;i<wListeners.length;i++){
+				IJ.error(wListeners[i].getClass().getName());
+				imp.getWindow().removeWindowListener(wListeners[i]);
+			}
+				
+			
 			imp.getWindow().addWindowListener(new MyWindowListener());
 			imp.getCanvas().addMouseListener(this);
 			imp.getCanvas().addMouseMotionListener(this);
