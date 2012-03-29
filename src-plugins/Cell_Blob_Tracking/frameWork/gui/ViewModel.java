@@ -246,4 +246,7 @@ public void reFreashSessionToBeDisplayed(){
 	sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(this.currentChannelNumber);  
 }
 
+public List<ViewWindow<IT>> getViewWindows(){
+	return this.views;
+}
 }

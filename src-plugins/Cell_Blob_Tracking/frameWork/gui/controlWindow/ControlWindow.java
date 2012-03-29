@@ -744,5 +744,36 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 		
 	}
+
+	@Override
+	public void open() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+	@Override
+	public boolean isOpen() {
+		return true;
+	}
+
+
+
+
+
+
 	
 }

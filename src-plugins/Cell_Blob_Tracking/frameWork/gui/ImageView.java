@@ -14,6 +14,8 @@ import ij.plugin.ContrastEnhancer;
 
 import java.awt.Color;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.List;
 import java.util.SortedMap;
 
@@ -47,7 +49,53 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 
 	protected RandomAccessibleInterval<IT> toDraw;
 	
-	private class MyCanvas extends ImageCanvas{
+	
+	protected class MyWindowListener implements WindowListener{
+
+		@Override
+		public void windowOpened(WindowEvent e) {
+			
+			
+			
+		}
+
+		@Override
+		public void windowClosing(WindowEvent e) {
+				
+		}
+
+		@Override
+		public void windowClosed(WindowEvent e) {
+			viewModel.update(null, null);
+		}
+
+		@Override
+		public void windowIconified(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowDeiconified(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowActivated(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowDeactivated(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	protected class MyCanvas extends ImageCanvas{
 		
 		
 		/**
@@ -69,6 +117,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	
 	@Override
 	public void addKeyListener(HotKeyListener keyListener){
+		
 		KeyListener[] listeners= imp.getWindow().getKeyListeners();
 		for(int i=0;i<listeners.length;i++){
 			KeyListener kl=listeners[i];
@@ -90,11 +139,13 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		super(mod, title,vm);
 		imp=imagePlus;
 		
+		
 		ovTemplate= new Overlay();
 		image=img;
 	 	if(imp==null) reFresh(vm.getPosition(),true);
 	 	ImageWindow imw= imp.getWindow();
-	 	new ImageWindow(imp, new MyCanvas(imp));
+	 	ImageWindow newImw=  new ImageWindow(imp, new MyCanvas(imp));
+	 	imp.getWindow().addWindowListener(new MyWindowListener());
 	 	
 	 	//imp.getCanvas().addComponentListener(new myPropChangeListener());
 	// 	imp.getCanvas().addPropertyChangeListener(new myPropChangeListener());
@@ -296,6 +347,31 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		
 		
 		
+	}
+	
+	@Override
+	public void open() {
+		new ImageWindow(imp,new MyCanvas(imp));	
+		imp.getWindow().addWindowListener(new MyWindowListener());
+	}
+
+
+
+
+
+	@Override
+	public void close() {
+		imp.getWindow().close();
+		
+	}
+
+
+
+
+
+	@Override
+	public boolean isOpen() {
+		return (imp.getWindow()!=null && imp.getWindow().isVisible());
 	}
 	
 

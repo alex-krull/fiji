@@ -11,6 +11,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	protected ViewModel<IT> viewModel;
 	protected Thread thread;
 	protected volatile UpdateTask currentUpdateTask=null;
+	protected int viewId;
 	protected ViewWindow(Model<IT> mod, String title, ViewModel<IT> vm){
 		
 		
@@ -87,8 +88,15 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		}
 	}
 	
+	public String getCaption(){
+		return caption;
+	}
+	
 	public void setZoom(double newZoom){
 		
 	}
 	
+	public abstract void open();
+	public abstract void close();
+	public abstract boolean isOpen();
 }
