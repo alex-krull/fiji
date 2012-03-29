@@ -332,7 +332,7 @@ public void load(ViewModel<IT> viewModel){
 	this.selectedTCId=-1;
 	
 	this.processDirectory(model.getProjectDirectory());
-	viewModel.reFreashSessionToBeDisplayed();
+	viewModel.reFreshSessionToBeDisplayed();
 	model.makeChangesPublic();
 	}
 }

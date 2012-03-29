@@ -242,7 +242,7 @@ public Controller<IT> getController(){
 	return controller;
 }
 
-public void reFreashSessionToBeDisplayed(){
+public void reFreshSessionToBeDisplayed(){
 	sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(this.currentChannelNumber);  
 }
 

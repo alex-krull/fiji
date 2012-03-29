@@ -19,7 +19,7 @@ protected TrackingFrame(int frameNum, Policy <T,IT> pol){
 	policy=pol;
 }
 
-public abstract void optimizeFrame(boolean cheap);
+
 
 public void addTrackable(T trackable){
 	removeTrackable(trackable.sequenceId);
