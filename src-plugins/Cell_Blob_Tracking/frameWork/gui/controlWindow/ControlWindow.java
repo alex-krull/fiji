@@ -514,6 +514,10 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		@Override
 		public void actionPerformed(ActionEvent s) {
 			int index= changeSession.getSelectedIndex();
+		    if(index<0){
+		    	viewModel.getController().setCurrentSession(-1);
+		    	return;
+		    }
 			List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
 			Session<? extends Trackable, IT> session = tempSessionList.get(index);
 			viewModel.getController().setCurrentSession(session.getId());
