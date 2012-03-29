@@ -150,16 +150,16 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		JButton trim = new JButton("Trim");
 		trim.addActionListener(new TrimListener());
 
-		JButton saveTo = new JButton("Save To");
-		saveTo.addActionListener(new SaveToListener());
+		//JButton saveTo = new JButton("Save To");
+		//saveTo.addActionListener(new SaveToListener());
 		
-		JButton loadTo = new JButton("Reload From");
-		loadTo.addActionListener(new LoadToListener());
+		//JButton loadTo = new JButton("Reload From");
+		//loadTo.addActionListener(new LoadFromListener());
 		
 		JButton saveAll = new JButton("Save");
 		saveAll.addActionListener(new SaveAllListener());
-		JButton loadAll = new JButton("Reload");
-		loadAll.addActionListener(new LoadAllListener());
+		JButton loadAllButton = new JButton("Reload");
+		loadAllButton.addActionListener(new LoadAllListener());
 		
 		
 		
@@ -177,12 +177,14 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		leftPanel.add(split);
 		leftPanel.add(trim);
 		leftPanel.add(delete);
+		
+		leftPanel.add(new JLabel());
 		//leftPanel.add(jump);
 		leftPanel.add(saveAll);
-		leftPanel.add(saveTo);
+		//leftPanel.add(saveTo);
 		
-		leftPanel.add(loadAll);
-		leftPanel.add(loadTo);
+		leftPanel.add(loadAllButton);
+		//leftPanel.add(loadTo);
 		
 
 		// The controls on the right
@@ -382,10 +384,22 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		JMenuItem newMenuItem = new JMenuItem("New");
 		fileMenu.add(newMenuItem);
-		JMenuItem saveAllMenu = new JMenuItem("Save all");
+		JMenuItem saveAllMenu = new JMenuItem("Save");
 		saveAllMenu.addActionListener(new SaveAllListener());
-		fileMenu.add(saveAllMenu);
 		
+		JMenuItem saveTo = new JMenuItem("Save to");
+		saveTo.addActionListener(new SaveToListener());
+		
+		JMenuItem loadFrom = new JMenuItem("Load from");
+		loadFrom.addActionListener(new LoadFromListener());
+		
+		JMenuItem loadAll = new JMenuItem("Load");
+		loadAll.addActionListener(new LoadAllListener());
+		
+		fileMenu.add(saveAllMenu);
+		fileMenu.add(saveTo);
+		fileMenu.add(loadAll);
+		fileMenu.add(loadFrom);
 		menuBar.add(fileMenu);
 		menuBar.add(windowMenu);
 		menuBar.setBackground(Color.white);
@@ -759,7 +773,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	}
 	
 	
-	public class LoadToListener implements ActionListener{
+	public class LoadFromListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
