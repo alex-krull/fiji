@@ -149,7 +149,6 @@ public class SelectionListener implements MouseListener{
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			
 	   		
 		}
 
@@ -159,7 +158,12 @@ public class SelectionListener implements MouseListener{
 			List <Integer> results = new ArrayList<Integer>();
     		for(int i=0; i<table.getRowCount();i++){
     			if(table.isRowSelected(i)){
+    				
     				results.add((Integer)table.getModel().getValueAt(i, 0));
+    				if(e.getClickCount()>1){
+    					int ff= model.getSequence((Integer)table.getModel().getValueAt(i, 0)).getFirstFrame();
+    					viewModel.setPosition(3, ff);
+    				}
     			}
     				
     		}
