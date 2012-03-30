@@ -134,6 +134,7 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			if(selectedIdList.contains(selectedSequenceId)){
 				selectedIdList.remove(new Integer( selectedSequenceId));	
 			}else {
+				
 				selectedIdList.add(new Integer( selectedSequenceId));
 			}
 			

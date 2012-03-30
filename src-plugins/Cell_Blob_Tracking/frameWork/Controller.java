@@ -170,7 +170,7 @@ private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCr
  * @param e the original MouseEvent
  */
 public void click(long[] position, int tChannel, MouseEvent e){
-	ChannelController<? extends Trackable,IT> cc= channelControllers.get(tChannel);
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	
 	if (cc!=null){
 		
@@ -337,18 +337,25 @@ public void load(ViewModel<IT> viewModel){
 }
 
 public void setCurrentSession(int id){
-	IJ.error("old:"+String.valueOf(selectedTCId));
+//	IJ.error("old:"+String.valueOf(selectedTCId));
 	selectedTCId=id;
-	IJ.error("new:"+String.valueOf(selectedTCId));
-//	model.makeChangesPublic();
+//	IJ.error("new:"+String.valueOf(selectedTCId));
+	model.makeChangesPublic();
 	
 }
 
-public int getCurrentSession(){
-	IJ.error("asking:"+String.valueOf(selectedTCId));
+public int getCurrentSessionId(){
+//	IJ.error("asking:"+String.valueOf(selectedTCId));
 	return selectedTCId;
 
 }
+
+public Session<? extends Trackable, IT> getCurrentSession(){
+	return model.getTrackingChannel(selectedTCId);
+
+}
+
+
 
 
 

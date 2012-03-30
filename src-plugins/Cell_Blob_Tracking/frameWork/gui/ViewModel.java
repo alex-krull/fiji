@@ -187,7 +187,10 @@ public void addViewWindow( ViewWindow<IT> vw, double initialZoom){
 }
 
 public List<Session<? extends Trackable,IT>> getSessionsToBeDisplayed(){
-	return this.sessionsToBeDisplayed;
+//	return this.sessionsToBeDisplayed;
+	List <Session<? extends Trackable,IT>> results=new ArrayList<Session<? extends Trackable,IT>>();
+	if(controller.getCurrentSession()!=null) results.add(controller.getCurrentSession());
+	return results;
 }
 
 public boolean getDrawOverLays(){
@@ -224,7 +227,7 @@ public void setColor(Color c){
 
 public  List <Sequence<? extends Trackable>> getVisibleSequences(){
 	List <Sequence<? extends Trackable>> results = new ArrayList <Sequence<? extends Trackable>>();
-	for(Session<? extends Trackable ,IT> tc: sessionsToBeDisplayed){
+	for(Session<? extends Trackable ,IT> tc: this.getSessionsToBeDisplayed()){
 		results.addAll(tc.getSeqsCollection());
 	}
 	return results;

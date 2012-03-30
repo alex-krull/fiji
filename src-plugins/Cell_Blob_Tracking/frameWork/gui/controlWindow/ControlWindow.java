@@ -3,12 +3,15 @@ package frameWork.gui.controlWindow;
 import ij.gui.GenericDialog;
 
 import java.awt.BorderLayout;
+import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +20,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -95,7 +97,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	volatile JSpinner cSpinner;
 	JMenu windowMenu;
 	JScrollPane tableScroll;
-	JComboBox changeSession;
+	Choice changeSession;
 	
 	List<ViewWindow<IT>> windowList;
 	
@@ -250,7 +252,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		
 		
-		changeSession = new JComboBox();
+		changeSession = new Choice();
+		changeSession.addItemListener(new ChangeSessionListener());
 	//	changeSession.addActionListener(new ChangeSessionListener());
 		
 		JLabel changeLabel = new JLabel("Current Session");
@@ -510,22 +513,24 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 
-	public class ChangeSessionListener implements ActionListener {
+	public class ChangeSessionListener implements ItemListener {
+
+
 		@Override
-		public void actionPerformed(ActionEvent s) {
+		public void itemStateChanged(ItemEvent e) {
 			synchronized (changeSession){
-			int index= changeSession.getSelectedIndex();
-		    if(index<0){
-		//    	viewModel.getController().setCurrentSession(-1);
-		    	return;
-		    }
-			List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
-			Session<? extends Trackable, IT> session = tempSessionList.get(index);
-			int temp=session.getId();
-			viewModel.getController().setCurrentSession(session.getId());
-			int temp2=viewModel.getController().getCurrentSession();
-			
-		}
+				int index= changeSession.getSelectedIndex();
+			    if(index<0){
+			//    	viewModel.getController().setCurrentSession(-1);
+			    	return;
+			    }
+				List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
+				Session<? extends Trackable, IT> session = tempSessionList.get(index);
+				if(session.getId()!=viewModel.getController().getCurrentSessionId())
+					viewModel.getController().setCurrentSession(session.getId());
+				
+				
+			}
 		}
 	}
 
@@ -662,29 +667,39 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		synchronized (changeSession){
 		//Change Session drop menu
-		if(changeSession.getActionListeners().length>0)	changeSession.removeActionListener(changeSession.getActionListeners()[0]);
-		changeSession.removeAllItems();
+	//	if(changeSession.getActionListeners().length>0)	changeSession.removeActionListener(changeSession.getActionListeners()[0]);
+	//	changeSession.removeAllItems();
+		
+			
+		
 		int index=0;
 		int count=0;
-		int getID=-1;
-		int cId=-1;
+		
+		boolean rePopulate=false;
 		for(Session<? extends Trackable, IT> session : tempSessionList){
-			changeSession.addItem(session.getLabel());
-			 getID=session.getId();
-			 cId=viewModel.getController().getCurrentSession();
-			 System.out.println(getID+" "+ cId);
-			if(session.getId()==viewModel.getController().getCurrentSession()){
+			 
+			if(count>=changeSession.getItemCount() || !session.getLabel().equals(changeSession.getItem(count))) 
+				 rePopulate=true;
+			
+			if(session.getId()==viewModel.getController().getCurrentSessionId())
 				index=count;
-			}
 				
 			count++;
+			
 		}
-		cId=changeSession.getSelectedIndex();
-		if(index!=changeSession.getSelectedIndex())
-			changeSession.setSelectedIndex(index);
-		}
-		changeSession.addActionListener(new ChangeSessionListener());
 		
+		if(rePopulate){
+			changeSession.removeAll();
+			for(Session<? extends Trackable, IT> session : tempSessionList)
+				changeSession.addItem(session.getLabel());
+		}
+	
+		if(index>0 && changeSession.getItemCount()>0 )
+			changeSession.select(index);
+		
+	
+		
+		}
 	}
 
 
