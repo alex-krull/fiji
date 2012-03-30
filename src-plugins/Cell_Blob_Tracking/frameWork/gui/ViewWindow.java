@@ -12,6 +12,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	protected Thread thread;
 	protected volatile UpdateTask currentUpdateTask=null;
 	protected int viewId;
+	
 	protected ViewWindow(Model<IT> mod, String title, ViewModel<IT> vm){
 		
 		
@@ -47,17 +48,19 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param rePaintImage if true, the image in the View will be redrawn.
 	 **/
 	public void upDate(long[] position, boolean rePaintImage){
-		synchronized (this){
+		
 			if(!this.isOpen()) return;
-		synchronized (model){
+		
 			reFresh( position,  rePaintImage);
-			UpdateTask udt= new UpdateTask(position,rePaintImage);
-			synchronized( this){
-				currentUpdateTask=udt;
-				notify();
-			}
-		}
-		}
+			//UpdateTask udt= new UpdateTask(position,rePaintImage);
+			//currentUpdateTask=udt;
+			//synchronized( thread){
+			//	thread.notify();
+			//}
+			
+			
+		
+		
 	}
 	
 	private class UpdateTask{
@@ -77,17 +80,20 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		int counter=1;
 		UpdateTask udt=null;
 		while(true){
-			
-			synchronized( this){
-				while (currentUpdateTask!=null){
-					try {	wait();	} catch (InterruptedException e) { 	e.printStackTrace();}		
-					udt=currentUpdateTask;					
-				}
-				if(udt!=null)reFresh(udt.position,udt.rePaintImage);
-				currentUpdateTask=null;
-				System.out.println("counter: "+counter);
-				counter++;
+			try {
+			synchronized( thread){
+				//if (currentUpdateTask==null)
+						thread.wait();			
+				udt=currentUpdateTask;	
+		//		currentUpdateTask=null;
 			}
+			} catch (InterruptedException e) { 	e.printStackTrace();}
+			
+				if(udt!=null)reFresh(udt.position,udt.rePaintImage);
+				
+				System.out.println(this.getClass().getName()+": "+counter);
+				counter++;
+		
 		}
 	}
 	

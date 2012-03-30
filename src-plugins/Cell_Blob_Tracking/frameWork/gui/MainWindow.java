@@ -243,6 +243,11 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 			imp.getCanvas().addMouseMotionListener(this);
 		}
 		}
+	
+	//@Override
+	//public void upDate(long[] position, boolean rePaintImage){
+	//	reFresh(position,rePaintImage);
+	//}
 
 
 }

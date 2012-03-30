@@ -592,7 +592,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		workingFolder.setText(viewModel.getController().getWorkspace());
 
-		zSpinner.setValue(position[2]+1);
+	zSpinner.setValue(position[2]+1);
 		frameSpinner.setValue(position[3]+1);
 		cSpinner.setValue(position[4]+1);
 
