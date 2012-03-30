@@ -697,8 +697,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		if(index>0 && changeSession.getItemCount()>0 )
 			changeSession.select(index);
 		
-	
-		
+			
 		}
 	}
 
@@ -877,7 +876,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 
 	}
-	
+
 	@Override
 	public boolean showInWindowList(){
 		return false;
@@ -890,7 +889,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	@Override
 	public void open() {
 		// TODO Auto-generated method stub
-		
+
+	}
+	
+	public void appendText(String arg){
+		text.append(arg + "\n");
 	}
 	
 }
