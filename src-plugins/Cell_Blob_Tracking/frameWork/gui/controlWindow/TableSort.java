@@ -122,7 +122,7 @@ public class TableSort extends JPanel {
     	for(int i=0; i<table.getRowCount();i++){
     		
 			int currentId=(Integer)table.getValueAt(i, 0);
-			if(viewModel.isSelected( currentId,0)){					
+			if(viewModel.isSelected( currentId)){					
 					table.addRowSelectionInterval(i, i);
 			}
 		}

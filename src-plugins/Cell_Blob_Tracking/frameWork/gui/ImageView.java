@@ -213,7 +213,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 			if(seqs!=null&& !seqs.isEmpty()) for(int i=seqs.firstKey();i<=seqs.lastKey();i++){
 			Sequence<? extends Trackable> seq = seqs.get(i);
 			if(seq!=null){			
-				seq.getKymoOverlayX(ovTemplate,scaleX,scaleY, transX, transY, viewModel.isSelected(seq.getId(), tc.getId()));
+				seq.getKymoOverlayX(ovTemplate,scaleX,scaleY, transX, transY, viewModel.isSelected(seq.getId()));
 			}
 			} 
 		}
@@ -233,7 +233,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 			Sequence<? extends Trackable> seq = seqs.get(i);
 			
 			if(seq!=null){			
-				seq.getKymoOverlayY(ovTemplate,scaleX,scaleY, transX, transY, viewModel.isSelected(seq.getId(), tc.getId()));
+				seq.getKymoOverlayY(ovTemplate,scaleX,scaleY, transX, transY, viewModel.isSelected(seq.getId()));
 			}
 		}
 		}
@@ -253,7 +253,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		   if(trackables!=null) for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId,viewModel.getCurrentChannelNumber()).getColor();
-			   t.addShapeX(ovTemplate,viewModel.isSelected(t.sequenceId, t.channel),c);
+			   t.addShapeX(ovTemplate,viewModel.isSelected(t.sequenceId),c);
 			   
 		   }
 		   
@@ -274,7 +274,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		 if(trackables!=null) for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId, viewModel.getCurrentChannelNumber()).getColor();
-			   t.addShapeY(ovTemplate,viewModel.isSelected(t.sequenceId, t.channel),c);
+			   t.addShapeY(ovTemplate,viewModel.isSelected(t.sequenceId),c);
 			   
 		   }
 		}
@@ -293,7 +293,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		 if(trackables!=null)for(Trackable t : trackables){	
 			//   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId).getColor();
-			   t.addShapeZ(ovTemplate,viewModel.isSelected(t.sequenceId, t.channel),c);
+			   t.addShapeZ(ovTemplate,viewModel.isSelected(t.sequenceId),c);
 			   
 		   }
 		} 

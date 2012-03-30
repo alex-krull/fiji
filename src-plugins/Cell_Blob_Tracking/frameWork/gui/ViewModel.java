@@ -170,8 +170,8 @@ public void update(Observable arg0, Object arg1) {
 //	return this.controller.getSelectedSeqId();
 //}
 
-public boolean isSelected(int sId, int cId){
-	return controller.isSeletced(sId, cId);
+public boolean isSelected(int sId){
+	return controller.isSeletced(sId);
 }
 
 public int getCurrentChannelNumber(){
