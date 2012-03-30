@@ -1,7 +1,6 @@
 package frameWork;
 
 
-import frameWork.gui.ViewModel;
 import ij.IJ;
 
 import java.awt.Color;
@@ -25,12 +24,14 @@ import java.util.TreeMap;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
+import frameWork.gui.ViewModel;
+import frameWork.gui.controlWindow.ControlWindow;
 
 
 public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > {
 	
 	
-	
+	protected ControlWindow<IT> controllWindow;
 	protected double xyToZ=3.5;
 	private int selectedTCId;
 	
@@ -40,26 +41,12 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 	private final SortedMap<String,Policy<? extends Trackable,IT>> policies;
 	 
 	public Controller( Model<IT> mod){
+		
 		policies= new TreeMap<String,Policy<? extends Trackable,IT>>();
 		
 		model =mod;
 		channelControllers=	new TreeMap<Integer, ChannelController<? extends Trackable,IT>>();
 		
-		
-	//	Session<Blob,IT> tc= new Session<Blob, IT>(model.getNextTCId(),new BlobPolicy<IT>(), model.getMovieChannel(0) );
-	//	ChannelController<Blob,IT> bc= new ChannelController<Blob,IT>(model,tc, new BlobPolicy<IT>());
-	//	channelControllers.put(tc.getId(), bc);
-	//	model.addTrackingChannel(tc,0);
-		selectedTCId=-1;
-		
-		//for(int j=0;j<tc.getNumberOfFrames();j++){
-//			tc.addTrackable(new Blob(2,500,20 +Math.cos(0/15.0f)*25,70+ Math.sin(0/35.0f)*25,15,4, 0));
-//			tc.addTrackable(new Blob(1,500,20 +Math.cos(0/15.0f)*25,70+ Math.sin(0/35.0f)*25,15,4, 0));
-//			tc.addTrackable(new Blob(3,500,20 +Math.cos(0/15.0f)*25,70+ Math.sin(0/35.0f)*25,15,4, 0));
-		//}
-		
-		//readFile("/home/alex/Desktop/test.txt");
-		//processFile("/home/alex/workspace/fiji/seq1.txt");
 		
 	}
 

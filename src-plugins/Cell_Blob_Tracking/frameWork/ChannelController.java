@@ -17,6 +17,7 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import tools.OtherTools;
+import frameWork.gui.controlWindow.ControlWindow;
 
 public class ChannelController<T extends Trackable,  IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
 	protected Model<IT> model;
@@ -25,6 +26,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	protected Session<T,IT> trackingChannel;
 	protected List <Integer> selectedIdList;
 	protected Policy <T,IT> policy;
+	protected ControlWindow<IT> controllWindow;
 	
 	public void click(long[] pos, MouseEvent e){
 		selectedSequenceId= policy.click(pos, e, model, selectedIdList, trackingChannel, selectedSequenceId);
@@ -51,6 +53,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 //	}
 	
 	public ChannelController( Model<IT> mod,Session<T,IT> tc, Policy<T,IT> pol ){
+		
 		selectedIdList=new ArrayList<Integer>();
 		model =mod;
 		trackingChannel=tc;
