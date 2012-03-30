@@ -126,7 +126,7 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			
 			if(e.getClickCount()==1){
 				
-			selectedSequenceId=model.selectAt((int)pos[0],(int) pos[1],(int) pos[2],(int) pos[3],(int) pos[4]);	 
+			selectedSequenceId=trackingChannel.selectAt((int)pos[0],(int) pos[1],(int) pos[2],(int) pos[3],(int) pos[4]);	 
 		//	System.out.println("        new selected Sequence ID:"+selectedSequenceId);
 			if(!e.isControlDown()){
 				selectedIdList.clear();			
