@@ -20,6 +20,7 @@ public class Sequence<T extends Trackable> {
 	protected Properties properties;
 	protected Policy<T,?> policy;
 	private final Session<T,?> session;
+	private final String path;
 	
 	public Session<T, ?> getSession() {
 		return session;
@@ -54,9 +55,14 @@ public class Sequence<T extends Trackable> {
 		properties.setProperty("a", "property");
 		properties.setProperty("test", "property");
 		color=OtherTools.colorFromIndex(id);
+		path="/seq"+getId()+".trcT";
 		
 	}
 	
+	public String getPath() {
+		return path;
+	}
+
 	public void addTrackable(T trackable){
 		trackables.put(trackable.frameId, trackable);
 	//	pieces= getPieces();
@@ -68,7 +74,7 @@ public class Sequence<T extends Trackable> {
 	}
 	
 	public Sequence<T> splitSequence(int frameNumber, Sequence<T> secondPart){
-		if(frameNumber>trackables.lastKey() || frameNumber<trackables.firstKey()||trackables.size()<=1)
+		if(frameNumber>trackables.lastKey() || frameNumber<=trackables.firstKey()||trackables.size()<=1)
 			return null;
 		for(int i=frameNumber;i<=trackables.lastKey();i++ ){
 			T trackable = trackables.get(i);

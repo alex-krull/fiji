@@ -25,8 +25,6 @@ import java.util.TreeMap;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
-import blobTracking.Blob;
-import blobTracking.BlobPolicy;
 
 
 public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > {
@@ -48,11 +46,11 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		channelControllers=	new TreeMap<Integer, ChannelController<? extends Trackable,IT>>();
 		
 		
-		Session<Blob,IT> tc= new Session<Blob, IT>(model.getNextTCId(),new BlobPolicy<IT>(), model.getMovieChannel(0) );
-		ChannelController<Blob,IT> bc= new ChannelController<Blob,IT>(model,tc, new BlobPolicy<IT>());
-		channelControllers.put(tc.getId(), bc);
-		model.addTrackingChannel(tc,0);
-		selectedTCId=tc.getId();
+	//	Session<Blob,IT> tc= new Session<Blob, IT>(model.getNextTCId(),new BlobPolicy<IT>(), model.getMovieChannel(0) );
+	//	ChannelController<Blob,IT> bc= new ChannelController<Blob,IT>(model,tc, new BlobPolicy<IT>());
+	//	channelControllers.put(tc.getId(), bc);
+	//	model.addTrackingChannel(tc,0);
+		selectedTCId=-1;
 		
 		//for(int j=0;j<tc.getNumberOfFrames();j++){
 //			tc.addTrackable(new Blob(2,500,20 +Math.cos(0/15.0f)*25,70+ Math.sin(0/35.0f)*25,15,4, 0));
@@ -62,7 +60,7 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		
 		//readFile("/home/alex/Desktop/test.txt");
 		//processFile("/home/alex/workspace/fiji/seq1.txt");
-		this.processDirectory(model.getProjectDirectory());
+		
 	}
 
 	public void addPolicy(Policy<? extends Trackable,IT> policy){
@@ -152,9 +150,11 @@ private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCr
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(id);
 	if(cc==null){
 		Policy<?, IT> policy= policies.get(sessionProps.getProperty("typeName"));
+	//	Policy<?, IT> policy= policies.get("Blob");
 		cc=policy.produceControllerAndChannel(sessionProps, model);
 		
 		this.channelControllers.put(cc.trackingChannel.getId(), cc); 
+		if(selectedTCId==-1)this.selectedTCId=cc.getId();
 	}
 	return cc;
 	
@@ -271,7 +271,7 @@ public void processDirectory(String directory){
 	for(String fName: files){
 		this.processFile(dir+fName);
 	}
-	if(this.selectedTCId==-1 && !this.channelControllers.isEmpty()) selectedTCId=0;
+	
 }
 
 public void setSelectionList(List <Integer> selectedIds){
@@ -325,14 +325,12 @@ public List<Session<? extends Trackable, IT>> getSessions(){
 public void load(ViewModel<IT> viewModel){
 	synchronized (model){
 	channelControllers.clear();
-	int a= model.getSessions().size();
-	model.clearSessions();
-	a= model.getSessions().size();
-	System.out.println(a);
 	this.selectedTCId=-1;
+	model.clearSessions();
+	
 	
 	this.processDirectory(model.getProjectDirectory());
-	viewModel.reFreashSessionToBeDisplayed();
+//	viewModel.reFreashSessionToBeDisplayed();
 	model.makeChangesPublic();
 	}
 }

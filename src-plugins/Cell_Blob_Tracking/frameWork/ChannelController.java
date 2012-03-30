@@ -1,8 +1,12 @@
 package frameWork;
 
 
+import ij.IJ;
+import ij.gui.GenericDialog;
+
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -104,7 +108,9 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	}
 	
 	public void splitSequnce(int frameNumber){
+		
 		for(Integer seqId: this.selectedIdList){
+			
 			trackingChannel.splitSequenence(seqId, model.getNextSequqnceId(), frameNumber);
 		}
 		
@@ -113,12 +119,28 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	}
 	
 	public void deleteSequence(){
+		if(selectedIdList.isEmpty()) return;
+		GenericDialog gd = new GenericDialog("delete files?");
+		gd.addMessage("Shuold the files be deleted as well?");
+		gd.enableYesNoCancel("Yes", "No");
+		gd.showDialog();
+		if (gd.wasCanceled()) return;
+		
 		for(Integer seqId: this.selectedIdList){
+			if(gd.wasOKed()){
+				
+				File toDel= new File(model.getProjectDirectory()+"/"+trackingChannel.getSequence(seqId).getPath());
+				IJ.error(toDel.getPath());
+				toDel.delete();		
+			}
 			trackingChannel.deleteSequence(seqId);
+			
 		}
 		selectedIdList.clear();
 		
 		selectedSequenceId=-1;
+		
+		
 		
 	}
 	
@@ -133,6 +155,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	
 	
 	public void mergeSequenences(){
+	
 		int newSid=model.getNextSequqnceId();
 		for(Integer sid: this.selectedIdList){
 			Sequence<T> s=trackingChannel.getSequence(sid);
@@ -166,7 +189,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	public void saveSequence(Sequence<T> seq){
 		
 		try {
-			FileWriter fileWriter= new FileWriter(model.getProjectDirectory()+"/seq"+seq.getId()+".trcT");
+			FileWriter fileWriter= new FileWriter(model.getProjectDirectory()+"/"+seq.getPath());
 			fileWriter.write("%-session properties-\n");
 			OtherTools.writeProperties(fileWriter, trackingChannel.getProperties());	
 			
