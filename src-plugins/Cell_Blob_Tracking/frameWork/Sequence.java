@@ -19,7 +19,12 @@ public class Sequence<T extends Trackable> {
 	protected Color color;
 	protected Properties properties;
 	protected Policy<T,?> policy;
+	private final Session<T,?> session;
 	
+	public Session<T, ?> getSession() {
+		return session;
+	}
+
 	public int getFirstFrame(){
 		return trackables.firstKey();
 	}
@@ -36,7 +41,8 @@ public class Sequence<T extends Trackable> {
 		this.color = color;
 	}
 
-	public Sequence(int ident, String lab, Policy<T,?> pol){
+	public Sequence(int ident, String lab, Policy<T,?> pol,Session<T,?> sess){
+		session=sess;
 		policy=pol;
 		color=new Color(255,0,0,255);
 		id = ident;

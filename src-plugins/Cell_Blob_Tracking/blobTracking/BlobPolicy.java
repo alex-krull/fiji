@@ -45,8 +45,8 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 
 	
 	@Override
-	public Sequence<Blob> produceSequence(int ident, String lab) {
-		return new Sequence<Blob>( ident,  lab, this);
+	public Sequence<Blob> produceSequence(int ident, String lab, Session<Blob, IT> session) {
+		return new Sequence<Blob>( ident,  lab, this, session);
 	}
 	
 	

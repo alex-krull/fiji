@@ -20,6 +20,7 @@ public class Session<T extends Trackable, IT extends NumericType<IT> & NativeTyp
 	private final int id;
 	private long numOfFrames;
 	private String label;
+	
 	protected Policy<T,IT> policy;
 	protected MovieChannel<IT> mChannel;
 	
@@ -32,6 +33,7 @@ public class Session<T extends Trackable, IT extends NumericType<IT> & NativeTyp
 	}
 
 	public Session(int newID, Policy<T,IT> pol, MovieChannel<IT> mc){
+		
 		mChannel=mc;
 		policy=pol;
 		id=newID;
@@ -146,7 +148,7 @@ public class Session<T extends Trackable, IT extends NumericType<IT> & NativeTyp
 	}
 	
 	protected Sequence<T> produceSequence(int ident, String lab){
-		return policy.produceSequence(ident, lab);
+		return policy.produceSequence(ident, lab, this);
 	}
 	
 	public void addSequence(Sequence <T> seq){
