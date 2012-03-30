@@ -82,7 +82,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	JPanel centerPanel;
 	JPanel leftPanel;
 	JPanel rightButtonPanel;
-	
+
 	JPanel bottomPanel;
 	JPanel urlPanel;
 	JList selectSessionList;
@@ -98,25 +98,25 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	JMenu windowMenu;
 	JScrollPane tableScroll;
 	Choice changeSession;
-	
+
 	List<ViewWindow<IT>> windowList;
-	
-/*
+
+	/*
 	public static void main(String[] args) {
 		ControlWindow2 window = new ControlWindow2();
 		window.go();
 	}
-*/
-	
+	 */
+
 	public void go(){
 		frame = new JFrame("Control Window");
-		
+
 		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
 		rightPanel = new JPanel();
 		leftPanel = new JPanel(new GridLayout(16, 0));
-		
+
 		centerPanel = new JPanel();
 		bottomPanel = new JPanel();
 		urlPanel = new JPanel(new FlowLayout());
@@ -144,11 +144,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		//This controls the left Panel
 		JButton merge = new JButton("Merge");
 		merge.addActionListener(new MergeTrace());
-		
-		
+
+
 		JButton delete = new JButton("Delete");
 		delete.addActionListener(new DeleteListener());
-		
+
 		//JButton jump = new JButton("Go to  ");
 		JButton split = new JButton("Split");
 		split.addActionListener(new splitListener());
@@ -158,17 +158,17 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		//JButton saveTo = new JButton("Save To");
 		//saveTo.addActionListener(new SaveToListener());
-		
+
 		//JButton loadTo = new JButton("Reload From");
 		//loadTo.addActionListener(new LoadFromListener());
-		
+
 		JButton saveAll = new JButton("Save");
 		saveAll.addActionListener(new SaveAllListener());
 		JButton loadAllButton = new JButton("Reload");
 		loadAllButton.addActionListener(new LoadAllListener());
-		
-		
-		
+
+
+
 
 
 		leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -183,15 +183,15 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		leftPanel.add(split);
 		leftPanel.add(trim);
 		leftPanel.add(delete);
-		
+
 		leftPanel.add(new JLabel());
 		//leftPanel.add(jump);
 		leftPanel.add(saveAll);
 		//leftPanel.add(saveTo);
-		
+
 		leftPanel.add(loadAllButton);
 		//leftPanel.add(loadTo);
-		
+
 
 		// The controls on the right
 
@@ -200,8 +200,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		//rightPanel.setLayout(new GridLayout(16, 0));
 		SpinnerModel model1 = new SpinnerNumberModel();
 		frameSpinner = new JSpinner(model1);
-		
-		
+
+
 
 		JLabel frameLabel = new JLabel("Frame #");
 		frameLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -215,8 +215,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		SpinnerModel zSpinnerModel = new SpinnerNumberModel();
 		zSpinner = new JSpinner(zSpinnerModel);
-		
-		
+
+
 		zSpinner.setPreferredSize(labelDim2);
 		zSpinner.setMaximumSize(labelDim);
 		JLabel zLabel = new JLabel("Z #");
@@ -227,7 +227,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		SpinnerModel cSpinnerModel = new SpinnerNumberModel(20, 0, 40, 1);
 		cSpinner = new JSpinner(cSpinnerModel);
 
-		
+
 		cSpinner.setPreferredSize(labelDim2);
 		cSpinner.setMaximumSize(labelDim);
 		JLabel label3 = new JLabel("Channel #");
@@ -248,17 +248,17 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		currentMethod.setHorizontalAlignment(JTextField.CENTER);
 		currentMethod.setMaximumSize(new Dimension(1000, 30));
 		currentMethod.setEditable(false);
-		
+
 
 
 		rightPanel.add(currentMethod);
-		
-		
-		
+
+
+
 		changeSession = new Choice();
 		changeSession.addItemListener(new ChangeSessionListener());
-	//	changeSession.addActionListener(new ChangeSessionListener());
-		
+		//	changeSession.addActionListener(new ChangeSessionListener());
+
 		JLabel changeLabel = new JLabel("Current Session");
 		changeLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		rightPanel.add(changeLabel);
@@ -294,9 +294,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		rightPanel.add(label5);
 
 		String[] vis = {"No Sessions"};
-		
 
-		
+
+
 		selectSessionList = new JList(vis);
 		//visList.setVisibleRowCount(3);
 		//visList.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -306,31 +306,31 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		visScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		visScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		//visScroller.setMaximumSize(new Dimension(1000, 100));
-		
+
 		rightPanel.add(visScroller);
-		
+
 		rightButtonPanel = new JPanel(new GridLayout(4,0));
-		
+
 		start = new JButton("Start Tracking");
 		start.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		start.addActionListener(new StartListener());
-		
+
 
 		JButton newSession = new JButton("New Session");
 		newSession.addActionListener(new NewSessionListener());
 		newSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
-		
+
 
 		JButton deleteSession = new JButton("Delete Session");
 		//deleteSession.addActionListener(new NewSessionListener());
 		deleteSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
-		
+
 
 		/*JButton changeSession = new JButton("Change Session");
 		//deleteSession.addActionListener(new NewSessionListener());
 		changeSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		changeSession.addActionListener(new ChangeSessionListener());*/
-		
+
 
 		rightButtonPanel.add(start);
 		rightButtonPanel.add(newSession);
@@ -340,21 +340,21 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		//This controls the center panel
 		JButton changeWorking = new JButton("Change Working Directory");
 		changeWorking.addActionListener(new changeWorkspaceListener());
-		
-		
+
+
 		workingFolder = new JTextField();
 		workingFolder.setPreferredSize(new Dimension(300, 20));
 		workingFolder.setEditable(false);
-		
-			
-			
-	
-		
-		
+
+
+
+
+
+
 		urlPanel.add(workingFolder);
 		urlPanel.add(changeWorking);
 		//urlPanel.setBackground(Color.blue);
-		
+
 		centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 
@@ -363,12 +363,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		trackerTable = new TableSort(viewModel, model);
 		trackerTable.setOpaque(true);
-		
+
 		tableScroll = new JScrollPane(trackerTable);
 		tableScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-		
+
 		centerPanel.add(urlPanel);
 		centerPanel.add(tableScroll);
 
@@ -381,23 +381,23 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		windowMenu = new JMenu("Windows");
-		
-	
+
+
 
 		JMenuItem newMenuItem = new JMenuItem("New");
 		fileMenu.add(newMenuItem);
 		JMenuItem saveAllMenu = new JMenuItem("Save");
 		saveAllMenu.addActionListener(new SaveAllListener());
-		
+
 		JMenuItem saveTo = new JMenuItem("Save to");
 		saveTo.addActionListener(new SaveToListener());
-		
+
 		JMenuItem loadFrom = new JMenuItem("Load from");
 		loadFrom.addActionListener(new LoadFromListener());
-		
+
 		JMenuItem loadAll = new JMenuItem("Load");
 		loadAll.addActionListener(new LoadAllListener());
-		
+
 		fileMenu.add(saveAllMenu);
 		fileMenu.add(saveTo);
 		fileMenu.add(loadAll);
@@ -420,7 +420,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		frame.setSize(1000,600);
 		frame.setVisible(true);
 		frame.setMinimumSize(new Dimension(850, 600));
-		
+
 		//frame.setFocusable(true);
 		//HotKeyListener keyListener = new HotKeyListener(viewModel);
 		//frame.addKeyListener(keyListener);
@@ -429,7 +429,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		frameSpinner.addChangeListener(new FrameSpinnerListener());
 		zSpinner.addChangeListener(new ZSpinnerListener());
-	    cSpinner.addChangeListener(new CSpinnerListener());
+		cSpinner.addChangeListener(new CSpinnerListener());
 
 	}
 
@@ -462,7 +462,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		for (i=1; i <= channelNumber; i++ ){
 			channelList[i-1]= i +"";
 		}
-		
+
 		GenericDialog gd = new GenericDialog("New Session");
 		gd.addStringField("Enter new session name: ", "");
 		gd.addChoice("Pick tracking method", trackingMethods, null);
@@ -470,27 +470,27 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		gd.showDialog();
 
 		String userSessionName = gd.getNextString();
-		
-		
+
+
 		//sessionList.add(userSessionName);
 
-		
+
 		String methodChoice = gd.getNextChoice();
 		int channelChoice =Integer.valueOf(gd.getNextChoice());
-		
+
 		currentMethod.setText(methodChoice);
-		
+
 		//String[] newValues = new String[sessionList.size()];
 		//sessionList.toArray(newValues);
 		//visList.setListData(newValues);
-		
-		
-		
-	     
-/*		text.selectAll();
+
+
+
+
+		/*		text.selectAll();
 		text.append((String) trace[2][0] + "\n");*/
-		
-		
+
+
 		viewModel.getController().addSession(methodChoice, userSessionName, channelChoice-1);
 	} 
 
@@ -500,7 +500,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		//Object[] selectionValues = { "Session 1", "Session 2", "Session 3" };
-		
+
 		Object[] selectionValues = new Object[sessionList.size()];
 		sessionList.toArray(selectionValues);
 		String initialSelection = "Cell Tracking";
@@ -523,16 +523,16 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		public void itemStateChanged(ItemEvent e) {
 			synchronized (changeSession){
 				int index= changeSession.getSelectedIndex();
-			    if(index<0){
-			//    	viewModel.getController().setCurrentSession(-1);
-			    	return;
-			    }
+				if(index<0){
+					//    	viewModel.getController().setCurrentSession(-1);
+					return;
+				}
 				List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
 				Session<? extends Trackable, IT> session = tempSessionList.get(index);
 				if(session.getId()!=viewModel.getController().getCurrentSessionId())
 					viewModel.getController().setCurrentSession(session.getId());
-				
-				
+
+
 			}
 		}
 	}
@@ -554,153 +554,153 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		@Override
 		public void stateChanged(ChangeEvent arg0) {
 			int number=( (SpinnerNumberModel)frameSpinner.getModel()).getNumber().intValue()-1;
-		
+
 			viewModel.setPosition(3,number);	
 		}
-		
-		
+
+
 	}
-	
+
 	public class ZSpinnerListener implements ChangeListener {
 
 		@Override
 		public void stateChanged(ChangeEvent a) {
-			
+
 			viewModel.setPosition(2,((SpinnerNumberModel)zSpinner.getModel()).getNumber().intValue()-1);
-			
+
 		}
-		
+
 	}
-	
+
 	public class CSpinnerListener implements ChangeListener {
 
 		@Override
 		public void stateChanged(ChangeEvent a) {
-			
+
 			viewModel.setPosition(4,((SpinnerNumberModel)cSpinner.getModel()).getNumber().intValue()-1);
-			
+
 		}
 
-	
-		
+
+
 	}
 
 	@Override
 	public synchronized void reFresh(long[] position, boolean rePaintImage) {
 		System.out.println("updating Spinners !!!!!!!!!!!");
 		System.out.println("position[3]+1: "+(position[3]+1));
-		
+
 		workingFolder.setText(viewModel.getController().getWorkspace());
-		
+
 		zSpinner.setValue(position[2]+1);
 		frameSpinner.setValue(position[3]+1);
 		cSpinner.setValue(position[4]+1);
-		
+
 		if (viewModel.isTracking()){
 			start.setText("Stop Tracking");
 		} else {
 			start.setText("Start Tracking");
 		}
-		
+
 		//This will get visible
 
-		
-		if (viewModel.isTracking()==false){
-			
-		
-		List<Sequence<? extends Trackable>> test = viewModel.getVisibleSequences();
-		
-		
-		
-		 
-		Object[][]trace = new Object[test.size()][6];
-		int i = 0;
-		for(Sequence<? extends Trackable> seq : test){
-			
-			trace[i][0]=seq.getId();
-			trace[i][1]=seq.getColor();
-			trace[i][2]="Trace Name";
-			trace[i][3]=seq.getSession().getLabel();
-			trace[i][4]=seq.getTypeName();
-			trace[i][5]=seq.getLastFrame()-seq.getFirstFrame()+1;
-			i++;
-			
 
-		}
-		
-		trackerTable.updateData(trace);
 		
 
-		} else {
+
+			List<Sequence<? extends Trackable>> test = viewModel.getVisibleSequences();
+
+
+
+
+			Object[][]trace = new Object[test.size()][6];
+			int i = 0;
+			for(Sequence<? extends Trackable> seq : test){
+
+				trace[i][0]=seq.getId();
+				trace[i][1]=seq.getColor();
+				trace[i][2]="Trace Name";
+				trace[i][3]=seq.getSession().getLabel();
+				trace[i][4]=seq.getTypeName();
+				trace[i][5]=seq.getLastFrame()-seq.getFirstFrame()+1;
+				i++;
+
+
+			}
+
+			trackerTable.updateData(trace);
+
+
+		
 			//This section puts frame number in console area
 			Long frameNumber = (Long) frameSpinner.getModel().getValue();
-			
+
 			text.selectAll();
 			text.append("Tracking Frame " + frameNumber + "\n");
-		}
+		
 
-		
-		
+
+
 		List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
 		String[] sessionNamesList = new String[tempSessionList.size()];
-		
-		int i=0;
-		
+
+		i=0;
+
 		for(Session<? extends Trackable, IT> session : tempSessionList){
 			sessionNamesList[i]=session.getLabel();
 			i++;
 		}
-		
+
 		selectSessionList.setListData(sessionNamesList);
-		
+
 		//Make Window list
 		windowList = viewModel.getViewWindows();
-		
-		
+
+
 		windowMenu.removeAll();
 		for(ViewWindow<IT> aViewWindow : windowList){
-			
+
 			if(!aViewWindow.showInWindowList()) continue;
 			JCheckBoxMenuItem tempMenu = new JCheckBoxMenuItem(aViewWindow.getCaption());
 			tempMenu.setState(aViewWindow.isOpen());
 			tempMenu.addActionListener(new KymographListener(aViewWindow));
-			
+
 			windowMenu.add(tempMenu);
 		}
-		
+
 		synchronized (changeSession){
-		//Change Session drop menu
-	//	if(changeSession.getActionListeners().length>0)	changeSession.removeActionListener(changeSession.getActionListeners()[0]);
-	//	changeSession.removeAllItems();
-		
-			
-		
-		int index=0;
-		int count=0;
-		
-		boolean rePopulate=false;
-		for(Session<? extends Trackable, IT> session : tempSessionList){
-			 
-			if(count>=changeSession.getItemCount() || !session.getLabel().equals(changeSession.getItem(count))) 
-				 rePopulate=true;
-			
-			if(session.getId()==viewModel.getController().getCurrentSessionId())
-				index=count;
-				
-			count++;
-			
-		}
-		
-		if(rePopulate){
-			changeSession.removeAll();
-			for(Session<? extends Trackable, IT> session : tempSessionList)
-				changeSession.addItem(session.getLabel());
-		}
-	
-		if(index>0 && changeSession.getItemCount()>0 )
-			changeSession.select(index);
-		
-			
+			//Change Session drop menu
+			//	if(changeSession.getActionListeners().length>0)	changeSession.removeActionListener(changeSession.getActionListeners()[0]);
+			//	changeSession.removeAllItems();
+
+
+
+			int index=0;
+			int count=0;
+
+			boolean rePopulate=false;
+			for(Session<? extends Trackable, IT> session : tempSessionList){
+
+				if(count>=changeSession.getItemCount() || !session.getLabel().equals(changeSession.getItem(count))) 
+					rePopulate=true;
+
+				if(session.getId()==viewModel.getController().getCurrentSessionId())
+					index=count;
+
+				count++;
+
+			}
+
+			if(rePopulate){
+				changeSession.removeAll();
+				for(Session<? extends Trackable, IT> session : tempSessionList)
+					changeSession.addItem(session.getLabel());
+			}
+
+			if(index>0 && changeSession.getItemCount()>0 )
+				changeSession.select(index);
+
+
 		}
 	}
 
@@ -713,22 +713,22 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		rightPanel.addKeyListener(keyListener);
 		bottomPanel.addKeyListener(keyListener);
 		leftPanel.addKeyListener(keyListener);
-		
-		
+
+
 	}
-	
-	
+
+
 	public class splitListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// Split Stuff
 			viewModel.splitSequence();
-			
+
 		}
-		
+
 	}
-	
+
 	public class TrimListener implements ActionListener {
 
 		@Override
@@ -736,18 +736,18 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			// Trims trace
 			viewModel.trimSequence();
 		}
-		
+
 	}
-	
+
 	public class DeleteListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Deletes tace
 			viewModel.deleteSequence();
-			
+
 		}
-		
+
 	}
 
 	public class StartListener implements ActionListener {
@@ -756,47 +756,47 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		public void actionPerformed(ActionEvent arg0) {
 			// Start Tracking
 			viewModel.toggleTracking();
-														
-						
+
+
 		}
-		
+
 	}
-	
+
 	public class changeWorkspaceListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
-			   JFileChooser workspace = new JFileChooser();
-			   workspace.setCurrentDirectory(new java.io.File(viewModel.getController().getWorkspace()));
-			   workspace.setDialogTitle("Pick Workspace");
-			   workspace.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			   workspace.setAcceptAllFileFilterUsed(false);
-			   workspace.showDialog(workspace, "Okay");
-			   File workspaceName = workspace.getSelectedFile();
-			   
-			   viewModel.getController().setWorkspace(workspaceName.toString());
+			JFileChooser workspace = new JFileChooser();
+			workspace.setCurrentDirectory(new java.io.File(viewModel.getController().getWorkspace()));
+			workspace.setDialogTitle("Pick Workspace");
+			workspace.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			workspace.setAcceptAllFileFilterUsed(false);
+			workspace.showDialog(workspace, "Okay");
+			File workspaceName = workspace.getSelectedFile();
+
+			viewModel.getController().setWorkspace(workspaceName.toString());
 		}
-		
+
 	}
 	public class SaveToListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Saves all traces
-			   JFileChooser saveLocation = new JFileChooser();
-			    saveLocation.setCurrentDirectory(new java.io.File(viewModel.getController().getWorkspace()));
-			    saveLocation.setDialogTitle("Pick Location to Save Files");
-			    saveLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			    saveLocation.setAcceptAllFileFilterUsed(false);
-			    saveLocation.showDialog(saveLocation, "Okay");
-			    viewModel.getController().setWorkspace(saveLocation.getSelectedFile().toString());
+			JFileChooser saveLocation = new JFileChooser();
+			saveLocation.setCurrentDirectory(new java.io.File(viewModel.getController().getWorkspace()));
+			saveLocation.setDialogTitle("Pick Location to Save Files");
+			saveLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			saveLocation.setAcceptAllFileFilterUsed(false);
+			saveLocation.showDialog(saveLocation, "Okay");
+			viewModel.getController().setWorkspace(saveLocation.getSelectedFile().toString());
 			viewModel.saveAll();
-			
+
 		}
-		
+
 	}
-	
+
 	public class SaveAllListener implements ActionListener{
 
 		@Override
@@ -804,7 +804,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			// TODO Auto-generated method stub
 			viewModel.saveAll();
 		}
-		
+
 	}
 	public class LoadAllListener implements ActionListener{
 
@@ -813,31 +813,31 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			// TODO Auto-generated method stub
 			viewModel.getController().load(viewModel);
 		}
-		
+
 	}
-	
-	
+
+
 	public class LoadFromListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Saves all traces
-			   JFileChooser loadLocation = new JFileChooser();
-			    loadLocation.setCurrentDirectory(new java.io.File(viewModel.getController().getWorkspace()));
-			    loadLocation.setDialogTitle("Pick Location to Load Files From");
-			    loadLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			    loadLocation.setAcceptAllFileFilterUsed(false);
-			    loadLocation.showDialog(loadLocation, "Okay");
+			JFileChooser loadLocation = new JFileChooser();
+			loadLocation.setCurrentDirectory(new java.io.File(viewModel.getController().getWorkspace()));
+			loadLocation.setDialogTitle("Pick Location to Load Files From");
+			loadLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			loadLocation.setAcceptAllFileFilterUsed(false);
+			loadLocation.showDialog(loadLocation, "Okay");
 			viewModel.saveAll();
-			
+
 		}
-		
+
 	}
 
 	@Override
 	public void initWindow() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
@@ -847,7 +847,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	@Override
 	public void close() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
@@ -879,7 +879,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 
 	}
-	
+
 	public class MergeTrace implements ActionListener{
 
 		@Override
@@ -887,7 +887,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			// TODO Auto-generated method stub
 			viewModel.getController().mergeSequenences();
 		}
-		
+
 	}
 
 	@Override
@@ -904,9 +904,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	public void appendText(String arg){
 		text.append(arg + "\n");
 	}
-	
+
 }
