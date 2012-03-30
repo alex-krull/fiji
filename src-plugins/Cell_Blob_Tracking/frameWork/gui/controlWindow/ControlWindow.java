@@ -307,7 +307,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		visScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		//visScroller.setMaximumSize(new Dimension(1000, 100));
 
-		//rightPanel.add(visScroller);
+		rightPanel.add(visScroller);
 		
 		rightButtonPanel = new JPanel(new GridLayout(4,0));
 
