@@ -143,6 +143,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		//This controls the left Panel
 		JButton merge = new JButton("Merge");
+		merge.addActionListener(new MergeTrace());
+		
+		
 		JButton delete = new JButton("Delete");
 		delete.addActionListener(new DeleteListener());
 		
@@ -617,7 +620,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			trace[i][0]=seq.getId();
 			trace[i][1]=seq.getColor();
 			trace[i][2]="Trace Name";
-			trace[i][3]=seq.getTypeName();
+			trace[i][3]=seq.getSession().getLabel();
 			trace[i][4]=seq.getTypeName();
 			trace[i][5]=seq.getLastFrame()-seq.getFirstFrame()+1;
 			i++;
@@ -875,6 +878,16 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			}
 		}
 
+	}
+	
+	public class MergeTrace implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			viewModel.getController().mergeSequenences();
+		}
+		
 	}
 
 	@Override
