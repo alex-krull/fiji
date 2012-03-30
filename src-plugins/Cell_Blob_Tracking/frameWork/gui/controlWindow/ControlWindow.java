@@ -307,8 +307,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		visScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		//visScroller.setMaximumSize(new Dimension(1000, 100));
 
-		rightPanel.add(visScroller);
-
+		//rightPanel.add(visScroller);
+		
 		rightButtonPanel = new JPanel(new GridLayout(4,0));
 
 		start = new JButton("Start Tracking");
@@ -633,11 +633,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		
 			//This section puts frame number in console area
+			if(viewModel.isTracking()){
+			
 			Long frameNumber = (Long) frameSpinner.getModel().getValue();
-
+			
 			text.selectAll();
 			text.append("Tracking Frame " + frameNumber + "\n");
-		
+			}
 
 
 
