@@ -343,10 +343,12 @@ public Session<? extends Trackable, IT> getCurrentSession(){
 public void deleteSession(){
 	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	selectedTCId=-1;
 	cc.deleteAllSequences();
 	channelControllers.remove(cc.getId());
 	model.deleteSession(cc.getId());
 	model.makeChangesPublic();
+	
 	}
 }
 

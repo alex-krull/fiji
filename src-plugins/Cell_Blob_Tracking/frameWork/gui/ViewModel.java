@@ -42,6 +42,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	public List<Session<? extends Trackable,IT>> sessionsToBeDisplayed;
 	
 	protected List <ViewWindow<IT>> views;
+	protected boolean sessionsUpdate=true;
 	
 	class ProjectionJob	implements Callable<RandomAccessibleInterval<IT> >{
 		RandomAccessibleInterval<IT> image;
@@ -121,7 +122,8 @@ public void setPosition(int dim, int pos){
 	if(dim==4){
 		if(currentChannelNumber==pos) return;
 		this.currentChannelNumber= Math.min(Math.max(pos,0), model.getNumberOfChannels()-1);
-		this.reInitSessionsToBeDisplayed();
+		sessionsToBeDisplayed.clear();
+		sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);
 	}
 	
 	upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, true );
@@ -189,13 +191,20 @@ public void addViewWindow( ViewWindow<IT> vw, double initialZoom){
 }
 
 public List<Session<? extends Trackable,IT>> getSessionsToBeDisplayed(){
-	return this.sessionsToBeDisplayed;
-//	List <Session<? extends Trackable,IT>> results=new ArrayList<Session<? extends Trackable,IT>>();
-	//if(controller.getCurrentSession()!=null) results.add(controller.getCurrentSession());
-//	for (Session<? extends Trackable,IT> s: model.getSessions()){
-//		if(s.isAssociatedWithMovieChannel(this.currentChannelNumber)) results.add(s);
-//	}
-//	return results;
+//	return this.sessionsToBeDisplayed;
+	List <Session<? extends Trackable,IT>> results=new ArrayList<Session<? extends Trackable,IT>>();
+	if(controller.getCurrentSession()!=null) results.add(controller.getCurrentSession());
+	//for (Session<? extends Trackable,IT> s: model.getSessions()){
+	//	if(s.isAssociatedWithMovieChannel(this.currentChannelNumber)) results.add(s);
+	//}
+	return results;
+}
+
+public boolean isSessionVisible(int id){
+	for(Session<? extends Trackable,IT> s: getSessionsToBeDisplayed()){
+		if(s.getId()==id) return true;
+	}
+	return false;
 }
 
 public boolean getDrawOverLays(){
@@ -250,8 +259,8 @@ public Controller<IT> getController(){
 	return controller;
 }
 
-public void reInitSessionsToBeDisplayed(){
-	sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(this.currentChannelNumber);
+public void reFreashSessionToBeDisplayed(){
+	sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(this.currentChannelNumber);  
 }
 
 public List<ViewWindow<IT>> getViewWindows(){
