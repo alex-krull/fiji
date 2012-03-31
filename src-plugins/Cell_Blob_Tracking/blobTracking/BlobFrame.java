@@ -255,7 +255,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
   
 
     	b.counter=0;
-		PowellOptimizer optimizer = new PowellOptimizer(100,100);
+		PowellOptimizer optimizer = new PowellOptimizer(1,1);
 		optimizer.setConvergenceChecker(new SimpleScalarValueChecker() );
   //  	SimplexOptimizer optimizer = new SimplexOptimizer();
     		    	

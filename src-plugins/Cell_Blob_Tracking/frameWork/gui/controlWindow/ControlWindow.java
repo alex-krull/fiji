@@ -322,7 +322,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		JButton deleteSession = new JButton("Delete Session");
-		//deleteSession.addActionListener(new NewSessionListener());
+		deleteSession.addActionListener(new DeleteSessionListener());
 		deleteSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
 
 
@@ -538,6 +538,17 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	}
 
 
+	public class DeleteSessionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent a) {
+			viewModel.getController().deleteSession();
+
+
+
+		}
+
+	}
+	
 	public class NewSessionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent a) {

@@ -192,7 +192,10 @@ public void addViewWindow( ViewWindow<IT> vw, double initialZoom){
 public List<Session<? extends Trackable,IT>> getSessionsToBeDisplayed(){
 //	return this.sessionsToBeDisplayed;
 	List <Session<? extends Trackable,IT>> results=new ArrayList<Session<? extends Trackable,IT>>();
-	if(controller.getCurrentSession()!=null) results.add(controller.getCurrentSession());
+	//if(controller.getCurrentSession()!=null) results.add(controller.getCurrentSession());
+	for (Session<? extends Trackable,IT> s: model.getSessions()){
+		if(s.isAssociatedWithMovieChannel(this.currentChannelNumber)) results.add(s);
+	}
 	return results;
 }
 

@@ -340,7 +340,15 @@ public Session<? extends Trackable, IT> getCurrentSession(){
 	return model.getTrackingChannel(selectedTCId);
 
 }
-
+public void deleteSession(){
+	synchronized (model){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	cc.deleteAllSequences();
+	channelControllers.remove(cc.getId());
+	model.deleteSession(cc.getId());
+	model.makeChangesPublic();
+	}
+}
 
 
 

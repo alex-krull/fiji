@@ -226,6 +226,14 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		return trackingChannel.getId();
 	}
 	
+	public void deleteAllSequences(){
+		this.selectedIdList.clear();
+		for(Sequence <T> seq: trackingChannel.getSeqsCollection()){
+			selectedIdList.add(seq.getId());
+		}
+		this.deleteSequence();
+		
+	}
 	
 	
 	

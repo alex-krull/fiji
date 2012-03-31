@@ -358,8 +358,6 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	@Override
 	public void setZoom(double newZoom){
 		
-		
-		
 		canvas =imp.getCanvas();
 		double cm=canvas.getMagnification();
 		while(cm>newZoom){
@@ -371,9 +369,6 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 			canvas.zoomIn(imp.getWidth()/2, imp.getHeight()/2);
 			cm=canvas.getMagnification();
 		}
-		
-		
-		
 		
 	}
 	

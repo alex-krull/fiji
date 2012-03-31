@@ -295,4 +295,8 @@ public void clearSessions(){
 	this.trackingChannels.clear();
 }
 
+public void deleteSession(int id){
+	this.trackingChannels.remove(id);
+}
+
 }
