@@ -3,6 +3,7 @@ package frameWork.gui.controlWindow;
 import ij.gui.GenericDialog;
 
 import java.awt.BorderLayout;
+import java.awt.Checkbox;
 import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,6 +20,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -34,6 +36,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -98,6 +101,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	JMenu windowMenu;
 	JScrollPane tableScroll;
 	Choice changeSession;
+	JPanel checkPanel;
+	JScrollPane checkScroll;
 
 	List<ViewWindow<IT>> windowList;
 
@@ -307,7 +312,22 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		visScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		//visScroller.setMaximumSize(new Dimension(1000, 100));
 
-		rightPanel.add(visScroller);
+		//rightPanel.add(visScroller);
+		
+		checkPanel = new JPanel();
+		checkPanel.setLayout(new BoxLayout(checkPanel, BoxLayout.Y_AXIS));
+		
+		//checkPanel.setPreferredSize(new Dimension(100, 100));
+		
+
+		
+		
+		
+		checkScroll = new JScrollPane(checkPanel);
+		checkScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		checkScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		checkScroll.setPreferredSize(new Dimension(100, 200));
+		rightPanel.add(checkScroll);
 		
 		rightButtonPanel = new JPanel(new GridLayout(4,0));
 
@@ -647,12 +667,23 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		String[] sessionNamesList = new String[tempSessionList.size()];
 
 		i=0;
-
+		checkPanel.removeAll();
 		for(Session<? extends Trackable, IT> session : tempSessionList){
 			sessionNamesList[i]=session.getLabel();
+			
+			//Adds check boxes
+			
+				JCheckBox temps = new JCheckBox(sessionNamesList[i]);
+				checkPanel.add(temps);
+				checkPanel.revalidate();
+				checkPanel.repaint();
+
 			i++;
 		}
-
+		
+		
+		
+		
 		selectSessionList.setListData(sessionNamesList);
 
 		//Make Window list
@@ -892,6 +923,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	}
 
+	
+	
 	@Override
 	public boolean showInWindowList(){
 		return false;
@@ -911,4 +944,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		text.append(arg + "\n");
 	}
 
+	
+	
+	
 }
