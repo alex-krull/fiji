@@ -675,7 +675,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
-		String[] sessionNamesList = new String[tempSessionList.size()];
+		
 		
 		int index=0;
 		int count=0;
@@ -694,7 +694,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 		
 
-		
+		String[] sessionNamesList = new String[tempSessionList.size()];
 		if(rePopulate){
 			i=0;	
 		checkPanel.removeAll();
@@ -703,13 +703,14 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			
 			//Adds check boxes
 			
-				JCheckBox temps = new JCheckBox(sessionNamesList[i]);
+				Checkbox temps = new Checkbox(sessionNamesList[i]);	
+				if(viewModel.getSessionsToBeDisplayed().contains(session)) temps.setState(true);
 				checkPanel.add(temps);
-				checkPanel.revalidate();
-				checkPanel.repaint();
-
+				
 			i++;
 		}
+		checkPanel.revalidate();
+		checkPanel.repaint();
 		}
 		
 		
