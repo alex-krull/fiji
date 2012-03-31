@@ -84,9 +84,15 @@ public class Session<T extends Trackable, IT extends NumericType<IT> & NativeTyp
 		return Sequences.get(id);
 	}
 
-	public void optimizeFrame(int frameId, boolean cheap){
+	public void optimizeFrame(int frameId, boolean cheap, List <Integer> trackables){
+		
 		TrackingFrame<T,IT> f= this.getFrame(frameId);
-		f.optimizeFrame(cheap);
+		List<T> results = new ArrayList<T>() ;
+		for(T t: f.getTrackables()){
+			if(trackables.contains(new Integer( t.sequenceId)) ) results.add(t);
+		}
+		
+		f.optimizeFrame(cheap, results);
 	}
 
 	public int selectAt(int x, int y, int z, int frameId, int channel){

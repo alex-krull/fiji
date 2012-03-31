@@ -44,10 +44,9 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	}
 	
 	public void optimizeFrame(int frameNumber){
-		trackingChannel.optimizeFrame(frameNumber,false);
+		trackingChannel.optimizeFrame(frameNumber,false, selectedIdList);
 		model.makeChangesPublic(frameNumber);
 	}
-	
 //	protected int getSelectedSeqId(){
 //		return selectedSequenceId;
 //	}

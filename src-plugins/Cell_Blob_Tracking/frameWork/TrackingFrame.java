@@ -9,27 +9,27 @@ import net.imglib2.type.numeric.RealType;
 
 
 public abstract class TrackingFrame<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>>{
-protected List <T> trackables;
+protected List <T> trackablesInFrame;
 protected int frameNumber;
 protected Policy<T,IT> policy;
 
 protected TrackingFrame(int frameNum, Policy <T,IT> pol){
 	frameNumber=frameNum;
-	trackables= new ArrayList<T>();
+	trackablesInFrame= new ArrayList<T>();
 	policy=pol;
 }
 
-public abstract void optimizeFrame(boolean cheap);
+public abstract void optimizeFrame(boolean cheap, List <T> trackables);
 
 public void addTrackable(T trackable){
 	removeTrackable(trackable.sequenceId);
-	trackables.add(trackable);
+	trackablesInFrame.add(trackable);
 }
 
 public void removeTrackable(int id){
-	for(T t:trackables){
+	for(T t:trackablesInFrame){
 		if(t.sequenceId==id){
-			trackables.remove(t);
+			trackablesInFrame.remove(t);
 			break;
 		}
 	}
@@ -39,7 +39,7 @@ public void removeTrackable(int id){
 public int selectAt(int x, int y, int z){
 	double bestResponse=1;
 	int winner = -1;
-	for(T t: trackables){
+	for(T t: trackablesInFrame){
 		double currentResponse=t.getDistanceTo(x, y, z);
 		if(winner==-1 || bestResponse> currentResponse){
 			bestResponse=currentResponse;
@@ -52,12 +52,12 @@ public int selectAt(int x, int y, int z){
 }
 
 public List<T>getTrackables(){
-	return trackables;
+	return trackablesInFrame;
 }
 
 public List<T> cloneTrackablesForFrame (int newFrame){
 	List<T> results = new ArrayList<T>();
-	for(T trackable:trackables){
+	for(T trackable:trackablesInFrame){
 		T newTrackable= policy.copy(trackable);	
 		newTrackable.frameId=newFrame;
 		results.add(newTrackable);

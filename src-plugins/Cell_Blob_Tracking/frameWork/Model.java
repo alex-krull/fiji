@@ -233,11 +233,11 @@ public MovieFrame<IT> getFrame(int frame, int channel){
 	return channels.get(channel).getMovieFrame(frame);
 }
 
-public synchronized RandomAccessibleInterval<IT> getXTProjections(int channel){
+public RandomAccessibleInterval<IT> getXTProjections(int channel){
 	return channels.get(channel).getXTProjections();
 }
 
-public synchronized RandomAccessibleInterval<IT> getYTProjections(int channel){
+public RandomAccessibleInterval<IT> getYTProjections(int channel){
 	return channels.get(channel).getYTProjections();
 }
 

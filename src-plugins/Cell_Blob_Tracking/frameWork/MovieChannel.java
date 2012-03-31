@@ -83,17 +83,17 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		ptk.start();
 	}
 	
-	public synchronized RandomAccessibleInterval<IT> getXProjections(){
+	public RandomAccessibleInterval<IT> getXProjections(){
 		if(xProjections==null) xProjections=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(image,0),0,1) ),0  ) ); 
 		return xProjections;
 	}
 
-	public synchronized RandomAccessibleInterval<IT> getYProjections(){
+	public RandomAccessibleInterval<IT> getYProjections(){
 		if(yProjections==null) yProjections=ImglibTools.projection(image,1);
 		return yProjections;
 	}
 
-	public synchronized RandomAccessibleInterval<IT> getZProjections(){
+	public RandomAccessibleInterval<IT> getZProjections(){
 		if(zProjections==null){
 			if(isVolume) zProjections=ImglibTools.projection(image,2);
 			else zProjections=image;
@@ -102,12 +102,12 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		return zProjections;
 	}
 	
-	public synchronized RandomAccessibleInterval<IT> getXTProjections(){
+	public RandomAccessibleInterval<IT> getXTProjections(){
 		if(xtProjections==null) xtProjections=Views.zeroMin( Views.invertAxis(    Views.rotate(ImglibTools.projection(getZProjections(),0),0,1 ),0 ) ) ;
 		return xtProjections;
 	}
 	
-	public synchronized RandomAccessibleInterval<IT> getYTProjections(){
+	public RandomAccessibleInterval<IT> getYTProjections(){
 		if(ytProjections==null) ytProjections=Views.zeroMin(    ImglibTools.projection(getZProjections(),1) )  ;
 		return ytProjections;
 	}

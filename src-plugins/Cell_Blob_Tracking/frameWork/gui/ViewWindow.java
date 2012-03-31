@@ -51,12 +51,12 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		
 			if(!this.isOpen()) return;
 		
-			reFresh( position,  rePaintImage);
-			//UpdateTask udt= new UpdateTask(position,rePaintImage);
-			//currentUpdateTask=udt;
-			//synchronized( thread){
-			//	thread.notify();
-			//}
+	//		reFresh( position,  rePaintImage);
+			UpdateTask udt= new UpdateTask(position,rePaintImage);
+			currentUpdateTask=udt;
+			synchronized( thread){
+				thread.notify();
+			}
 			
 			
 		
@@ -82,16 +82,20 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		while(true){
 			try {
 			synchronized( thread){
-				//if (currentUpdateTask==null)
-						thread.wait();			
-				udt=currentUpdateTask;	
+				if (currentUpdateTask==null)
+						thread.wait();	
+	//			else{
+					udt=currentUpdateTask;
+					currentUpdateTask=null;
+	//			}
+					
 		//		currentUpdateTask=null;
 			}
 			} catch (InterruptedException e) { 	e.printStackTrace();}
 			
 				if(udt!=null)reFresh(udt.position,udt.rePaintImage);
 				
-				System.out.println(this.getClass().getName()+": "+counter);
+		//		System.out.println(this.getClass().getName()+": "+counter);
 				counter++;
 		
 		}

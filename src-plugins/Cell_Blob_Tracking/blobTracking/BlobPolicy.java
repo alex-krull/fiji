@@ -144,10 +144,13 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		
 		if(e.getID()==MouseEvent.MOUSE_CLICKED){
 			if(e.isShiftDown() && e.getClickCount()==1){
-				trackingChannel.addTrackable(new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], pos[2], 1, trackingChannel.getId()));
+				Blob nB=new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], pos[2], 1, trackingChannel.getId());				
+				selectedIdList.clear();
+				selectedIdList.add(nB.sequenceId);
+				trackingChannel.addTrackable(nB);
 			}
 			
-			if(e.getClickCount()>1) trackingChannel.optimizeFrame((int)pos[3], false);
+			if(e.getClickCount()>1) trackingChannel.optimizeFrame((int)pos[3], false, selectedIdList);
 			
 		}
 

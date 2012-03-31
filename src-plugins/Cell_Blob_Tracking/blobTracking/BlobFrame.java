@@ -37,7 +37,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	}
 
 	@Override
-	public synchronized void optimizeFrame(boolean cheap) {
+	public synchronized void optimizeFrame(boolean cheap,  List <Blob> trackables) {
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();	
 		this.backProb=1;
 		for(Blob b:trackables){
@@ -50,12 +50,12 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			long mTime=0;
 			for(int i=0;i<100;i++){	
 					long eTime0= System.nanoTime();
-					double ti= doEStep();
+					double ti= doEStep(trackables);
 					long eTime1= System.nanoTime();
 					double change;
 					
 					long mTime0= System.nanoTime();
-					change=this.doMstep(ti);
+					change=this.doMstep(ti, trackables);
 					long mTime1= System.nanoTime();
 					
 					mTime +=mTime1-mTime0;
@@ -79,7 +79,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 
 	}
 	
-	private double doEStep(){
+	private double doEStep( List <Blob> trackables){
 		double totalInten=0;
 		long[] mins=  {Long.MAX_VALUE,Long.MAX_VALUE};		
 		long[] maxs=  {Long.MIN_VALUE,Long.MIN_VALUE};
@@ -319,7 +319,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		}
 	}
 	
-	private double doMstep(double totalInten){
+	private double doMstep(double totalInten,  List <Blob> trackables){
 		
 		
 		double change=0;
