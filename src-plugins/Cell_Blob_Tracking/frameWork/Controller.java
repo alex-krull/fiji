@@ -90,7 +90,7 @@ private void processFile(String fName){
 		  
 		  while ((strLine = br.readLine()) != null&& strLine.startsWith("%")){
 			  if(strLine.equals("%-session properties-")) break;	//skip through initial comments
-			  System.out.println(strLine);
+		//	  System.out.println(strLine);
 		  }
 		  
 		  
@@ -100,7 +100,7 @@ private void processFile(String fName){
 		  while ((strLine = br.readLine()) != null&& strLine.startsWith("%")){
 			  if(strLine.equals("%-sequence properties-")) break;
 			  forReader= forReader+ strLine.replace("%","")+"\n";  
-			  System.out.println(strLine);
+	//		  System.out.println(strLine);
 		  }
 		  Reader reader= new StringReader(forReader);
 		  sessionProps.load(reader);
@@ -111,7 +111,7 @@ private void processFile(String fName){
 		  while ((strLine = br.readLine()) != null&& strLine.startsWith("%")){
 			  if(strLine.equals("%-data-")) break;
 			  forReader= forReader+ strLine.replace("%","")+"\n";
-			  System.out.println(strLine);
+		//	  System.out.println(strLine);
 		  }
 		  reader= new StringReader(forReader);
 		  sequenceProps.load(reader);
@@ -120,7 +120,7 @@ private void processFile(String fName){
 		  
 		  while ((strLine = br.readLine()) != null)   {	// get data		  
 			  cc.processLineFromFile(strLine);
-			  System.out.println (strLine);
+		//	  System.out.println (strLine);
 		  }
 		  //Close the input stream
 		  in.close();

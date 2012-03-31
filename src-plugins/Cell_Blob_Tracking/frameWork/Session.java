@@ -58,14 +58,14 @@ public class Session<T extends Trackable, IT extends NumericType<IT> & NativeTyp
 	}
 	
 	public List<T> getTrackablesForFrame(int frame){
-		System.out.println("frame:" + frame + "  nOfF:"+ frames.size());
+	//	System.out.println("frame:" + frame + "  nOfF:"+ frames.size());
 		return frames.get(frame).getTrackables();
 	}
 
 	public T getTrackable(int seqId, int frameId){
 		Sequence<T> sequence= Sequences.get(seqId);	
 		if (sequence==null){
-			System.out.println("sequence==null");
+	//		System.out.println("sequence==null");
 			return null;
 		}
 		return sequence.getTrackableForFrame(frameId);
@@ -107,7 +107,7 @@ public class Session<T extends Trackable, IT extends NumericType<IT> & NativeTyp
 		if(sequence==null){
 			
 			sequence=produceSequence(trackable.sequenceId, Integer.toString(trackable.sequenceId));
-			System.out.println("Adding Seq!");
+	//		System.out.println("Adding Seq!");
 			Sequences.put(trackable.sequenceId, sequence);
 		}
 		sequence.addTrackable(trackable);
@@ -118,14 +118,14 @@ public class Session<T extends Trackable, IT extends NumericType<IT> & NativeTyp
 		
 		return numOfFrames;
 	}
-	
+	// position:
 	public TrackingFrame<T,IT> getFrame(int frameNumber) {	
-		System.out.println("size:"+ frames.size()+ "   fn:"+frameNumber);
+//		System.out.println("size:"+ frames.size()+ "   fn:"+frameNumber);
 		return frames.get(frameNumber);
 	}
 	
 	public Sequence<T> splitSequenence(int SequenceId, int newSequqenceId,int frameNumber){
-		System.out.println("                         splitting sequqnce");
+	//	System.out.println("                         splitting sequqnce");
 		Sequence<T> s= Sequences.get(SequenceId);
 		if(s!=null){
 			Sequence<T> newS= s.splitSequence(frameNumber, produceSequence( newSequqenceId, Integer.toString(newSequqenceId)));		

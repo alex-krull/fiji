@@ -74,7 +74,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			
 			currentlyTracking=true;	
 			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames();i++){
-				System.out.println("trackingFrame:"+i);
+		//		System.out.println("trackingFrame:"+i);
 				optimizeFrame( i);
 				if(!currentlyTracking) break;
 				
@@ -167,7 +167,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 				T t=policy.copy( s.getTrackableForFrame(i) );
 				t.sequenceId=newSid;
 				trackingChannel.addTrackable(t);
-				System.out.println("adding frame:"+ t.frameId);
+	//			System.out.println("adding frame:"+ t.frameId);
 			}		
 		}
 		

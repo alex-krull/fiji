@@ -38,7 +38,6 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		
 		scaleY=timeScale;	
 		transY=Math.max(0,(int)(scaleY*position[3])-ySize/2);
-		System.out.println("position:" + transY + "  Maximum:"+  ((int)(model.getYTProjections((int)position[4]).max(1)*scaleY-ySize) ) + "ySize:" +ySize);
 		transY=Math.min( transY, (int)((1+model.getYTProjections((int)position[4]).max(1))*scaleY)-ySize );
 		
 		this.clearOverlay();

@@ -125,14 +125,14 @@ public Model(ImagePlus imp){
 	setMultiChannel(imp.getNChannels()>1);
 	setVolume(imp.getNSlices()>1);	
 	
-	System.out.println("iv:" + isVolume+ "  its:" +isTimeSequence + "  imc:"+ isMultiChannel);
+	//System.out.println("iv:" + isVolume+ "  its:" +isTimeSequence + "  imc:"+ isMultiChannel);
 	
 	
 	if(isVolume&&!isTimeSequence && !imp.isHyperStack()){
  	   isVolume=false;
  	   isTimeSequence=true;
  	  switchedDimensions=true;
- 	   System.out.println("SWITCHING DIMENSIONS");
+ //	   System.out.println("SWITCHING DIMENSIONS");
     }
 	
 	if(isMultiChannel)numberOfChannels=imp.getNChannels();
@@ -179,7 +179,7 @@ public Model(ImagePlus imp){
 	
 	
 	
-	System.out.println("numOfFrames:" +numberOfFrames);
+//	System.out.println("numOfFrames:" +numberOfFrames);
 }
 
 

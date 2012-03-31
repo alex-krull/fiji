@@ -618,8 +618,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	@Override
 	public synchronized void reFresh(long[] position, boolean rePaintImage) {
-		System.out.println("updating Spinners !!!!!!!!!!!");
-		System.out.println("position[3]+1: "+(position[3]+1));
+		//System.out.println("updating Spinners !!!!!!!!!!!");
+		//System.out.println("position[3]+1: "+(position[3]+1));
 
 		workingFolder.setText(viewModel.getController().getWorkspace());
 
@@ -676,8 +676,27 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
 		String[] sessionNamesList = new String[tempSessionList.size()];
+		
+		int index=0;
+		int count=0;
 
-		i=0;
+		boolean rePopulate=false;
+		for(Session<? extends Trackable, IT> session : tempSessionList){
+
+			if(count>=changeSession.getItemCount() || !session.getLabel().equals(changeSession.getItem(count))) 
+				rePopulate=true;
+
+			if(session.getId()==viewModel.getController().getCurrentSessionId())
+				index=count;
+
+			count++;
+
+		}
+		
+
+		
+		if(rePopulate){
+			i=0;	
 		checkPanel.removeAll();
 		for(Session<? extends Trackable, IT> session : tempSessionList){
 			sessionNamesList[i]=session.getLabel();
@@ -691,6 +710,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 			i++;
 		}
+		}
 		
 		
 		
@@ -698,6 +718,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		selectSessionList.setListData(sessionNamesList);
 
 		//Make Window list
+		
 		windowList = viewModel.getViewWindows();
 
 
@@ -711,29 +732,15 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 			windowMenu.add(tempMenu);
 		}
+		
 
-		synchronized (changeSession){
+		
 			//Change Session drop menu
 			//	if(changeSession.getActionListeners().length>0)	changeSession.removeActionListener(changeSession.getActionListeners()[0]);
 			//	changeSession.removeAllItems();
 
 
 
-			int index=0;
-			int count=0;
-
-			boolean rePopulate=false;
-			for(Session<? extends Trackable, IT> session : tempSessionList){
-
-				if(count>=changeSession.getItemCount() || !session.getLabel().equals(changeSession.getItem(count))) 
-					rePopulate=true;
-
-				if(session.getId()==viewModel.getController().getCurrentSessionId())
-					index=count;
-
-				count++;
-
-			}
 
 			if(rePopulate){
 				changeSession.removeAll();
@@ -745,7 +752,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				changeSession.select(index);
 
 
-		}
+		
 	}
 
 

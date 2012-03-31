@@ -79,7 +79,7 @@ public class Sequence<T extends Trackable> {
 		for(int i=frameNumber;i<=trackables.lastKey();i++ ){
 			T trackable = trackables.get(i);
 			trackable.sequenceId=secondPart.getId();
-			System.out.println("new id:"+ trackable.sequenceId);
+		//	System.out.println("new id:"+ trackable.sequenceId);
 			secondPart.addTrackable(trackable);
 			trackables.remove(i);
 			

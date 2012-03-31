@@ -82,8 +82,8 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 				timeScale=baseTimeScale*Math.pow(1.1, tics);
 				viewModel.setPosition(-1, -1);				
 				
-				System.out.println("baseTimeScale:"+baseTimeScale);
-				System.out.println("timeScale:"+timeScale);
+		//		System.out.println("baseTimeScale:"+baseTimeScale);
+		//		System.out.println("timeScale:"+timeScale);
 				
 				
 				// TODO Auto-generated method stub
