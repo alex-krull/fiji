@@ -208,6 +208,7 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
+		viewModel.mouseAtPosition(positionFromEvent(e), e);
 		
 	}
 	

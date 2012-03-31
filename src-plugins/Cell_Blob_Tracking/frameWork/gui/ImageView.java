@@ -307,7 +307,8 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 */
 	protected void addYLineOverlay(double position){
 		   
-		Line l= new Line(0*scaleX,(position+0.5)*scaleY-transY,this.model.getImage().dimension(0)*scaleX ,(position+0.5)*scaleY-transY);
+		Line l= new Line(0 ,(position+0.5)*scaleY-transY
+				,this.xSize ,(position+0.5)*scaleY-transY);
 		l.setStrokeWidth(1);
 		l.setStrokeColor(new Color (255,255,0));
 		ovTemplate.add(l);		  			   
@@ -319,7 +320,35 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param position the y-position of the line
 	 */
 	protected void addXLineOverlay(double position){
-		Line l= new Line((position+0.5)*scaleX-transX,0*scaleY,(position+0.5)*scaleX-transX,model.getImage().dimension(1) *scaleY) ;
+		Line l= new Line((position+0.5)*scaleX-transX,0
+				,(position+0.5)*scaleX-transX,this.ySize) ;
+		l.setStrokeWidth(1);
+		l.setStrokeColor(new Color (255,255,0));
+		   ovTemplate.add(l);		  			   
+		  
+	}
+	
+	/**
+	 * Adds a vertical line Overlay from top to bottom.
+	 * @param position the x-position of the line
+	 */
+	protected void addYShortLineOverlay(double position, double pos2, double length){
+		   
+		Line l= new Line((pos2+0.5)*scaleX-length -transX,(position+0.5)*scaleY-transY
+				,(pos2+0.5)*scaleX+length -transX,(position+0.5)*scaleY-transY);
+		l.setStrokeWidth(1);
+		l.setStrokeColor(new Color (255,255,0));
+		ovTemplate.add(l);		  			   
+		   
+	}
+	
+	/**
+	 * Adds a horizontal line Overlay from the left to the right border.
+	 * @param position the y-position of the line
+	 */
+	protected void addXShortLineOverlay(double position, double pos2, double length){
+		Line l= new Line((position+0.5)*scaleX-transX,(pos2+0.5)*scaleY-transY-length
+				,(position+0.5)*scaleX-transX,(pos2+0.5)*scaleY+length-transY) ;
 		l.setStrokeWidth(1);
 		l.setStrokeColor(new Color (255,255,0));
 		   ovTemplate.add(l);		  			   

@@ -29,9 +29,9 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	protected int currentSliceNumber=0;
 	protected int currentChannelNumber=0;
 	protected int currentTrackingChannel=0;
-	protected double mouseX=0;
-	protected double mouseY=0;
-	protected double mouseZ=0;
+	protected int mouseX=0;
+	protected int mouseY=0;
+	protected int mouseZ=0;
 	
 	protected boolean drawOverlays=true;
 	protected HotKeyListener hotKeyListener;
@@ -142,14 +142,17 @@ public long[] getPosition(){
 }
 
 public void mouseAtPosition(long [] pos, MouseEvent me){
-
+	
 
 	controller.click(pos, currentTrackingChannel, me);
+	this.mouseX=(int)pos[0];
+	this.mouseY=(int)pos[1];
+	upDateImages(this.currentFrameNumber,this.currentSliceNumber, this.currentChannelNumber, false);
 }
 
 protected void upDateImages(int frame, int slice, int channel, boolean init){
 	
-	long[] pos= {0,0,slice, frame, channel};
+	long[] pos= {this.mouseX,this.mouseY,slice, frame, channel};
 	for(ViewWindow<IT> vw:views){	
 		vw.upDate(pos, init);
 	}
