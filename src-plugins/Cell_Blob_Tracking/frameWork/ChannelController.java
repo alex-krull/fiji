@@ -82,8 +82,8 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 				
 				for(T t: newTrackables){
 					
-					
-					trackingChannel.addTrackable(t);
+					if(selectedIdList.contains( t.sequenceId))
+						trackingChannel.addTrackable(t);
 				}
 				
 				
