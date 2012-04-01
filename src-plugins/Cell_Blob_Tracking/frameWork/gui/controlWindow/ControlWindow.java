@@ -692,7 +692,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			count++;
 
 		}
-		
+		if(count!=changeSession.getItemCount())
+			rePopulate=true;
 
 		String[] sessionNamesList = new String[tempSessionList.size()];
 		if(rePopulate){
