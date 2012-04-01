@@ -34,7 +34,7 @@ public class OtherTools {
 			c++;
 		}
 		
-		return Color.getHSBColor((float)h, 1.0f, l);
+		return Color.getHSBColor((float)h, l,1.0f);
 		
 	}
 }

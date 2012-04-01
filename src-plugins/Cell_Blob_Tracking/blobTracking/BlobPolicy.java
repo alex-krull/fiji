@@ -140,6 +140,7 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			
 			
 			}
+			model.makeStructuralChange();
 		}
 		
 		if(e.getID()==MouseEvent.MOUSE_CLICKED){
@@ -151,7 +152,7 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			}
 			
 			if(e.getClickCount()>1) trackingChannel.optimizeFrame((int)pos[3], false, selectedIdList);
-			
+			model.makeStructuralChange();
 		}
 
 		

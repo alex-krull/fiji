@@ -41,8 +41,8 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	public void reFresh(long[] position, boolean rePaintImage){
 		scaleX=timeScale;
 		transX=(int)Math.min(Math.max(0,(int)(scaleX*position[3])-xSize/2),(1+model.getXTProjections((int)position[4]).max(0))*scaleX-xSize);
-		System.out.println("timeScale:"+timeScale);
-		System.out.println("transX:"+transX);
+		//System.out.println("timeScale:"+timeScale);
+		//System.out.println("transX:"+transX);
 		this.clearOverlay();
 		this.addKymoXOverlayes();
 		this.addXLineOverlay(position[3]);
@@ -61,7 +61,7 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	public void mouseClicked(MouseEvent e) {
 		int x=(int)(((double)imp.getCanvas().offScreenX(e.getX())+transX)/scaleX);
 		int y=(int)(((double)imp.getCanvas().offScreenY(e.getY())+transY)/scaleY);
-		System.out.println("x:"+ x +"  y:"+y);
+		//System.out.println("x:"+ x +"  y:"+y);
 		if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(3,x);
 		
 		

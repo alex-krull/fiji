@@ -38,6 +38,21 @@ private final SortedMap <Integer, Session <? extends Trackable,IT> > trackingCha
 private String imageFileName;
 private String imageDrirectory;
 private String projectDirectory;
+private boolean structuralChange=true;
+
+public boolean isStruckturalChange(){
+	synchronized(trackingChannels){
+		boolean temp=structuralChange;
+		structuralChange=false;
+		return temp;
+	}
+}
+
+public void makeStructuralChange(){
+	synchronized(trackingChannels){
+		structuralChange=true;
+	}
+}
 
 public String getImageFileName() {
 	return imageFileName;

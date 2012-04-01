@@ -103,7 +103,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	Choice changeSession;
 	JPanel checkPanel;
 	JScrollPane checkScroll;
-
+	
+	List<JCheckBox> cBoxes;
 	List<ViewWindow<IT>> windowList;
 
 	/*
@@ -114,6 +115,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	 */
 
 	public void go(){
+		cBoxes= new ArrayList<JCheckBox>();
 		frame = new JFrame("Control Window");
 
 		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -623,10 +625,26 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		workingFolder.setText(viewModel.getController().getWorkspace());
 
+if(((SpinnerNumberModel)zSpinner.getModel()).getNumber().intValue()-1 !=position[2]+1){
+	zSpinner.removeChangeListener(zSpinner.getChangeListeners()[0]);
 	zSpinner.setValue(position[2]+1);
-		frameSpinner.setValue(position[3]+1);
-		cSpinner.setValue(position[4]+1);
-
+	zSpinner.addChangeListener(new ZSpinnerListener());
+}
+	
+if(((SpinnerNumberModel)frameSpinner.getModel()).getNumber().intValue()-1 !=position[3]+1){
+	frameSpinner.removeChangeListener(frameSpinner.getChangeListeners()[0]);
+	frameSpinner.setValue(position[3]+1);
+	frameSpinner.addChangeListener(new FrameSpinnerListener());
+}
+	
+if(((SpinnerNumberModel)cSpinner.getModel()).getNumber().intValue()-1 !=position[4]+1){
+	cSpinner.removeChangeListener(cSpinner.getChangeListeners()[0]);
+	cSpinner.setValue(position[4]+1);
+	cSpinner.addChangeListener(new CSpinnerListener());
+}
+	
+if(model.isStruckturalChange()){
+		
 		if (viewModel.isTracking()){
 			start.setText("Stop Tracking");
 		} else {
@@ -673,7 +691,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			}
 
 
-
+	
+//		int i=0;
 		List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
 		
 		
@@ -697,27 +716,47 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		String[] sessionNamesList = new String[tempSessionList.size()];
 		if(rePopulate){
-			i=0;	
+		cBoxes.clear();
 		checkPanel.removeAll();
+		changeSession.removeAll();
+		}
+		
+		i=0;
 		for(Session<? extends Trackable, IT> session : tempSessionList){
 			sessionNamesList[i]=session.getLabel();
 			
-			//Adds check boxes
+			if(rePopulate){
+				//Adds changeSession items
+				changeSession.addItem(session.getLabel());
 			
-			JCheckBox temps = new JCheckBox(sessionNamesList[i], viewModel.isSessionVisible(session.getId()));
-			//JCheckBox temps = new JCheckBox(sessionNamesList[i],true);
+				//Adds check boxes
+			
+				//JCheckBox temps = new JCheckBox(sessionNamesList[i], );
+				JCheckBox temps = new JCheckBox(sessionNamesList[i]);
 				checkPanel.add(temps);
+				cBoxes.add(temps);
+			}
+			
+			// check boxes if visible
+			JCheckBox currentCBox= cBoxes.get(i);
+			currentCBox.setSelected(viewModel.isSessionVisible(session.getId()));
+			
 				
 			i++;
 		}
 		checkPanel.revalidate();
 		checkPanel.repaint();
-		}
 		
+		//Change Session drop menu
 		
-		
+		if(index>0 && changeSession.getItemCount()>0 )
+			changeSession.select(index);
+			
 		
 		selectSessionList.setListData(sessionNamesList);
+		
+		
+	}
 
 		//Make Window list
 		
@@ -737,27 +776,14 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 
 		
-			//Change Session drop menu
-			//	if(changeSession.getActionListeners().length>0)	changeSession.removeActionListener(changeSession.getActionListeners()[0]);
-			//	changeSession.removeAllItems();
-
-
-
-		
 			
-			if(rePopulate){
-				changeSession.removeAll();
-				for(Session<? extends Trackable, IT> session : tempSessionList)
-					changeSession.addItem(session.getLabel());
-			}
-
-			if(index>0 && changeSession.getItemCount()>0 )
-				changeSession.select(index);
 
 
 		
 	}
 
+	
+	
 
 	@Override
 	public void addKeyListener(HotKeyListener keyListener) {

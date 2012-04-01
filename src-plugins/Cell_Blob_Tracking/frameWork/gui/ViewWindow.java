@@ -10,8 +10,12 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	protected String caption;
 	protected ViewModel<IT> viewModel;
 	protected Thread thread;
-	protected volatile UpdateTask currentUpdateTask=null;
+	protected UpdateTask currentUpdateTask=null;
 	protected int viewId;
+	
+	public static final int MODELCHANGED=0;
+	public static final int MOUSEPOSCHANGED=1;
+	public static final int VIEWMODELCHANGED=2;
 	
 	protected ViewWindow(Model<IT> mod, String title, ViewModel<IT> vm){
 		
@@ -51,12 +55,12 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		
 			if(!this.isOpen()) return;
 		
-		reFresh( position,  rePaintImage);
-	//		UpdateTask udt= new UpdateTask(position,rePaintImage);
-	//		currentUpdateTask=udt;
-	//		synchronized( thread){
-	//			thread.notify();
-	//		}
+	//	reFresh( position,  rePaintImage);
+			UpdateTask udt= new UpdateTask(position,rePaintImage);
+			currentUpdateTask=udt;
+			synchronized( thread){
+				thread.notify();
+			}
 			
 			
 		
@@ -77,12 +81,13 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	
 	@Override
 	public void run(){
+		long time0= System.nanoTime();
 		int counter=1;
-		UpdateTask udt=null;
+		UpdateTask udt=null;	
 		while(true){
 			try {
 			synchronized( thread){
-				if (currentUpdateTask==null)
+				while (currentUpdateTask==null)
 						thread.wait();	
 	//			else{
 					udt=currentUpdateTask;
@@ -97,6 +102,8 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 				
 		//		System.out.println(this.getClass().getName()+": "+counter);
 				counter++;
+				long time1= System.nanoTime();	
+	//			System.out.println(this.getClass().getName()+": "+(1000000000*((double)counter/((double)(time1-time0)))));
 		
 		}
 	}

@@ -176,16 +176,19 @@ public void optimizeFrame(int frameNumber ){
 		ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 		if(cc!=null) cc.optimizeFrame(frameNumber);		
 	}
+	model.makeStructuralChange();
 }
 
 public void StartTracking(int frameNumber ){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.startTracking(frameNumber);
+	model.makeStructuralChange();
 }
 
 public void StopTracking(){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.stopTracking();
+	model.makeStructuralChange();
 }
 
 public void toggleTracking(int frameId){
@@ -193,12 +196,14 @@ public void toggleTracking(int frameId){
 	if(cc!=null)
 		if(!cc.isTracking()) cc.startTracking(frameId);
 		else cc.stopTracking();
+	model.makeStructuralChange();
 }
 
 public void splitSequence(int frameId){
 	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.splitSequnce(frameId);
+	model.makeStructuralChange();
 	model.makeChangesPublic();
 	}
 }
@@ -207,6 +212,7 @@ public void deleteSequence(){
 	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.deleteSequence();
+	model.makeStructuralChange();
 	model.makeChangesPublic();
 	}
 }
@@ -215,6 +221,7 @@ public void trimSequence(int frameId){
 	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.trimSequence(frameId);
+	model.makeStructuralChange();
 	model.makeChangesPublic();
 	}
 }
@@ -229,6 +236,7 @@ public void mergeSequenences(){
 	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	cc.mergeSequenences();
+	model.makeStructuralChange();
 	model.makeChangesPublic();	
 	}
 }
@@ -241,6 +249,7 @@ public void mergeSequenences(){
 public void setColor(Color c){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	cc.setColor(c);
+	model.makeStructuralChange();
 	model.makeChangesPublic();
 }
 
@@ -258,12 +267,14 @@ public void processDirectory(String directory){
 	for(String fName: files){
 		this.processFile(dir+fName);
 	}
+	model.makeStructuralChange();
 	
 }
 
 public void setSelectionList(List <Integer> selectedIds){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	cc.setSelectionList(selectedIds);
+	model.makeStructuralChange();
 	model.makeChangesPublic();
 	
 }
@@ -279,6 +290,7 @@ public void addSession(String typeName, String label, int channelID){
 	this.channelControllers.put(cc.getId(), cc);
 	if(this.selectedTCId==-1) this.selectedTCId=cc.getId();
 	}
+	model.makeStructuralChange();
 	model.makeChangesPublic();
 	
 }
@@ -347,8 +359,8 @@ public void deleteSession(){
 	cc.deleteAllSequences();
 	channelControllers.remove(cc.getId());
 	model.deleteSession(cc.getId());
+	model.makeStructuralChange();
 	model.makeChangesPublic();
-	
 	}
 }
 

@@ -35,10 +35,15 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		public void run() {
 			//super.run();
 			
+			
 			System.out.println("iv:" + model.isVolume()+ "  its:" +model.isTimeSequence() + "  imc:"+ model.isMultiChannel() );
 			double initZoom=imp.getCanvas().getMagnification();
-			viewModel.addViewWindow(new MainWindow<IT>(imp, model, viewModel),initZoom);
 			
+			
+			ControlWindow<IT> cw= new ControlWindow<IT>(model, "Control Window",viewModel);
+	        cw.go();
+	        viewModel.addViewWindow(cw,initZoom);
+	        
 	        if(model.isVolume()){
 	        
 	        System.out.println("adding projections");
@@ -47,12 +52,11 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 			viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel),initZoom);
 	        }
 	        
-	        ControlWindow<IT> cw= new ControlWindow<IT>(model, "Control Window",viewModel);
-	        cw.go();
-	        viewModel.addViewWindow(cw,initZoom);
+	
 			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel),initZoom);		
 			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel),initZoom);		
 			
+			viewModel.addViewWindow(new MainWindow<IT>(imp, model, viewModel),initZoom);
 			
 	    }
 	}
@@ -88,7 +92,9 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		AddingViewsThread awt= new AddingViewsThread(vm,model, imp);
 		cont.load(vm);
- 	awt.start();
+		awt.run();
+//		for(int i=0; i< 100000000;i++)
+//			vm.setPosition(3, i%20);
 		
 	//	awt.run();
 		
