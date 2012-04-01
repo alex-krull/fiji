@@ -46,7 +46,7 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		this.clearOverlay();
 		this.addKymoXOverlayes();
 		this.addXLineOverlay(position[3]);
-		this.addYShortLineOverlay(position[1], position[3],10);
+		if(viewModel.mouseIsInWindow) this.addYShortLineOverlay(position[1], position[3],10);
 		toDraw=model.getXTProjections((int)position[4]);
 		super.reFresh(position, rePaintImage);
 		//imp.updateAndDraw();

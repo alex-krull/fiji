@@ -81,6 +81,8 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		
 		
 		ImagePlus.addImageListener(this);
+		xSize=imp.getWidth();
+	 	ySize=imp.getHeight();
 		initWindow();
 	}
 
@@ -106,6 +108,11 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		
 		this.clearOverlay();
 		addZOverlayes((int)position[3]);
+		if(viewModel.mouseIsInWindow) {
+			this.addXLineOverlay(position[0]);
+			this.addYLineOverlay(position[1]);
+		}
+		
 		this.upDateOverlay();
 		imp.updateAndDraw();
 

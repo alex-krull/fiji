@@ -32,7 +32,7 @@ import frameWork.Model;
 			
 			this.addXOverlayes((int)position[3]);
 			this.addXLineOverlay(position[2]);
-			this.addYShortLineOverlay(position[1], position[2],10);
+			if(viewModel.mouseIsInWindow)  this.addYShortLineOverlay(position[1], position[2],10);
 			
 			int frameNumber= (int)position[3];
 			toDraw=model.getFrame(frameNumber, viewModel.getCurrentChannelNumber()).getXProjections();

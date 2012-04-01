@@ -32,6 +32,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	protected int mouseX=0;
 	protected int mouseY=0;
 	protected int mouseZ=0;
+	protected volatile boolean mouseIsInWindow=false;
 	
 	protected boolean drawOverlays=true;
 	protected HotKeyListener hotKeyListener;
@@ -152,9 +153,16 @@ public void mouseAtPosition(long [] pos, MouseEvent me){
 		if(pos[4]>=0) this.currentChannelNumber=(int)pos[4];
 	}
 	
+	if(me.getID()==MouseEvent.MOUSE_EXITED) this.mouseIsInWindow=false;
+	else this.mouseIsInWindow=true;
+	
 	controller.click(pos, currentTrackingChannel, me);
 	
 	upDateImages(this.currentFrameNumber,this.currentSliceNumber, this.currentChannelNumber, false);
+}
+
+public boolean isMouseInWindow(){
+	return mouseIsInWindow;
 }
 
 protected void upDateImages(int frame, int slice, int channel, boolean init){

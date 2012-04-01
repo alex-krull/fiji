@@ -147,7 +147,6 @@ implements MouseListener, MouseMotionListener{
 		ovTemplate= new Overlay();
 		image=img;
 	 	if(imp==null) reFresh(vm.getPosition(),true);
-	 	
 	 	initWindow();
 	 	
 	 	//imp.getCanvas().addComponentListener(new myPropChangeListener());
@@ -432,14 +431,14 @@ implements MouseListener, MouseMotionListener{
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseEntered(MouseEvent e) {
+		viewModel.mouseAtPosition(positionFromEvent(e), e);	
 		
 	}
 
 	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseExited(MouseEvent e) {
+		viewModel.mouseAtPosition(positionFromEvent(e), e);	
 		
 	}
 
@@ -452,8 +451,8 @@ implements MouseListener, MouseMotionListener{
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseReleased(MouseEvent e) {
+		viewModel.mouseAtPosition(positionFromEvent(e), e);	
 		
 	}
 
@@ -465,7 +464,7 @@ implements MouseListener, MouseMotionListener{
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
+
 		viewModel.mouseAtPosition(positionFromEvent(e), e);
 		
 	}

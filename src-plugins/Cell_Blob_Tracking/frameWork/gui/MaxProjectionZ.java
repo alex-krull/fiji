@@ -24,6 +24,10 @@ public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		
 		this.clearOverlay();
 		addZOverlayes((int)position[3]);
+		if(viewModel.mouseIsInWindow){
+			this.addXLineOverlay(position[0]);
+			this.addYLineOverlay(position[1]);
+		}
 		int frameNumber= (int)position[3];
 		toDraw=model.getFrame(frameNumber, viewModel.getCurrentChannelNumber()).getZProjections();
 		reDraw( position ,rePaintImage);

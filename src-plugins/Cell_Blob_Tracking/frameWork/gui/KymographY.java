@@ -43,7 +43,7 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		this.clearOverlay();
 	    this.addKymoYOverlayes();
 		this.addYLineOverlay(position[3]);
-		this.addXShortLineOverlay(position[0], position[3],10);
+		if(viewModel.mouseIsInWindow)  this.addXShortLineOverlay(position[0], position[3],10);
 		toDraw=model.getYTProjections((int)position[4]);
 		super.reFresh(position, rePaintImage);
 	}

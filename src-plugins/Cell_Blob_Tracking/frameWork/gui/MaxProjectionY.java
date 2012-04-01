@@ -30,7 +30,7 @@ public class MaxProjectionY < IT extends  NumericType<IT> & NativeType<IT> & Rea
 			
 			this.addYOverlayes((int)position[3]);
 			this.addYLineOverlay(position[2]);
-			this.addXShortLineOverlay(position[0], position[2],10);
+			if(viewModel.mouseIsInWindow) this.addXShortLineOverlay(position[0], position[2],10);
 			int frameNumber= (int)position[3];
 			toDraw=model.getFrame(frameNumber, viewModel.getCurrentChannelNumber()).getYProjections();
 			reDraw( position ,rePaintImage);
