@@ -15,7 +15,7 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.Model;
 
 
-public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> implements MouseListener , ActionListener{
+public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> {
 
 	
 	private boolean buisy=false;
@@ -29,7 +29,7 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		timeScale=baseTimeScale*Math.pow(1.1, tics);
 	   
 	    
-		this.imp.getCanvas().addMouseListener(this);
+	//	this.imp.getCanvas().addMouseListener(this);
 	//	sb.setLocation(0, 0);
 	//	sb.setOrientation(Scrollbar.VERTICAL);
 	}
@@ -48,46 +48,20 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		super.reFresh(position, rePaintImage);
 	}
 
+	
+	
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public long[] positionFromEvent(MouseEvent e){
 		int x=(int)((double)(imp.getCanvas().offScreenX(e.getX())+transX)/this.scaleX);
-		int y=(int)((double)(imp.getCanvas().offScreenY(e.getY())+transY)/this.scaleY);
-		System.out.println("x:"+ x +"  y:"+y);
-		if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(3,y);
+		int t=(int)((double)(imp.getCanvas().offScreenY(e.getY())+transY)/this.scaleY);
+	//	System.out.println("x:"+ x +"  y:"+y);
 		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+			long[] pos= viewModel.getPosition();
+			pos[0]=x;
+			pos[1]=-1; 
+			pos[3]=t;
+		return pos;
 	}
 	
 

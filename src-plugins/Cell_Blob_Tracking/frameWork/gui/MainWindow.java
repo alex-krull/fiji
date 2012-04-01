@@ -168,61 +168,7 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 		
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		viewModel.mouseAtPosition(positionFromEvent(e), e);	
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		
-		
-		viewModel.mouseAtPosition(positionFromEvent(e), e);			
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		
-		viewModel.mouseAtPosition(positionFromEvent(e), e);		
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-		viewModel.mouseAtPosition(positionFromEvent(e), e);
-		
-	}
 	
-	private long[] positionFromEvent(MouseEvent e){
-		int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
-		int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);
-		System.out.println("x:"+ x +"  y:"+y);
-		
-		
-			long[] pos= viewModel.getPosition();
-			pos[0]=x;
-			pos[1]=y; 			
-		return pos;
-	}
 	
 
 	@Override
@@ -251,4 +197,16 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 	//}
 
 
+	@Override
+	public long[] positionFromEvent(MouseEvent e){
+		int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
+		int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);
+		System.out.println("x:"+ x +"  y:"+y);
+		
+		
+			long[] pos= viewModel.getPosition();
+			pos[0]=x;
+			pos[1]=y; 			
+		return pos;
+	}
 }

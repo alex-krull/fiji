@@ -86,8 +86,6 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 						trackingChannel.addTrackable(t);
 				}
 				
-				
-				
 			}
 			currentlyTracking=false;
 			}

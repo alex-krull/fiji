@@ -12,7 +12,7 @@ import frameWork.Model;
 
 
 
-	public class MaxProjectionX < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageView<IT> implements MouseListener, MouseMotionListener{
+	public class MaxProjectionX < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageView<IT>{
 		
 		public MaxProjectionX(Model<IT> mod, ViewModel<IT> vm){
 			super(mod, 
@@ -22,8 +22,8 @@ import frameWork.Model;
 		//	xSize=(int)model.getFrame(0, viewModel.getCurrentChannelNumber()).getXProjections().max(0);
 		//	ySize=(int)model.getFrame(0, viewModel.getCurrentChannelNumber()).getXProjections().max(1);
 			
-			imp.getCanvas().addMouseListener(this);
-			imp.getCanvas().addMouseMotionListener(this);
+		//	imp.getCanvas().addMouseListener(this);
+		//	imp.getCanvas().addMouseMotionListener(this);
 		}
 		
 		@Override
@@ -32,63 +32,14 @@ import frameWork.Model;
 			
 			this.addXOverlayes((int)position[3]);
 			this.addXLineOverlay(position[2]);
+			this.addYShortLineOverlay(position[1], position[2],10);
 			
 			int frameNumber= (int)position[3];
 			toDraw=model.getFrame(frameNumber, viewModel.getCurrentChannelNumber()).getXProjections();
 			reDraw( position ,rePaintImage);
 			}
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
-			int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);
-			System.out.println("x:"+ x +"  y:"+y);
-			if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(2,(int)x);
-			
-			if(e.getButton()==MouseEvent.BUTTON1) viewModel.mouseAtPosition(positionFromEvent(e), e);
-			
-			
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void mouseExited(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			
-			if(e.getButton()==MouseEvent.BUTTON1) viewModel.mouseAtPosition(positionFromEvent(e), e);
-			
-			
-						
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-					
-			
-		}
-
-		@Override
-		public void mouseDragged(MouseEvent e) {
-			viewModel.mouseAtPosition(positionFromEvent(e), e);
-		}
-
-		@Override
-		public void mouseMoved(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		}
 		
-		private long[] positionFromEvent(MouseEvent e){
+		public long[] positionFromEvent(MouseEvent e){
 			int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
 			int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);
 			System.out.println("x:"+ x +"  y:"+y);

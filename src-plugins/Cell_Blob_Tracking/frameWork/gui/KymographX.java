@@ -31,9 +31,9 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		baseTimeScale=(double)xSize/(double)model.getNumberOfFrames();	
 		timeScale=baseTimeScale*Math.pow(1.1, tics);
 		
-		MyListener ml=new MyListener();
-		this.imp.getCanvas().addMouseListener(ml);
-		this.imp.getCanvas().addMouseMotionListener(ml);
+	//	MyListener ml=new MyListener();
+	//	this.imp.getCanvas().addMouseListener(ml);
+	//	this.imp.getCanvas().addMouseMotionListener(ml);
 	//	sb.setOrientation(Scrollbar.HORIZONTAL);
 		
 	}
@@ -53,67 +53,19 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		
 	}
 
-	public class MyListener implements MouseListener, MouseMotionListener{
+
 	
-	private int dragStart=-1;
-		
-	@Override	
-	public void mouseClicked(MouseEvent e) {
-		int x=(int)(((double)imp.getCanvas().offScreenX(e.getX())+transX)/scaleX);
-		int y=(int)(((double)imp.getCanvas().offScreenY(e.getY())+transY)/scaleY);
-		//System.out.println("x:"+ x +"  y:"+y);
-		if(e.getButton()==MouseEvent.BUTTON2) viewModel.setPosition(3,x);
+	public long[] positionFromEvent(MouseEvent e){
+		int t=(int)((double)(imp.getCanvas().offScreenX(e.getX())+transX)/this.scaleX);
+		int y=(int)((double)(imp.getCanvas().offScreenY(e.getY())+transY)/this.scaleY);
+	//	System.out.println("x:"+ x +"  y:"+y);
 		
 		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		dragStart=(int)(((double)imp.getCanvas().offScreenX(e.getX()))/scaleX);
-		System.out.println("_______________________________dragStart:"+ dragStart);
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		dragStart=-1;
-		
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-/*		int dif=dragStart-(int)(((double)imp.getCanvas().offScreenX(e.getX()))/scaleX);
-		if(dif<0) dif=-1;
-		if(dif>0) dif=1;
-		System.out.println("_______________________________dif:"+ dif+ "  dragStart:"+ dragStart);
-		int newValue=Math.min(Math.max(0,(int)viewModel.getPosition()[3] - dif ), model.getNumberOfFrames()-1 );
-		
-		viewModel.setPosition(3,newValue);
-		//dragStart=(int)(((double)imp.getCanvas().offScreenX(e.getX()))/scaleX);
-		// TODO Auto-generated method stub
-	*/	
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	
+			long[] pos= viewModel.getPosition();
+			pos[0]=-1;
+			pos[1]=y; 
+			pos[3]=t;
+		return pos;
 	}
 
 	

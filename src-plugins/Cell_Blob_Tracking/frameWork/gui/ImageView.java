@@ -14,6 +14,9 @@ import ij.plugin.ContrastEnhancer;
 
 import java.awt.Color;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.List;
@@ -34,7 +37,8 @@ import tools.ImglibTools;
  *
  * @param <IT>
  */
-public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ViewWindow<IT>{
+public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ViewWindow<IT>
+implements MouseListener, MouseMotionListener{
 	
 	protected ImagePlus imp=null;
 	protected RandomAccessibleInterval<IT> image;
@@ -383,6 +387,8 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		}
 		
 		imp.getWindow().addWindowListener(new MyWindowListener());
+		imp.getCanvas().addMouseListener(this);
+		imp.getCanvas().addMouseMotionListener(this);
 		viewModel.setPosition(-1, -1);		}
 	
 	}
@@ -416,6 +422,55 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 		
 	}
 	
+	public abstract long[] positionFromEvent(MouseEvent e);
 
+	
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		viewModel.mouseAtPosition(positionFromEvent(e), e);	
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		
+		
+		viewModel.mouseAtPosition(positionFromEvent(e), e);			
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		
+		viewModel.mouseAtPosition(positionFromEvent(e), e);		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		viewModel.mouseAtPosition(positionFromEvent(e), e);
+		
+	}
+	
+
+	
 }
 
