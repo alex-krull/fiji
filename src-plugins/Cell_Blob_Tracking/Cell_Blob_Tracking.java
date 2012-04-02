@@ -41,7 +41,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 			
 			
 			ControlWindow<IT> cw= new ControlWindow<IT>(model, "Control Window",viewModel);
-	        cw.go();
+	        
 	        viewModel.addViewWindow(cw,initZoom);
 	        
 	        if(model.isVolume()){
@@ -56,7 +56,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	
 			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel,mw),initZoom);		
 			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel,mw),initZoom);		
-			
+			cw.go();
 			
 			
 	    }
