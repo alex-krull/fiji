@@ -365,12 +365,14 @@ public Session<? extends Trackable, IT> getCurrentSession(){
 public void deleteSession(ViewModel<IT> viewModel){
 	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
-	selectedTCId=-1;
+	if(!channelControllers.isEmpty()) selectedTCId=channelControllers.firstKey();
+	else selectedTCId=-1;
+	if(cc==null) return;
 	cc.deleteAllSequences();
 	channelControllers.remove(cc.getId());
 	model.deleteSession(cc.getId());
-	model.makeStructuralChange();
 	viewModel.reFreshSessionToBeDisplayed();
+	model.makeStructuralChange();
 	model.makeChangesPublic();
 	
 	}
