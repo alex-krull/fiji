@@ -719,17 +719,17 @@ if(model.isStruckturalChange()){
 			rePopulate=true;
 
 		String[] sessionNamesList = new String[tempSessionList.size()];
-		if(rePopulate){
+		//if(rePopulate){
 		cBoxes.clear();
 		checkPanel.removeAll();
 		changeSession.removeAll();
-		}
+		//}
 		
 		i=0;
 		for(Session<? extends Trackable, IT> session : tempSessionList){
 			sessionNamesList[i]=session.getLabel();
 			
-			if(rePopulate){
+			//if(rePopulate){
 				//Adds changeSession items
 				changeSession.addItem(session.getLabel());
 			
@@ -739,12 +739,12 @@ if(model.isStruckturalChange()){
 				JCheckBox temps = new JCheckBox(sessionNamesList[i]);
 				checkPanel.add(temps);
 				cBoxes.add(temps);
-			}
+			//}
 			
 			// check boxes if visible
 			JCheckBox currentCBox= cBoxes.get(i);
 			currentCBox.setSelected(viewModel.isSessionVisible(session.getId()));
-			
+			currentCBox.addActionListener(new VisBoxListener());
 				
 			i++;
 		}
@@ -974,6 +974,15 @@ if(model.isStruckturalChange()){
 
 	}
 
+	public class VisBoxListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			text.append("action \n");
+		}
+		
+	}
 	
 	
 	@Override
