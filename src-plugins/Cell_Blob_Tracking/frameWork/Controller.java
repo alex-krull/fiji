@@ -157,11 +157,13 @@ private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCr
  * @param e the original MouseEvent
  */
 public void click(long[] position, int tChannel, MouseEvent e){
+	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	
 	if (cc!=null){
 		
 		cc.click(position, e);
+	}
 	}
 }
 
@@ -271,15 +273,17 @@ public void processDirectory(String directory){
 	
 }
 
-public void setSelectionList(List <Integer> selectedIds){
+public synchronized void setSelectionList(List <Integer> selectedIds){
+	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	cc.setSelectionList(selectedIds);
 	model.makeStructuralChange();
 	model.makeChangesPublic();
+	}
 	
 }
 
-public void addSession(String typeName, String label, int channelID){
+public void addSession(String typeName, String label, int channelID, ViewModel<IT> viewModel){
 	synchronized (model){
 	Properties sessionProps= new Properties();
 	sessionProps.setProperty("typeName", typeName);
@@ -291,6 +295,7 @@ public void addSession(String typeName, String label, int channelID){
 	if(this.selectedTCId==-1) this.selectedTCId=cc.getId();
 	}
 	model.makeStructuralChange();
+	viewModel.reFreshSessionToBeDisplayed();
 	model.makeChangesPublic();
 	
 }
@@ -329,17 +334,20 @@ public void load(ViewModel<IT> viewModel){
 	
 	
 	this.processDirectory(model.getProjectDirectory());
-//	viewModel.reFreashSessionToBeDisplayed();
+	
 	model.makeStructuralChange();
+	viewModel.reFreshSessionToBeDisplayed();
 	model.makeChangesPublic();
+	
 	}
 }
 
-public void setCurrentSession(int id){
+public void setCurrentSession(int id, ViewModel<IT> viewModel){
 //	IJ.error("old:"+String.valueOf(selectedTCId));
 	selectedTCId=id;
 //	IJ.error("new:"+String.valueOf(selectedTCId));
 	model.makeStructuralChange();
+	viewModel.reFreshSessionToBeDisplayed();
 	model.makeChangesPublic();
 	
 }
@@ -354,7 +362,7 @@ public Session<? extends Trackable, IT> getCurrentSession(){
 	return model.getTrackingChannel(selectedTCId);
 
 }
-public void deleteSession(){
+public void deleteSession(ViewModel<IT> viewModel){
 	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	selectedTCId=-1;
@@ -362,7 +370,9 @@ public void deleteSession(){
 	channelControllers.remove(cc.getId());
 	model.deleteSession(cc.getId());
 	model.makeStructuralChange();
+	viewModel.reFreshSessionToBeDisplayed();
 	model.makeChangesPublic();
+	
 	}
 }
 

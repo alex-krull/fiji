@@ -40,7 +40,10 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			selectedSequenceId=selectedIds.get(0);
 		else
 			selectedSequenceId=-1;
-		selectedIdList=selectedIds;
+		selectedIdList.clear();
+		for(Integer i: selectedIds){
+			if(trackingChannel.getSeqs().keySet().contains(i)) selectedIdList.add(i);
+		}
 	}
 	
 	public void optimizeFrame(int frameNumber){

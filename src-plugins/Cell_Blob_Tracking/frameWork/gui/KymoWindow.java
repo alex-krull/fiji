@@ -1,5 +1,4 @@
 package frameWork.gui;
-
 import java.awt.Scrollbar;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.MouseWheelEvent;

@@ -71,12 +71,12 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	 * @param contr the Controller to be used.
 	 **/
 	public ViewModel(Model<IT> mod, Controller<IT> contr){
-		
+		sessionsToBeDisplayed= new ArrayList<Session<? extends Trackable, IT>>();
 	hotKeyListener=new HotKeyListener(this);
 	   controller=contr;
 		
 	   model=mod;
-	   sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(this.currentChannelNumber);   
+	   //sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(this.currentChannelNumber);   
             
        image = model.getImage();
        
@@ -91,7 +91,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
    
        
  	  views= new ArrayList<ViewWindow<IT>>();
-            return;
+ 	 reFreshSessionToBeDisplayed();
     }
 
 public void toggleDrawOverlays(){
@@ -123,8 +123,9 @@ public void setPosition(int dim, int pos){
 	if(dim==4){
 		if(currentChannelNumber==pos) return;
 		this.currentChannelNumber= Math.min(Math.max(pos,0), model.getNumberOfChannels()-1);
-		sessionsToBeDisplayed.clear();
-		sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);
+	//	sessionsToBeDisplayed.clear();
+	//	sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(currentChannelNumber);
+		reFreshSessionToBeDisplayed();
 	}
 	
 	upDateImages(currentFrameNumber, currentSliceNumber, currentChannelNumber, true );
@@ -205,13 +206,14 @@ public void addViewWindow( ViewWindow<IT> vw, double initialZoom){
 }
 
 public List<Session<? extends Trackable,IT>> getSessionsToBeDisplayed(){
-//	return this.sessionsToBeDisplayed;
-	List <Session<? extends Trackable,IT>> results=new ArrayList<Session<? extends Trackable,IT>>();
-	if(controller.getCurrentSession()!=null) results.add(controller.getCurrentSession());
+	
+	return this.sessionsToBeDisplayed;
+//	List <Session<? extends Trackable,IT>> results=new ArrayList<Session<? extends Trackable,IT>>();
+//	if(controller.getCurrentSession()!=null) results.add(controller.getCurrentSession());
 	//for (Session<? extends Trackable,IT> s: model.getSessions()){
 	//	if(s.isAssociatedWithMovieChannel(this.currentChannelNumber)) results.add(s);
 	//}
-	return results;
+//	return results;
 }
 
 public boolean isSessionVisible(int id){
@@ -273,8 +275,19 @@ public Controller<IT> getController(){
 	return controller;
 }
 
-public void reFreashSessionToBeDisplayed(){
-	sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(this.currentChannelNumber);  
+public void reFreshSessionToBeDisplayed(){
+	if(sessionsToBeDisplayed==null) sessionsToBeDisplayed= new ArrayList<Session<? extends Trackable,IT>>();
+	sessionsToBeDisplayed.clear();
+//	sessionsToBeDisplayed=model.getTCsAssociatedWithChannel(this.currentChannelNumber);  
+	Session<? extends Trackable,IT> ses=controller.getCurrentSession();
+	if(ses!=null) sessionsToBeDisplayed.add(ses);
+}
+
+public void toggleSessionTobeDisplayed(Session<? extends Trackable,IT> ses){
+	if(!sessionsToBeDisplayed.contains(ses)) sessionsToBeDisplayed.add(ses);
+	else sessionsToBeDisplayed.remove(ses);
+	model.makeStructuralChange();
+	this.setPosition(-1, -1);
 }
 
 public List<ViewWindow<IT>> getViewWindows(){

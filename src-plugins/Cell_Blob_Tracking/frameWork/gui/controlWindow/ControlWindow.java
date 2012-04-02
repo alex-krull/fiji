@@ -3,7 +3,6 @@ package frameWork.gui.controlWindow;
 import ij.gui.GenericDialog;
 
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -38,7 +37,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -517,7 +515,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		text.append((String) trace[2][0] + "\n");*/
 
 
-		viewModel.getController().addSession(methodChoice, userSessionName, channelChoice-1);
+		viewModel.getController().addSession(methodChoice, userSessionName, channelChoice-1, viewModel);
 	} 
 
 	public void changeSessionDialog() {
@@ -547,7 +545,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			synchronized (changeSession){
+			
 				int index= changeSession.getSelectedIndex();
 				if(index<0){
 					//    	viewModel.getController().setCurrentSession(-1);
@@ -555,11 +553,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				}
 				List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
 				Session<? extends Trackable, IT> session = tempSessionList.get(index);
-				if(session.getId()!=viewModel.getController().getCurrentSessionId())
-					viewModel.getController().setCurrentSession(session.getId());
+				
+					viewModel.getController().setCurrentSession(session.getId(),viewModel);
+	
+					
 
 
-			}
+			
 		}
 	}
 
@@ -567,7 +567,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	public class DeleteSessionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent a) {
-			viewModel.getController().deleteSession();
+			viewModel.getController().deleteSession(viewModel);
 
 
 
@@ -648,7 +648,7 @@ if(((SpinnerNumberModel)cSpinner.getModel()).getNumber().intValue()-1 !=position
 }
 	
 if(model.isStruckturalChange()){
-		
+	trackerTable.removeListener();
 		if (viewModel.isTracking()){
 			start.setText("Stop Tracking");
 		} else {
@@ -703,11 +703,8 @@ if(model.isStruckturalChange()){
 		int index=0;
 		int count=0;
 
-		boolean rePopulate=false;
+	
 		for(Session<? extends Trackable, IT> session : tempSessionList){
-
-			if(count>=changeSession.getItemCount() || !session.getLabel().equals(changeSession.getItem(count))) 
-				rePopulate=true;
 
 			if(session.getId()==viewModel.getController().getCurrentSessionId())
 				index=count;
@@ -715,8 +712,7 @@ if(model.isStruckturalChange()){
 			count++;
 
 		}
-		if(count!=changeSession.getItemCount())
-			rePopulate=true;
+		
 
 		String[] sessionNamesList = new String[tempSessionList.size()];
 		//if(rePopulate){
@@ -729,22 +725,19 @@ if(model.isStruckturalChange()){
 		for(Session<? extends Trackable, IT> session : tempSessionList){
 			sessionNamesList[i]=session.getLabel();
 			
-			//if(rePopulate){
-				//Adds changeSession items
+		
 				changeSession.addItem(session.getLabel());
 			
-				//Adds check boxes
-			
-				//JCheckBox temps = new JCheckBox(sessionNamesList[i], );
+
 				JCheckBox temps = new JCheckBox(sessionNamesList[i]);
 				checkPanel.add(temps);
 				cBoxes.add(temps);
-			//}
+		
 			
 			// check boxes if visible
 			JCheckBox currentCBox= cBoxes.get(i);
 			currentCBox.setSelected(viewModel.isSessionVisible(session.getId()));
-			currentCBox.addActionListener(new VisBoxListener());
+			currentCBox.addActionListener(new VisBoxListener(session));
 				
 			i++;
 		}
@@ -759,7 +752,7 @@ if(model.isStruckturalChange()){
 		
 		selectSessionList.setListData(sessionNamesList);
 		
-		
+		trackerTable.addListener();
 	}
 
 		//Make Window list
@@ -975,10 +968,14 @@ if(model.isStruckturalChange()){
 	}
 
 	public class VisBoxListener implements ActionListener{
+		Session<? extends Trackable,IT> session;
+		VisBoxListener(Session<? extends Trackable,IT> ses){
+			session=ses;
+		}
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
+			viewModel.toggleSessionTobeDisplayed(session);			
 			text.append("action \n");
 		}
 		

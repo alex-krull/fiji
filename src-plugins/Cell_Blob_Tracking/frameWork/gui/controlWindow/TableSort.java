@@ -51,6 +51,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import frameWork.Model;
@@ -68,6 +70,7 @@ public class TableSort extends JPanel {
     private int tableSelected = 0;
     private final ViewModel<?> viewModel;
     private final Model<?> model;
+    private final MySelectionListener listener;
   
     
     public TableSort(ViewModel<?> vm, Model<?> m) {
@@ -86,8 +89,10 @@ public class TableSort extends JPanel {
         table = new JTable(tableModel);
         
         //Makes a selection listener
-        MouseListener listener = new SelectionListener();
-        table.addMouseListener(listener);
+        listener = new MySelectionListener();
+        table.getSelectionModel().addListSelectionListener(listener);
+        
+        
         
         //table.getColumnModel().getSelectionModel().addListSelectionListener(listener);
         //JTable table = new JTable(new MyTableModel());
@@ -110,6 +115,14 @@ public class TableSort extends JPanel {
                                new ColorEditor(viewModel));
         //Add the scroll pane to this panel.
         add(scrollPane);
+    }
+    
+    public void removeListener(){
+    	table.getSelectionModel().removeListSelectionListener(listener);
+    }
+    
+    public void addListener(){
+    	table.getSelectionModel().addListSelectionListener(listener);
     }
 
     public void updateData(Object[][] data){
@@ -142,7 +155,7 @@ public class TableSort extends JPanel {
     	}
     	return userColor;
     }
-public class SelectionListener implements MouseListener{
+public class MySelectionListener implements MouseListener, ListSelectionListener{
 
 		
     
@@ -154,10 +167,12 @@ public class SelectionListener implements MouseListener{
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
+			
 			List <Integer> results = new ArrayList<Integer>();
     		for(int i=0; i<table.getRowCount();i++){
-    			if(table.isRowSelected(i)){
+    			if(table.isRowSelected(i)&&
+    					model.getSequence((Integer)table.getModel().getValueAt(i, 0)).getSession().getId()
+    					==viewModel.getController().getCurrentSessionId() ){
     				
     				results.add((Integer)table.getModel().getValueAt(i, 0));
     				if(e.getClickCount()>1){
@@ -167,7 +182,7 @@ public class SelectionListener implements MouseListener{
     			}
     				
     		}
-    		viewModel.setSelectionList(results);
+    		//viewModel.setSelectionList(results);
     		tableSelected++;
 		}
 
@@ -189,6 +204,22 @@ public class SelectionListener implements MouseListener{
 		public void mouseExited(MouseEvent e) {
 			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			List <Integer> results = new ArrayList<Integer>();
+    		for(int i=0; i<table.getRowCount();i++){
+    			if(table.isRowSelected(i)&&
+    					model.getSequence((Integer)table.getModel().getValueAt(i, 0)).getSession().getId()
+    					==viewModel.getController().getCurrentSessionId() ){
+    				
+    				results.add((Integer)table.getModel().getValueAt(i, 0));
+    			}
+    				
+    		}
+    		viewModel.setSelectionList(results);
+    		tableSelected++;
 		}
     	
     	
