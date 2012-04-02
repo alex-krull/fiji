@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,9 +116,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	}
 	 */
 
+	
 	public void go(){
 		cBoxes= new ArrayList<JCheckBox>();
 		frame = new JFrame("Control Window");
+		frame.addWindowListener(new ControlWindowListener());
 
 		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -989,6 +993,54 @@ if(model.isStruckturalChange()){
 
 	public void appendText(String arg){
 		text.append(arg + "\n");
+	}
+	
+	private class ControlWindowListener implements WindowListener{
+
+		@Override
+		public void windowActivated(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowClosed(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowClosing(WindowEvent arg0) {
+			for(ViewWindow<IT> vw: viewModel.getViewWindows()){
+				vw.terminate();
+			}
+			
+		}
+
+		@Override
+		public void windowDeactivated(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowDeiconified(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowIconified(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowOpened(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 
 	

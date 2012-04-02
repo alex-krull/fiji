@@ -12,6 +12,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	protected Thread thread;
 	protected UpdateTask currentUpdateTask=null;
 	protected int viewId;
+	protected volatile boolean terminate=false;
 	
 	public static final int MODELCHANGED=0;
 	public static final int MOUSEPOSCHANGED=1;
@@ -84,10 +85,10 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		long time0= System.nanoTime();
 		int counter=1;
 		UpdateTask udt=null;	
-		while(true){
+		while(!terminate){
 			try {
 			synchronized( thread){
-				while (currentUpdateTask==null)
+				while (currentUpdateTask==null&& !terminate)
 						thread.wait();	
 	//			else{
 					udt=currentUpdateTask;
@@ -113,6 +114,20 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	}
 	
 	public void setZoom(double newZoom){
+		
+	}
+	
+	public void terminate(){
+		this.terminate=true;
+		synchronized(thread){
+			thread.notify();
+		}
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	

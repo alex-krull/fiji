@@ -1,6 +1,10 @@
 package frameWork.gui;
 
+import ij.IJ;
+
+import java.awt.Point;
 import java.awt.Scrollbar;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -22,7 +26,7 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	private boolean buisy =false;
 	
-	public KymographX(Model<IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<IT> vm) {
+	public KymographX(Model<IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<IT> vm, MainWindow<IT> mainWindow) {
 		super(mod, img,vm, "Kymograph X");
 		xSize=(int)model.getXTProjections(0).dimension(0);
 		
@@ -35,7 +39,21 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	//	this.imp.getCanvas().addMouseListener(ml);
 	//	this.imp.getCanvas().addMouseMotionListener(ml);
 	//	sb.setOrientation(Scrollbar.HORIZONTAL);
+		Point p= mainWindow.getWindow().getLocation();
 		
+		imp.getWindow().setLocation(p);
+		if(imp.getWindow().getParent()!= null){
+			IJ.error(imp.getWindow().getParent().getClass().getName());
+			imp.getWindow().getParent().setLocation(0, 0);
+			
+		}
+		
+		if(mainWindow.getWindow().getParent()!= null){
+			mainWindow.getWindow().getParent().setLocation(0, 0);
+			IJ.error(mainWindow.getWindow().getParent().getClass().getName());
+		}
+	//	IJ.error("mw x:"+ String.valueOf(mainWindow.getWindow().getX()) +
+	//			 "kw x:"+ imp.getWindow().getX());
 	}
 	
 	public void reFresh(long[] position, boolean rePaintImage){

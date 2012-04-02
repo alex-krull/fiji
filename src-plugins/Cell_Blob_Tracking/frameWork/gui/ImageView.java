@@ -58,42 +58,42 @@ implements MouseListener, MouseMotionListener{
 
 		@Override
 		public void windowOpened(WindowEvent e) {
-			imp.getWindow().windowOpened(e);
+			if(!terminate) imp.getWindow().windowOpened(e);
 			
 			
 		}
 
 		@Override
 		public void windowClosing(WindowEvent e) {
-			close();
+			if(!terminate) close();
 		}
 
 		@Override
 		public void windowClosed(WindowEvent e) {
-			imp.getWindow().windowClosed(e);
+			if(!terminate) imp.getWindow().windowClosed(e);
 		}
 
 		@Override
 		public void windowIconified(WindowEvent e) {
-			imp.getWindow().windowIconified(e);
+			if(!terminate) imp.getWindow().windowIconified(e);
 			
 		}
 
 		@Override
 		public void windowDeiconified(WindowEvent e) {
-			imp.getWindow().windowDeiconified(e);
+			if(!terminate) imp.getWindow().windowDeiconified(e);
 			
 		}
 
 		@Override
 		public void windowActivated(WindowEvent e) {
-			imp.getWindow().windowActivated(e);
+			if(!terminate) imp.getWindow().windowActivated(e);
 			
 		}
 
 		@Override
 		public void windowDeactivated(WindowEvent e) {
-			imp.getWindow().windowDeactivated(e);
+			if(!terminate) imp.getWindow().windowDeactivated(e);
 			
 		}
 		
@@ -417,6 +417,11 @@ implements MouseListener, MouseMotionListener{
 		imp.getWindow().setVisible(false);
 		viewModel.setPosition(-1, -1);
 		}
+	}
+	
+	public void terminate(){
+		super.terminate();
+		imp.close();
 	}
 
 

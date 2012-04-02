@@ -6,6 +6,7 @@ import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
 
+import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -215,5 +216,9 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 			pos[0]=x;
 			pos[1]=y; 			
 		return pos;
+	}
+	
+	public Window getWindow(){
+		return imp.getWindow();
 	}
 }

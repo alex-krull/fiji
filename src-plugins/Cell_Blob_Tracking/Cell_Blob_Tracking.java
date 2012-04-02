@@ -51,12 +51,13 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 			viewModel.addViewWindow(new MaxProjectionY<IT>(model, viewModel),initZoom);
 			viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel),initZoom);
 	        }
-	        
+	        MainWindow<IT> mw=new MainWindow<IT>(imp, model, viewModel);
+	        viewModel.addViewWindow(mw,initZoom);
 	
-			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel),initZoom);		
-			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel),initZoom);		
+			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel,mw),initZoom);		
+			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel,mw),initZoom);		
 			
-			viewModel.addViewWindow(new MainWindow<IT>(imp, model, viewModel),initZoom);
+			
 			
 	    }
 	}
