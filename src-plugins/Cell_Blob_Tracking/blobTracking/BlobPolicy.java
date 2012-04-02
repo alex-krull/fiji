@@ -144,6 +144,7 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 		}
 		
 		if(e.getID()==MouseEvent.MOUSE_CLICKED){
+			synchronized (model){
 			if(e.isShiftDown() && e.getClickCount()==1){
 				Blob nB=new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], pos[2], 1, trackingChannel.getId());				
 				selectedIdList.clear();
@@ -153,6 +154,7 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			
 			if(e.getClickCount()>1) trackingChannel.optimizeFrame((int)pos[3], false, selectedIdList);
 			model.makeStructuralChange();
+			}
 		}
 
 		

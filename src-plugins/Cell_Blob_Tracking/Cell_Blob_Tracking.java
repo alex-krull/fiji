@@ -93,11 +93,12 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		AddingViewsThread awt= new AddingViewsThread(vm,model, imp);
 		cont.load(vm);
-//		awt.run();
+		awt.run();
 //		for(int i=0; i< 100000000;i++)
 //			vm.setPosition(3, i%20);
 		
-	//	awt.run();
+		
+
 		
 		
 		
