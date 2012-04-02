@@ -160,8 +160,11 @@ implements MouseListener, MouseMotionListener{
 		if(rePaintImage){
 			
 			if (toDraw.numDimensions()>2) toDraw=Views.hyperSlice(toDraw,2,position[4]);
-			if(imp==null) 
+			if(imp==null) {
 				imp= ImageJFunctions.show(toDraw,caption);
+				ContrastEnhancer ce= new ContrastEnhancer();		
+				ce.stretchHistogram(imp, 0.5);
+			}
 			else{
 						
 
@@ -170,9 +173,14 @@ implements MouseListener, MouseMotionListener{
 			
 			RandomAccessibleInterval<IT> temp = ImglibTools.scaleAndShift(toDraw, transX, transY, scaleX, scaleY, xSize, ySize);
 			ImagePlus impl=ImageJFunctions.wrap( temp , caption);
-			ContrastEnhancer ce= new ContrastEnhancer();
-			ce.stretchHistogram(impl.getProcessor(), 0.5); 
+			
+			double min= imp.getProcessor().getMin();
+			double max= imp.getProcessor().getMax();
+			System.out.println("min:"+min +"  max:"+max);
+			
+			
 			this.imp.setProcessor(impl.getProcessor());
+			impl.getProcessor().setMinAndMax(min, max);
 			}
 	
 		}
