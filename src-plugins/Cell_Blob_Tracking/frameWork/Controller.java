@@ -330,6 +330,7 @@ public void load(ViewModel<IT> viewModel){
 	
 	this.processDirectory(model.getProjectDirectory());
 //	viewModel.reFreashSessionToBeDisplayed();
+	model.makeStructuralChange();
 	model.makeChangesPublic();
 	}
 }
@@ -338,6 +339,7 @@ public void setCurrentSession(int id){
 //	IJ.error("old:"+String.valueOf(selectedTCId));
 	selectedTCId=id;
 //	IJ.error("new:"+String.valueOf(selectedTCId));
+	model.makeStructuralChange();
 	model.makeChangesPublic();
 	
 }
