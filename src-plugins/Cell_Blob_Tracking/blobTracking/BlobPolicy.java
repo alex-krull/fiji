@@ -65,8 +65,30 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			l.setStrokeWidth(1);
 			if(selected) l.setStrokeWidth(4);
 			ov.add(l);
+			
+			
+			
 		
 		}
+		if(!(trackables.keySet().contains((int)i+1)) && !(trackables.keySet().contains((int)i-1) ) ){
+			
+			
+			Line lStart1 =new Line((i+0.5)*scaleX-transX-1,(b.yPos+0.5)*scaleY-transY-1,
+					(i+0.5)*scaleX-transX+1,(b.yPos+0.5)*scaleY-transY+1);
+			lStart1.setStrokeColor(color);
+			lStart1.setStrokeWidth(1);
+			if(selected) lStart1.setStrokeWidth(4);
+			ov.add(lStart1);
+			
+			Line lStart2 =new Line((i+0.5)*scaleX-transX+1,(b.yPos+0.5)*scaleY-transY-1,
+					(i+0.5)*scaleX-transX-1,(b.yPos+0.5)*scaleY-transY+1);
+			lStart2.setStrokeColor(color);
+			lStart2.setStrokeWidth(1);
+			if(selected) lStart2.setStrokeWidth(4);
+			ov.add(lStart2);
+		
+		
+	}
 	}
 	}
 	
@@ -87,7 +109,34 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 				ov.add(l);
 				
 			}
+			
+			if(!(trackables.keySet().contains((int)i+1)) && !(trackables.keySet().contains((int)i-1) ) ){
+				
+				
+					
+					Line lStart1 =new Line((b.xPos+0.5)*scaleX-transX-1,(i+0.5)*scaleY-transY-1,
+							(b.xPos+0.5)*scaleX-transX+1,(i+0.5)*scaleY-transY+1);
+					lStart1.setStrokeColor(color);
+					lStart1.setStrokeWidth(1);
+					if(selected) lStart1.setStrokeWidth(4);
+					ov.add(lStart1);
+					
+					Line lStart2 =new Line((b.xPos+0.5)*scaleX-transX+1,(i+0.5)*scaleY-transY-1,
+							(b.xPos+0.5)*scaleX-transX-1,(i+0.5)*scaleY-transY+1);
+					lStart2.setStrokeColor(color);
+					lStart2.setStrokeWidth(1);
+					if(selected) lStart2.setStrokeWidth(4);
+					ov.add(lStart2);
+				
+				
+			}
 		}
+		
+	
+		
+		
+		
+
 	}
 	
 	@Override

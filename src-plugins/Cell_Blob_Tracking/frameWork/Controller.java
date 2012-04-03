@@ -182,15 +182,20 @@ public void optimizeFrame(int frameNumber ){
 }
 
 public void StartTracking(int frameNumber ){
+//	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.startTracking(frameNumber);
-	model.makeStructuralChange();
+//	model.makeStructuralChange();
+	
+//	}
 }
 
 public void StopTracking(){
+//	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.stopTracking();
-	model.makeStructuralChange();
+//	model.makeStructuralChange();
+//	}
 }
 
 public void toggleTracking(int frameId){
@@ -367,15 +372,24 @@ public void deleteSession(ViewModel<IT> viewModel){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	if(!channelControllers.isEmpty()) selectedTCId=channelControllers.firstKey();
 	else selectedTCId=-1;
-	if(cc==null) return;
+	if(cc!=null){
 	cc.deleteAllSequences();
 	channelControllers.remove(cc.getId());
 	model.deleteSession(cc.getId());
 	viewModel.reFreshSessionToBeDisplayed();
+	}
 	model.makeStructuralChange();
 	model.makeChangesPublic();
 	
 	}
+	
+
+
+}
+
+public void reFresh(){
+	model.makeStructuralChange();
+	model.makeChangesPublic();
 }
 
 public void setSqequenceLabel(int id, String newLabel){

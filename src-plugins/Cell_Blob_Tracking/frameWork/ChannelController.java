@@ -79,17 +79,23 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames();i++){
 		//		System.out.println("trackingFrame:"+i);
 				optimizeFrame( i);
+				synchronized( model){
 				if(!currentlyTracking) break;
 				
 				List<T> newTrackables= trackingChannel.getFrame(i).cloneTrackablesForFrame(i+1);
+				model.makeStructuralChange();
+				model.makeChangesPublic();
 				
 				for(T t: newTrackables){
 					
 					if(selectedIdList.contains( t.sequenceId))
 						trackingChannel.addTrackable(t);
 				}
+				}
 				
 			}
+			
+			
 			currentlyTracking=false;
 			}
 			}

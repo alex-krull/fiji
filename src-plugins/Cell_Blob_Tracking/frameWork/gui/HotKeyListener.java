@@ -2,7 +2,6 @@ package frameWork.gui;
 
 import ij.IJ;
 
-import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 public class HotKeyListener implements KeyListener {
@@ -41,15 +40,15 @@ public class HotKeyListener implements KeyListener {
 		      return;
 		      
 		    
-		  case KeyEvent.VK_C:			  
-			  viewModel.setColor(new Color(255,255,0));		 
+		  case KeyEvent.VK_R:			  
+			  viewModel.getController().reFresh(); 
 		      return;
 		      
 		  case KeyEvent.VK_M:			  
 			  viewModel.mergeSequenences();		 
 		      return; 
 		      
-		      
+		           
 		  
 		        
 		}
