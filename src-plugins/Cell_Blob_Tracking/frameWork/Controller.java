@@ -378,6 +378,18 @@ public void deleteSession(ViewModel<IT> viewModel){
 	}
 }
 
+public void setSqequenceLabel(int id, String newLabel){
+	synchronized (model){
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	cc.setSequenceLabel(id,newLabel);
+	model.makeStructuralChange();
+	model.makeChangesPublic();
+	}
+		
+}
+
+
+
 
 
 
