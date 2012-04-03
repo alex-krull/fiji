@@ -65,7 +65,7 @@ import frameWork.gui.ViewWindow;
 
 public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ViewWindow<IT> {
 
-	public ControlWindow(Model <IT>mod, String title, ViewModel <IT> vm) {
+	public ControlWindow(Model <IT> mod, String title, ViewModel <IT> vm) {
 		super(mod, title, vm);
 		// TODO Auto-generated constructor stub
 	}
@@ -85,7 +85,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	JPanel centerPanel;
 	JPanel leftPanel;
 	JPanel rightButtonPanel;
-
+	JPanel spinnerPanel;
+	
 	JPanel bottomPanel;
 	JPanel urlPanel;
 	JList selectSessionList;
@@ -143,66 +144,77 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		text.setText("Ready to start tracking!");
 		text.append("\n");
 
-		JScrollPane scroller = new JScrollPane(text);
-		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		JScrollPane feedbackPanel = new JScrollPane(text);
+		feedbackPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		feedbackPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
 
 		//bottomPanel.add(scroller);
 
+		
+
+		
+		
+
+		
+		
+		
+		// The controls on the 
+
+		
 		//This controls the left Panel
-		JButton merge = new JButton("Merge");
-		merge.addActionListener(new MergeTrace());
+				JButton merge = new JButton("Merge");
+				merge.addActionListener(new MergeTrace());
 
 
-		JButton delete = new JButton("Delete");
-		delete.addActionListener(new DeleteListener());
+				JButton delete = new JButton("Delete");
+				delete.addActionListener(new DeleteListener());
 
-		//JButton jump = new JButton("Go to  ");
-		JButton split = new JButton("Split");
-		split.addActionListener(new splitListener());
-		//split.setAlignmentX(JButton.CENTER_ALIGNMENT);
-		JButton trim = new JButton("Trim");
-		trim.addActionListener(new TrimListener());
+				//JButton jump = new JButton("Go to  ");
+				JButton split = new JButton("Split");
+				split.addActionListener(new splitListener());
+				//split.setAlignmentX(JButton.CENTER_ALIGNMENT);
+				JButton trim = new JButton("Trim");
+				trim.addActionListener(new TrimListener());
 
-		//JButton saveTo = new JButton("Save To");
-		//saveTo.addActionListener(new SaveToListener());
+				//JButton saveTo = new JButton("Save To");
+				//saveTo.addActionListener(new SaveToListener());
 
-		//JButton loadTo = new JButton("Reload From");
-		//loadTo.addActionListener(new LoadFromListener());
+				//JButton loadTo = new JButton("Reload From");
+				//loadTo.addActionListener(new LoadFromListener());
 
-		JButton saveAll = new JButton("Save");
-		saveAll.addActionListener(new SaveAllListener());
-		JButton loadAllButton = new JButton("Reload");
-		loadAllButton.addActionListener(new LoadAllListener());
-
-
+				JButton saveAll = new JButton("Save");
+				saveAll.addActionListener(new SaveAllListener());
+				JButton loadAllButton = new JButton("Reload");
+				loadAllButton.addActionListener(new LoadAllListener());
 
 
 
-		leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		//leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 
-		leftPanel.add(new JLabel());
-		leftPanel.add(new JLabel());
-		leftPanel.add(new JLabel());
-		leftPanel.add(new JLabel());
+/*
+				leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+				//leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 
-		leftPanel.add(merge);
-		leftPanel.add(split);
-		leftPanel.add(trim);
-		leftPanel.add(delete);
+				leftPanel.add(new JLabel());
+				leftPanel.add(new JLabel());
+				leftPanel.add(new JLabel());
+				leftPanel.add(new JLabel());
 
-		leftPanel.add(new JLabel());
-		//leftPanel.add(jump);
-		leftPanel.add(saveAll);
-		//leftPanel.add(saveTo);
+				leftPanel.add(merge);
+				leftPanel.add(split);
+				leftPanel.add(trim);
+				leftPanel.add(delete);
 
-		leftPanel.add(loadAllButton);
-		//leftPanel.add(loadTo);
+				leftPanel.add(new JLabel());
+				//leftPanel.add(jump);
+				leftPanel.add(saveAll);
+				//leftPanel.add(saveTo);
 
-
-		// The controls on the right
+				leftPanel.add(loadAllButton);
+				//leftPanel.add(loadTo);
+*/
+		
+		
 
 		rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
@@ -216,8 +228,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		frameLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 
 
-		rightPanel.add(frameLabel);
-		rightPanel.add(frameSpinner);
+
 
 		frameSpinner.setPreferredSize(labelDim2);
 		frameSpinner.setMaximumSize(labelDim);
@@ -230,8 +241,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		zSpinner.setMaximumSize(labelDim);
 		JLabel zLabel = new JLabel("Z #");
 		zLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-		rightPanel.add(zLabel);
-		rightPanel.add(zSpinner);
+		
 
 		SpinnerModel cSpinnerModel = new SpinnerNumberModel(20, 0, 40, 1);
 		cSpinner = new JSpinner(cSpinnerModel);
@@ -239,19 +249,28 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		cSpinner.setPreferredSize(labelDim2);
 		cSpinner.setMaximumSize(labelDim);
-		JLabel label3 = new JLabel("Channel #");
-		label3.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-		rightPanel.add(label3);
-		rightPanel.add(cSpinner);
-
+		JLabel cLabel = new JLabel("Channel #");
+		cLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		
+		spinnerPanel = new JPanel();
+		
+		spinnerPanel.add(frameLabel);
+		spinnerPanel.add(frameSpinner);
+		spinnerPanel.add(zLabel);
+		spinnerPanel.add(zSpinner);
+		spinnerPanel.add(cLabel);
+		spinnerPanel.add(cSpinner);
 		//Create the tracking method pair.
-
+		
 		JLabel label4 = new JLabel("Current Method");
 		label4.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		rightPanel.add(label4);
 
 		String currentM = "";
 
+	
+		
+		
 		currentMethod = new JTextField();
 		currentMethod.setText(currentM);
 		currentMethod.setHorizontalAlignment(JTextField.CENTER);
@@ -360,7 +379,15 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		rightButtonPanel.add(newSession);
 		rightButtonPanel.add(deleteSession);
 		//rightButtonPanel.add(changeSession);
+		
 		rightPanel.add(rightButtonPanel);
+
+		
+		
+		
+		
+		
+		
 		//This controls the center panel
 		JButton changeWorking = new JButton("Change Working Directory");
 		changeWorking.addActionListener(new changeWorkspaceListener());
@@ -376,7 +403,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		urlPanel.add(workingFolder);
-		urlPanel.add(changeWorking);
+		//urlPanel.add(changeWorking);
 		//urlPanel.setBackground(Color.blue);
 
 		centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -392,14 +419,32 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		tableScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
+		
+		//urlPanel.setBackground(Color.blue);
+		//spinnerPanel.setBackground(Color.DARK_GRAY);
+		
+		JPanel traceButtonPanel = new JPanel();
+		
+		
+		traceButtonPanel.add(merge);
+		traceButtonPanel.add(split);
+		traceButtonPanel.add(trim);
+		traceButtonPanel.add(delete);
 
+		urlPanel.add(saveAll);
+		urlPanel.add(loadAllButton);
+		
+		traceButtonPanel.setLayout(new GridLayout(0, 4));
+		
+		
+		
+		centerPanel.add(spinnerPanel);
 		centerPanel.add(urlPanel);
+		centerPanel.add(traceButtonPanel);
 		centerPanel.add(tableScroll);
+		centerPanel.add(feedbackPanel);
+		
 
-		JTextArea details = new JTextArea("Place holder");
-		Border raisedetched = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
-		details.setBorder(raisedetched);
-		centerPanel.add(details);
 
 		// The is the menu bar area
 		JMenuBar menuBar = new JMenuBar();
@@ -437,13 +482,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		// This puts everything in the frame
-		frame.getContentPane().add(BorderLayout.SOUTH, scroller);
+		//frame.getContentPane().add(BorderLayout.SOUTH, feedbackPanel);
 		frame.getContentPane().add(BorderLayout.EAST, rightPanel);
 		frame.getContentPane().add(BorderLayout.CENTER, centerPanel);
 		frame.getContentPane().add(BorderLayout.WEST, leftPanel);
-		frame.setSize(1000,600);
+		frame.setSize(700,400);
 		frame.setVisible(true);
-		frame.setMinimumSize(new Dimension(850, 600));
+		frame.setMinimumSize(new Dimension(700, 400));
 
 		//frame.setFocusable(true);
 		//HotKeyListener keyListener = new HotKeyListener(viewModel);
@@ -492,7 +537,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		gd.addChoice("Pick tracking method", trackingMethods, null);
 		gd.addChoice("Pick channel to track", channelList, null);
 		gd.showDialog();
-
+		if(gd.wasCanceled())
+			return;
 		String userSessionName = gd.getNextString();
 
 
@@ -976,7 +1022,7 @@ if(model.isStruckturalChange()){
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			viewModel.toggleSessionTobeDisplayed(session);			
-			text.append("action \n");
+			
 		}
 		
 	}
