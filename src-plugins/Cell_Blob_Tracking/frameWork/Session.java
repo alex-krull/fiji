@@ -124,13 +124,14 @@ public class Session<T extends Trackable, IT extends NumericType<IT> & NativeTyp
 		return frames.get(frameNumber);
 	}
 	
-	public Sequence<T> splitSequenence(int SequenceId, int newSequenceId,int frameNumber){
+	public void splitSequenence(int SequenceId, int newSequenceId,int frameNumber){
 		
-	//	System.out.println("                         splitting sequqnce");
+		
 		Sequence<T> s= Sequences.get(SequenceId);
 		
 		
 		if(s!=null){
+			if(frameNumber<=s.getFirstFrame()|| frameNumber>=s.getLastFrame() ) return;
 			this.deleteSequence(SequenceId);
 			for(Integer i: s.getTrackables().keySet()){
 				T trackable = s.getTrackables().get(i);
@@ -146,7 +147,7 @@ public class Session<T extends Trackable, IT extends NumericType<IT> & NativeTyp
 		}
 		
 		
-		return null;
+		return;
 	}
 	
 

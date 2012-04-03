@@ -96,12 +96,14 @@ public class TableSort extends JPanel {
         
         //Makes a selection listener
         selectionListener = new MySelectionListener();
+        
    
         
         
         
         table.getSelectionModel().addListSelectionListener(selectionListener);
-
+        table.addMouseListener(selectionListener);
+        
         
         
         //table.getColumnModel().getSelectionModel().addListSelectionListener(listener);

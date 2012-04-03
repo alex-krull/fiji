@@ -176,6 +176,7 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	
 	@Override
 	public Blob copy(Blob toCopy){
+		if(toCopy==null) return null;
 		Blob result=new Blob(toCopy.sequenceId, toCopy.frameId, toCopy.xPos, toCopy.yPos, toCopy.zPos, toCopy.sigma, toCopy.channel);
 		result.pK=toCopy.pK;
 		return result;
