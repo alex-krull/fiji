@@ -84,18 +84,9 @@ public class Sequence<T extends Trackable> {
 		return trackables.get(frameNumber);
 	}
 	
-	public Sequence<T> splitSequence(int frameNumber, Sequence<T> secondPart){
-		if(frameNumber>trackables.lastKey() || frameNumber<=trackables.firstKey()||trackables.size()<=1)
-			return null;
-		for(int i=frameNumber;i<=trackables.lastKey();i++ ){
-			T trackable = trackables.get(i);
-			trackable.sequenceId=secondPart.getId();
-		//	System.out.println("new id:"+ trackable.sequenceId);
-			secondPart.addTrackable(trackable);
-			trackables.remove(i);
-			
-		}
-		return secondPart;
+	
+	protected  SortedMap <Integer,T> getTrackables(){
+		return trackables;
 	}
 	
 	public String getTypeName(){

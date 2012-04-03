@@ -112,7 +112,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	
 	public void splitSequnce(int frameNumber){
 		
-		for(Integer seqId: this.selectedIdList){
+		for(Integer seqId: this.selectedIdList){			
 			
 			trackingChannel.splitSequenence(seqId, model.getNextSequqnceId(), frameNumber);
 		}

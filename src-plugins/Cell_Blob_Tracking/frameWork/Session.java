@@ -124,14 +124,28 @@ public class Session<T extends Trackable, IT extends NumericType<IT> & NativeTyp
 		return frames.get(frameNumber);
 	}
 	
-	public Sequence<T> splitSequenence(int SequenceId, int newSequqenceId,int frameNumber){
+	public Sequence<T> splitSequenence(int SequenceId, int newSequenceId,int frameNumber){
+		
 	//	System.out.println("                         splitting sequqnce");
 		Sequence<T> s= Sequences.get(SequenceId);
+		
+		
 		if(s!=null){
-			Sequence<T> newS= s.splitSequence(frameNumber, produceSequence( newSequqenceId, Integer.toString(newSequqenceId)));		
-			if(newS!=null)	this.Sequences.put(newS.getId(), newS);
-			return newS;
+			this.deleteSequence(SequenceId);
+			for(Integer i: s.getTrackables().keySet()){
+				T trackable = s.getTrackables().get(i);
+				if(i>=frameNumber)
+					trackable.sequenceId=newSequenceId;
+				this.addTrackable(trackable);
+			}
+			Sequence<T> partA=this.getSequence(SequenceId);
+			Sequence<T> partB=this.getSequence(newSequenceId);
+			String label=s.getLabel();
+			partA.setLabel(label+" (1st part)");
+			partB.setLabel(label+" (2nd part)");
 		}
+		
+		
 		return null;
 	}
 	
