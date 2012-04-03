@@ -238,7 +238,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	
 	public void setSequenceLabel(int id, String newLabel){
 		Sequence<T> s= this.trackingChannel.getSequence(id);
-		if(s!=null) s.label=newLabel;	
+		if(s!=null) s.setLabel(newLabel);
 		
 	}
 	

@@ -39,6 +39,8 @@
 
 package frameWork.gui.controlWindow;
 
+import ij.IJ;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -53,6 +55,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 import frameWork.Model;
@@ -70,7 +74,8 @@ public class TableSort extends JPanel {
     private int tableSelected = 0;
     private final ViewModel<?> viewModel;
     private final Model<?> model;
-    private final MySelectionListener listener;
+    private final MySelectionListener selectionListener;
+    private final MyModelListener modelListener;
   
     
     public TableSort(ViewModel<?> vm, Model<?> m) {
@@ -89,9 +94,13 @@ public class TableSort extends JPanel {
         table = new JTable(tableModel);
         
         //Makes a selection listener
-        listener = new MySelectionListener();
-        table.getSelectionModel().addListSelectionListener(listener);
+        selectionListener = new MySelectionListener();
+        modelListener = new MyModelListener();
         
+        
+        
+        table.getSelectionModel().addListSelectionListener(selectionListener);
+        tableModel.addTableModelListener(modelListener);
         
         
         //table.getColumnModel().getSelectionModel().addListSelectionListener(listener);
@@ -118,11 +127,13 @@ public class TableSort extends JPanel {
     }
     
     public void removeListener(){
-    	table.getSelectionModel().removeListSelectionListener(listener);
+    	table.getSelectionModel().removeListSelectionListener(selectionListener);
+    //	tableModel.removeTableModelListener(modelListener);
     }
     
     public void addListener(){
-    	table.getSelectionModel().addListSelectionListener(listener);
+    	table.getSelectionModel().addListSelectionListener(selectionListener);
+   // 	tableModel.addTableModelListener(modelListener);
     }
 
     public void updateData(Object[][] data){
@@ -143,6 +154,7 @@ public class TableSort extends JPanel {
     	}
 		table.revalidate();	
     	table.repaint();
+    //	IJ.error(tableModel.getTableModelListeners()[0].getClass().getName());
     }
     
     public Color[] getColor(){
@@ -155,6 +167,23 @@ public class TableSort extends JPanel {
     	}
     	return userColor;
     }
+    
+    
+public class MyModelListener implements TableModelListener{
+
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		IJ.error("hurra!");
+		if(e.getType()==TableModelEvent.UPDATE && e.getColumn()==2){
+			for(int i = e.getFirstRow();i<= e.getLastRow();i++){
+				int id = Integer.valueOf((String)table.getModel().getValueAt(i, 0));
+				viewModel.getController().setSqequenceLabel(id , (String)table.getModel().getValueAt(i, 2) );
+			}
+		}
+	}
+	
+}
+    
 public class MySelectionListener implements MouseListener, ListSelectionListener{
 
 		

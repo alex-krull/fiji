@@ -43,8 +43,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -718,7 +716,7 @@ if(model.isStruckturalChange()){
 
 				trace[i][0]=seq.getId();
 				trace[i][1]=seq.getColor();
-				trace[i][2]="Trace Name";
+				trace[i][2]=seq.getLabel();
 				trace[i][3]=seq.getSession().getLabel();
 				trace[i][4]=seq.getTypeName();
 				trace[i][5]=seq.getLastFrame()-seq.getFirstFrame()+1;

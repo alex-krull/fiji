@@ -14,6 +14,15 @@ import tools.OtherTools;
 public class Sequence<T extends Trackable> {
 	protected int id;
 	protected String label;
+	
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
 	protected SortedMap <Integer,T> trackables;
 
 	protected Color color;
@@ -41,6 +50,8 @@ public class Sequence<T extends Trackable> {
 	public void setColor(Color color) {
 		this.color = color;
 	}
+	
+	
 
 	public Sequence(int ident, String lab, Policy<T,?> pol,Session<T,?> sess){
 		session=sess;
