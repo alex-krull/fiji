@@ -53,10 +53,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 import frameWork.Model;
@@ -75,13 +75,14 @@ public class TableSort extends JPanel {
     private final ViewModel<?> viewModel;
     private final Model<?> model;
     private final MySelectionListener selectionListener;
-    private final MyModelListener modelListener;
+
   
     
     public TableSort(ViewModel<?> vm, Model<?> m) {
         super(new GridLayout(1,0));
         viewModel=vm;
         model=m;
+        //GenericEditor ge= new GenericEditor();
 
         tableModel = new MyTableModel();
         
@@ -95,12 +96,12 @@ public class TableSort extends JPanel {
         
         //Makes a selection listener
         selectionListener = new MySelectionListener();
-        modelListener = new MyModelListener();
+   
         
         
         
         table.getSelectionModel().addListSelectionListener(selectionListener);
-        tableModel.addTableModelListener(modelListener);
+
         
         
         //table.getColumnModel().getSelectionModel().addListSelectionListener(listener);
@@ -115,15 +116,47 @@ public class TableSort extends JPanel {
         JScrollPane scrollPane = new JScrollPane(table);
 
 
-
+        
 
         //Set up renderer and editor for the Favorite Color column.
         table.setDefaultRenderer(Color.class,
                                  new ColorRenderer(true));
         table.setDefaultEditor(Color.class,
                                new ColorEditor(viewModel));
+        table.getDefaultEditor(String.class).addCellEditorListener(new CellListener());
+        
         //Add the scroll pane to this panel.
         add(scrollPane);
+    }
+    
+    
+    private class CellListener implements CellEditorListener{
+
+		@Override
+		public void editingStopped(ChangeEvent e) {
+			
+			for(int i=0;i<table.getModel().getRowCount();i++){
+			
+				int id = (Integer)table.getModel().getValueAt(i, 0);
+				String value= (String)table.getModel().getValueAt(i, 2);
+				if(!value.equals(model.getSequence(id).getLabel())){
+					viewModel.getController().setSqequenceLabel(id , value );
+					return;
+				}
+			}
+			
+			
+		}
+
+		@Override
+		public void editingCanceled(ChangeEvent e) {
+			IJ.error("Hurra! editing canceled!");
+			
+		}
+
+		
+    	
+    	
     }
     
     public void removeListener(){
@@ -169,20 +202,7 @@ public class TableSort extends JPanel {
     }
     
     
-public class MyModelListener implements TableModelListener{
 
-	@Override
-	public void tableChanged(TableModelEvent e) {
-		IJ.error("hurra!");
-		if(e.getType()==TableModelEvent.UPDATE && e.getColumn()==2){
-			for(int i = e.getFirstRow();i<= e.getLastRow();i++){
-				int id = Integer.valueOf((String)table.getModel().getValueAt(i, 0));
-				viewModel.getController().setSqequenceLabel(id , (String)table.getModel().getValueAt(i, 2) );
-			}
-		}
-	}
-	
-}
     
 public class MySelectionListener implements MouseListener, ListSelectionListener{
 
@@ -395,4 +415,6 @@ public class MySelectionListener implements MouseListener, ListSelectionListener
             }
         });
     }
+
+	
 }
