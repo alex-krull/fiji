@@ -282,6 +282,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		changeSession = new Choice();
+		changeSession.setMaximumSize(new Dimension(1000, 80));
 		changeSession.addItemListener(new ChangeSessionListener());
 		//	changeSession.addActionListener(new ChangeSessionListener());
 
@@ -376,6 +377,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		rightButtonPanel.add(start);
 		rightButtonPanel.add(newSession);
 		rightButtonPanel.add(deleteSession);
+		rightButtonPanel.setMaximumSize(new Dimension(1000, 300));
 		//rightButtonPanel.add(changeSession);
 		
 		rightPanel.add(rightButtonPanel);
@@ -434,8 +436,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		traceButtonPanel.setLayout(new GridLayout(0, 4));
 		
-		
-		
+		traceButtonPanel.setMaximumSize(new Dimension(1000, 80));
+		spinnerPanel.setMaximumSize(new Dimension(1000, 80));
+		urlPanel.setMaximumSize(new Dimension(1000, 80));
 		centerPanel.add(spinnerPanel);
 		centerPanel.add(urlPanel);
 		centerPanel.add(traceButtonPanel);
