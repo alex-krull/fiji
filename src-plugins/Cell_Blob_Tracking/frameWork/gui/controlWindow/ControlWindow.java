@@ -394,7 +394,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		workingFolder = new JTextField();
-		workingFolder.setPreferredSize(new Dimension(300, 20));
+		workingFolder.setPreferredSize(new Dimension(300, 25));
 		workingFolder.setEditable(false);
 
 
@@ -439,6 +439,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		traceButtonPanel.setMaximumSize(new Dimension(1000, 80));
 		spinnerPanel.setMaximumSize(new Dimension(1000, 80));
 		urlPanel.setMaximumSize(new Dimension(1000, 80));
+	//	urlPanel.setPreferredSize(new Dimension(1000,80));
 		centerPanel.add(spinnerPanel);
 		centerPanel.add(urlPanel);
 		centerPanel.add(traceButtonPanel);

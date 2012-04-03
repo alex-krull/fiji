@@ -3,6 +3,10 @@
 import ij.IJ;
 import ij.ImagePlus;
 import ij.io.FileInfo;
+
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -33,6 +37,24 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		}
 		@Override
 		public void run() {
+			try {
+	            // Set cross-platform Java L&F (also called "Metal")
+	        UIManager.setLookAndFeel(
+	            UIManager.getSystemLookAndFeelClassName());
+	    } 
+	    catch (UnsupportedLookAndFeelException e) {
+	       // handle exception
+	    }
+	    catch (ClassNotFoundException e) {
+	       // handle exception
+	    }
+	    catch (InstantiationException e) {
+	       // handle exception
+	    }
+	    catch (IllegalAccessException e) {
+	       // handle exception
+	    }
+			
 			//super.run();
 			
 			
@@ -59,6 +81,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	        cw.go();
 	        viewModel.addViewWindow(cw,initZoom);
 			
+	        
 	    }
 	}
 	
