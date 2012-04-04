@@ -75,6 +75,15 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			if(!currentlyTracking)	{
 			synchronized (trackingChannel){
 			
+			boolean foundOne=false;
+				for(T t :trackingChannel.getTrackablesForFrame(startingFrame)){
+					if(selectedIdList.contains(t.sequenceId)){
+						foundOne=true;
+						break;
+					}
+				}
+				if(!foundOne) return;
+					
 			currentlyTracking=true;	
 			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames();i++){
 		//		System.out.println("trackingFrame:"+i);
