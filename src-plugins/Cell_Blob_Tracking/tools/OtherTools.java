@@ -29,7 +29,7 @@ public class OtherTools {
 		
 		while(remainder>=8){
 			remainder-=8;
-			l+=0.3333;
+			l+=0.5;
 			while(l>1) l=l-1;
 		}
 		
@@ -43,7 +43,7 @@ public class OtherTools {
 			c++;
 		}
 	//	IJ.error(String.valueOf(h));
-		return Color.getHSBColor((float)h, l,1.0f);
+		return Color.getHSBColor((float)h, l,l);
 		
 	}
 }

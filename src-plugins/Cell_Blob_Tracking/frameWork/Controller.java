@@ -378,6 +378,7 @@ public void deleteSession(ViewModel<IT> viewModel){
 	model.deleteSession(cc.getId());
 	viewModel.reFreshSessionToBeDisplayed();
 	}
+	if(!channelControllers.isEmpty()) this.setCurrentSession(channelControllers.firstKey(), viewModel);
 	model.makeStructuralChange();
 	model.makeChangesPublic();
 	

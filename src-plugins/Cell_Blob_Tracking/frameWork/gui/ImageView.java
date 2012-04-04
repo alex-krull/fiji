@@ -193,6 +193,7 @@ implements MouseListener, MouseMotionListener{
 	}
 
 	protected void upDateOverlay(){
+		synchronized (ovTemplate){
 		if(viewModel.getDrawOverLays()){
 			Overlay ov=ovTemplate.duplicate();
 			for(int i=0;i<ov.size();i++){
@@ -204,10 +205,13 @@ implements MouseListener, MouseMotionListener{
 		}
 		else imp.setOverlay(null);	
 		
+		}
 	}
 	
 	protected void clearOverlay(){
-		ovTemplate= new Overlay();
+		synchronized (ovTemplate){
+		ovTemplate.clear();
+		}
 	}
 	
 	
@@ -215,6 +219,7 @@ implements MouseListener, MouseMotionListener{
 	 * add the Overlays of the traces for the x-projection-kymographs
 	 */
 	protected void addKymoXOverlayes(){
+		synchronized (ovTemplate){
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 	
 		for(Session<? extends Trackable,IT> tc: tcs){
@@ -228,12 +233,14 @@ implements MouseListener, MouseMotionListener{
 			}
 			} 
 		}
+		}
 	}
 	
 	/**
 	 * add the Overlays of the traces for the y-projection-kymographs
 	 */
 	protected void addKymoYOverlayes(){
+		synchronized (ovTemplate){
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		
 		for(Session<? extends Trackable,IT> tc: tcs){
@@ -248,6 +255,7 @@ implements MouseListener, MouseMotionListener{
 			}
 		}
 		}
+		}
 	}
 
 	
@@ -257,6 +265,7 @@ implements MouseListener, MouseMotionListener{
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addXOverlayes(int frameNumber){
+		synchronized (ovTemplate){
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		for(Session<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
@@ -269,6 +278,7 @@ implements MouseListener, MouseMotionListener{
 		   }
 		   
 		}
+		}
 		   
 	}
 	
@@ -278,6 +288,7 @@ implements MouseListener, MouseMotionListener{
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addYOverlayes(int frameNumber){
+		synchronized (ovTemplate){
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		for(Session<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
@@ -289,6 +300,7 @@ implements MouseListener, MouseMotionListener{
 			   
 		   }
 		}
+		}
 	}
 	
 	/**
@@ -297,6 +309,7 @@ implements MouseListener, MouseMotionListener{
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addZOverlayes(int frameNumber){
+		synchronized (ovTemplate){
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		for(Session<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
@@ -308,6 +321,7 @@ implements MouseListener, MouseMotionListener{
 			   
 		   }
 		} 
+		}
 	}
 	
 	
@@ -317,12 +331,14 @@ implements MouseListener, MouseMotionListener{
 	 * @param position the x-position of the line
 	 */
 	protected void addYLineOverlay(double position){
+		synchronized (ovTemplate){
 		   
 		Line l= new Line(0 ,(position+0.5)*scaleY-transY
 				,this.xSize ,(position+0.5)*scaleY-transY);
 		l.setStrokeWidth(1);
 		l.setStrokeColor(new Color (255,255,0));
-		ovTemplate.add(l);		  			   
+		ovTemplate.add(l);		
+		}
 		   
 	}
 	
@@ -331,11 +347,13 @@ implements MouseListener, MouseMotionListener{
 	 * @param position the y-position of the line
 	 */
 	protected void addXLineOverlay(double position){
+		synchronized (ovTemplate){
 		Line l= new Line((position+0.5)*scaleX-transX,0
 				,(position+0.5)*scaleX-transX,this.ySize) ;
 		l.setStrokeWidth(1);
 		l.setStrokeColor(new Color (255,255,0));
-		   ovTemplate.add(l);		  			   
+		   ovTemplate.add(l);	
+		}
 		  
 	}
 	
@@ -344,12 +362,14 @@ implements MouseListener, MouseMotionListener{
 	 * @param position the x-position of the line
 	 */
 	protected void addYShortLineOverlay(double position, double pos2, double length){
+		synchronized (ovTemplate){
 		   
 		Line l= new Line((pos2+0.5)*scaleX-length -transX,(position+0.5)*scaleY-transY
 				,(pos2+0.5)*scaleX+length -transX,(position+0.5)*scaleY-transY);
 		l.setStrokeWidth(1);
 		l.setStrokeColor(new Color (255,255,0));
-		ovTemplate.add(l);		  			   
+		ovTemplate.add(l);		
+		}
 		   
 	}
 	
@@ -358,11 +378,13 @@ implements MouseListener, MouseMotionListener{
 	 * @param position the y-position of the line
 	 */
 	protected void addXShortLineOverlay(double position, double pos2, double length){
+		synchronized (ovTemplate){
 		Line l= new Line((position+0.5)*scaleX-transX,(pos2+0.5)*scaleY-transY-length
 				,(position+0.5)*scaleX-transX,(pos2+0.5)*scaleY+length-transY) ;
 		l.setStrokeWidth(1);
 		l.setStrokeColor(new Color (255,255,0));
-		   ovTemplate.add(l);		  			   
+		   ovTemplate.add(l);		
+		}
 		  
 	}
 	
