@@ -26,6 +26,14 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 			
 	protected int currentFrameNumber=0;
+	public int getCurrentFrameNumber() {
+		return currentFrameNumber;
+	}
+
+	public void setCurrentFrameNumber(int currentFrameNumber) {
+		this.currentFrameNumber = currentFrameNumber;
+	}
+
 	protected int currentSliceNumber=0;
 	protected int currentChannelNumber=0;
 	protected int currentTrackingChannel=0;

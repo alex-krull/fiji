@@ -679,19 +679,19 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 if(((SpinnerNumberModel)zSpinner.getModel()).getNumber().intValue()-1 !=position[2]+1){
 	zSpinner.removeChangeListener(zSpinner.getChangeListeners()[0]);
-	zSpinner.setValue(position[2]+1);
+	zSpinner.setValue((int )(position[2]+1));
 	zSpinner.addChangeListener(new ZSpinnerListener());
 }
 	
 if(((SpinnerNumberModel)frameSpinner.getModel()).getNumber().intValue()-1 !=position[3]+1){
 	frameSpinner.removeChangeListener(frameSpinner.getChangeListeners()[0]);
-	frameSpinner.setValue(position[3]+1);
+	frameSpinner.setValue((int )(position[3]+1));
 	frameSpinner.addChangeListener(new FrameSpinnerListener());
 }
 	
 if(((SpinnerNumberModel)cSpinner.getModel()).getNumber().intValue()-1 !=position[4]+1){
 	cSpinner.removeChangeListener(cSpinner.getChangeListeners()[0]);
-	cSpinner.setValue(position[4]+1);
+	cSpinner.setValue((int )(position[4]+1));
 	cSpinner.addChangeListener(new CSpinnerListener());
 }
 	
@@ -736,7 +736,7 @@ if(model.isStruckturalChange()){
 			//This section puts frame number in console area
 			if(viewModel.isTracking()){
 			
-			Long frameNumber = (Long) frameSpinner.getModel().getValue();
+			int frameNumber = viewModel.getCurrentFrameNumber();
 			
 			text.selectAll();
 			text.append("Tracking Frame " + frameNumber + "\n");
