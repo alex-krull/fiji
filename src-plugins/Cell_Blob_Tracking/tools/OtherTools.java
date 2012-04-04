@@ -1,5 +1,7 @@
 package tools;
 
+import ij.IJ;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.io.Writer;
@@ -24,16 +26,23 @@ public class OtherTools {
 		float l=1;
 		int remainder=i-1;
 		double c=1;
+		
+		while(remainder>=8){
+			remainder-=8;
+			l+=0.3333;
+			while(l>1) l=l-1;
+		}
+		
 		while(remainder>0){
 			int newSummand= remainder % 3;
 			remainder=(remainder-newSummand)/3;
 			h=h+newSummand/Math.pow(3.0, c);
 			while(h>1) h=h-1;
-			l+=0.33333;
-			while(l>1) l=l-1;
+	//		l+=0.33333;
+	//		while(l>1) l=l-1;
 			c++;
 		}
-		
+	//	IJ.error(String.valueOf(h));
 		return Color.getHSBColor((float)h, l,1.0f);
 		
 	}

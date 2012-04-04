@@ -125,7 +125,7 @@ public class TableSort extends JPanel {
                                  new ColorRenderer(true));
         table.setDefaultEditor(Color.class,
                                new ColorEditor(viewModel));
-        //table.getDefaultEditor(String.class).addCellEditorListener(new CellListener());
+        table.getDefaultEditor(String.class).addCellEditorListener(new CellListener());
         
         //Add the scroll pane to this panel.
         add(scrollPane);

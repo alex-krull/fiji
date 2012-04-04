@@ -149,7 +149,7 @@ public void mouseAtPosition(long [] pos, MouseEvent me){
 	boolean redraw=false;
 	this.mouseX=(int)pos[0];
 	this.mouseY=(int)pos[1];
-	if(me.getButton()==MouseEvent.BUTTON2){
+	if(me.getButton()==MouseEvent.BUTTON2 && me.getID()==MouseEvent.MOUSE_CLICKED){
 		if(pos[2]>=0) this.currentSliceNumber=(int)pos[2];
 		if(pos[3]>=0) this.currentFrameNumber=(int)pos[3];
 		if(pos[4]>=0) this.currentChannelNumber=(int)pos[4];

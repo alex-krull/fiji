@@ -209,7 +209,7 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 	public long[] positionFromEvent(MouseEvent e){
 		int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
 		int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);
-		System.out.println("x:"+ x +"  y:"+y);
+	//	System.out.println("x:"+ x +"  y:"+y);
 		
 		
 			long[] pos= viewModel.getPosition();
