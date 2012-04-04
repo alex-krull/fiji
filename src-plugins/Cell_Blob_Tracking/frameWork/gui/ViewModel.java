@@ -153,7 +153,7 @@ public long[] getPosition(){
 }
 
 public void mouseAtPosition(long [] pos, MouseEvent me){
-	
+		
 	boolean redraw=false;
 	this.mouseX=(int)pos[0];
 	this.mouseY=(int)pos[1];

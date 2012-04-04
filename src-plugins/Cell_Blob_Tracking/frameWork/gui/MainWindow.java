@@ -89,7 +89,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 
 	@Override
 	public void reFresh(long[] position, boolean rePaintImage) {
-	
+		ImagePlus.removeImageListener(this);
 		
 		currentFrameNumber= (int)position[3];
 		currentSliceNumber= (int)position[2];
@@ -117,7 +117,9 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		this.upDateOverlay();
 		imp.updateAndDraw();
 
+		ImagePlus.addImageListener(this);
 	}
+	
 	
 
 	@Override

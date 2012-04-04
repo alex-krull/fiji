@@ -99,9 +99,19 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 			}
 			} catch (InterruptedException e) { 	e.printStackTrace();}
 			
-			synchronized(model){
-				if(udt!=null)reFresh(udt.position,udt.rePaintImage);
-			}
+			
+				
+				if(udt!=null){
+					
+					synchronized(model){
+				
+					reFresh(udt.position,udt.rePaintImage);
+					
+					}
+					
+				}
+				
+			
 				
 		//		System.out.println(this.getClass().getName()+": "+counter);
 				counter++;
