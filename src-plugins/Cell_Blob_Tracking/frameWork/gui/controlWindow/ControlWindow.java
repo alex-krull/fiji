@@ -394,7 +394,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		workingFolder = new JTextField();
-		workingFolder.setPreferredSize(new Dimension(300, 25));
+		workingFolder.setPreferredSize(new Dimension(300, 20));
 		workingFolder.setEditable(false);
 
 
@@ -414,10 +414,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		trackerTable = new TableSort(viewModel, model);
 		trackerTable.setOpaque(true);
-
+		trackerTable.setPreferredSize(new Dimension(300, 100));
+/*
 		tableScroll = new JScrollPane(trackerTable);
 		tableScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);*/
 
 		
 		//urlPanel.setBackground(Color.blue);
@@ -439,11 +440,10 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		traceButtonPanel.setMaximumSize(new Dimension(1000, 80));
 		spinnerPanel.setMaximumSize(new Dimension(1000, 80));
 		urlPanel.setMaximumSize(new Dimension(1000, 80));
-	//	urlPanel.setPreferredSize(new Dimension(1000,80));
 		centerPanel.add(spinnerPanel);
 		centerPanel.add(urlPanel);
 		centerPanel.add(traceButtonPanel);
-		centerPanel.add(tableScroll);
+		centerPanel.add(trackerTable);
 		centerPanel.add(feedbackPanel);
 		
 
@@ -679,19 +679,19 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 if(((SpinnerNumberModel)zSpinner.getModel()).getNumber().intValue()-1 !=position[2]+1){
 	zSpinner.removeChangeListener(zSpinner.getChangeListeners()[0]);
-	zSpinner.setValue((int)position[2]+1);
+	zSpinner.setValue(position[2]+1);
 	zSpinner.addChangeListener(new ZSpinnerListener());
 }
 	
 if(((SpinnerNumberModel)frameSpinner.getModel()).getNumber().intValue()-1 !=position[3]+1){
 	frameSpinner.removeChangeListener(frameSpinner.getChangeListeners()[0]);
-	frameSpinner.setValue((int)position[3]+1);
+	frameSpinner.setValue(position[3]+1);
 	frameSpinner.addChangeListener(new FrameSpinnerListener());
 }
 	
 if(((SpinnerNumberModel)cSpinner.getModel()).getNumber().intValue()-1 !=position[4]+1){
 	cSpinner.removeChangeListener(cSpinner.getChangeListeners()[0]);
-	cSpinner.setValue((int)position[4]+1);
+	cSpinner.setValue(position[4]+1);
 	cSpinner.addChangeListener(new CSpinnerListener());
 }
 	
@@ -736,7 +736,7 @@ if(model.isStruckturalChange()){
 			//This section puts frame number in console area
 			if(viewModel.isTracking()){
 			
-				int frameNumber=( (SpinnerNumberModel)frameSpinner.getModel()).getNumber().intValue();
+			Long frameNumber = (Long) frameSpinner.getModel().getValue();
 			
 			text.selectAll();
 			text.append("Tracking Frame " + frameNumber + "\n");
