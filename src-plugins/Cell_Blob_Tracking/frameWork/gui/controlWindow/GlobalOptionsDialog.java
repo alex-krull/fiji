@@ -10,19 +10,25 @@ import javax.swing.JDialog;
 public class GlobalOptionsDialog {
 
 	private double deltaZ;
-	private double intensityOffset;
+	private int intensityOffset;
 	   
 	    public GlobalOptionsDialog(Model<?> mod) {
 	      GenericDialog gd = new GenericDialog("Global Options");
 	      //gd.setPreferredSize(new Dimension(300,200));
-	      gd.addNumericField("Intensity Offset: ", 0, 0);
-	      gd.addNumericField("\u0394 Z (in pixels): ", 0, 0);
+	      gd.addNumericField("Intensity Offset: ", mod.getIntensityOffset(), 0);
+	      gd.addNumericField("\u0394 Z (in pixels): ", mod.getXyToZ(), 0);
 	      gd.showDialog();
 	      if (gd.wasCanceled()) return;
 
-	      intensityOffset = (double)gd.getNextNumber();
+	      intensityOffset = (int)gd.getNextNumber();
 	      deltaZ = (double)gd.getNextNumber();
 	      
+	      
+	      if (gd.wasOKed()){
+	    	  mod.setIntensityOffset(intensityOffset);
+	    	  mod.setXyToZ(deltaZ);
+	    	  
+	      }
 	   }
 	    
 	    public double getDeltaZ(){
