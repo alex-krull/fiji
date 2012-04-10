@@ -374,9 +374,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		changeSession.addActionListener(new ChangeSessionListener());*/
 
 
-		rightButtonPanel.add(start);
+		
 		rightButtonPanel.add(newSession);
 		rightButtonPanel.add(deleteSession);
+		rightButtonPanel.add(new JLabel(""));
+		rightButtonPanel.add(start);
 		rightButtonPanel.setMaximumSize(new Dimension(1000, 300));
 		//rightButtonPanel.add(changeSession);
 		
@@ -452,6 +454,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		windowMenu = new JMenu("Windows");
+		JMenu helpMenu = new JMenu("Help");
 
 
 
