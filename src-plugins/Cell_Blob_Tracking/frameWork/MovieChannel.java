@@ -76,6 +76,7 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		
 		if(isVolume){
 			ProjectionThread pt= new ProjectionThread(this);
+			pt.setPriority(Thread.MIN_PRIORITY);
 			pt.start();
 		}
 		
@@ -102,12 +103,12 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		return zProjections;
 	}
 	
-	public RandomAccessibleInterval<IT> getXTProjections(){
+	public synchronized RandomAccessibleInterval<IT> getXTProjections(){
 		if(xtProjections==null) xtProjections=Views.zeroMin( Views.invertAxis(    Views.rotate(ImglibTools.projection(getZProjections(),0),0,1 ),0 ) ) ;
 		return xtProjections;
 	}
 	
-	public RandomAccessibleInterval<IT> getYTProjections(){
+	public synchronized RandomAccessibleInterval<IT> getYTProjections(){
 		if(ytProjections==null) ytProjections=Views.zeroMin(    ImglibTools.projection(getZProjections(),1) )  ;
 		return ytProjections;
 	}

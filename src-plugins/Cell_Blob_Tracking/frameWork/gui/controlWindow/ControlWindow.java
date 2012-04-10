@@ -6,7 +6,6 @@ import java.awt.BorderLayout;
 import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -687,23 +686,23 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		workingFolder.setText(viewModel.getController().getWorkspace());
 
-if(((SpinnerNumberModel)zSpinner.getModel()).getNumber().intValue()-1 !=position[2]+1){
+//if(((SpinnerNumberModel)zSpinner.getModel()).getNumber().intValue()-1 !=position[2]+1){
 	zSpinner.removeChangeListener(zSpinner.getChangeListeners()[0]);
 	zSpinner.setValue((int )(position[2]+1));
 	zSpinner.addChangeListener(new ZSpinnerListener());
-}
+//}
 	
-if(((SpinnerNumberModel)frameSpinner.getModel()).getNumber().intValue()-1 !=position[3]+1){
+//if(((SpinnerNumberModel)frameSpinner.getModel()).getNumber().intValue()-1 !=position[3]+1){
 	frameSpinner.removeChangeListener(frameSpinner.getChangeListeners()[0]);
 	frameSpinner.setValue((int )(position[3]+1));
 	frameSpinner.addChangeListener(new FrameSpinnerListener());
-}
+//}
 	
-if(((SpinnerNumberModel)cSpinner.getModel()).getNumber().intValue()-1 !=position[4]+1){
+//if(((SpinnerNumberModel)cSpinner.getModel()).getNumber().intValue()-1 !=position[4]+1){
 	cSpinner.removeChangeListener(cSpinner.getChangeListeners()[0]);
 	cSpinner.setValue((int )(position[4]+1));
 	cSpinner.addChangeListener(new CSpinnerListener());
-}
+//}
 	
 if(model.isStruckturalChange()){
 	trackerTable.removeListener();
