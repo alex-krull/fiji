@@ -8,7 +8,7 @@ public class SessionOptionsDialog {
 	private double intensityOffset;
 	   
 	    public SessionOptionsDialog(Model<?> mod) {
-	      GenericDialog gd = new GenericDialog("Global Options");
+	      GenericDialog gd = new GenericDialog("Session Options");
 	      //gd.setPreferredSize(new Dimension(300,200));
 	      gd.addNumericField("Intensity Offset: ", 0, 0);
 	      gd.addNumericField("\u0394 Z (in pixels): ", 0, 0);

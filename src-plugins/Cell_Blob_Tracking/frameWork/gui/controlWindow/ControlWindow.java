@@ -86,7 +86,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	JPanel spinnerPanel;
 	
 	JPanel bottomPanel;
-	JPanel urlPanel;
+	JPanel pathPanel;
 	JList selectSessionList;
 	JButton start;
 	JTextArea text;
@@ -127,7 +127,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		centerPanel = new JPanel();
 		bottomPanel = new JPanel();
-		urlPanel = new JPanel(new FlowLayout());
+		pathPanel = new JPanel();
+		pathPanel.setLayout(new BoxLayout(pathPanel, BoxLayout.X_AXIS));
 		// Some constants
 		Dimension labelDim = new Dimension(60, 28);
 		Dimension labelDim2 = new Dimension(60, 22);
@@ -404,7 +405,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 
-		urlPanel.add(workingFolder);
+		pathPanel.add(workingFolder);
 		//urlPanel.add(changeWorking);
 		//urlPanel.setBackground(Color.blue);
 
@@ -434,16 +435,16 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		traceButtonPanel.add(trim);
 		traceButtonPanel.add(delete);
 
-		urlPanel.add(saveAll);
-		urlPanel.add(loadAllButton);
+		pathPanel.add(saveAll);
+		pathPanel.add(loadAllButton);
 		
 		traceButtonPanel.setLayout(new GridLayout(0, 4));
 		
 		traceButtonPanel.setMaximumSize(new Dimension(1000, 80));
 		spinnerPanel.setMaximumSize(new Dimension(1000, 80));
-		urlPanel.setMaximumSize(new Dimension(1000, 80));
+		pathPanel.setMaximumSize(new Dimension(1000, 80));
 		centerPanel.add(spinnerPanel);
-		centerPanel.add(urlPanel);
+		centerPanel.add(pathPanel);
 		centerPanel.add(traceButtonPanel);
 		centerPanel.add(trackerTable);
 		centerPanel.add(feedbackPanel);
