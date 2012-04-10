@@ -85,6 +85,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	JPanel leftPanel;
 	JPanel rightButtonPanel;
 	JPanel spinnerPanel;
+	JMenuItem editSession;
+	
 	
 	JPanel bottomPanel;
 	JPanel pathPanel;
@@ -463,7 +465,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		//Edit items
 		
-		JMenuItem editSession = new JMenuItem("Edit Session Defaults");
+		editSession = new JMenuItem("Edit Session Defaults");
 		editSession.addActionListener(new EditMenuListener());
 		JMenuItem newMenuItem = new JMenuItem("New");
 		fileMenu.add(newMenuItem);
@@ -837,7 +839,12 @@ if(model.isStruckturalChange()){
 		}
 		
 
-		
+		if (viewModel.getController().getCurrentSessionId()==-1){
+			editSession.setEnabled(false);
+		}else
+			{editSession.setEnabled(true);
+		}
+			
 			
 
 
