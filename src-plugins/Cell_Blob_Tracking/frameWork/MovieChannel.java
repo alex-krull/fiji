@@ -3,37 +3,36 @@ package frameWork;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import tools.ImglibTools;
-
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
+import tools.ImglibTools;
 
 public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
-	private	List<MovieFrame <IT>> frames;
+	private final	List<MovieFrame <IT>> frames;
 	
 	private RandomAccessibleInterval<IT> zProjections = null;
 	private RandomAccessibleInterval<IT> xProjections = null;
 	private RandomAccessibleInterval<IT> yProjections = null;
 	private RandomAccessibleInterval<IT> xtProjections= null;
 	private RandomAccessibleInterval<IT> ytProjections= null; 
-	private RandomAccessibleInterval<IT> image;
-	private long numOfFrames;
-	private int MovieChannelId;
-	private boolean isVolume;
-	private boolean isTimeSeries;
+	private final RandomAccessibleInterval<IT> image;
+	private final long numOfFrames;
+	private final int MovieChannelId;
+	private final boolean isVolume;
+	private final boolean isTimeSeries;
 	
 	
 
 	public class ProjectionThreadKymographs extends Thread{
-		private MovieChannel <IT> channel;
+		private final MovieChannel <IT> channel;
 		ProjectionThreadKymographs(MovieChannel <IT> chan){
 			channel=chan;
 		}
 		
+		@Override
 		public void run() {
 	       channel.getXTProjections();
 	       channel.getYTProjections();
@@ -41,11 +40,12 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	}
 	
 	public class ProjectionThread extends Thread{
-		private MovieChannel <IT> channel;
+		private final MovieChannel <IT> channel;
 		ProjectionThread(MovieChannel <IT> chan){
 			channel=chan;
 		}
 		
+		@Override
 		public void run() {
 	       for(int i=0;i<channel.getNumberOfFrames();i++){
 	    	   MovieFrame<IT> f=channel.getMovieFrame(i);
@@ -58,7 +58,7 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	
 	
 	
-	public MovieChannel(RandomAccessibleInterval<IT> view, int id, int nOfFrames){
+	public MovieChannel(RandomAccessibleInterval<IT> view, int id, int nOfFrames, int cBackGround){
 		MovieChannelId=id;
 		image=view;
 		numOfFrames=nOfFrames;
@@ -69,7 +69,7 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		frames= new ArrayList<MovieFrame<IT>>();
 		
 		for(int i=0;i<numOfFrames;i++){
-			MovieFrame<IT> f=new MovieFrame<IT>(i, getFrameView(i));
+			MovieFrame<IT> f=new MovieFrame<IT>(i, getFrameView(i),cBackGround);
 			frames.add(f);
 			
 		}

@@ -24,7 +24,7 @@ public class Model <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> 
 
 
 
-public double xyToZ=3.5;
+
 private boolean isVolume=false;
 private boolean isTimeSequence=false;
 private boolean isMultiChannel=false;
@@ -39,6 +39,27 @@ private String imageFileName;
 private String imageDrirectory;
 private String projectDirectory;
 private boolean structuralChange=true;
+private int intensityOffset=0;
+private double xyToZ=3.5;
+
+public double getXyToZ() {
+	return xyToZ;
+}
+
+public void setXyToZ(double xyToZ) {
+	this.xyToZ = xyToZ;
+}
+
+public int getIntensityOffset() {
+	return intensityOffset;
+}
+
+public void setIntensityOffset(int intensityOffset) {
+	this.intensityOffset = intensityOffset;
+}
+
+
+
 
 public boolean isStruckturalChange(){
 	synchronized(trackingChannels){
@@ -180,7 +201,7 @@ public Model(ImagePlus imp){
 	
 	if(isMultiChannel){
 		for(int i=0;i<numberOfChannels;i++){
-			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i),i,numberOfFrames );
+			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i),i,numberOfFrames, this.intensityOffset );
 //			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, 2, i),i,numberOfFrames );
 
 			channels.put(i, chann);
@@ -188,7 +209,7 @@ public Model(ImagePlus imp){
 			
 		}
 	}else{
-		MovieChannel<IT> chann= new MovieChannel<IT>( image,0, numberOfFrames);
+		MovieChannel<IT> chann= new MovieChannel<IT>( image,0, numberOfFrames, this.intensityOffset);
 		channels.put(0, chann);
 	}
 	

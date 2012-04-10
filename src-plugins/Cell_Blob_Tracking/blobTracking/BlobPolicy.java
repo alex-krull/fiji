@@ -215,7 +215,7 @@ public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			}
 			if(pos[0]>=0)selectedTrackable.xPos=pos[0];
 			if(pos[1]>=0)selectedTrackable.yPos=pos[1];
-			if(pos[2]>=0)selectedTrackable.zPos=pos[2]*model.xyToZ;
+			if(pos[2]>=0)selectedTrackable.zPos=pos[2]*model.getXyToZ();
 			
 		}
 		

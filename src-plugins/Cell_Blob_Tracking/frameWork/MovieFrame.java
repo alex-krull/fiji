@@ -1,21 +1,30 @@
 package frameWork;
 
 
-import tools.ImglibTools;
-
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
+import tools.ImglibTools;
 
 public class MovieFrame <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
 	protected int frameNumber;
+	
 	private RandomAccessibleInterval<IT> zProjection = null;
 	private RandomAccessibleInterval<IT> xProjection = null;
 	private RandomAccessibleInterval<IT> yProjection = null;
 	protected RandomAccessibleInterval<IT> frameView;
+	protected int constBackground;
 	
+	public int getConstBackground() {
+		return constBackground;
+	}
+
+	public void setConstBackground(int constBackground) {
+		this.constBackground = constBackground;
+	}
+
 	public RandomAccessibleInterval<IT> getFrameView() {
 		return frameView;
 	}
@@ -24,7 +33,8 @@ public class MovieFrame <IT extends NumericType<IT> & NativeType<IT> & RealType<
 		this.frameView = frameView;
 	}
 
-	public MovieFrame(int frameNum, RandomAccessibleInterval<IT> view){
+	public MovieFrame(int frameNum, RandomAccessibleInterval<IT> view, int cBackGround){
+		constBackground=cBackGround;
 		frameView=view;
 		frameNumber=frameNum;
 			

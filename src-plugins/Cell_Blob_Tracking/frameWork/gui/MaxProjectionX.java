@@ -1,8 +1,6 @@
 package frameWork.gui;
 
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
@@ -18,7 +16,7 @@ import frameWork.Model;
 			super(mod, 
 				     null,		
 					"max-X-projection",vm, null);
-			this.scaleX=model.xyToZ;
+			this.scaleX=model.getXyToZ();
 		//	xSize=(int)model.getFrame(0, viewModel.getCurrentChannelNumber()).getXProjections().max(0);
 		//	ySize=(int)model.getFrame(0, viewModel.getCurrentChannelNumber()).getXProjections().max(1);
 			
@@ -39,6 +37,7 @@ import frameWork.Model;
 			reDraw( position ,rePaintImage);
 			}
 		
+		@Override
 		public long[] positionFromEvent(MouseEvent e){
 			int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
 			int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);

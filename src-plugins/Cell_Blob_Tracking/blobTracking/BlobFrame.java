@@ -27,7 +27,7 @@ import frameWork.TrackingFrame;
 
 public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends TrackingFrame<Blob, IT>{
 	
-	private static final int constBackground = 100;
+	
 	private final MovieFrame<IT> movieFrame;
 	private double backProb=0.1;
 	private IterableInterval<IT> iterableFrame;
@@ -71,12 +71,6 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 			
 			System.out.println("totalTime:" +time+ "  fraction E:"+ ((double)eTime/(double)time)+ "  fraction M:"+ ((double)mTime/(double)time) );
 			
-		
-				
-	//	for(Blob b:trackables)
-	//		b.expectedValues= null;
-		
-
 	}
 	
 	private double doEStep( List <Blob> trackables){
@@ -135,7 +129,7 @@ public class BlobFrame <IT extends  NumericType<IT> & NativeType<IT> & RealType<
 	    	if(!isIn) continue;
 	  */  	
 	    	
-	    	float value= Math.max(0,cursor.get().getRealFloat()- BlobFrame.constBackground); 
+	    	float value= Math.max(0,cursor.get().getRealFloat()- movieFrame.getConstBackground()); 
 	    	totalInten+=value;
 	    	
 	    	for(Blob b:trackables){    		    		

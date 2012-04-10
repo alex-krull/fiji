@@ -13,7 +13,9 @@ protected List <T> trackablesInFrame;
 protected int frameNumber;
 protected Policy<T,IT> policy;
 
+
 protected TrackingFrame(int frameNum, Policy <T,IT> pol){
+	
 	frameNumber=frameNum;
 	trackablesInFrame= new ArrayList<T>();
 	policy=pol;
