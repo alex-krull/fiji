@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -393,12 +395,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		//This controls the center panel
 		JButton changeWorking = new JButton("Change Working Directory");
-		changeWorking.addActionListener(new changeWorkspaceListener());
+		//changeWorking.addActionListener(new changeWorkspaceListener());
 
 
 		workingFolder = new JTextField();
 		workingFolder.setPreferredSize(new Dimension(300, 20));
 		workingFolder.setEditable(false);
+		workingFolder.addMouseListener(new changeWorkspaceListener());
 
 
 
@@ -891,10 +894,37 @@ if(model.isStruckturalChange()){
 
 	}
 
-	public class changeWorkspaceListener implements ActionListener{
+	public class changeWorkspaceListener implements MouseListener{
+
+
+	
 
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
+		public void mouseClicked(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent arg0) {
 			// TODO Auto-generated method stub
 			JFileChooser workspace = new JFileChooser();
 			workspace.setCurrentDirectory(new java.io.File(viewModel.getController().getWorkspace()));
