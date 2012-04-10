@@ -38,4 +38,5 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 	public abstract int click(long[] pos, MouseEvent e, Model<IT> model, List<Integer>  selectedIdList, Session<T,IT> trackingChannel, int selectedSequenceId);
 
 	public abstract T copy(T toCopy);
+	
 }

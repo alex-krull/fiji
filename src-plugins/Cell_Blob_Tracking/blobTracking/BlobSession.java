@@ -6,9 +6,21 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.MovieChannel;
 import frameWork.Policy;
 import frameWork.Session;
+import frameWork.gui.controlWindow.SessionOptionsDialog;
 
 public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends Session<Blob,IT>{
 
+	private double defaultSigma=1;
+	private double defaultMaxSigma=2;
+	private double defaultMinSigma=0.5;
+	private boolean autoSigma=false;
+	private double defaultSigmaZ=1;
+	private double defaultMaxSigmaZ=2;
+	private double defaultMinSigmaZ=0.5;
+	private boolean autoSigmaZ=false;
+	
+	
+	
 	public BlobSession(int newID, Policy<Blob, IT> pol, MovieChannel<IT> mc) {
 		super(newID, pol, mc);
 	}
@@ -77,13 +89,10 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		this.autoSigmaZ = autoSigmaZ;
 	}
 
-	private double defaultSigma=1;
-	private double defaultMaxSigma=2;
-	private double defaultMinSigma=0.5;
-	private boolean autoSigma=false;
-	private double defaultSigmaZ=1;
-	private double defaultMaxSigmaZ=2;
-	private double defaultMinSigmaZ=0.5;
-	private boolean autoSigmaZ=false;
+	
+	@Override
+	public void showPropertiesDialog() {
+		  new SessionOptionsDialog(this);
+	}
 
 }

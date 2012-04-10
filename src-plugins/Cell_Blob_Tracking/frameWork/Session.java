@@ -12,7 +12,7 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 
-public class Session<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
+public abstract class Session<T extends Trackable, IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
 	
 	
 	private SortedMap <Integer, Sequence<T>> Sequences;
@@ -201,5 +201,7 @@ public class Session<T extends Trackable, IT extends NumericType<IT> & NativeTyp
 		props.setProperty("channelId", String.valueOf(this.mChannel.getId()));
 		return props;
 	}
+	
+	public abstract void showPropertiesDialog();
 	
 }
