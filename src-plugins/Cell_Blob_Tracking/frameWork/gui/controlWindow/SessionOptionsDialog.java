@@ -10,8 +10,10 @@ public class SessionOptionsDialog {
 	    public SessionOptionsDialog(Model<?> mod) {
 	      GenericDialog gd = new GenericDialog("Session Options");
 	      //gd.setPreferredSize(new Dimension(300,200));
-	      gd.addNumericField("Intensity Offset: ", 0, 0);
-	      gd.addNumericField("\u0394 Z (in pixels): ", 0, 0);
+	      gd.addCheckbox("Automatic \u03C3", true);
+	      gd.addNumericField("Initial \u03C3: ", 0, 0);
+	      gd.addNumericField("Max \u03C3: ", 0, 0);
+	      gd.addNumericField("Min \u03C3: ", 0, 0);
 	      gd.showDialog();
 	      if (gd.wasCanceled()) return;
 
@@ -30,7 +32,7 @@ public class SessionOptionsDialog {
 	    }
 	    
 	    public static void main(String[] args) {
-GlobalOptionsDialog test = new GlobalOptionsDialog(null);
+	    	SessionOptionsDialog test = new SessionOptionsDialog(null);
 
 }
 }

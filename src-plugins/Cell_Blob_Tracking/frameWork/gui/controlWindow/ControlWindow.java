@@ -480,10 +480,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		fileMenu.add(saveTo);
 		fileMenu.add(loadAll);
 		fileMenu.add(loadFrom);
+				
 		menuBar.add(fileMenu);
 		menuBar.add(windowMenu);
+		menuBar.add(helpMenu);
 		menuBar.setBackground(Color.white);
 		menuBar.setForeground(Color.BLACK);
+		
 
 		frame.setJMenuBar(menuBar);
 
