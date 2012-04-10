@@ -24,6 +24,10 @@ public class Session<T extends Trackable, IT extends NumericType<IT> & NativeTyp
 	protected Policy<T,IT> policy;
 	protected MovieChannel<IT> mChannel;
 	
+	public boolean isVolune(){
+		return mChannel.isVolume();
+	}
+	
 	public String getLabel() {
 		return label;
 	}

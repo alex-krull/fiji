@@ -22,6 +22,10 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	private final long numOfFrames;
 	private final int MovieChannelId;
 	private final boolean isVolume;
+	public boolean isVolume() {
+		return isVolume;
+	}
+
 	private final boolean isTimeSeries;
 	
 	
