@@ -157,14 +157,14 @@ private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCr
  * @param e the original MouseEvent
  */
 public void click(long[] position, int tChannel, MouseEvent e){
-	synchronized (model){
+	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	
 	if (cc!=null){
 		
 		cc.click(position, e);
 	}
-	}
+	model.rwLock.writeLock().unlock();
 }
 
 public boolean isTracking(){
@@ -174,27 +174,28 @@ public boolean isTracking(){
 }
 
 public void optimizeFrame(int frameNumber ){
-	synchronized (model){
+	model.rwLock.writeLock().lock();
 		ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 		if(cc!=null) cc.optimizeFrame(frameNumber);		
-	}
+	
 	model.makeStructuralChange();
+	model.rwLock.writeLock().unlock();
 }
 
 public void StartTracking(int frameNumber ){
-//	synchronized (model){
+	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.startTracking(frameNumber);
-//	model.makeStructuralChange();
+	model.rwLock.writeLock().unlock();
 	
 //	}
 }
 
 public void StopTracking(){
-//	synchronized (model){
+	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.stopTracking();
-//	model.makeStructuralChange();
+	model.rwLock.writeLock().unlock();
 //	}
 }
 
@@ -207,30 +208,31 @@ public void toggleTracking(int frameId){
 }
 
 public void splitSequence(int frameId){
-	synchronized (model){
+	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.splitSequnce(frameId);
 	model.makeStructuralChange();
 	model.makeChangesPublic();
-	}
+	model.rwLock.writeLock().unlock();
 }
 
 public void deleteSequence(){
-	synchronized (model){
+	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.deleteSequence();
 	model.makeStructuralChange();
 	model.makeChangesPublic();
-	}
+	model.rwLock.writeLock().unlock();
 }
 
 public void trimSequence(int frameId){
-	synchronized (model){
+	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.trimSequence(frameId);
 	model.makeStructuralChange();
 	model.makeChangesPublic();
-	}
+	model.rwLock.writeLock().unlock();
+	
 }
 
 public void saveAll(){
@@ -240,12 +242,12 @@ public void saveAll(){
 }
 
 public void mergeSequenences(){
-	synchronized (model){
+	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	cc.mergeSequenences();
 	model.makeStructuralChange();
 	model.makeChangesPublic();	
-	}
+	model.rwLock.writeLock().unlock();
 }
 
 //public int getSelectedSeqId(){
@@ -279,17 +281,17 @@ public void processDirectory(String directory){
 }
 
 public synchronized void setSelectionList(List <Integer> selectedIds){
-	synchronized (model){
+	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	cc.setSelectionList(selectedIds);
 	model.makeStructuralChange();
 	model.makeChangesPublic();
-	}
+	model.rwLock.writeLock().unlock();
 	
 }
 
 public void addSession(String typeName, String label, int channelID, ViewModel<IT> viewModel){
-	synchronized (model){
+	model.rwLock.writeLock().lock();
 	Properties sessionProps= new Properties();
 	sessionProps.setProperty("typeName", typeName);
 	sessionProps.setProperty("sessionLabel", label);
@@ -298,10 +300,12 @@ public void addSession(String typeName, String label, int channelID, ViewModel<I
 	ChannelController <? extends Trackable,IT> cc= this.findOrCreateController(sessionProps);
 	this.channelControllers.put(cc.getId(), cc);
 	if(this.selectedTCId==-1) this.selectedTCId=cc.getId();
-	}
+	
 	model.makeStructuralChange();
 	viewModel.reFreshSessionToBeDisplayed();
 	model.makeChangesPublic();
+	
+	model.rwLock.writeLock().unlock();
 	
 }
 
@@ -321,10 +325,10 @@ public String getWorkspace(){
 }
 
 public void setWorkspace(String path){
-	synchronized (model){
+	model.rwLock.writeLock().lock();
 	model.setProjectDirectory(path);
 	model.makeChangesPublic();
-	}
+	model.rwLock.writeLock().unlock();
 }
 
 public List<Session<? extends Trackable, IT>> getSessions(){
@@ -332,7 +336,7 @@ public List<Session<? extends Trackable, IT>> getSessions(){
 }
 
 public void load(ViewModel<IT> viewModel){
-	synchronized (model){
+	model.rwLock.writeLock().lock();
 	channelControllers.clear();
 	this.selectedTCId=-1;
 	model.clearSessions();
@@ -344,7 +348,7 @@ public void load(ViewModel<IT> viewModel){
 	viewModel.reFreshSessionToBeDisplayed();
 	model.makeChangesPublic();
 	
-	}
+	model.rwLock.writeLock().unlock();
 }
 
 public void setCurrentSession(int id, ViewModel<IT> viewModel){
@@ -369,21 +373,23 @@ public Session<? extends Trackable, IT> getCurrentSession(){
 }
 
 public void deleteSession(ViewModel<IT> viewModel){
-	synchronized (model){
+	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
-	if(!channelControllers.isEmpty()) selectedTCId=channelControllers.firstKey();
-	else selectedTCId=-1;
+	
 	if(cc!=null){
 	cc.deleteAllSequences();
 	channelControllers.remove(cc.getId());
+	if(!channelControllers.isEmpty()) selectedTCId=channelControllers.firstKey();
+	else selectedTCId=-1;
+	
 	model.deleteSession(cc.getId());
 	viewModel.reFreshSessionToBeDisplayed();
 	}
 	if(!channelControllers.isEmpty()) this.setCurrentSession(channelControllers.firstKey(), viewModel);
 	model.makeStructuralChange();
 	model.makeChangesPublic();
+	model.rwLock.writeLock().unlock();
 	
-	}
 	
 
 
@@ -395,12 +401,12 @@ public void reFresh(){
 }
 
 public void setSqequenceLabel(int id, String newLabel){
-	synchronized (model){
+	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	cc.setSequenceLabel(id,newLabel);
 	model.makeStructuralChange();
 	model.makeChangesPublic();
-	}
+	model.rwLock.writeLock().unlock();
 		
 }
 

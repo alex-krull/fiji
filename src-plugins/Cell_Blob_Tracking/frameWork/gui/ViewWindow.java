@@ -103,11 +103,11 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 				
 				if(udt!=null){
 					
-			//		synchronized(model){
-				
-					reFresh(udt.position,udt.rePaintImage);
 					
-			//		}
+					model.rwLock.readLock().lock();	
+					reFresh(udt.position,udt.rePaintImage);
+					model.rwLock.readLock().unlock();
+					
 					
 				}
 				

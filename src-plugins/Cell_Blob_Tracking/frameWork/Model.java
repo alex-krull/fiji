@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.ImagePlusAdapter;
@@ -42,6 +43,7 @@ private String projectDirectory;
 private boolean structuralChange=true;
 private int intensityOffset=0;
 private double xyToZ=3.5;
+public final ReentrantReadWriteLock rwLock;
 
 public double getXyToZ() {
 	return xyToZ;
@@ -153,6 +155,7 @@ public void setMultiChannel(boolean isMultiChannel) {
 
 public Model(ImagePlus imp){
 	new GlobalOptionsDialog(this);
+	rwLock= new ReentrantReadWriteLock();
 	
 	imageFileName=imp.getOriginalFileInfo().fileName;
 	imageDrirectory=imp.getOriginalFileInfo().directory;
