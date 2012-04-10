@@ -39,4 +39,6 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 
 	public abstract T copy(T toCopy);
 	
+	public abstract void optimizeFrame(boolean cheap, List <T> trackables, MovieFrame<IT> movieFrame);
+	
 }

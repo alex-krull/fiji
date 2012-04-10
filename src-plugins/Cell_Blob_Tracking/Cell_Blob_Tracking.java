@@ -10,7 +10,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
-import blobTracking.BlobPolicy;
+import blobTracking.MaximumLikelihoodBlobPolicy;
 import fiji.tool.AbstractTool;
 import frameWork.Controller;
 import frameWork.Model;
@@ -106,7 +106,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 					
 		
 		Controller<IT> cont= new Controller<IT>(model);
-		cont.addPolicy(new BlobPolicy<IT>());
+		cont.addPolicy(new MaximumLikelihoodBlobPolicy<IT>());
 		System.out.println("creating ViewModel...");
 		ViewModel<IT> vm= new ViewModel<IT>( model,cont);
 		System.out.println("done!");

@@ -12,16 +12,29 @@ public abstract class TrackingFrame<T extends Trackable, IT extends NumericType<
 protected List <T> trackablesInFrame;
 protected int frameNumber;
 protected Policy<T,IT> policy;
+private MovieFrame<IT> movieFrame;
 
 
-protected TrackingFrame(int frameNum, Policy <T,IT> pol){
-	
+public MovieFrame<IT> getMovieFrame() {
+	return movieFrame;
+}
+
+
+
+public void setMovieFrame(MovieFrame<IT> movieFrame) {
+	this.movieFrame = movieFrame;
+}
+
+
+
+protected TrackingFrame(int frameNum, Policy <T,IT> pol, MovieFrame<IT> mf ){
+	movieFrame=mf;
 	frameNumber=frameNum;
 	trackablesInFrame= new ArrayList<T>();
 	policy=pol;
 }
 
-public abstract void optimizeFrame(boolean cheap, List <T> trackables);
+
 
 public void addTrackable(T trackable){
 	removeTrackable(trackable.sequenceId);

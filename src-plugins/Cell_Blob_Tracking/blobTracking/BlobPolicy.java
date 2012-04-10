@@ -20,14 +20,7 @@ import frameWork.Sequence;
 import frameWork.Session;
 import frameWork.TrackingFrame;
 
-public class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends Policy<Blob, IT>{
-
-
-	@Override
-	public String getTypeName() {
-		return "Blob";
-	}
-
+public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends Policy<Blob, IT>{
 
 	@Override
 	public ChannelController<Blob, IT> produceControllerAndChannel(
