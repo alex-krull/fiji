@@ -4,21 +4,30 @@ import ij.gui.GenericDialog;
 
 public class SessionOptionsDialog {
 
-	 static String title="Example";
-	    static int width=512,height=512;
+	private double deltaZ;
+	private double intensityOffset;
 	   
 	    public SessionOptionsDialog(Model<?> mod) {
 	      GenericDialog gd = new GenericDialog("Global Options");
-	      gd.addStringField("Title: ", title);
-	      gd.addNumericField("Width: ", width, 0);
-	      gd.addNumericField("Height: ", height, 0);
+	      //gd.setPreferredSize(new Dimension(300,200));
+	      gd.addNumericField("Intensity Offset: ", 0, 0);
+	      gd.addNumericField("\u0394 Z (in pixels): ", 0, 0);
 	      gd.showDialog();
 	      if (gd.wasCanceled()) return;
-	      title = gd.getNextString();
-	      width = (int)gd.getNextNumber();
-	      height = (int)gd.getNextNumber();
 
+	      intensityOffset = (int)gd.getNextNumber();
+	      deltaZ = (int)gd.getNextNumber();
+	      
 	   }
+	    
+	    public double getDeltaZ(){
+	    	return deltaZ;
+	    	
+	    }
+	    
+	    public double getInensityOffest(){
+	    	return intensityOffset;
+	    }
 	    
 	    public static void main(String[] args) {
 GlobalOptionsDialog test = new GlobalOptionsDialog(null);
