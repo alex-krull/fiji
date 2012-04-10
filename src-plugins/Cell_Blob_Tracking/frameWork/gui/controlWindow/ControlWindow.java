@@ -458,9 +458,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		JMenu fileMenu = new JMenu("File");
 		windowMenu = new JMenu("Windows");
 		JMenu helpMenu = new JMenu("Help");
+		JMenu editMenu = new JMenu("Edit");
 
 
-
+		//Edit items
+		
+		JMenuItem editSession = new JMenuItem("Edit Session Defaults");
+		editSession.addActionListener(new EditMenuListener());
 		JMenuItem newMenuItem = new JMenuItem("New");
 		fileMenu.add(newMenuItem);
 		JMenuItem saveAllMenu = new JMenuItem("Save");
@@ -480,7 +484,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		fileMenu.add(loadAll);
 		fileMenu.add(loadFrom);
 				
+		editMenu.add(editSession);
+		
+		
 		menuBar.add(fileMenu);
+		menuBar.add(editMenu);
 		menuBar.add(windowMenu);
 		menuBar.add(helpMenu);
 		menuBar.setBackground(Color.white);
@@ -993,6 +1001,17 @@ if(model.isStruckturalChange()){
 
 		}
 
+	}
+	//Edit Menu Listeners
+	
+	public class EditMenuListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			viewModel.getController().getCurrentSession().showPropertiesDialog();
+			
+		}
+		
 	}
 
 	@Override

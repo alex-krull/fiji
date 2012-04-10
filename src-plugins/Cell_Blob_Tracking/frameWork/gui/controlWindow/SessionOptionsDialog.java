@@ -16,22 +16,25 @@ import ij.gui.GenericDialog;
 
 public class SessionOptionsDialog{
 
-	private double deltaZ;
-	private double intensityOffset;
+
 	   
 	    public SessionOptionsDialog(BlobSession<?> mod) {
 	      GenericDialog gd = new GenericDialog("Session Options");
+	     
 	     // gd.setPreferredSize(new Dimension(300,200));
-
+	     
 	      gd.addCheckbox("Automatic \u03C3", mod.isAutoSigmaZ());
+	      gd.addNumericField("\u03C3:", mod.getDefaultSigma(), 0);
 	      gd.addNumericField("Max \u03C3:", mod.getDefaultMaxSigma(), 0);
 	      gd.addNumericField("Min \u03C3:", mod.getDefaultMinSigma(), 0);
-	      gd.addNumericField("Initial \u03C3:", mod.getDefaultSigma(), 0);
+	      
 	      
 	      if(mod.isVolune()){
-		      gd.addNumericField("Max Z \u03C3:", mod.getDefaultMaxSigmaZ(), 0);
-		      gd.addNumericField("Min Z \u03C3:", mod.getDefaultMinSigmaZ(), 0);
-		      gd.addNumericField("Initial Z \u03C3:", mod.getDefaultSigmaZ(), 0);
+	    	  gd.addMessage("");
+	    	  gd.addNumericField("\u03C3Z:", mod.getDefaultSigmaZ(), 0);
+	    	  gd.addNumericField("Max \u03C3Z:", mod.getDefaultMaxSigmaZ(), 0);
+		      gd.addNumericField("Min \u03C3Z:", mod.getDefaultMinSigmaZ(), 0);
+		      
 	      }
 	      
 	      gd.addMessage("");
@@ -42,14 +45,16 @@ public class SessionOptionsDialog{
 	      if (gd.wasCanceled()) return;
 
 	      if(gd.wasOKed()){
+	    	  double init = gd.getNextNumber();
 	    	  double max=gd.getNextNumber();
 	    	  double min = gd.getNextNumber();
-	    	  double init = gd.getNextNumber();
+	    	  
 	    	  
 	    	  if(mod.isVolune()){
+	    		  double initz=gd.getNextNumber();
 	    		  double maxz=gd.getNextNumber();
 	    		  double minz=gd.getNextNumber();
-	    		  double initz=gd.getNextNumber();
+	    		  
 	    		  mod.setDefaultSigmaZ(initz);
 	    		  mod.setDefaultMaxSigmaZ(maxz);
 	    		  mod.setDefaultMinSigmaZ(minz);
