@@ -35,6 +35,10 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	
 	private boolean currentlyTracking=false;
 	
+	public List <Integer> getSelectionList(){
+		return selectedIdList;
+	}
+	
 	public void setSelectionList(List <Integer> selectedIds){
 		if(selectedIds.size()>0)
 			selectedSequenceId=selectedIds.get(0);

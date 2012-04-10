@@ -280,7 +280,14 @@ public void processDirectory(String directory){
 	
 }
 
-public synchronized void setSelectionList(List <Integer> selectedIds){
+public List<Integer> getSelectionList(List <Integer> selectedIds){
+	
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	return cc.getSelectionList();
+	
+}
+
+public void setSelectionList(List <Integer> selectedIds){
 	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	cc.setSelectionList(selectedIds);
