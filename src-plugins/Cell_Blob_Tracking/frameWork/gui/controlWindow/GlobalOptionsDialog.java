@@ -20,9 +20,9 @@ public class GlobalOptionsDialog {
 	      gd.showDialog();
 	      if (gd.wasCanceled()) return;
 
-	      intensityOffset = (int)gd.getNextNumber();
-	      deltaZ = (int)gd.getNextNumber();
-
+	      intensityOffset = (double)gd.getNextNumber();
+	      deltaZ = (double)gd.getNextNumber();
+	      
 	   }
 	    
 	    public double getDeltaZ(){
