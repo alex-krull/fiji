@@ -20,6 +20,7 @@ import org.apache.commons.math.optimization.direct.PowellOptimizer;
 
 import tools.ImglibTools;
 import frameWork.MovieFrame;
+import frameWork.Session;
 
 public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends BlobPolicy<IT>{
 
@@ -231,7 +232,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 
 	@Override
 	public void optimizeFrame(boolean cheap, List<Blob> trackables,
-			MovieFrame<IT> movieFrame, BlobSession<IT> bs) {
+			MovieFrame<IT> movieFrame, Session<Blob,IT> bs) {
+		BlobSession<IT> blobSession= (BlobSession<IT>) bs;
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();	
 		Double backProb=1.0;
 		
@@ -261,7 +263,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 					eTime +=eTime1-eTime0;
 					
 					System.out.println("change:" +change);			
-					if(change<0.01) break;
+					if(change<blobSession.getQualityThreshold()) break;
 			}
 			long time1= System.nanoTime();
 			long time= (time1-time0)/1000000;

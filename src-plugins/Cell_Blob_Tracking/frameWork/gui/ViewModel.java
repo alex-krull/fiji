@@ -271,6 +271,7 @@ public  List <Sequence<? extends Trackable>> getVisibleSequences(){
 	for(Session<? extends Trackable ,IT> tc: this.getSessionsToBeDisplayed()){
 		results.addAll(tc.getSeqsCollection());
 	}
+	
 	return results;
 }
  

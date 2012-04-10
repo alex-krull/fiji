@@ -11,8 +11,6 @@ import java.util.SortedMap;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
-import blobTracking.Blob;
-import blobTracking.BlobSession;
 
 public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >  {
 	/*public abstract String getTypeName();
@@ -41,7 +39,7 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 
 	public abstract T copy(T toCopy);
 	
-	public abstract void  optimizeFrame(boolean cheap, List<Blob> trackables,
-			MovieFrame<IT> movieFrame, BlobSession<IT> bs);
+	public abstract void  optimizeFrame(boolean cheap, List<T> trackables,
+			MovieFrame<IT> movieFrame, Session<T,IT> bs);
 	
 }

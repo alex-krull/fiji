@@ -367,6 +367,7 @@ public Session<? extends Trackable, IT> getCurrentSession(){
 	return model.getTrackingChannel(selectedTCId);
 
 }
+
 public void deleteSession(ViewModel<IT> viewModel){
 	synchronized (model){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
