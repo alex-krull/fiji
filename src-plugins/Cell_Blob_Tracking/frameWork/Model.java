@@ -1,6 +1,7 @@
 package frameWork;
 
 
+import frameWork.gui.controlWindow.GlobalOptionsDialog;
 import ij.ImagePlus;
 
 import java.util.ArrayList;
@@ -151,6 +152,7 @@ public void setMultiChannel(boolean isMultiChannel) {
 }
 
 public Model(ImagePlus imp){
+	new GlobalOptionsDialog(this);
 	
 	imageFileName=imp.getOriginalFileInfo().fileName;
 	imageDrirectory=imp.getOriginalFileInfo().directory;
