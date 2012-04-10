@@ -86,7 +86,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	JPanel rightButtonPanel;
 	JPanel spinnerPanel;
 	JMenuItem editSession;
-	
+	JButton deleteSession;
 	
 	JPanel bottomPanel;
 	JPanel pathPanel;
@@ -108,6 +108,10 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	
 	List<JCheckBox> cBoxes;
 	List<ViewWindow<IT>> windowList;
+	private JButton merge;
+	private JButton delete;
+	private JButton split;
+	private JButton trim;
 
 	/*
 	public static void main(String[] args) {
@@ -165,18 +169,18 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		
 		//This controls the left Panel
-				JButton merge = new JButton("Merge");
+				merge = new JButton("Merge");
 				merge.addActionListener(new MergeTrace());
 
 
-				JButton delete = new JButton("Delete");
+			    delete = new JButton("Delete");
 				delete.addActionListener(new DeleteListener());
 
 				//JButton jump = new JButton("Go to  ");
-				JButton split = new JButton("Split");
+				split = new JButton("Split");
 				split.addActionListener(new splitListener());
 				//split.setAlignmentX(JButton.CENTER_ALIGNMENT);
-				JButton trim = new JButton("Trim");
+				trim = new JButton("Trim");
 				trim.addActionListener(new TrimListener());
 
 				//JButton saveTo = new JButton("Save To");
@@ -367,7 +371,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		newSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
 
 
-		JButton deleteSession = new JButton("Delete Session");
+		deleteSession = new JButton("Delete Session");
 		deleteSession.addActionListener(new DeleteSessionListener());
 		deleteSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
 
@@ -841,11 +845,30 @@ if(model.isStruckturalChange()){
 
 		if (viewModel.getController().getCurrentSessionId()==-1){
 			editSession.setEnabled(false);
+			this.changeSession.setEnabled(false);
+			this.deleteSession.setEnabled(false);
+			this.start.setEnabled(false);
+
 		}else
 			{editSession.setEnabled(true);
+			this.changeSession.setEnabled(true);
+			this.deleteSession.setEnabled(true);
+			this.start.setEnabled(true);
+			
 		}
 			
-			
+		if(viewModel.getVisibleSequences().size()==0){
+		merge.setEnabled(false);
+		delete.setEnabled(false);
+		split.setEnabled(false);
+		trim.setEnabled(false);
+		
+		}else{
+			merge.setEnabled(true);
+			delete.setEnabled(true);
+			split.setEnabled(true);
+			trim.setEnabled(true);
+		}
 
 
 		
