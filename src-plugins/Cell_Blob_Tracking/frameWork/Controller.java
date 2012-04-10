@@ -280,7 +280,7 @@ public void processDirectory(String directory){
 	
 }
 
-public List<Integer> getSelectionList(List <Integer> selectedIds){
+public List<Integer> getSelectionList(){
 	
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	return cc.getSelectionList();
