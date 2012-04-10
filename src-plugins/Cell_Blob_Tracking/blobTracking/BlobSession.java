@@ -18,11 +18,19 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	private double defaultMaxSigmaZ=2;
 	private double defaultMinSigmaZ=0.5;
 	private boolean autoSigmaZ=false;
-	
+	private double qualityThreshold=0.001;
 	
 	
 	public BlobSession(int newID, Policy<Blob, IT> pol, MovieChannel<IT> mc) {
 		super(newID, pol, mc);
+	}
+	
+	public double getQualityThreshold() {
+		return qualityThreshold;
+	}
+
+	public void setQualityThreshold(double qualityThreshold) {
+		this.qualityThreshold = qualityThreshold;
 	}
 	
 	public double getDefaultSigma() {
