@@ -906,7 +906,7 @@ if(model.isStruckturalChange()){
 		rightPanel.addKeyListener(keyListener);
 		bottomPanel.addKeyListener(keyListener);
 		leftPanel.addKeyListener(keyListener);
-
+		
 
 	}
 
