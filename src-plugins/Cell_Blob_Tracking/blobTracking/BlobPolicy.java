@@ -201,6 +201,8 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 				nB.autoSigma=bs.isAutoSigma();
 				nB.autoSigmaZ=bs.isAutoSigmaZ();
 				
+			
+				
 				selectedIdList.clear();
 				selectedIdList.add(nB.sequenceId);
 				trackingChannel.addTrackable(nB);
