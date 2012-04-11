@@ -103,6 +103,8 @@ public class TableSort extends JPanel {
         
         table.getSelectionModel().addListSelectionListener(selectionListener);
         table.addMouseListener(selectionListener);
+        table.getColumnModel().getColumn(0).setPreferredWidth(15);
+        table.getColumnModel().getColumn(5).setPreferredWidth(20);
         
         
         
@@ -278,11 +280,11 @@ public class MySelectionListener implements MouseListener, ListSelectionListener
     
     
     class MyTableModel extends AbstractTableModel {
-        private final String[] columnNames = {"Trace Name",
-                                        "Color", "Trace Label",
+        private final String[] columnNames = {"ID #",
+                                        "Color", "Label",
                                         "Session",
-                                        "Tracking Method",
-                                        "Trace Length"};
+                                        "Method",
+                                        "Length"};
         public Object[][] data = {
 	    {"Blob 1", new Color(255, 0, 0), "Place holder",
 	     "Session 1", "Blob", new Integer(5)},

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -122,6 +123,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JMenuItem trimSeqMenu;
 	private JMenuItem mergeMenu;
 	private JMenuItem saveAllMenu;
+	private JMenuItem newSessionMenu;
 
 	/*
 	public static void main(String[] args) {
@@ -154,7 +156,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		//Bottom Area
 		bottomPanel.setBackground(Color.LIGHT_GRAY);
 
-		text = new JTextArea(5,5);
+		text = new JTextArea(20,5);
 
 		text.setLineWrap(true);
 		text.setText("Ready to start tracking!");
@@ -256,7 +258,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		zSpinner.setPreferredSize(labelDim2);
 		zSpinner.setMaximumSize(labelDim);
 		JLabel zLabel = new JLabel("Z #");
-		zLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		zLabel.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
 		
 
 		SpinnerModel cSpinnerModel = new SpinnerNumberModel(20, 0, 40, 1);
@@ -266,16 +268,23 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		cSpinner.setPreferredSize(labelDim2);
 		cSpinner.setMaximumSize(labelDim);
 		JLabel cLabel = new JLabel("Channel #");
-		cLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		cLabel.setAlignmentX(JLabel.RIGHT);
 		
 		spinnerPanel = new JPanel();
+		spinnerPanel.setLayout(new BoxLayout(spinnerPanel, BoxLayout.X_AXIS));
 		
+		spinnerPanel.add(Box.createHorizontalGlue());
 		spinnerPanel.add(frameLabel);
 		spinnerPanel.add(frameSpinner);
+		spinnerPanel.add(Box.createRigidArea(new Dimension(30, 0)));
+		
 		spinnerPanel.add(zLabel);
 		spinnerPanel.add(zSpinner);
+		spinnerPanel.add(Box.createRigidArea(new Dimension(30, 0)));
+		
 		spinnerPanel.add(cLabel);
 		spinnerPanel.add(cSpinner);
+		spinnerPanel.add(Box.createHorizontalGlue());
 		//Create the tracking method pair.
 		
 		JLabel label4 = new JLabel("Current Method");
@@ -435,7 +444,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		trackerTable = new TableSort(viewModel, model);
 		trackerTable.setOpaque(true);
-		trackerTable.setPreferredSize(new Dimension(300, 100));
+		//trackerTable.setPreferredSize(new Dimension(300, 100));
 /*
 		tableScroll = new JScrollPane(trackerTable);
 		tableScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -481,6 +490,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		editSession = new JMenuItem("Edit Session Defaults");
 		editSession.addActionListener(new EditMenuListener());
+		editSession.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.SHIFT_MASK));
 		
 		editBlob = new JMenuItem("Edit Object");
 		editBlob.addActionListener(new BlobMenuListener());
@@ -498,9 +508,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		JMenuItem loadAll = new JMenuItem("Load");
 		loadAll.addActionListener(new LoadAllListener());
+		loadAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.SHIFT_MASK));
 		
-		JMenuItem newSessionMenu = new JMenuItem("New Session");
+		newSessionMenu = new JMenuItem("New Session");
 		newSessionMenu.addActionListener(new NewSessionListener());
+		newSessionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.SHIFT_MASK));
+		
 		
 		startMenu = new JMenuItem("Start Tracking");
 		startMenu.addActionListener(new StartListener());
@@ -522,13 +535,14 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		mergeMenu.addActionListener(new MergeListener());
 		mergeMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.SHIFT_MASK));
 		
-		
+		fileMenu.setBackground(Color.lightGray);
 		fileMenu.add(newSessionMenu);
 		fileMenu.add(saveAllMenu);
 		fileMenu.add(saveTo);
 		fileMenu.add(loadAll);
 		fileMenu.add(loadFrom);
 				
+		editMenu.setBackground(Color.lightGray);
 		editMenu.add(deleteSeqMenu);
 		editMenu.add(this.splitSeqMenu);
 		editMenu.add(trimSeqMenu);
@@ -540,12 +554,14 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		editMenu.addSeparator();
 		editMenu.add(startMenu);
 		
+		windowMenu.setBackground(Color.lightGray);
+		helpMenu.setBackground(Color.lightGray);
 		
 		menuBar.add(fileMenu);
 		menuBar.add(editMenu);
 		menuBar.add(windowMenu);
 		menuBar.add(helpMenu);
-		menuBar.setBackground(Color.white);
+		menuBar.setBackground(Color.lightGray);
 		menuBar.setForeground(Color.BLACK);
 		
 
@@ -559,9 +575,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		frame.getContentPane().add(BorderLayout.EAST, rightPanel);
 		frame.getContentPane().add(BorderLayout.CENTER, centerPanel);
 		frame.getContentPane().add(BorderLayout.WEST, leftPanel);
-		frame.setSize(700,400);
+		frame.setSize(650,350);
 		frame.setVisible(true);
-		frame.setMinimumSize(new Dimension(700, 400));
+		frame.setMinimumSize(new Dimension(650, 350));
 
 		//frame.setFocusable(true);
 		//HotKeyListener keyListener = new HotKeyListener(viewModel);
@@ -836,7 +852,8 @@ if(model.isStruckturalChange()){
 
 		}
 		
-
+		//Takes care of the session list.
+		
 		String[] sessionNamesList = new String[tempSessionList.size()];
 		//if(rePopulate){
 		cBoxes.clear();
