@@ -72,6 +72,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 		double pX=0;
 		
+		double cx=(iterableFrame.min(0)+iterableFrame.max(0))/2.0;
+    	double cy=(iterableFrame.min(1)+iterableFrame.max(1))/2.0;
 		
 		while ( cursor.hasNext() )	{
 	    	cursor.fwd();
@@ -90,7 +92,13 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	    	if(!isIn) continue;
 	  */  	
 	    	
-	    	float value= Math.max(0,cursor.get().getRealFloat()- movieFrame.getConstBackground()); 
+	    	
+	    //	double dist= Math.sqrt((cx-x)*(cx-x) +(cy-y)*(cy-y) );
+	    //	double sn=1;
+	   // 	double overlap=dist-(-iterableFrame.min(0)+iterableFrame.max(0))/2.0-1;
+	   // 	if(overlap>0) sn=Math.max(0, sn-(overlap*2));
+	    		
+	    	float value= Math.max(0,cursor.get().getRealFloat()- movieFrame.getConstBackground());//*(float)sn; 
 	    	totalInten+=value;
 	    	
 	    	for(Blob b:trackables){    		    		
