@@ -848,6 +848,11 @@ if(model.isStruckturalChange()){
 			this.changeSession.setEnabled(false);
 			this.deleteSession.setEnabled(false);
 			this.start.setEnabled(false);
+			
+			merge.setEnabled(false);
+			delete.setEnabled(false);
+			split.setEnabled(false);
+			trim.setEnabled(false);
 
 		}else
 			{editSession.setEnabled(true);
@@ -855,20 +860,22 @@ if(model.isStruckturalChange()){
 			this.deleteSession.setEnabled(true);
 			this.start.setEnabled(true);
 			
+			if(viewModel.getController().getSelectionList().size()==0){
+				merge.setEnabled(false);
+				delete.setEnabled(false);
+				split.setEnabled(false);
+				trim.setEnabled(false);
+				
+				}else{
+					merge.setEnabled(true);
+					delete.setEnabled(true);
+					split.setEnabled(true);
+					trim.setEnabled(true);
+				}
+			
 		}
 			
-		if(viewModel.getVisibleSequences().size()==0){
-		merge.setEnabled(false);
-		delete.setEnabled(false);
-		split.setEnabled(false);
-		trim.setEnabled(false);
-		
-		}else{
-			merge.setEnabled(true);
-			delete.setEnabled(true);
-			split.setEnabled(true);
-			trim.setEnabled(true);
-		}
+
 
 
 		
