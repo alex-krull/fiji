@@ -3,16 +3,7 @@ package frameWork.gui;
 import ij.IJ;
 
 import java.awt.Point;
-import java.awt.Scrollbar;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
@@ -24,7 +15,7 @@ import frameWork.Model;
 public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> {
 
 	
-	private boolean buisy =false;
+	private final boolean buisy =false;
 	
 	public KymographX(Model<IT> mod, RandomAccessibleInterval<IT> img,  ViewModel<IT> vm, MainWindow<IT> mainWindow) {
 		super(mod, img,vm, "Kymograph X");
@@ -35,13 +26,14 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		baseTimeScale=(double)xSize/(double)model.getNumberOfFrames();	
 		timeScale=baseTimeScale*Math.pow(1.1, tics);
 		
+		
 	//	MyListener ml=new MyListener();
 	//	this.imp.getCanvas().addMouseListener(ml);
 	//	this.imp.getCanvas().addMouseMotionListener(ml);
 	//	sb.setOrientation(Scrollbar.HORIZONTAL);
 		Point p= mainWindow.getWindow().getLocation();
 		
-		imp.getWindow().setLocation(p);
+		
 		if(imp.getWindow().getParent()!= null){
 			IJ.error(imp.getWindow().getParent().getClass().getName());
 			imp.getWindow().getParent().setLocation(0, 0);
@@ -56,6 +48,7 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	//			 "kw x:"+ imp.getWindow().getX());
 	}
 	
+	@Override
 	public void reFresh(long[] position, boolean rePaintImage){
 		scaleX=timeScale;
 		transX=(int)Math.min(Math.max(0,(int)(scaleX*position[3])-xSize/2),(1+model.getXTProjections((int)position[4]).max(0))*scaleX-xSize);
@@ -73,9 +66,10 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 
 
 	
+	@Override
 	public long[] positionFromEvent(MouseEvent e){
-		int t=(int)((double)(imp.getCanvas().offScreenX(e.getX())+transX)/this.scaleX);
-		int y=(int)((double)(imp.getCanvas().offScreenY(e.getY())+transY)/this.scaleY);
+		int t=(int)((imp.getCanvas().offScreenX(e.getX())+transX)/this.scaleX);
+		int y=(int)((imp.getCanvas().offScreenY(e.getY())+transY)/this.scaleY);
 	//	System.out.println("x:"+ x +"  y:"+y);
 		
 		
