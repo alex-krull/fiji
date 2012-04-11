@@ -47,7 +47,10 @@ public class HotKeyListener implements KeyListener {
 		  case KeyEvent.VK_M:			  
 			  viewModel.mergeSequenences();		 
 		      return; 
-		      
+		     
+		  case KeyEvent.VK_O:
+			  viewModel.getController().showOjectOptions(viewModel.getCurrentFrameNumber());
+			  return;
 		           
 		  
 		        

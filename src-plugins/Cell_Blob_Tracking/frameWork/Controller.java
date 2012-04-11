@@ -417,6 +417,16 @@ public void setSqequenceLabel(int id, String newLabel){
 		
 }
 
+public void showOjectOptions(int frameNumber){
+	model.rwLock.writeLock().lock();
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	if(cc!=null){			
+		cc.showObjectOptions(frameNumber);
+	}
+	model.makeChangesPublic();
+	model.rwLock.writeLock().unlock();
+}
+
 
 
 

@@ -6,6 +6,7 @@ import net.imglib2.type.numeric.RealType;
 import frameWork.MovieChannel;
 import frameWork.Policy;
 import frameWork.Session;
+import frameWork.gui.controlWindow.BlobOptionDialog;
 import frameWork.gui.controlWindow.SessionOptionsDialog;
 
 public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends Session<Blob,IT>{
@@ -23,7 +24,6 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	public BlobSession(int newID, Policy<Blob, IT> pol, MovieChannel<IT> mc) {
 		super(newID, pol, mc);
 	}
-	
 	
 	
 	public double getDefaultSigma() {
@@ -95,5 +95,10 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	public void showPropertiesDialog() {
 		  new SessionOptionsDialog(this);
 	}
+	
+	public void showObjectPropertiesDialog(Blob b) {
+		 new BlobOptionDialog(b,this.isVolune());
+	}
+	
 
 }

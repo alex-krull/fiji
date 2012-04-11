@@ -235,6 +235,14 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		if(toCopy==null) return null;
 		Blob result=new Blob(toCopy.sequenceId, toCopy.frameId, toCopy.xPos, toCopy.yPos, toCopy.zPos, toCopy.sigma, toCopy.channel);
 		result.pK=toCopy.pK;
+		result.sigma=toCopy.sigma;
+		result.sigmaZ=toCopy.sigmaZ;
+		result.minSigma=toCopy.minSigma;
+		result.maxSigma=toCopy.maxSigma;
+		result.minSigmaZ=toCopy.minSigmaZ;
+		result.maxSigmaZ=toCopy.maxSigmaZ;
+		result.autoSigma=toCopy.autoSigma;
+		result.autoSigmaZ=toCopy.autoSigmaZ;
 		return result;
 	}
 

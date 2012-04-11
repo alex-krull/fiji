@@ -262,6 +262,17 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		
 	}
 	
+	public void showObjectOptions(int frameNumber){
+		List<T> list= trackingChannel.getTrackablesForFrame(frameNumber);
+		for(T t: list){
+			if(this.selectedIdList.contains(t.sequenceId)){
+				trackingChannel.showObjectPropertiesDialog(t);
+				break;
+			}
+			
+		}
+	}
+	
 	
 	
 }
