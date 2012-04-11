@@ -244,12 +244,9 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			long time0= System.nanoTime();	
 			long eTime=0;	
 			long mTime=0;
-			
-			IterableRandomAccessibleInterval<IT> iFrame= makeIterableFrame( movieFrame,  trackables);
-			
 			for(int i=0;i<100;i++){
 				
-				
+				IterableRandomAccessibleInterval<IT> iFrame= makeIterableFrame( movieFrame,  trackables);
 				
 					long eTime0= System.nanoTime();
 					double ti= doEStep(trackables,movieFrame,backProb,iFrame);
