@@ -113,6 +113,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JButton split;
 	private JButton trim;
 	private JButton saveAll;
+	private JMenuItem editBlob;
 
 	/*
 	public static void main(String[] args) {
@@ -472,6 +473,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		editSession = new JMenuItem("Edit Session Defaults");
 		editSession.addActionListener(new EditMenuListener());
+		
+		editBlob = new JMenuItem("Edit Object");
+		editBlob.addActionListener(new BlobMenuListener());
 
 		JMenuItem saveAllMenu = new JMenuItem("Save");
 		saveAllMenu.addActionListener(new SaveAllListener());
@@ -494,7 +498,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		fileMenu.add(loadFrom);
 				
 		editMenu.add(editSession);
-		
+		editMenu.add(editBlob);
 		
 		menuBar.add(fileMenu);
 		menuBar.add(editMenu);
@@ -858,7 +862,7 @@ if(model.isStruckturalChange()){
 			delete.setEnabled(false);
 			split.setEnabled(false);
 			trim.setEnabled(false);
-			
+			editBlob.setEnabled(false);
 			this.saveAll.setEnabled(false);
 
 		}else
@@ -873,12 +877,14 @@ if(model.isStruckturalChange()){
 				split.setEnabled(false);
 				trim.setEnabled(false);
 				this.saveAll.setEnabled(false);
+				editBlob.setEnabled(false);
 				}else{
 					merge.setEnabled(true);
 					delete.setEnabled(true);
 					split.setEnabled(true);
 					trim.setEnabled(true);
 					this.saveAll.setEnabled(true);
+					editBlob.setEnabled(true);
 				}
 			
 		}
@@ -1055,6 +1061,16 @@ if(model.isStruckturalChange()){
 		public void actionPerformed(ActionEvent arg0) {
 			viewModel.getController().getCurrentSession().showPropertiesDialog();
 			
+		}
+		
+	}
+	
+	public class BlobMenuListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			viewModel.getController().showOjectOptions(viewModel.getCurrentFrameNumber());
 		}
 		
 	}
