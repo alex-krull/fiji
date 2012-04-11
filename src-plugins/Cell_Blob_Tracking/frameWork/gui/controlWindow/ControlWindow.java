@@ -117,6 +117,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JButton saveAll;
 	private JMenuItem editBlob;
 	private JMenuItem startMenu;
+	private JMenuItem deleteSeqMenu;
+	private JMenuItem splitSeqMenu;
+	private JMenuItem trimSeqMenu;
+	private JMenuItem mergeMenu;
+	private JMenuItem saveAllMenu;
 
 	/*
 	public static void main(String[] args) {
@@ -175,7 +180,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		//This controls the left Panel
 				merge = new JButton("Merge");
-				merge.addActionListener(new MergeTrace());
+				merge.addActionListener(new MergeListener());
 
 
 			    delete = new JButton("Delete");
@@ -183,7 +188,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 				//JButton jump = new JButton("Go to  ");
 				split = new JButton("Split");
-				split.addActionListener(new splitListener());
+				split.addActionListener(new SplitListener());
 				//split.setAlignmentX(JButton.CENTER_ALIGNMENT);
 				trim = new JButton("Trim");
 				trim.addActionListener(new TrimListener());
@@ -481,8 +486,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		editBlob.addActionListener(new BlobMenuListener());
 		editBlob.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.SHIFT_MASK));
 
-		JMenuItem saveAllMenu = new JMenuItem("Save");
+		saveAllMenu = new JMenuItem("Save");
 		saveAllMenu.addActionListener(new SaveAllListener());
+		saveAllMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.SHIFT_MASK));
 
 		JMenuItem saveTo = new JMenuItem("Save to");
 		saveTo.addActionListener(new SaveToListener());
@@ -500,12 +506,35 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		startMenu.addActionListener(new StartListener());
 		startMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.SHIFT_MASK));
 		
+		deleteSeqMenu = new JMenuItem("Delete Sequence");
+		deleteSeqMenu.addActionListener(new DeleteListener());
+		deleteSeqMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.SHIFT_MASK));
+		
+		splitSeqMenu = new JMenuItem("Split Sequence");
+		splitSeqMenu.addActionListener(new SplitListener());
+		splitSeqMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.SHIFT_MASK));
+		
+		trimSeqMenu = new JMenuItem("Trim Sequence");
+		trimSeqMenu.addActionListener(new TrimListener());
+		trimSeqMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.SHIFT_MASK));
+		
+		mergeMenu = new JMenuItem("Merge Sequence");
+		mergeMenu.addActionListener(new MergeListener());
+		mergeMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.SHIFT_MASK));
+		
+		
 		fileMenu.add(newSessionMenu);
 		fileMenu.add(saveAllMenu);
 		fileMenu.add(saveTo);
 		fileMenu.add(loadAll);
 		fileMenu.add(loadFrom);
 				
+		editMenu.add(deleteSeqMenu);
+		editMenu.add(this.splitSeqMenu);
+		editMenu.add(trimSeqMenu);
+		editMenu.add(mergeMenu);
+		editMenu.addSeparator();
+		
 		editMenu.add(editSession);
 		editMenu.add(editBlob);
 		editMenu.addSeparator();
@@ -925,7 +954,7 @@ if(model.isStruckturalChange()){
 	}
 
 
-	public class splitListener implements ActionListener {
+	public class SplitListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -1135,7 +1164,7 @@ if(model.isStruckturalChange()){
 
 	}
 
-	public class MergeTrace implements ActionListener{
+	public class MergeListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
