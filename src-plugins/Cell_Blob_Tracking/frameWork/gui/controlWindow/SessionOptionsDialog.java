@@ -24,21 +24,21 @@ public class SessionOptionsDialog{
 		// gd.setPreferredSize(new Dimension(300,200));
 
 		gd.addCheckbox("Automatic \u03C3", mod.isAutoSigmaZ());
-		gd.addNumericField("\u03C3:", mod.getDefaultSigma(), 0);
-		gd.addNumericField("Max \u03C3:", mod.getDefaultMaxSigma(), 0);
-		gd.addNumericField("Min \u03C3:", mod.getDefaultMinSigma(), 0);
+		gd.addNumericField("\u03C3:", mod.getDefaultSigma(), 2);
+		gd.addNumericField("Max \u03C3:", mod.getDefaultMaxSigma(), 2);
+		gd.addNumericField("Min \u03C3:", mod.getDefaultMinSigma(), 2);
 
 
 		if(mod.isVolune()){
 			gd.addMessage("");
-			gd.addNumericField("\u03C3Z:", mod.getDefaultSigmaZ(), 0);
-			gd.addNumericField("Max \u03C3Z:", mod.getDefaultMaxSigmaZ(), 0);
-			gd.addNumericField("Min \u03C3Z:", mod.getDefaultMinSigmaZ(), 0);
+			gd.addNumericField("\u03C3Z:", mod.getDefaultSigmaZ(), 2);
+			gd.addNumericField("Max \u03C3Z:", mod.getDefaultMaxSigmaZ(), 2);
+			gd.addNumericField("Min \u03C3Z:", mod.getDefaultMinSigmaZ(), 2);
 
 		}
 
 		gd.addMessage("");
-		gd.addNumericField("Quality Threshold:", 0, 0);
+		gd.addNumericField("Quality Threshold:", mod.getQualityThreshold(), 4);
 
 
 		gd.showDialog();
@@ -60,10 +60,13 @@ public class SessionOptionsDialog{
 				mod.setDefaultMinSigmaZ(minz);
 			}
 
+			double qthreshold = gd.getNextNumber();
+			mod.setQualityThreshold(qthreshold);
+			
 			mod.setDefaultMaxSigma(max);
 			mod.setDefaultMinSigma(min);
 			mod.setDefaultSigma(init);
-
+			
 
 
 			mod.setAutoSigmaZ(gd.getNextBoolean());
