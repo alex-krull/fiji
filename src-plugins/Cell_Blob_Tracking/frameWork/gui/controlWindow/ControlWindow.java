@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
@@ -40,6 +41,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerModel;
@@ -114,6 +116,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JButton trim;
 	private JButton saveAll;
 	private JMenuItem editBlob;
+	private JMenuItem startMenu;
 
 	/*
 	public static void main(String[] args) {
@@ -366,7 +369,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		start = new JButton("Start Tracking");
 		start.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		start.addActionListener(new StartListener());
-
+		
 
 		JButton newSession = new JButton("New Session");
 		newSession.addActionListener(new NewSessionListener());
@@ -476,6 +479,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		editBlob = new JMenuItem("Edit Object");
 		editBlob.addActionListener(new BlobMenuListener());
+		editBlob.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.SHIFT_MASK));
 
 		JMenuItem saveAllMenu = new JMenuItem("Save");
 		saveAllMenu.addActionListener(new SaveAllListener());
@@ -491,6 +495,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		JMenuItem newSessionMenu = new JMenuItem("New Session");
 		newSessionMenu.addActionListener(new NewSessionListener());
+		
+		startMenu = new JMenuItem("Start Tracking");
+		startMenu.addActionListener(new StartListener());
+		startMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.SHIFT_MASK));
+		
 		fileMenu.add(newSessionMenu);
 		fileMenu.add(saveAllMenu);
 		fileMenu.add(saveTo);
@@ -499,6 +508,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				
 		editMenu.add(editSession);
 		editMenu.add(editBlob);
+		editMenu.addSeparator();
+		editMenu.add(startMenu);
+		
 		
 		menuBar.add(fileMenu);
 		menuBar.add(editMenu);
@@ -731,8 +743,10 @@ if(model.isStruckturalChange()){
 	trackerTable.removeListener();
 		if (viewModel.isTracking()){
 			start.setText("Stop Tracking");
+			startMenu.setText("Stop Tracking");
 		} else {
 			start.setText("Start Tracking");
+			startMenu.setText("Start Tracking");
 		}
 
 		//This will get visible
