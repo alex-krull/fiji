@@ -20,7 +20,6 @@ import org.apache.commons.math.optimization.direct.PowellOptimizer;
 
 import tools.ImglibTools;
 import frameWork.MovieFrame;
-import frameWork.Session;
 
 public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends BlobPolicy<IT>{
 
@@ -122,25 +121,24 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		double newSig=0;
 		double newZ=0;
 		
-		long[] mins=  {(long)Math.max(iterableFrame.min(0), b.xPos-b.sigma*3 ),(long)
-				Math.max(iterableFrame.min(1), b.yPos-b.sigma*3 )};
+		long[] mins=  {(long)Math.max(iterableFrame.min(0), b.xPos-b.sigma*3-3 ),(long)
+				Math.max(iterableFrame.min(1), b.yPos-b.sigma*3-3 )};
 		
 		System.out.println(" mins[0] mstep:"+ mins[0]);
 		
-		long[] maxs=  {(long)Math.min(iterableFrame.max(0), b.xPos+b.sigma*3 ),(long)
-				Math.min(iterableFrame.max(1), b.yPos+b.sigma*3 )};
+		long[] maxs=  {(long)Math.min(iterableFrame.max(0), b.xPos+b.sigma*3+3 ),(long)
+				Math.min(iterableFrame.max(1), b.yPos+b.sigma*3 +3)};
 			
 		b.expectedValuesRoi=new IterableRandomAccessibleInterval<FloatType>(Views.interval(b.expectedValues,mins,maxs ));
 
-		Cursor<FloatType> cursor= b.expectedValuesRoi.cursor(); 
-  
+
 
     	b.counter=0;
 		PowellOptimizer optimizer = new PowellOptimizer(1,1);
 		optimizer.setConvergenceChecker(new SimpleScalarValueChecker() );
   //  	SimplexOptimizer optimizer = new SimplexOptimizer();
     		    	
-		boolean findSigma=false;
+		boolean findSigma=b.autoSigma;
 		double []startPoint;
 	    if(findSigma){
 	    	startPoint=new double [3];
@@ -162,7 +160,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 		newX=output[0];
 		newY=output[1];
-		if(findSigma) newSig=Math.max(0.5,Math.min(2,Math.sqrt(output[2]) ));
+		if(findSigma) newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[2],0.5 )));
 		
 	
     	change=Math.max(Math.abs((newX-b.xPos)),change);
@@ -232,8 +230,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 
 	@Override
 	public void optimizeFrame(boolean cheap, List<Blob> trackables,
-			MovieFrame<IT> movieFrame, Session<Blob,IT> bs) {
-		BlobSession<IT> blobSession= (BlobSession<IT>) bs;
+			MovieFrame<IT> movieFrame,  double qualityT) {
+		
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();	
 		Double backProb=1.0;
 		
@@ -246,7 +244,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			long time0= System.nanoTime();	
 			long eTime=0;	
 			long mTime=0;
-			for(int i=0;i<100;i++){	
+			for(int i=0;i<100;i++){
 				
 				IterableRandomAccessibleInterval<IT> iFrame= makeIterableFrame( movieFrame,  trackables);
 				
@@ -263,7 +261,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 					eTime +=eTime1-eTime0;
 					
 					System.out.println("change:" +change);			
-					if(change<blobSession.getQualityThreshold()) break;
+					if(change<qualityT) break;
 			}
 			long time1= System.nanoTime();
 			long time= (time1-time0)/1000000;

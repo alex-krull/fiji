@@ -24,6 +24,17 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 	protected Policy<T,IT> policy;
 	protected MovieChannel<IT> mChannel;
 	
+	protected double qualityThreshold=0.001;
+	
+	public double getQualityThreshold() {
+		return qualityThreshold;
+	}
+
+	public void setQualityThreshold(double qualityThreshold) {
+		this.qualityThreshold = qualityThreshold;
+	}
+	
+	
 	public boolean isVolune(){
 		return mChannel.isVolume();
 	}
@@ -96,7 +107,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 			if(trackables.contains(new Integer( t.sequenceId)) ) results.add(t);
 		}
 		
-		policy.optimizeFrame(false, results, f.getMovieFrame(), this);
+		policy.optimizeFrame(false, results, f.getMovieFrame(),this.qualityThreshold );
 	}
 
 	public int selectAt(int x, int y, int z, int frameId, int channel){

@@ -133,7 +133,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 	}
 	
 	@Override
-	public TrackingFrame<Blob,IT> produceFrame(int frameNum, MovieChannel<IT> mChannel) {		
+	public TrackingFrame<Blob,IT> produceFrame(int frameNum, MovieChannel<IT> mChannel) {
 		return new BlobFrame<IT>(frameNum, mChannel.getMovieFrame(frameNum));
 	}
 	
@@ -155,7 +155,9 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		double sigma= Double.valueOf(values[5]);
 		double sigmaZ= Double.valueOf(values[6]);
 		
-		return new Blob(sId, fNum, x, y, z, sigma, sessionId);
+		Blob nB=new Blob(sId, fNum, x, y, z, sigma, sessionId);
+		
+		return nB;
 	}
 	
 	@Override
@@ -189,6 +191,16 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 			synchronized (model){
 			if(e.isShiftDown() && e.getClickCount()==1){
 				Blob nB=new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], pos[2], 1, trackingChannel.getId());				
+				BlobSession<IT> bs= (BlobSession<IT>)trackingChannel;
+				nB.sigma=bs.getDefaultSigma();
+				nB.sigmaZ=bs.getDefaultSigmaZ();
+				nB.minSigma=bs.getDefaultMinSigma();
+				nB.maxSigma=bs.getDefaultMaxSigma();
+				nB.minSigmaZ=bs.getDefaultMinSigmaZ();
+				nB.maxSigmaZ=bs.getDefaultMaxSigmaZ();
+				nB.autoSigma=bs.isAutoSigma();
+				nB.autoSigmaZ=bs.isAutoSigmaZ();
+				
 				selectedIdList.clear();
 				selectedIdList.add(nB.sequenceId);
 				trackingChannel.addTrackable(nB);

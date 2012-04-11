@@ -38,7 +38,12 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public double pKAkku; 
 	public double inten=0;
 	public int counter=0;
-	
+	public double maxSigma=2;
+	public double minSigma=0.5;
+	public double maxSigmaZ=2;
+	public double minSigmaZ=0.5;
+	public boolean autoSigma=false;
+	public boolean autoSigmaZ=false;
 	
 	public double denominator=0;
 	public Img<FloatType> expectedValues=null;
@@ -186,7 +191,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		
 		xPos=position[0];
 		yPos=position[1];
-		if(position.length>2) sigma=Math.max(0.8,Math.min(3.0,Math.sqrt(position[2]) ) );
+		if(position.length>2) sigma=Math.max(0.8,Math.min(3.0,Math.pow(position[2],0.5) ) );
 		double value=this.localLogLikelihood();
 		
 		xPos=xOld;
