@@ -23,7 +23,7 @@ public class SessionOptionsDialog{
 
 		// gd.setPreferredSize(new Dimension(300,200));
 
-		gd.addCheckbox("Automatic \u03C3", mod.isAutoSigmaZ());
+		gd.addCheckbox("Automatic \u03C3", mod.isAutoSigma());
 		gd.addNumericField("\u03C3:", mod.getDefaultSigma(), 2);
 		gd.addNumericField("Max \u03C3:", mod.getDefaultMaxSigma(), 2);
 		gd.addNumericField("Min \u03C3:", mod.getDefaultMinSigma(), 2);
@@ -69,7 +69,7 @@ public class SessionOptionsDialog{
 			
 
 
-			mod.setAutoSigmaZ(gd.getNextBoolean());
+			mod.setAutoSigma(gd.getNextBoolean());
 		}
 
 
