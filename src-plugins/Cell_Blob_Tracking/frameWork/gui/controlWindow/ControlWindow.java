@@ -112,6 +112,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JButton delete;
 	private JButton split;
 	private JButton trim;
+	private JButton saveAll;
 
 	/*
 	public static void main(String[] args) {
@@ -189,7 +190,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				//JButton loadTo = new JButton("Reload From");
 				//loadTo.addActionListener(new LoadFromListener());
 
-				JButton saveAll = new JButton("Save");
+				saveAll = new JButton("Save");
 				saveAll.addActionListener(new SaveAllListener());
 				JButton loadAllButton = new JButton("Reload");
 				loadAllButton.addActionListener(new LoadAllListener());
@@ -471,8 +472,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		editSession = new JMenuItem("Edit Session Defaults");
 		editSession.addActionListener(new EditMenuListener());
-		JMenuItem newMenuItem = new JMenuItem("New");
-		fileMenu.add(newMenuItem);
+
 		JMenuItem saveAllMenu = new JMenuItem("Save");
 		saveAllMenu.addActionListener(new SaveAllListener());
 
@@ -484,7 +484,10 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		JMenuItem loadAll = new JMenuItem("Load");
 		loadAll.addActionListener(new LoadAllListener());
-
+		
+		JMenuItem newSessionMenu = new JMenuItem("New Session");
+		newSessionMenu.addActionListener(new NewSessionListener());
+		fileMenu.add(newSessionMenu);
 		fileMenu.add(saveAllMenu);
 		fileMenu.add(saveTo);
 		fileMenu.add(loadAll);
@@ -587,6 +590,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		viewModel.getController().addSession(methodChoice, userSessionName, channelChoice-1, viewModel);
+		int newsessionID = viewModel.getController().getSessions().size()-1;
+		viewModel.getController().setCurrentSession(newsessionID, viewModel);
 	} 
 
 	public void changeSessionDialog() {
@@ -853,6 +858,8 @@ if(model.isStruckturalChange()){
 			delete.setEnabled(false);
 			split.setEnabled(false);
 			trim.setEnabled(false);
+			
+			this.saveAll.setEnabled(false);
 
 		}else
 			{editSession.setEnabled(true);
@@ -865,12 +872,13 @@ if(model.isStruckturalChange()){
 				delete.setEnabled(false);
 				split.setEnabled(false);
 				trim.setEnabled(false);
-				
+				this.saveAll.setEnabled(false);
 				}else{
 					merge.setEnabled(true);
 					delete.setEnabled(true);
 					split.setEnabled(true);
 					trim.setEnabled(true);
+					this.saveAll.setEnabled(true);
 				}
 			
 		}
