@@ -728,7 +728,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			//newSessionDialog();
 			
 			viewModel.getController().newSession(viewModel);
-
+			
 
 
 

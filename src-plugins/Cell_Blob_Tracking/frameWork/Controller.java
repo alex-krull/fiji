@@ -432,11 +432,12 @@ public void showOjectOptions(int frameNumber){
 
 public void newSession(ViewModel<IT> viewModel){
 
-	NewSessionDialog<IT> newDialog = new NewSessionDialog<IT>(this, model);
+	NewSessionDialog<IT> newDialog = new NewSessionDialog<IT>(this, model, viewModel.getCurrentChannelNumber()+1);
 	this.addSession(newDialog.getMethodChoice(), newDialog.getUserSessionName(), newDialog.getChannelChoice()-1, viewModel); 
 	int newsessionID = viewModel.getController().getSessions().size()-1;
 	viewModel.getController().setCurrentSession(newsessionID, viewModel);
 	viewModel.getController().getCurrentSession().showPropertiesDialog();
+	viewModel.setPosition(4, newDialog.getChannelChoice()-1);
 }
 
 

@@ -22,7 +22,7 @@ public class NewSessionDialog < IT extends  NumericType<IT> & NativeType<IT> & R
 
 	private String userSessionName;
 
-	public NewSessionDialog(Controller<IT> controller, Model <IT> model){
+	public NewSessionDialog(Controller<IT> controller, Model <IT> model, int startingChannelNumber){
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
 
@@ -37,7 +37,7 @@ public class NewSessionDialog < IT extends  NumericType<IT> & NativeType<IT> & R
 		GenericDialog gd = new GenericDialog("New Session");
 		gd.addStringField("Enter new session name: ", "");
 		gd.addChoice("Pick tracking method", trackingMethods, null);
-		gd.addChoice("Pick channel to track", channelList, null);
+		gd.addChoice("Pick channel to track", channelList, startingChannelNumber + "");
 		gd.showDialog();
 		if(gd.wasCanceled())
 			return;
