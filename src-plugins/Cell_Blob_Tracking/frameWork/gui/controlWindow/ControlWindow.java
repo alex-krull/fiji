@@ -653,6 +653,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		viewModel.getController().addSession(methodChoice, userSessionName, channelChoice-1, viewModel);
 		int newsessionID = viewModel.getController().getSessions().size()-1;
 		viewModel.getController().setCurrentSession(newsessionID, viewModel);
+		viewModel.getController().getCurrentSession().showPropertiesDialog();
 	} 
 
 	public void changeSessionDialog() {
