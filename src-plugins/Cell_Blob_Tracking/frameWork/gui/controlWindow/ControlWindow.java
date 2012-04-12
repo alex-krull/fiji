@@ -1,5 +1,6 @@
 package frameWork.gui.controlWindow;
 
+import ij.IJ;
 import ij.gui.GenericDialog;
 
 import java.awt.BorderLayout;
@@ -124,6 +125,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JMenuItem mergeMenu;
 	private JMenuItem saveAllMenu;
 	private JMenuItem newSessionMenu;
+	private JMenuItem toggleOverlay;
 
 	/*
 	public static void main(String[] args) {
@@ -535,6 +537,10 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		mergeMenu.addActionListener(new MergeListener());
 		mergeMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.SHIFT_MASK));
 		
+		toggleOverlay = new JMenuItem("Toggle Overlay");
+		toggleOverlay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.SHIFT_MASK));
+		toggleOverlay.addActionListener(new ToggleListener());
+		
 		fileMenu.setBackground(Color.lightGray);
 		fileMenu.add(newSessionMenu);
 		fileMenu.add(saveAllMenu);
@@ -543,6 +549,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		fileMenu.add(loadFrom);
 				
 		editMenu.setBackground(Color.lightGray);
+		
+		editMenu.add(toggleOverlay);
+		editMenu.addSeparator();
 		editMenu.add(deleteSeqMenu);
 		editMenu.add(this.splitSeqMenu);
 		editMenu.add(trimSeqMenu);
@@ -1183,6 +1192,15 @@ if(model.isStruckturalChange()){
 			}
 		}
 
+	}
+	public class ToggleListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			viewModel.toggleDrawOverlays();	
+		}
+		
 	}
 
 	public class MergeListener implements ActionListener{
