@@ -26,6 +26,7 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.gui.ViewModel;
 import frameWork.gui.controlWindow.ControlWindow;
+import frameWork.gui.controlWindow.NewSessionDialog;
 
 
 public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > {
@@ -429,7 +430,14 @@ public void showOjectOptions(int frameNumber){
 	model.rwLock.writeLock().unlock();
 }
 
+public void newSession(ViewModel<IT> viewModel){
 
+	NewSessionDialog<IT> newDialog = new NewSessionDialog<IT>(this, model);
+	this.addSession(newDialog.getMethodChoice(), newDialog.getUserSessionName(), newDialog.getChannelChoice()-1, viewModel); 
+	int newsessionID = viewModel.getController().getSessions().size()-1;
+	viewModel.getController().setCurrentSession(newsessionID, viewModel);
+	viewModel.getController().getCurrentSession().showPropertiesDialog();
+}
 
 
 

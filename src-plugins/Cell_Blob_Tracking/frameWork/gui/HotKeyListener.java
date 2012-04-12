@@ -52,6 +52,8 @@ public class HotKeyListener implements KeyListener {
 			  viewModel.getController().showOjectOptions(viewModel.getCurrentFrameNumber());
 			  return;
 		           
+		  case KeyEvent.VK_W:
+			  viewModel.getController().newSession(viewModel);
 		  
 		        
 		}

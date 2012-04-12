@@ -14,11 +14,19 @@ import frameWork.Controller;
 
 public class NewSessionDialog < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > {
 
-	public NewSessionDialog(ViewModel<IT> viewModel, Model <IT> model){
+	private String methodChoice;
+
+
+	private Integer channelChoice;
+
+
+	private String userSessionName;
+
+	public NewSessionDialog(Controller<IT> controller, Model <IT> model){
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
 
-		String[] trackingMethods = viewModel.getController().getPossibleSessionTypes();
+		String[] trackingMethods = controller.getPossibleSessionTypes();
 		int channelNumber = model.getNumberOfChannels();
 		String[] channelList = new  String[channelNumber];
 		Integer i;
@@ -33,17 +41,30 @@ public class NewSessionDialog < IT extends  NumericType<IT> & NativeType<IT> & R
 		gd.showDialog();
 		if(gd.wasCanceled())
 			return;
-		String userSessionName = gd.getNextString();
+		userSessionName = gd.getNextString();
 
 
 
 
-		String methodChoice = gd.getNextChoice();
-		int channelChoice =Integer.valueOf(gd.getNextChoice());
+		 methodChoice = gd.getNextChoice();
+		 channelChoice =Integer.valueOf(gd.getNextChoice());
 
 
 
 		
-		viewModel.getController().addSession(methodChoice, userSessionName, channelChoice-1, viewModel);
+		//viewModel.getController().addSession(methodChoice, userSessionName, channelChoice-1, viewModel);
 	}
+	public String getUserSessionName() {
+		return userSessionName;
+	}
+	public String getMethodChoice() {
+		return methodChoice;
+	}
+
+	public Integer getChannelChoice() {
+		return channelChoice;
+	}
+
 }
+
+

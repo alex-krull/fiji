@@ -717,9 +717,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		@Override
 		public void actionPerformed(ActionEvent a) {
 			//newSessionDialog();
-			int newsessionID = viewModel.getController().getSessions().size()-1;
-			viewModel.getController().setCurrentSession(newsessionID, viewModel);
-			viewModel.getController().getCurrentSession().showPropertiesDialog();
+			
+			viewModel.getController().newSession(viewModel);
+
 
 
 
