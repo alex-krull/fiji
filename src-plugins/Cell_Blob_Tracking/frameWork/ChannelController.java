@@ -1,7 +1,6 @@
 package frameWork;
 
 
-import ij.IJ;
 import ij.gui.GenericDialog;
 
 import java.awt.Color;
@@ -152,7 +151,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			if(gd.wasOKed()){
 				
 				File toDel= new File(model.getProjectDirectory()+"/"+trackingChannel.getSequence(seqId).getPath());
-				IJ.error(toDel.getPath());
+				
 				toDel.delete();		
 			}
 			trackingChannel.deleteSequence(seqId);
