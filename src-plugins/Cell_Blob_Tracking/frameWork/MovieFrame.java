@@ -17,6 +17,10 @@ public class MovieFrame <IT extends NumericType<IT> & NativeType<IT> & RealType<
 	protected RandomAccessibleInterval<IT> frameView;
 	protected int constBackground;
 	
+	public int getNumberOfPlanes(){
+		return (int)frameView.dimension(2);
+	}
+	
 	public int getConstBackground() {
 		return constBackground;
 	}

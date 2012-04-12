@@ -171,6 +171,7 @@ implements MouseListener, MouseMotionListener{
 	}
 	
 	public void reDraw(long[] position, boolean rePaintImage){
+		model.rwLock.readLock().lock();
 		if(rePaintImage){
 			
 			if (toDraw.numDimensions()>2) toDraw=Views.hyperSlice(toDraw,2,position[4]);
@@ -190,7 +191,7 @@ implements MouseListener, MouseMotionListener{
 			
 			double min= imp.getProcessor().getMin();
 			double max= imp.getProcessor().getMax();
-			System.out.println("min:"+min +"  max:"+max);
+			System.out.println(this.getClass().getName()+":  min:"+min +"  max:"+max);
 			
 			
 			this.imp.setProcessor(impl.getProcessor());
@@ -203,7 +204,7 @@ implements MouseListener, MouseMotionListener{
 		
 	//	imp.updateAndDraw();
 		
-    	
+		model.rwLock.readLock().unlock();
 	}
 
 	protected void upDateOverlay(){
@@ -286,8 +287,8 @@ implements MouseListener, MouseMotionListener{
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
 		   
 		   if(trackables!=null) for(Trackable t : trackables){	
-	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
-			   Color c= model.getSequence(t.sequenceId,viewModel.getCurrentChannelNumber()).getColor();
+	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);		  
+			   Color c= model.getSequence(t.sequenceId).getColor();
 			   t.addShapeX(ovTemplate,viewModel.isSelected(t.sequenceId),c);
 			   
 		   }
@@ -310,7 +311,7 @@ implements MouseListener, MouseMotionListener{
 		
 		 if(trackables!=null) for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
-			   Color c= model.getSequence(t.sequenceId, viewModel.getCurrentChannelNumber()).getColor();
+			   Color c= model.getSequence(t.sequenceId ).getColor();
 			   t.addShapeY(ovTemplate,viewModel.isSelected(t.sequenceId),c);
 			   
 		   }
