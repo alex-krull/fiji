@@ -512,7 +512,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		newSessionMenu = new JMenuItem("New Session");
 		newSessionMenu.addActionListener(new NewSessionListener());
-		newSessionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.SHIFT_MASK));
+		newSessionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.SHIFT_MASK));
 		
 		
 		startMenu = new JMenuItem("Start Tracking");
