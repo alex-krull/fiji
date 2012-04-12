@@ -275,11 +275,17 @@ public MovieFrame<IT> getFrame(int frame, int channel){
 }
 
 public RandomAccessibleInterval<IT> getXTProjections(int channel){
-	return channels.get(channel).getXTProjections();
+	this.rwLock.readLock().lock();
+	RandomAccessibleInterval<IT> r= channels.get(channel).getXTProjections();
+	this.rwLock.readLock().unlock();
+	return r;
 }
 
 public RandomAccessibleInterval<IT> getYTProjections(int channel){
-	return channels.get(channel).getYTProjections();
+	this.rwLock.readLock().lock();
+	RandomAccessibleInterval<IT> r= channels.get(channel).getYTProjections();
+	this.rwLock.readLock().unlock();
+	return r;
 }
 
 public void makeChangesPublic(){

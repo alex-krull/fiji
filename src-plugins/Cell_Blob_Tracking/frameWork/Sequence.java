@@ -137,8 +137,9 @@ public class Sequence<T extends Trackable> {
 	
 	
 	
-	public void getKymoOverlayX(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected){
+	public void getKymoOverlayX(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected){	
 		policy.getKymoOverlayX(ov, scaleX, scaleY, transX, transY, selected, trackables, color);
+		
 	}
 	
 	public void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected){
