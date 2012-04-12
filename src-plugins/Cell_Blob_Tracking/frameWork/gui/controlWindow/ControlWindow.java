@@ -608,7 +608,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	}
 
 	//This creates the newSessionDialog
-	public void newSessionDialog() {
+	/*public void newSessionDialog() {
 
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
@@ -646,15 +646,15 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 
-		/*		text.selectAll();
-		text.append((String) trace[2][0] + "\n");*/
+				text.selectAll();
+		text.append((String) trace[2][0] + "\n");
 
 
 		viewModel.getController().addSession(methodChoice, userSessionName, channelChoice-1, viewModel);
 		int newsessionID = viewModel.getController().getSessions().size()-1;
 		viewModel.getController().setCurrentSession(newsessionID, viewModel);
 		viewModel.getController().getCurrentSession().showPropertiesDialog();
-	} 
+	} */
 
 	public void changeSessionDialog() {
 
@@ -716,7 +716,10 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	public class NewSessionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent a) {
-			newSessionDialog();
+			//newSessionDialog();
+			int newsessionID = viewModel.getController().getSessions().size()-1;
+			viewModel.getController().setCurrentSession(newsessionID, viewModel);
+			viewModel.getController().getCurrentSession().showPropertiesDialog();
 
 
 
