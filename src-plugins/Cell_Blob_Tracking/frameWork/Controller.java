@@ -359,12 +359,14 @@ public void load(ViewModel<IT> viewModel){
 }
 
 public void setCurrentSession(int id, ViewModel<IT> viewModel){
+	model.rwLock.writeLock().lock();
 //	IJ.error("old:"+String.valueOf(selectedTCId));
 	selectedTCId=id;
 //	IJ.error("new:"+String.valueOf(selectedTCId));
 	model.makeStructuralChange();
 	viewModel.reFreshSessionToBeDisplayed();
 	model.makeChangesPublic();
+	model.rwLock.writeLock().unlock();
 	
 }
 
