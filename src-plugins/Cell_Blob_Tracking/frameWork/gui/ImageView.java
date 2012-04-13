@@ -171,7 +171,7 @@ implements MouseListener, MouseMotionListener{
 	}
 	
 	public synchronized void reDraw(long[] position, boolean rePaintImage){
-		model.rwLock.readLock().lock();
+		//model.rwLock.readLock().lock();
 		if(rePaintImage){
 			
 			if (toDraw.numDimensions()>2) toDraw=Views.hyperSlice(toDraw,2,position[4]);
@@ -204,7 +204,7 @@ implements MouseListener, MouseMotionListener{
 		
 	//	imp.updateAndDraw();
 		
-		model.rwLock.readLock().unlock();
+	//	model.rwLock.readLock().unlock();
 	}
 
 	protected void upDateOverlay(){

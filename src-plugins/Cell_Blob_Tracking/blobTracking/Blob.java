@@ -109,7 +109,9 @@ public class Blob extends Trackable implements MultivariateRealFunction {
     	while ( cursor.hasNext() )	{
     		cursor.fwd();
     		double b=(cursor.get().get());
-    		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1), cursor.getIntPosition(2),
+    		int zPos=0;
+    		if(Model.getInstance().isVolume()) zPos=cursor.getIntPosition(2);
+    		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1),zPos,
     				px,py,pz,ps,psz,
     				denominator);  		
     		
@@ -204,15 +206,18 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		//if(position[2]<0.5) return Double.MIN_VALUE;
 	
 		
-		
-		
-		
 		double px=position[0];
 		double py=position[1];
-		double pz=position[2];
+		double pz=0;
 		double ps=this.sigma;
 		double psz=this.sigmaZ;
-		if(position.length>3) ps=Math.max(0.8,Math.min(3.0,Math.pow(position[3],0.5) ) );
+		if(!Model.getInstance().isVolume()&& this.autoSigma) ps=Math.max(0.8,Math.min(3.0,Math.pow(position[2],0.5) ) );
+		if(Model.getInstance().isVolume()&& this.autoSigma){
+			 pz=position[2];
+			 ps=Math.max(0.8,Math.min(3.0,Math.pow(position[3],0.5) ) );
+		}
+		if(Model.getInstance().isVolume()&& !this.autoSigma)
+			pz=position[2];
 		double value=this.localLogLikelihood(px,py,pz,ps,psz);
 		
 		return value;

@@ -123,8 +123,9 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 			
 			sequence=produceSequence(trackable.sequenceId, Integer.toString(trackable.sequenceId));
 	//		System.out.println("Adding Seq!");
+			sequence.addTrackable(trackable);
 			Sequences.put(trackable.sequenceId, sequence);
-		}
+		}else
 		sequence.addTrackable(trackable);
 		
 	}

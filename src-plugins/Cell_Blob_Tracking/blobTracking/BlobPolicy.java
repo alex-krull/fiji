@@ -52,6 +52,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 	for(double i=trackables.firstKey();i<=trackables.lastKey();i++){
 		lastB=b;
 		b=trackables.get((int)i);
+		if(b==null) continue;
 		if(lastB!=null&&b!=null){
 			Line l=new Line((i-1+0.5)*scaleX-transX,(lastB.yPos+0.5)*scaleY-transY,(i+0.5)*scaleX-transX,(b.yPos+0.5)*scaleY-transY);
 			l.setStrokeColor(color);
@@ -88,12 +89,16 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 	@Override
 	public void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected,
 			SortedMap <Integer,Blob> trackables, Color color){
+		
 
+		
 		Blob b=null;
 		Blob lastB=null;
+		
 		for(double i=trackables.firstKey();i<=trackables.lastKey();i++){
 			lastB=b;
-			b=trackables.get((int)i);		
+			b=trackables.get((int)i);
+			if(b==null) continue;
 			if(lastB!=null&&b!=null){
 				Line l =new Line((lastB.xPos+0.5)*scaleX-transX,(i-1+0.5)*scaleY-transY,(b.xPos+0.5)*scaleX-transX,(i+0.5)*scaleY-transY);
 				l.setStrokeColor(color);
@@ -126,8 +131,6 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		}
 		
 	
-		
-		
 		
 
 	}
