@@ -184,10 +184,10 @@ public void optimizeFrame(int frameNumber ){
 }
 
 public void StartTracking(int frameNumber ){
-	model.rwLock.writeLock().lock();
+	
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null) cc.startTracking(frameNumber);
-	model.rwLock.writeLock().unlock();
+	
 	
 //	}
 }

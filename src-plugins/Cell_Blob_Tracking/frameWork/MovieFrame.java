@@ -16,6 +16,17 @@ public class MovieFrame <IT extends NumericType<IT> & NativeType<IT> & RealType<
 	private RandomAccessibleInterval<IT> yProjection = null;
 	protected RandomAccessibleInterval<IT> frameView;
 	protected int constBackground;
+	protected boolean isVolume;
+	protected double xyToZ;
+	
+	public boolean isVolume(){
+		return this.isVolume;
+	}
+	
+	public int getNumberOfPlanes(){
+		if(frameView.numDimensions()<3) return 1;
+		return (int)frameView.dimension(2);
+	}
 	
 	public int getConstBackground() {
 		return constBackground;
@@ -33,11 +44,12 @@ public class MovieFrame <IT extends NumericType<IT> & NativeType<IT> & RealType<
 		this.frameView = frameView;
 	}
 
-	public MovieFrame(int frameNum, RandomAccessibleInterval<IT> view, int cBackGround){
+	public MovieFrame(int frameNum, RandomAccessibleInterval<IT> view, int cBackGround, double zRatio){
+		xyToZ=zRatio;
 		constBackground=cBackGround;
 		frameView=view;
 		frameNumber=frameNum;
-			
+		isVolume=(frameView.numDimensions()>2);
 	}
 	
 	public synchronized RandomAccessibleInterval<IT> getXProjections(){

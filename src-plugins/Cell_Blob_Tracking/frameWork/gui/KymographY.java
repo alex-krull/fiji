@@ -55,8 +55,9 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	    this.addKymoYOverlayes();
 		this.addYLineOverlay(position[3]);
 		if(viewModel.mouseIsInWindow)  this.addXShortLineOverlay(position[0], position[3],10);
-		toDraw=model.getYTProjections((int)position[4]);
-		super.reFresh(position, rePaintImage);
+		RandomAccessibleInterval<IT> toDraw=model.getYTProjections((int)position[4]);
+		reDraw(position, rePaintImage,toDraw);
+		//super.reFresh(position, rePaintImage);
 	}
 
 	

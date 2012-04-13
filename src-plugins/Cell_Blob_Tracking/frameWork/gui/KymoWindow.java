@@ -34,19 +34,7 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 	//	rePaint(viewModel.getPosition(),true);	
 	}
 	
-	@Override
-	public void reFresh(long[] position, boolean rePaintImage){
-	//	long time0= System.nanoTime();
-//		if(sb!=null){
-//			if(sb.getValue()!=position[3]+1 )  sb.setValue((int) (position[3]+1));
-			
-//		}
-		
-		reDraw(position, rePaintImage);
-	//	long time1= System.nanoTime();
-	//	System.out.println("Time taken:"+((time1-time0)/1000000));
-		
-	}
+
 	
 	
 

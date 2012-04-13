@@ -25,7 +25,7 @@ public class Model <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> 
 
 
 
-
+private static Model<?> instance;
 
 private boolean isVolume=false;
 private boolean isTimeSequence=false;
@@ -44,6 +44,10 @@ private boolean structuralChange=true;
 private int intensityOffset=0;
 private double xyToZ=3.5;
 public final ReentrantReadWriteLock rwLock;
+
+public static Model<?> getInstance(){
+	return instance;
+}
 
 public double getXyToZ() {
 	return xyToZ;
@@ -206,7 +210,7 @@ public Model(ImagePlus imp){
 	
 	if(isMultiChannel){
 		for(int i=0;i<numberOfChannels;i++){
-			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i),i,numberOfFrames, this.intensityOffset );
+			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, image.numDimensions()-1, i),i,numberOfFrames, this.intensityOffset, xyToZ );
 //			MovieChannel<IT> chann= new MovieChannel<IT>(Views.hyperSlice(image, 2, i),i,numberOfFrames );
 
 			channels.put(i, chann);
@@ -214,13 +218,14 @@ public Model(ImagePlus imp){
 			
 		}
 	}else{
-		MovieChannel<IT> chann= new MovieChannel<IT>( image,0, numberOfFrames, this.intensityOffset);
+		MovieChannel<IT> chann= new MovieChannel<IT>( image,0, numberOfFrames, this.intensityOffset, xyToZ);
 		channels.put(0, chann);
 	}
 	
 	
 	
 //	System.out.println("numOfFrames:" +numberOfFrames);
+	instance=this;
 }
 
 

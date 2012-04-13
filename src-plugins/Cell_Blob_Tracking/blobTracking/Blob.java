@@ -18,6 +18,7 @@ import net.imglib2.view.IterableRandomAccessibleInterval;
 import org.apache.commons.math.analysis.MultivariateRealFunction;
 
 import tools.ImglibTools;
+import frameWork.Model;
 import frameWork.Trackable;
 
 /**
@@ -34,7 +35,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public double zPos;
 	public double sigma;
 	public double sigmaZ;
-	public double pK=0.18;
+	public double pK=0.5;
 	public double pKAkku; 
 	public double inten=0;
 	public int counter=0;
@@ -44,8 +45,9 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public double minSigmaZ=0.5;
 	public boolean autoSigma=false;
 	public boolean autoSigmaZ=false;
+	public double denom=0;
 	
-	public double denominator=0;
+	
 	public Img<FloatType> expectedValues=null;
 	public IterableRandomAccessibleInterval <FloatType> expectedValuesRoi;
 
@@ -70,35 +72,53 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		sigmaZ = sigma * 2;
 	}
 	
-	public double calcDenominator(Interval img){
-		denominator=ImglibTools.gaussIntegral(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5,xPos,yPos,sigma );
-//		System.out.println("denominator :" +denominator );
-		return denominator;
+	public double calcDenominator(Interval img, double px,double py,double pz,double ps,double psz){
+		//denominator=ImglibTools.gaussIntegral(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5,xPos,yPos,sigma );
+		double akku=0;
+		for(double i=0;i<this.expectedValues.dimension(2);i++){
+			akku+=ImglibTools.gaussIntegral2dIn3d(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5, i*Model.getInstance().getXyToZ(),
+					px, py, pz, ps, psz);
+		
+		}
+						
+		return akku;
 	}
 	
-	public double pXunderK(int x, int y, int z){
-		return ImglibTools.gaussPixelIntegral(x, y, xPos, yPos, sigma)/denominator;
+	public double pXunderK(int x, int y, int z,
+			double px, double py, double pz, double ps, double psz,
+			double denominator){
+		//return ImglibTools.gaussPixelIntegral(x, y, xPos, yPos, sigma)/denominator;
+		return ImglibTools.gaussPixelIntegral2dIn3d(x, y, z* Model.getInstance().getXyToZ()
+				, px, py, pz, ps, psz)/denominator;
 	}
 	
 	
-	public double pXandK(int x, int y, int z){
-		return pXunderK(x,y,z)*pK;
+	public double pXandK(int x, int y, int z,
+			double px, double py, double pz, double ps, double psz,
+			double denominator){
+		return pXunderK(x,y,z, px, py, pz, ps, psz, denominator)*pK;
+		
 	}
 	
-	public double localLogLikelihood(){
-		this.calcDenominator(expectedValuesRoi);
+	public double localLogLikelihood(double px, double py, double pz, double ps, double psz){
+		double denominator= calcDenominator(expectedValuesRoi, px,py,pz,ps,psz);
+	//	if(this.denominator<0.00000001) return 0;
 		double result=0;
 		Cursor<FloatType> cursor= expectedValuesRoi.cursor();	
+		
     	while ( cursor.hasNext() )	{
     		cursor.fwd();
     		double b=(cursor.get().get());
-    		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1),0 );  		
+    		int zPos=0;
+    		if(Model.getInstance().isVolume()) zPos=cursor.getIntPosition(2);
+    		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1),zPos,
+    				px,py,pz,ps,psz,
+    				denominator);  		
     		
-    		if(a<0.0000001) continue;
+    		if(a<0.0000000000001) continue;
     		result+=Math.log(a)*b;
     		
     	}
-   // 	System.out.println("Result: "+result);
 		return result;
 	}
 	
@@ -130,8 +150,8 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public void addShapeY(Overlay ov, boolean selected, Color c){
 		
 		
-		Roi roi=new EllipseRoi(xPos , zPos-2*sigmaZ, xPos ,
-				zPos+2*sigmaZ, sigma / sigmaZ);
+		Roi roi=new EllipseRoi(0.5+ xPos ,0.5*Model.getInstance().getXyToZ()+ zPos-2*sigmaZ,0.5+ xPos ,
+				0.5*Model.getInstance().getXyToZ()+zPos+2*sigmaZ, sigma / sigmaZ);
 		roi.setStrokeColor(c);
 		roi.setStrokeWidth(1);
 		if(selected) roi.setStrokeWidth(4);
@@ -143,8 +163,9 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public void addShapeX(Overlay ov, boolean selected, Color c){
 		
 		
-		Roi roi = new EllipseRoi(zPos + sigmaZ * 2, yPos, zPos - sigmaZ * 2,
-				yPos, sigma / sigmaZ);
+		Roi roi = new EllipseRoi(0.5*Model.getInstance().getXyToZ()+zPos + sigmaZ * 2,0.5+ yPos,
+				0.5*Model.getInstance().getXyToZ()+ zPos - sigmaZ * 2,
+				0.5+yPos, sigma / sigmaZ);
 		roi.setStrokeColor(c);
 		roi.setStrokeWidth(1);
 		if(selected) roi.setStrokeWidth(4);
@@ -185,18 +206,19 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		//if(position[2]<0.5) return Double.MIN_VALUE;
 	
 		
-		double xOld=xPos;
-		double yOld=yPos;
-		double sigmaOld=sigma;
-		
-		xPos=position[0];
-		yPos=position[1];
-		if(position.length>2) sigma=Math.max(0.8,Math.min(3.0,Math.pow(position[2],0.5) ) );
-		double value=this.localLogLikelihood();
-		
-		xPos=xOld;
-		yPos=yOld;
-		sigma=sigmaOld;
+		double px=position[0];
+		double py=position[1];
+		double pz=0;
+		double ps=this.sigma;
+		double psz=this.sigmaZ;
+		if(!Model.getInstance().isVolume()&& this.autoSigma) ps=Math.max(0.8,Math.min(3.0,Math.pow(position[2],0.5) ) );
+		if(Model.getInstance().isVolume()&& this.autoSigma){
+			 pz=position[2];
+			 ps=Math.max(0.8,Math.min(3.0,Math.pow(position[3],0.5) ) );
+		}
+		if(Model.getInstance().isVolume()&& !this.autoSigma)
+			pz=position[2];
+		double value=this.localLogLikelihood(px,py,pz,ps,psz);
 		
 		return value;
 		

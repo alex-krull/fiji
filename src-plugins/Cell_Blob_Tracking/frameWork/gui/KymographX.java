@@ -1,14 +1,17 @@
 package frameWork.gui;
 
 import ij.IJ;
+import ij.plugin.ContrastEnhancer;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.Views;
 import frameWork.Model;
 
 
@@ -58,9 +61,9 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		this.addKymoXOverlayes();
 		this.addXLineOverlay(position[3]);
 		if(viewModel.mouseIsInWindow) this.addYShortLineOverlay(position[1], position[3],10);
-		toDraw=model.getXTProjections((int)position[4]);
-		super.reFresh(position, rePaintImage);
-		//imp.updateAndDraw();
+		RandomAccessibleInterval<IT> toDraw=model.getXTProjections((int)position[4]);
+		reDraw(position, rePaintImage,toDraw);
+		
 		
 	}
 

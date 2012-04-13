@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -29,8 +30,8 @@ public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & Rea
 			this.addYLineOverlay(position[1]);
 		}
 		int frameNumber= (int)position[3];
-		toDraw=model.getFrame(frameNumber, viewModel.getCurrentChannelNumber()).getZProjections();
-		reDraw( position ,rePaintImage);
+		RandomAccessibleInterval<IT> toDraw=model.getFrame(frameNumber, viewModel.getCurrentChannelNumber()).getZProjections();
+		reDraw( position ,rePaintImage, toDraw);
 		//super.rePaint(position, rePaintImage);
 	}
 
