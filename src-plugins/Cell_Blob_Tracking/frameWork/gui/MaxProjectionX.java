@@ -2,6 +2,7 @@ package frameWork.gui;
 
 import java.awt.event.MouseEvent;
 
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -33,8 +34,8 @@ import frameWork.Model;
 			if(viewModel.mouseIsInWindow)  this.addYShortLineOverlay(position[1], position[2],10);
 			
 			int frameNumber= (int)position[3];
-			toDraw=model.getFrame(frameNumber, viewModel.getCurrentChannelNumber()).getXProjections();
-			reDraw( position ,rePaintImage);
+			RandomAccessibleInterval<IT> toDraw=model.getFrame(frameNumber, viewModel.getCurrentChannelNumber()).getXProjections();
+			reDraw( position ,rePaintImage, toDraw);
 			}
 		
 		@Override

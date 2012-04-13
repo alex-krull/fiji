@@ -44,7 +44,7 @@ implements MouseListener, MouseMotionListener{
 	protected ImagePlus imp=null;
 	protected RandomAccessibleInterval<IT> image;
 	protected ImageCanvas canvas;
-	protected Overlay ovTemplate;
+	protected volatile Overlay ovTemplate;
 	protected double scaleX=1;
 	protected double scaleY=1;
 	protected int transX=0;
@@ -52,7 +52,7 @@ implements MouseListener, MouseMotionListener{
 	protected int xSize=-1;
 	protected int ySize=-1;
 
-	protected RandomAccessibleInterval<IT> toDraw;
+//	protected RandomAccessibleInterval<IT> toDraw;
 	
 	
 	protected class MyWindowListener implements WindowListener{
@@ -170,11 +170,12 @@ implements MouseListener, MouseMotionListener{
 	 	
 	}
 	
-	public synchronized void reDraw(long[] position, boolean rePaintImage){
+	public synchronized void reDraw(long[] position, boolean rePaintImage, RandomAccessibleInterval<IT> toDraw){
 		//model.rwLock.readLock().lock();
+		
 		if(rePaintImage){
 			
-			if (toDraw.numDimensions()>2) toDraw=Views.hyperSlice(toDraw,2,position[4]);
+			if (toDraw.numDimensions()>2) toDraw=Views.hyperSlice(toDraw,2,position[4] );
 			if(imp==null) {
 				imp= ImageJFunctions.show(toDraw,caption);
 				ContrastEnhancer ce= new ContrastEnhancer();		
@@ -200,6 +201,8 @@ implements MouseListener, MouseMotionListener{
 	
 		}
 		
+		
+		
 		upDateOverlay();
 		
 	//	imp.updateAndDraw();
@@ -208,7 +211,7 @@ implements MouseListener, MouseMotionListener{
 	}
 
 	protected void upDateOverlay(){
-		synchronized (ovTemplate){
+		
 			
 		if(viewModel.getDrawOverLays()){
 			Overlay ov=ovTemplate.duplicate();
@@ -216,17 +219,22 @@ implements MouseListener, MouseMotionListener{
 				Roi roi=ov.get(i);
 				roi.setStrokeWidth(Math.min(3, roi.getStrokeWidth()/imp.getCanvas().getMagnification() ));
 			}
+			synchronized (ovTemplate){
 			imp.setOverlay(ov);
+			}
 		}
-		else imp.setOverlay(null);	
+		else {
+			synchronized (ovTemplate){
+				imp.setOverlay(null);	
+			}
 		
 		}
 	}
 	
 	protected void clearOverlay(){
-		synchronized (ovTemplate){
+		
 		ovTemplate.clear();
-		}
+		
 		
 	}
 	
@@ -235,7 +243,7 @@ implements MouseListener, MouseMotionListener{
 	 * add the Overlays of the traces for the x-projection-kymographs
 	 */
 	protected void addKymoXOverlayes(){
-		synchronized (ovTemplate){
+		
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 	
 		for(Session<? extends Trackable,IT> tc: tcs){
@@ -249,14 +257,14 @@ implements MouseListener, MouseMotionListener{
 			}
 			} 
 		}
-		}
+		
 	}
 	
 	/**
 	 * add the Overlays of the traces for the y-projection-kymographs
 	 */
 	protected void addKymoYOverlayes(){
-		synchronized (ovTemplate){
+		
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		
 		for(Session<? extends Trackable,IT> tc: tcs){
@@ -271,7 +279,7 @@ implements MouseListener, MouseMotionListener{
 			}
 		}
 		}
-		}
+		
 	}
 
 	
@@ -281,7 +289,7 @@ implements MouseListener, MouseMotionListener{
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addXOverlayes(int frameNumber){
-		synchronized (ovTemplate){
+		
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		for(Session<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
@@ -294,7 +302,7 @@ implements MouseListener, MouseMotionListener{
 		   }
 		   
 		}
-		}
+		
 		   
 	}
 	
@@ -304,7 +312,7 @@ implements MouseListener, MouseMotionListener{
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addYOverlayes(int frameNumber){
-		synchronized (ovTemplate){
+		
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		for(Session<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
@@ -316,7 +324,7 @@ implements MouseListener, MouseMotionListener{
 			   
 		   }
 		}
-		}
+		
 	}
 	
 	/**
@@ -325,7 +333,7 @@ implements MouseListener, MouseMotionListener{
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addZOverlayes(int frameNumber){
-		synchronized (ovTemplate){
+		
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		for(Session<? extends Trackable,IT> tc: tcs){	
 		List<? extends Trackable> trackables= tc.getTrackablesForFrame(frameNumber);
@@ -337,7 +345,7 @@ implements MouseListener, MouseMotionListener{
 			   
 		   }
 		} 
-		}
+		
 	}
 	
 	
@@ -347,7 +355,7 @@ implements MouseListener, MouseMotionListener{
 	 * @param position the x-position of the line
 	 */
 	protected void addYLineOverlay(double position){
-		synchronized (ovTemplate){
+		
 		   
 		Line l= new Line(0 ,(position+0.5)*scaleY-transY
 				,this.xSize ,(position+0.5)*scaleY-transY);
@@ -355,7 +363,7 @@ implements MouseListener, MouseMotionListener{
 		l.setStrokeColor(new Color (255,255,0));
 		ovTemplate.add(l);		  
 
-		}
+		
 	}
 	
 	/**
@@ -363,13 +371,13 @@ implements MouseListener, MouseMotionListener{
 	 * @param position the y-position of the line
 	 */
 	protected void addXLineOverlay(double position){
-		synchronized (ovTemplate){
+		
 		Line l= new Line((position+0.5)*scaleX-transX,0
 				,(position+0.5)*scaleX-transX,this.ySize) ;
 		l.setStrokeWidth(1);
 		l.setStrokeColor(new Color (255,255,0));
 		   ovTemplate.add(l);		  			   
-		}
+		
 	}
 	
 	/**
@@ -377,13 +385,13 @@ implements MouseListener, MouseMotionListener{
 	 * @param position the x-position of the line
 	 */
 	protected void addYShortLineOverlay(double position, double pos2, double length){
-		synchronized (ovTemplate){
+		
 		Line l= new Line((pos2+0.5)*scaleX-length -transX,(position+0.5)*scaleY-transY
 				,(pos2+0.5)*scaleX+length -transX,(position+0.5)*scaleY-transY);
 		l.setStrokeWidth(1);
 		l.setStrokeColor(new Color (255,255,0));
 		ovTemplate.add(l);		  			   
-		}
+		
 	}
 	
 	/**
@@ -391,13 +399,13 @@ implements MouseListener, MouseMotionListener{
 	 * @param position the y-position of the line
 	 */
 	protected void addXShortLineOverlay(double position, double pos2, double length){
-		synchronized (ovTemplate){
+		
 		Line l= new Line((position+0.5)*scaleX-transX,(pos2+0.5)*scaleY-transY-length
 				,(position+0.5)*scaleX-transX,(pos2+0.5)*scaleY+length-transY) ;
 		l.setStrokeWidth(1);
 		l.setStrokeColor(new Color (255,255,0));
 		   ovTemplate.add(l);		  			   
-		}
+		
 	}
 	
 	@Override
