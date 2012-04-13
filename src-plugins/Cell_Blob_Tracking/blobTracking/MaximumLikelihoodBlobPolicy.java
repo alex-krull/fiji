@@ -1,5 +1,7 @@
 package blobTracking;
 
+import ij.IJ;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,12 +135,12 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		double newZ=0;
 		
 		long[] mins=  {(long)Math.max(iterableFrame.min(0), b.xPos-b.sigma*3-3 ),(long)
-				Math.max(iterableFrame.min(1), b.yPos-b.sigma*3-3 ), iterableFrame.min(2)};
+				Math.max(iterableFrame.min(1), b.yPos-b.sigma*3-3 ), b.expectedValues.min(2)};
 		
 		System.out.println(" mins[0] mstep:"+ mins[0]);
 		
 		long[] maxs=  {(long)Math.min(iterableFrame.max(0), b.xPos+b.sigma*3+3 ),(long)
-				Math.min(iterableFrame.max(1), b.yPos+b.sigma*3 +3), iterableFrame.max(2)};
+				Math.min(iterableFrame.max(1), b.yPos+b.sigma*3 +3), b.expectedValues.max(2)};
 			
 		b.expectedValuesRoi=new IterableRandomAccessibleInterval<FloatType>(Views.interval(b.expectedValues,mins,maxs ));
 
@@ -160,7 +162,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	    }else{
 	    	startPoint=new double [3];
 	    	startPoint[0]=b.xPos;
-	    	startPoint[1]=	b.yPos;
+	    	startPoint[1]=b.yPos;
 	    	startPoint[2]=b.zPos;
 	    }
 		
@@ -174,6 +176,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		newX=output[0];
 		newY=output[1];
 		newZ=output[2];
+		
 		if(findSigma) newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[3],0.5 )));
 		
 	
@@ -185,6 +188,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
     	b.xPos=newX;
     	b.yPos=newY;
     	b.zPos=newZ;
+    	System.out.println("new Z: "+ newZ);
     	if(findSigma) b.sigma=newSig;
 //    	b.zPos=newZ/inten;
     	b.pK=b.inten/totalInten;
@@ -261,6 +265,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		}
 	
 		
+		
 			long time0= System.nanoTime();	
 			long eTime=0;	
 			long mTime=0;
@@ -273,11 +278,13 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 					long eTime0= System.nanoTime();
 					double ti= doEStep(trackables,movieFrame,backProb,iFrame);
 					ImageJFunctions.show (trackables.get(0).expectedValues, "ev");
+			//		IJ.error("stop");
 					long eTime1= System.nanoTime();
-					double change;
-					
+					double change=0;
+			
 					long mTime0= System.nanoTime();
 					change=this.doMstep(ti, trackables,backProb, iFrame);
+					//System.out.println("value:"+ trackables.get(0).localLogLikelihood());
 					long mTime1= System.nanoTime();
 					
 					mTime +=mTime1-mTime0;

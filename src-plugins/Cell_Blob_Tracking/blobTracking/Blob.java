@@ -74,12 +74,12 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		//denominator=ImglibTools.gaussIntegral(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5,xPos,yPos,sigma );
 		double akku=0;
 		for(double i=0;i<this.expectedValues.dimension(2);i++){
-			akku+=ImglibTools.gaussIntegral2dIn3d(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5, 1.0/*marker*/,
+			akku+=ImglibTools.gaussIntegral2dIn3d(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5, i*1.0/*marker*/,
 					xPos, yPos, zPos, sigma, sigmaZ);
 		
 		}
-		denominator=akku;
-	//					System.out.println("denominator :" +denominator );
+		denominator= akku;
+						
 		return denominator;
 	}
 	
@@ -90,23 +90,30 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	
 	
 	public double pXandK(int x, int y, int z){
+		System.out.println(pK);
 		return pXunderK(x,y,z)*pK;
 		
 	}
 	
 	public double localLogLikelihood(){
 		this.calcDenominator(expectedValuesRoi);
+	//	if(this.denominator<0.00000001) return 0;
 		double result=0;
 		Cursor<FloatType> cursor= expectedValuesRoi.cursor();	
+		double sumA=0;
     	while ( cursor.hasNext() )	{
     		cursor.fwd();
     		double b=(cursor.get().get());
     		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1), cursor.getIntPosition(2));  		
-    		
-    		//if(a<0.000000000000001) continue;
+    		if(a>=1.0){
+    			System.out.println("a:"+a+"  b:"+b+ "   denominator :" +denominator );
+    		}
+    		sumA+=a;
+    		if(a<0.0000000000001) continue;
     		result+=Math.log(a)*b;
     		
     	}
+    	System.out.println("denominator :" +denominator + "     sumA:"+ sumA);
    // 	System.out.println("Result: "+result);
 		return result;
 	}
