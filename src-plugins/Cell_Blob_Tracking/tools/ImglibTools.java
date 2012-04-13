@@ -1,10 +1,8 @@
 package tools;
 
-import org.apache.commons.math.special.Erf;
-
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import net.imglib2.Cursor;
@@ -23,10 +21,14 @@ import net.imglib2.view.IntervalView;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
+import org.apache.commons.math.special.Erf;
+
 public class ImglibTools {
+	
 	
 	public static final int MAXPROJECTION = 0;
 	public static final int SUMPROJECTION = 1;
+	public static final double sq=Math.sqrt(2);
 	
 	public static <T extends  NumericType<T> & RealType<T> & NativeType<T>  > Img<T> scaleByFactor(RandomAccessibleInterval<T> img, int d, double factor){
 		ImgFactory<T> imgFactory = new ArrayImgFactory<T>();
@@ -36,7 +38,7 @@ public class ImglibTools {
 	  		
 	  		
 	   	        
-	       dims[d]=(long) ((double)dims[d]*factor);
+	       dims[d]=(long) (dims[d]*factor);
 	       Img <T> result= imgFactory.create(dims, img.randomAccess().get().copy());      
 	       resize(img,result);
 	       return result;
@@ -71,9 +73,9 @@ public class ImglibTools {
 		{
 			d.fwd();
 			for(int dim=0;dim<dimensions;dim++){
-				int position= (int) ((double)(d.getIntPosition(dim))*factors[dim]);
+				int position= (int) ((d.getIntPosition(dim))*factors[dim]);
 				
-				s.setPosition((int) position,dim );
+				s.setPosition(position,dim );
 			}
 			
 			d.get().set( s.get() );
@@ -213,6 +215,7 @@ public static long getNumOfPixels(Interval img){
 	long akku=1;
 	for(int i=0;i<img.numDimensions();i++)
 		akku*=(img.max(i)-img.min(i)+1);
+	//System.out.println("                            number of pixels:" + akku);
 	return akku;
 }
 
@@ -265,15 +268,17 @@ public static long getNumOfPixels(Interval img){
 */
 
 public static double gaussPixelIntegral(int x , int y, double cx, double cy, double sig){
-    double sq=Math.sqrt(2);
-    double calcX=0.5*Erf.erf( ((double)x-cx+0.5)/(sq*sig) )-0.5*Erf.erf( ((double)x-cx-0.5)/(sq*sig) );
-    double calcY=0.5*Erf.erf( ((double)y-cy+0.5)/(sq*sig) )-0.5*Erf.erf( ((double)y-cy-0.5)/(sq*sig) );
+  //  double sq=Math.sqrt(2);
+    double calcX=0.5*Erf.erf( (x-cx+0.5)/(sq*sig) )-0.5*Erf.erf( (x-cx-0.5)/(sq*sig) );
+    double calcY=0.5*Erf.erf( (y-cy+0.5)/(sq*sig) )-0.5*Erf.erf( (y-cy-0.5)/(sq*sig) );
 
     return calcX*calcY;
 }
 
+
+
 public static double gaussIntegral(double x1 , double y1, double x2, double y2,  double cx, double cy, double sig){
-    double sq=Math.sqrt(2.0);
+//    double sq=Math.sqrt(2.0);
 
     double calcX=0.5*Erf.erf( (x2-cx)/(sq*sig) )-0.5*Erf.erf( (x1-cx)/(sq*sig) );
     double calcY=0.5*Erf.erf( (y2-cy)/(sq*sig) )-0.5*Erf.erf( (y1-cy)/(sq*sig) );
@@ -282,27 +287,35 @@ public static double gaussIntegral(double x1 , double y1, double x2, double y2, 
     return calcX*calcY;
 }
 
+public static double gaussIntegral2dIn3d(double x1 , double y1,  double x2, double y2,  double z ,double cx, double cy, double cz, double sig, double sigZ){
+	    return ImglibTools.gaussIntegral(x1, y1, x2, y2, cx, cy, sig)*Math.exp(-(cz-z)*(cz-z)/(sigZ*sigZ*2));
+}
+
+public static double gaussPixelIntegral2dIn3d(int x , int y, double z, double cx, double cy, double cz,double sig, double sigZ){
+	return ImglibTools.gaussPixelIntegral(x, y, cx, cy, sig)*Math.exp(-(cz-z)*(cz-z)/(sigZ*sigZ*2));
+}
+
 public static <T extends RealType<T> & NativeType<T> & NumericType<T>> RandomAccessibleInterval<T> 
 scaleAndShift(RandomAccessibleInterval<T> src, int transX, int transY, double scaleX, double scaleY, int xSize, int ySize){
 	
-	long minX=(long)((double)(transX)/(double)scaleX) -4;
-	long minY=(long)((double)(transY)/(double)scaleY) -4;
+	long minX=(long)((transX)/scaleX) -4;
+	long minY=(long)((transY)/scaleY) -4;
 	
 	
 	minX=Math.max(minX, 0);
 	minY=Math.max(minY, 0);
 	
-	long maxX=minX+8+(long)((double)(xSize)/(double)scaleX) ;
-	long maxY=minY+8+(long)((double)(ySize)/(double)scaleY) ;
+	long maxX=minX+8+(long)((xSize)/scaleX) ;
+	long maxY=minY+8+(long)((ySize)/scaleY) ;
 	
 	if(maxX>=src.max(0)){
 		maxX=src.max(0);
-		minX=Math.max( (long)((double)maxX-(double)xSize/(scaleX)-8) , 0);
+		minX=Math.max( (long)(maxX-xSize/(scaleX)-8) , 0);
 	}
 	
 	if(maxY>=src.max(1)){
 		maxY=src.max(1);
-		minY=Math.max( (long)((double)maxY-(double)ySize/(scaleY)-8) , 0);
+		minY=Math.max( (long)(maxY-ySize/(scaleY)-8) , 0);
 	}
 	
 
@@ -316,13 +329,13 @@ scaleAndShift(RandomAccessibleInterval<T> src, int transX, int transY, double sc
 	temp=ImglibTools.scaleByFactor(temp, 0, scaleX);
 	temp=ImglibTools.scaleByFactor(temp, 1, scaleY);
 	
-	minsP[0]=(long)(-scaleX*(double)minsP[0]);
-	minsP[1]=(long)(-scaleY*(double)minsP[1]);
+	minsP[0]=(long)(-scaleX*minsP[0]);
+	minsP[1]=(long)(-scaleY*minsP[1]);
 	
 				
 	
-	minX=(long) transX+minsP[0];
-	minY=(long) transY+minsP[1];
+	minX=transX+minsP[0];
+	minY=transY+minsP[1];
 	
 	minX=Math.max(minX, 0);
 	minY=Math.max(minY, 0);

@@ -34,7 +34,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public double zPos;
 	public double sigma;
 	public double sigmaZ;
-	public double pK=0.18;
+	public double pK=0.5;
 	public double pKAkku; 
 	public double inten=0;
 	public int counter=0;
@@ -71,18 +71,27 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	}
 	
 	public double calcDenominator(Interval img){
-		denominator=ImglibTools.gaussIntegral(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5,xPos,yPos,sigma );
-//		System.out.println("denominator :" +denominator );
+		//denominator=ImglibTools.gaussIntegral(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5,xPos,yPos,sigma );
+		double akku=0;
+		for(double i=0;i<this.expectedValues.dimension(2);i++){
+			akku+=ImglibTools.gaussIntegral2dIn3d(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5, 1.0/*marker*/,
+					xPos, yPos, zPos, sigma, sigmaZ);
+		
+		}
+		denominator=akku;
+	//					System.out.println("denominator :" +denominator );
 		return denominator;
 	}
 	
 	public double pXunderK(int x, int y, int z){
-		return ImglibTools.gaussPixelIntegral(x, y, xPos, yPos, sigma)/denominator;
+		//return ImglibTools.gaussPixelIntegral(x, y, xPos, yPos, sigma)/denominator;
+		return ImglibTools.gaussPixelIntegral2dIn3d(x, y, z* 1.0/*marker*/, xPos, yPos, zPos, sigma, sigmaZ)/denominator;
 	}
 	
 	
 	public double pXandK(int x, int y, int z){
 		return pXunderK(x,y,z)*pK;
+		
 	}
 	
 	public double localLogLikelihood(){
@@ -92,9 +101,9 @@ public class Blob extends Trackable implements MultivariateRealFunction {
     	while ( cursor.hasNext() )	{
     		cursor.fwd();
     		double b=(cursor.get().get());
-    		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1),0 );  		
+    		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1), cursor.getIntPosition(2));  		
     		
-    		if(a<0.0000001) continue;
+    		//if(a<0.000000000000001) continue;
     		result+=Math.log(a)*b;
     		
     	}
@@ -187,15 +196,19 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		
 		double xOld=xPos;
 		double yOld=yPos;
+		double zOld=zPos;
 		double sigmaOld=sigma;
+		
 		
 		xPos=position[0];
 		yPos=position[1];
-		if(position.length>2) sigma=Math.max(0.8,Math.min(3.0,Math.pow(position[2],0.5) ) );
+		zPos=position[2];
+		if(position.length>3) sigma=Math.max(0.8,Math.min(3.0,Math.pow(position[3],0.5) ) );
 		double value=this.localLogLikelihood();
 		
 		xPos=xOld;
 		yPos=yOld;
+		zPos=zOld;
 		sigma=sigmaOld;
 		
 		return value;

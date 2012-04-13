@@ -7,6 +7,7 @@ import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -29,8 +30,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	}
 
 	private IterableRandomAccessibleInterval<IT> makeIterableFrame(MovieFrame<IT> movieFrame,  List <Blob> trackables){
-		long[] mins=  {Long.MAX_VALUE,Long.MAX_VALUE};		
-		long[] maxs=  {Long.MIN_VALUE,Long.MIN_VALUE};
+		long[] mins=  {Long.MAX_VALUE,Long.MAX_VALUE,0};		
+		long[] maxs=  {Long.MIN_VALUE,Long.MIN_VALUE,movieFrame.getNumberOfPlanes()-1};
 			
 		for(Blob b:trackables){
 			
@@ -81,8 +82,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 
 	    	int x=cursor.getIntPosition(0);
 	    	int y=cursor.getIntPosition(1);
-	    //	int z=cursor.getIntPosition(2);
-	    	int z=0;
+	    	int z=cursor.getIntPosition(2);
+	   // 	int z=0;
 	 /*   	
 	    	boolean isIn=false;
 	    	for(Blob b:trackables){
@@ -101,15 +102,17 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	    	float value= Math.max(0,cursor.get().getRealFloat()- movieFrame.getConstBackground());//*(float)sn; 
 	    	totalInten+=value;
 	    	
-	    	for(Blob b:trackables){    		    		
+	    	for(Blob b:trackables){
 	    		pX+=b.pXandK(x, y, z);
-	    		
 	    	}
 	    	
-	    	for(Blob b:trackables){    		    		
+	    	for(Blob b:trackables){
 	    		RandomAccess<FloatType> ra= b.expectedValues.randomAccess();
 	    		ra.setPosition(cursor);
-	    		double currentInten=value*b.pXandK(x, y, z)/pX;
+	    		double temp=b.pXandK(x, y, z)/pX;
+	    		//System.out.println("temp:"+ temp);
+	    		double currentInten=value*temp;
+	
 	    		ra.get().set((float)(currentInten  ) );
 	    		b.inten+=currentInten;    		
 	    	}
@@ -130,12 +133,12 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		double newZ=0;
 		
 		long[] mins=  {(long)Math.max(iterableFrame.min(0), b.xPos-b.sigma*3-3 ),(long)
-				Math.max(iterableFrame.min(1), b.yPos-b.sigma*3-3 )};
+				Math.max(iterableFrame.min(1), b.yPos-b.sigma*3-3 ), iterableFrame.min(2)};
 		
 		System.out.println(" mins[0] mstep:"+ mins[0]);
 		
 		long[] maxs=  {(long)Math.min(iterableFrame.max(0), b.xPos+b.sigma*3+3 ),(long)
-				Math.min(iterableFrame.max(1), b.yPos+b.sigma*3 +3)};
+				Math.min(iterableFrame.max(1), b.yPos+b.sigma*3 +3), iterableFrame.max(2)};
 			
 		b.expectedValuesRoi=new IterableRandomAccessibleInterval<FloatType>(Views.interval(b.expectedValues,mins,maxs ));
 
@@ -149,14 +152,16 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		boolean findSigma=b.autoSigma;
 		double []startPoint;
 	    if(findSigma){
+	    	startPoint=new double [4];
+	    	startPoint[0]=b.xPos;
+	    	startPoint[1]=b.yPos;
+	    	startPoint[2]=b.zPos;
+	    	startPoint[3]=	b.sigma*b.sigma;
+	    }else{
 	    	startPoint=new double [3];
 	    	startPoint[0]=b.xPos;
 	    	startPoint[1]=	b.yPos;
-	    	startPoint[2]=	b.sigma*b.sigma;
-	    }else{
-	    	startPoint=new double [2];
-	    	startPoint[0]=b.xPos;
-	    	startPoint[1]=	b.yPos;
+	    	startPoint[2]=b.zPos;
 	    }
 		
 		
@@ -168,7 +173,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 		newX=output[0];
 		newY=output[1];
-		if(findSigma) newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[2],0.5 )));
+		newZ=output[2];
+		if(findSigma) newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[3],0.5 )));
 		
 	
     	change=Math.max(Math.abs((newX-b.xPos)),change);
@@ -178,6 +184,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
  	
     	b.xPos=newX;
     	b.yPos=newY;
+    	b.zPos=newZ;
     	if(findSigma) b.sigma=newSig;
 //    	b.zPos=newZ/inten;
     	b.pK=b.inten/totalInten;
@@ -229,10 +236,14 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			t.join();
 			}catch(Exception e){}
 			change=Math.max(change,t.localChange);
-			totalBlobsInten+=t.localChange;
+			
+		}
+		backProb=1.0;
+		for(Blob b:trackables){  
+			backProb-=b.pK;
 		}
 		
-		backProb=1-(totalBlobsInten/totalInten);
+		
 		return change;
 	}
 
@@ -244,6 +255,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		Double backProb=1.0;
 		
 		for(Blob b:trackables){
+			
 			b.expectedValues= imgFactory.create(movieFrame.getFrameView(), new FloatType());
 			backProb-=b.pK;
 		}
@@ -252,12 +264,15 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			long time0= System.nanoTime();	
 			long eTime=0;	
 			long mTime=0;
-			for(int i=0;i<100;i++){
+			for(int i=0;i<1;i++){
 				
 				IterableRandomAccessibleInterval<IT> iFrame= makeIterableFrame( movieFrame,  trackables);
+					
+					
 				
 					long eTime0= System.nanoTime();
 					double ti= doEStep(trackables,movieFrame,backProb,iFrame);
+					ImageJFunctions.show (trackables.get(0).expectedValues, "ev");
 					long eTime1= System.nanoTime();
 					double change;
 					
