@@ -158,7 +158,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		//Bottom Area
 		bottomPanel.setBackground(Color.LIGHT_GRAY);
 
-		text = new JTextArea(20,5);
+		text = new JTextArea(3,5);
+		//text.setMinimumSize(new Dimension(40,200));
 
 		text.setLineWrap(true);
 		text.setText("Ready to start tracking!");
@@ -167,6 +168,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		JScrollPane feedbackPanel = new JScrollPane(text);
 		feedbackPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		feedbackPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		feedbackPanel.setPreferredSize(new Dimension(100,300));
 
 
 		//bottomPanel.add(scroller);
@@ -211,28 +213,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 
-/*
-				leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-				//leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 
-				leftPanel.add(new JLabel());
-				leftPanel.add(new JLabel());
-				leftPanel.add(new JLabel());
-				leftPanel.add(new JLabel());
-
-				leftPanel.add(merge);
-				leftPanel.add(split);
-				leftPanel.add(trim);
-				leftPanel.add(delete);
-
-				leftPanel.add(new JLabel());
-				//leftPanel.add(jump);
-				leftPanel.add(saveAll);
-				//leftPanel.add(saveTo);
-
-				leftPanel.add(loadAllButton);
-				//leftPanel.add(loadTo);
-*/
 		
 		
 
@@ -377,7 +358,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		checkScroll = new JScrollPane(checkPanel);
 		checkScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		checkScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		checkScroll.setPreferredSize(new Dimension(100, 200));
+		checkScroll.setPreferredSize(new Dimension(50, 200));
 		rightPanel.add(checkScroll);
 		
 		rightButtonPanel = new JPanel(new GridLayout(4,0));
@@ -385,6 +366,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		start = new JButton("Start Tracking");
 		start.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		start.addActionListener(new StartListener());
+		
 		
 
 		JButton newSession = new JButton("New Session");
@@ -578,7 +560,20 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		// This makes the Dialog for tracking method
 
-
+		//Make Buttons grayed out from the start
+		editSession.setEnabled(false);
+		this.changeSession.setEnabled(false);
+		this.deleteSession.setEnabled(false);
+		this.start.setEnabled(false);
+		
+		merge.setEnabled(false);
+		delete.setEnabled(false);
+		split.setEnabled(false);
+		trim.setEnabled(false);
+		editBlob.setEnabled(false);
+		this.saveAll.setEnabled(false);
+		
+		
 		// This puts everything in the frame
 		//frame.getContentPane().add(BorderLayout.SOUTH, feedbackPanel);
 		frame.getContentPane().add(BorderLayout.EAST, rightPanel);
@@ -616,54 +611,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 	}
 
-	//This creates the newSessionDialog
-	/*public void newSessionDialog() {
-
-		JDialog.setDefaultLookAndFeelDecorated(true);
-
-		//String[] trackingMethods = {"Blob", "Cell"};
-		String[] trackingMethods = viewModel.getController().getPossibleSessionTypes();
-		int channelNumber = model.getNumberOfChannels();
-		String[] channelList = new  String[channelNumber];
-		Integer i;
-		for (i=1; i <= channelNumber; i++ ){
-			channelList[i-1]= i +"";
-		}
-
-		GenericDialog gd = new GenericDialog("New Session");
-		gd.addStringField("Enter new session name: ", "");
-		gd.addChoice("Pick tracking method", trackingMethods, null);
-		gd.addChoice("Pick channel to track", channelList, null);
-		gd.showDialog();
-		if(gd.wasCanceled())
-			return;
-		String userSessionName = gd.getNextString();
-
-
-		//sessionList.add(userSessionName);
-
-
-		String methodChoice = gd.getNextChoice();
-		int channelChoice =Integer.valueOf(gd.getNextChoice());
-
-		currentMethod.setText(methodChoice);
-
-		//String[] newValues = new String[sessionList.size()];
-		//sessionList.toArray(newValues);
-		//visList.setListData(newValues);
-
-
-
-
-				text.selectAll();
-		text.append((String) trace[2][0] + "\n");
-
-
-		viewModel.getController().addSession(methodChoice, userSessionName, channelChoice-1, viewModel);
-		int newsessionID = viewModel.getController().getSessions().size()-1;
-		viewModel.getController().setCurrentSession(newsessionID, viewModel);
-		viewModel.getController().getCurrentSession().showPropertiesDialog();
-	} */
+	
 
 	public void changeSessionDialog() {
 
@@ -801,10 +749,12 @@ if(model.isStruckturalChange()){
 	trackerTable.removeListener();
 		if (viewModel.isTracking()){
 			start.setText("Stop Tracking");
+			start.setForeground(Color.red);
 			startMenu.setText("Stop Tracking");
 		} else {
 			start.setText("Start Tracking");
 			startMenu.setText("Start Tracking");
+			start.setForeground(Color.blue);
 		}
 
 		//This will get visible
