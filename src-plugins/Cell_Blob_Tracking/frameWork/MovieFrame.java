@@ -18,6 +18,7 @@ public class MovieFrame <IT extends NumericType<IT> & NativeType<IT> & RealType<
 	protected int constBackground;
 	
 	public int getNumberOfPlanes(){
+		if(frameView.numDimensions()<3) return 1;
 		return (int)frameView.dimension(2);
 	}
 	

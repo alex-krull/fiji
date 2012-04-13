@@ -170,7 +170,7 @@ implements MouseListener, MouseMotionListener{
 	 	
 	}
 	
-	public void reDraw(long[] position, boolean rePaintImage){
+	public synchronized void reDraw(long[] position, boolean rePaintImage){
 		model.rwLock.readLock().lock();
 		if(rePaintImage){
 			

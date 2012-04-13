@@ -269,7 +269,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			long time0= System.nanoTime();	
 			long eTime=0;	
 			long mTime=0;
-			for(int i=0;i<1;i++){
+			for(int i=0;i<100;i++){
 				
 				IterableRandomAccessibleInterval<IT> iFrame= makeIterableFrame( movieFrame,  trackables);
 					
@@ -277,7 +277,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 				
 					long eTime0= System.nanoTime();
 					double ti= doEStep(trackables,movieFrame,backProb,iFrame);
-					ImageJFunctions.show (trackables.get(0).expectedValues, "ev");
+			//		ImageJFunctions.show (trackables.get(0).expectedValues, "ev");
 			//		IJ.error("stop");
 					long eTime1= System.nanoTime();
 					double change=0;

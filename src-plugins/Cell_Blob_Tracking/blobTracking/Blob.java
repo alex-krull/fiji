@@ -90,7 +90,6 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	
 	
 	public double pXandK(int x, int y, int z){
-		System.out.println(pK);
 		return pXunderK(x,y,z)*pK;
 		
 	}
@@ -105,15 +104,12 @@ public class Blob extends Trackable implements MultivariateRealFunction {
     		cursor.fwd();
     		double b=(cursor.get().get());
     		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1), cursor.getIntPosition(2));  		
-    		if(a>=1.0){
-    			System.out.println("a:"+a+"  b:"+b+ "   denominator :" +denominator );
-    		}
     		sumA+=a;
     		if(a<0.0000000000001) continue;
     		result+=Math.log(a)*b;
     		
     	}
-    	System.out.println("denominator :" +denominator + "     sumA:"+ sumA);
+   // 	System.out.println("denominator :" +denominator + "     sumA:"+ sumA);
    // 	System.out.println("Result: "+result);
 		return result;
 	}
@@ -146,8 +142,8 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public void addShapeY(Overlay ov, boolean selected, Color c){
 		
 		
-		Roi roi=new EllipseRoi(xPos , zPos-2*sigmaZ, xPos ,
-				zPos+2*sigmaZ, sigma / sigmaZ);
+		Roi roi=new EllipseRoi(0.5+ xPos ,0.5+ zPos-2*sigmaZ,0.5+ xPos ,
+				0.5+zPos+2*sigmaZ, sigma / sigmaZ);
 		roi.setStrokeColor(c);
 		roi.setStrokeWidth(1);
 		if(selected) roi.setStrokeWidth(4);
@@ -159,8 +155,8 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public void addShapeX(Overlay ov, boolean selected, Color c){
 		
 		
-		Roi roi = new EllipseRoi(zPos + sigmaZ * 2, yPos, zPos - sigmaZ * 2,
-				yPos, sigma / sigmaZ);
+		Roi roi = new EllipseRoi(0.5+zPos + sigmaZ * 2,0.5+ yPos,0.5+ zPos - sigmaZ * 2,
+				0.5+yPos, sigma / sigmaZ);
 		roi.setStrokeColor(c);
 		roi.setStrokeWidth(1);
 		if(selected) roi.setStrokeWidth(4);
