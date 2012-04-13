@@ -22,6 +22,7 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	private final long numOfFrames;
 	private final int MovieChannelId;
 	private final boolean isVolume;
+	private double xyToZ;
 	public boolean isVolume() {
 		return isVolume;
 	}
@@ -62,7 +63,8 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	
 	
 	
-	public MovieChannel(RandomAccessibleInterval<IT> view, int id, int nOfFrames, int cBackGround){
+	public MovieChannel(RandomAccessibleInterval<IT> view, int id, int nOfFrames, int cBackGround, double zRatio){
+		xyToZ=zRatio;
 		MovieChannelId=id;
 		image=view;
 		numOfFrames=nOfFrames;
@@ -73,7 +75,7 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		frames= new ArrayList<MovieFrame<IT>>();
 		
 		for(int i=0;i<numOfFrames;i++){
-			MovieFrame<IT> f=new MovieFrame<IT>(i, getFrameView(i),cBackGround);
+			MovieFrame<IT> f=new MovieFrame<IT>(i, getFrameView(i),cBackGround, xyToZ);
 			frames.add(f);
 			
 		}

@@ -22,6 +22,7 @@ import org.apache.commons.math.optimization.SimpleScalarValueChecker;
 import org.apache.commons.math.optimization.direct.PowellOptimizer;
 
 import tools.ImglibTools;
+import frameWork.Model;
 import frameWork.MovieFrame;
 
 public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends BlobPolicy<IT>{
@@ -67,7 +68,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		double totalInten=0;
 	
 		for(Blob b:trackables)	
-			b.calcDenominator(iterableFrame);
+			b.denom=b.calcDenominator(iterableFrame, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
 		
 	//	IterableInterval<IT> iterableFrame= new IterableRandomAccessibleInterval<IT>(movieFrame.getFrameView());
 		Cursor<IT> cursor =iterableFrame.cursor();
@@ -105,15 +106,20 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	    	totalInten+=value;
 	    	
 	    	for(Blob b:trackables){
-	    		pX+=b.pXandK(x, y, z);
+	    		pX+=b.pXandK(x, y, z, 
+	    				b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ,
+	    				b.denom);
 	    	}
 	    	
 	    	for(Blob b:trackables){
 	    		RandomAccess<FloatType> ra= b.expectedValues.randomAccess();
 	    		ra.setPosition(cursor);
-	    		double temp=b.pXandK(x, y, z)/pX;
-	    		//System.out.println("temp:"+ temp);
-	    		double currentInten=value*temp;
+	    		double currentInten=value*
+	    				b.pXandK(x, y, z,
+	    				b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ,
+	    				b.denom)/pX;
+	    		
+	    		
 	
 	    		ra.get().set((float)(currentInten  ) );
 	    		b.inten+=currentInten;    		
@@ -181,10 +187,13 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 	
     	change=Math.max(Math.abs((newX-b.xPos)),change);
-    	change=Math.max(Math.abs((newY-b.yPos)), change );
+    	change=Math.max(Math.abs((newY-b.yPos)), change);
+    	change=Math.max(Math.abs((newZ-b.zPos)), change);
     	if(findSigma) change=Math.max(Math.abs((newSig*newSig-b.sigma*b.sigma)), change);
     	change=Math.max(Math.abs(((b.inten/totalInten)-b.pK)/b.pK), change);
  	
+    	
+    Model.getInstance().rwLock.writeLock().lock();
     	b.xPos=newX;
     	b.yPos=newY;
     	b.zPos=newZ;
@@ -192,7 +201,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
     	if(findSigma) b.sigma=newSig;
 //    	b.zPos=newZ/inten;
     	b.pK=b.inten/totalInten;
-    	
+    Model.getInstance().rwLock.writeLock().unlock();	
     	
     	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~pk: " +b.pK);
     	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~totalInten: " +totalInten);
@@ -242,6 +251,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			change=Math.max(change,t.localChange);
 			
 		}
+		
 		backProb=1.0;
 		for(Blob b:trackables){  
 			backProb-=b.pK;
