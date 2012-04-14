@@ -169,7 +169,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		Blob selectedTrackable;
 		
-		if(e.getID()==MouseEvent.MOUSE_PRESSED){
+		if(e.getID()==MouseEvent.MOUSE_PRESSED && e.getButton()==MouseEvent.BUTTON1){
 			
 			if(e.getClickCount()==1){
 				
