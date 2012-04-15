@@ -7,6 +7,8 @@ import java.util.List;
 
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
@@ -32,46 +34,63 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		return "Blob";
 	}
 
-	private IterableRandomAccessibleInterval<IT> makeIterableFrame(MovieFrame<IT> movieFrame,  List <Blob> trackables){
-		long[] mins=  {Long.MAX_VALUE,Long.MAX_VALUE,0};		
-		long[] maxs=  {Long.MIN_VALUE,Long.MIN_VALUE,movieFrame.getNumberOfPlanes()-1};
+	private IterableRandomAccessibleInterval<IT> makeIterableFrame(RandomAccessibleInterval <IT> movieFrame,  List <Blob> trackables){
+		boolean isVolume= movieFrame.numDimensions()>2;
+		long[] mins=  {Long.MAX_VALUE,Long.MAX_VALUE,0};	
+		int max2=1;
+		if(isVolume)max2=(int) movieFrame.max(2);
+		long[] maxs=  {Long.MIN_VALUE,Long.MIN_VALUE,max2};
 			
 		for(Blob b:trackables){
 			
 	
 			b.inten=0;
-			System.out.println(" mins[0]:"+ mins[0]);
+			
 			mins[0]=Math.min(mins[0],(long) (b.xPos-b.sigma*3-3));
 			mins[1]=Math.min(mins[1],(long) (b.yPos-b.sigma*3-3));
 			maxs[0]=Math.max(maxs[0],(long) (b.xPos+b.sigma*3+3));
 			maxs[1]=Math.max(maxs[1],(long) (b.yPos+b.sigma*3+3));
-			System.out.println(" mins[0] after:"+ mins[0]);
+			
 		}
 		
-		long frameMinX=movieFrame.getFrameView().min(0);
-		long frameMinY=movieFrame.getFrameView().min(1);
-		long frameMaxX=movieFrame.getFrameView().max(0);
-		long frameMaxY=movieFrame.getFrameView().max(1);
+		long frameMinX=movieFrame.min(0);
+		long frameMinY=movieFrame.min(1);
+		long frameMaxX=movieFrame.max(0);
+		long frameMaxY=movieFrame.max(1);
+			
 		
 		mins[0]=Math.max(mins[0],frameMinX);
 		mins[1]=Math.max(mins[1],frameMinY);
 		maxs[0]=Math.min(maxs[0],frameMaxX);
 		maxs[1]=Math.min(maxs[1],frameMaxY);
 		
+		mins[0]=Math.min(mins[0],maxs[0]);
+		mins[1]=Math.min(mins[1],maxs[1]);
+		maxs[0]=Math.max(maxs[0],mins[0]);
+		maxs[1]=Math.max(maxs[1],mins[1]);
 		
-				if(movieFrame.isVolume()){
-					return new IterableRandomAccessibleInterval<IT>(Views.interval(movieFrame.getFrameView(),mins,maxs ));
+		
+				if(isVolume){
+					System.out.println(" mins[0] after:"+ mins[0]+" max[0] after:"+ maxs[0]);
+					System.out.println(" mins[1] after:"+ mins[1]+" max[0] after:"+ maxs[1]);
+					System.out.println(" mins[2] after:"+ mins[2]+" max[2] after:"+ maxs[2]);
+					System.out.println(" movieFrame min[0] :"+movieFrame.min(0)+" movieFrame[0] max:"+ movieFrame.max(0));
+					System.out.println(" movieFrame min[1] :"+movieFrame.min(1)+" movieFrame[1] max:"+ movieFrame.max(1));
+					System.out.println(" movieFrame min[2] :"+movieFrame.min(2)+" movieFrame[2] max:"+ movieFrame.max(2));
+					return new IterableRandomAccessibleInterval<IT>(Views.interval(movieFrame,mins,maxs ));
 				}else{
 					long[] mins2D={mins[0],mins[1]};
 					long[] maxs2D={maxs[0],maxs[1]};
-					return new IterableRandomAccessibleInterval<IT>(Views.interval(movieFrame.getFrameView(),mins2D,maxs2D ));
+					return new IterableRandomAccessibleInterval<IT>(Views.interval(movieFrame,mins2D,maxs2D ));
 				}
 					
 	
 		
 	}
 	
-	private double doEStep( List <Blob> trackables, MovieFrame<IT> movieFrame, Double backProb, IterableRandomAccessibleInterval<IT> iterableFrame){
+	private double doEStep( List <Blob> trackables,  Double backProb, IterableRandomAccessibleInterval<IT> iterableFrame,
+			 int constBackground){
+		boolean isVolume=iterableFrame.numDimensions()>2;
 		double totalInten=0;
 	
 		for(Blob b:trackables)	
@@ -83,9 +102,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 		double pX=0;
 		
-		double cx=(iterableFrame.min(0)+iterableFrame.max(0))/2.0;
-    	double cy=(iterableFrame.min(1)+iterableFrame.max(1))/2.0;
-		
+	
 		while ( cursor.hasNext() )	{
 	    	cursor.fwd();
 	    	pX=backProb/ImglibTools.getNumOfPixels(iterableFrame); // init with probability for background
@@ -93,7 +110,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	    	int x=cursor.getIntPosition(0);
 	    	int y=cursor.getIntPosition(1);
 	    	int z=0;
-	    	if(movieFrame.isVolume()) z=cursor.getIntPosition(2);
+	    	if(isVolume) z=cursor.getIntPosition(2);
 	   // 	
 	 /*   	
 	    	boolean isIn=false;
@@ -110,7 +127,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	   // 	double overlap=dist-(-iterableFrame.min(0)+iterableFrame.max(0))/2.0-1;
 	   // 	if(overlap>0) sn=Math.max(0, sn-(overlap*2));
 	    		
-	    	float value= Math.max(0,cursor.get().getRealFloat()- movieFrame.getConstBackground());//*(float)sn; 
+	    	float value= Math.max(0,cursor.get().getRealFloat()- constBackground);//*(float)sn; 
 	    	totalInten+=value;
 	    	
 	    	for(Blob b:trackables){
@@ -298,16 +315,15 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		return change;
 	}
 
-	@Override
-	public void optimizeFrame(boolean cheap, List<Blob> trackables,
-			MovieFrame<IT> movieFrame,  double qualityT) {
-		
+	private void doOptimizationSingleScale( List<Blob> trackables,
+			RandomAccessibleInterval <IT> movieFrame,  double qualityT, int constBackGround,
+			int maxIterations){
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();	
 		Double backProb=1.0;
 		
 		for(Blob b:trackables){
 			
-			b.expectedValues= imgFactory.create(movieFrame.getFrameView(), new FloatType());
+			b.expectedValues= imgFactory.create(movieFrame, new FloatType());
 			backProb-=b.pK;
 		}
 	
@@ -316,14 +332,14 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			long time0= System.nanoTime();	
 			long eTime=0;	
 			long mTime=0;
-			for(int i=0;i<100;i++){
+			for(int i=0;i<maxIterations;i++){
 				
 				IterableRandomAccessibleInterval<IT> iFrame= makeIterableFrame( movieFrame,  trackables);
 					
 					
 				
 					long eTime0= System.nanoTime();
-					double ti= doEStep(trackables,movieFrame,backProb,iFrame);
+					double ti= doEStep(trackables,backProb,iFrame,  constBackGround);
 			//		ImageJFunctions.show (trackables.get(0).expectedValues, "ev");
 			//		IJ.error("stop");
 					long eTime1= System.nanoTime();
@@ -346,7 +362,56 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			mTime/=1000000;
 			
 			System.out.println("totalTime:" +time+ "  fraction E:"+ ((double)eTime/(double)time)+ "  fraction M:"+ ((double)mTime/(double)time) );
+
+	}
+	
+	@Override
+	public void optimizeFrame(boolean cheap, List<Blob> trackables,
+			MovieFrame<IT> movieFrame,  double qualityT) {
+			ImgFactory <IT>factory= new ArrayImgFactory<IT>();
+			Img<IT>src= factory.create(movieFrame.getFrameView(), movieFrame.getFrameView().randomAccess().get());
+			ImglibTools.resize(movieFrame.getFrameView(), src);
 			
+			double gaussianStd =0.5;
+			double sf =0.9;
+			double steps=4;
+			List <Img<IT>> pyramid= ImglibTools.generatePyramid(src, (int)steps, gaussianStd, sf);	
+			
+			
+	//		List<Blob> tempBlobs= new ArrayList<Blob>();
+	//		for(Blob b:trackables){
+	//			tempBlobs.add(this.copy(b));
+	//		}
+			for(double iter=0;iter<steps;iter++){
+				for(int i=0;i<trackables.size();i++){
+					Blob ob= trackables.get(i);
+					ob.sigma=Math.sqrt(ob.sigma*ob.sigma +gaussianStd*gaussianStd);
+					ob.sigma*=sf;
+					ob.xPos=ob.xPos*sf;
+					ob.yPos=ob.yPos*sf;
+				}
+			}
+			
+			
+			double scaleIndex=steps;
+			for(Img<IT> currentScale: pyramid){
+		//		IJ.error("starting optimization");
+				doOptimizationSingleScale(trackables, currentScale, 0.1, movieFrame.getConstBackground(), 25);
+	//			IJ.error("done with optimization");
+				for(int i=0;i<trackables.size();i++){
+					
+					Blob tb= trackables.get(i);
+					tb.sigma/=sf;
+					tb.sigma=Math.sqrt(tb.sigma*tb.sigma -(gaussianStd)*(gaussianStd));		
+					
+					tb.xPos=tb.xPos/sf;
+					tb.yPos=tb.yPos/sf;
+				}
+				
+				scaleIndex--;
+			}
+	
+			doOptimizationSingleScale(trackables, movieFrame.getFrameView(), 0.01, movieFrame.getConstBackground(),100);
 	}
 
 	

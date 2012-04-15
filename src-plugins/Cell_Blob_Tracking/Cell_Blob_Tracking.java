@@ -7,6 +7,8 @@ import ij.io.FileInfo;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import tools.ImglibTools;
+
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -22,6 +24,11 @@ import frameWork.gui.MaxProjectionY;
 import frameWork.gui.MaxProjectionZ;
 import frameWork.gui.ViewModel;
 import frameWork.gui.controlWindow.ControlWindow;
+
+import net.imglib2.algorithm.gauss.Gauss;
+import net.imglib2.img.ImagePlusAdapter;
+import net.imglib2.img.Img;
+import net.imglib2.img.display.imagej.ImageJFunctions;
 
 public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>>extends AbstractTool{
 
@@ -114,6 +121,9 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		long time0= System.nanoTime();
 		ImagePlus imp=IJ.getImage();
+	//	Img <IT> img = ImagePlusAdapter.wrap(imp);	
+	//	ImglibTools.generatePyramid(img, 1,1,1);
+		
 		FileInfo fi= imp.getOriginalFileInfo();
 		
 		

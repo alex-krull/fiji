@@ -45,6 +45,7 @@ public class MovieFrame <IT extends NumericType<IT> & NativeType<IT> & RealType<
 	}
 
 	public MovieFrame(int frameNum, RandomAccessibleInterval<IT> view, int cBackGround, double zRatio){
+	
 		xyToZ=zRatio;
 		constBackground=cBackGround;
 		frameView=view;

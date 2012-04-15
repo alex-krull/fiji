@@ -1,5 +1,10 @@
 package tools;
 
+import ij.IJ;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,9 +15,11 @@ import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.algorithm.gauss.Gauss;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.NumericType;
@@ -22,6 +29,7 @@ import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
 import org.apache.commons.math.special.Erf;
+import net.imglib2.algorithm.gauss.GaussNativeType;
 
 public class ImglibTools {
 	
@@ -38,7 +46,7 @@ public class ImglibTools {
 	  		
 	  		
 	   	        
-	       dims[d]=(long) (dims[d]*factor);
+	       dims[d]=(long) Math.max(1,(dims[d]*factor) );
 	       Img <T> result= imgFactory.create(dims, img.randomAccess().get().copy());      
 	       resize(img,result);
 	       return result;
@@ -369,5 +377,35 @@ scaleAndShift(RandomAccessibleInterval<T> src, int transX, int transY, double sc
 	return temp;
 }
 
+public static <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>> List<Img <IT>> generatePyramid(Img<IT> src, int steps, double std, double factor){
+	System.out.println("pyramid!");
+	List <Img <IT>> result = new LinkedList<Img <IT>>();
+//	result.add(src);
+	double sigma[]= new double[src.numDimensions()];
+	for(int i=0;i<src.numDimensions();i++){
+		if(i<2)sigma[i]=std;
+		else sigma[i]=0;
+	}
+	
+	Img <IT> lastImage= src;
+	Img <IT> currentImage= null;
+	for(int i= 0;i<steps;i++){
+		currentImage=Gauss.inNumericType(sigma, lastImage);
+		for(int d=0;d<currentImage.numDimensions();d++)
+			if(d<2) currentImage= scaleByFactor(currentImage, d, factor);
+			
+		result.add(0,currentImage);
+		
+		lastImage=currentImage;
+	//	ImageJFunctions.show(Gauss.inNumericType(sigma, currentImage));
+		
+	}
+	
+	//IJ.error("returning");
+	
+	
+	
+	return result;
+}
 
 }

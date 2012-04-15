@@ -3,12 +3,14 @@ package frameWork;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 import tools.ImglibTools;
+
 
 public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> {
 	private final	List<MovieFrame <IT>> frames;
@@ -64,6 +66,11 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	
 	
 	public MovieChannel(RandomAccessibleInterval<IT> view, int id, int nOfFrames, int cBackGround, double zRatio){
+		
+		
+		//GaussNativeType<IT> gaussianFilter= new GaussNativeType<IT>(sigma, view, view, new  ArrayImgFactory<IT>(), view.randomAccess().get());
+			//	ImageJFunctions.show(gaussianFilter.);
+		
 		xyToZ=zRatio;
 		MovieChannelId=id;
 		image=view;
