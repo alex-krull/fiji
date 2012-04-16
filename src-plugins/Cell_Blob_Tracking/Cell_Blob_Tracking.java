@@ -121,7 +121,11 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		long time0= System.nanoTime();
 		ImagePlus imp=IJ.getImage();
-	//	Img <IT> img = ImagePlusAdapter.wrap(imp);	
+//		Img <IT> img = ImagePlusAdapter.wrap(imp);
+//		ImageJFunctions.show(ImglibTools.differenceOfGaussians(img, 2.5, 1.5));
+//		ImageJFunctions.show(ImglibTools.differenceOfGaussians(img, 2.2, 1.8));
+	//	ImageJFunctions.show(ImglibTools.differenceOfGaussians(img, 2.1, 1.9));
+//		ImageJFunctions.show(ImglibTools.differenceOfGaussians(img, 2.05, 1.95));
 	//	ImglibTools.generatePyramid(img, 1,1,1);
 		
 		FileInfo fi= imp.getOriginalFileInfo();
