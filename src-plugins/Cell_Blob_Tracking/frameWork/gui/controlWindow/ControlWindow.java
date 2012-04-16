@@ -126,6 +126,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JMenuItem saveAllMenu;
 	private JMenuItem newSessionMenu;
 	private JMenuItem toggleOverlay;
+	private JMenu viewMenu;
+	private JMenuItem contrastMenu;
 
 	/*
 	public static void main(String[] args) {
@@ -532,8 +534,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				
 		editMenu.setBackground(Color.lightGray);
 		
-		editMenu.add(toggleOverlay);
-		editMenu.addSeparator();
+
 		editMenu.add(deleteSeqMenu);
 		editMenu.add(this.splitSeqMenu);
 		editMenu.add(trimSeqMenu);
@@ -548,8 +549,24 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		windowMenu.setBackground(Color.lightGray);
 		helpMenu.setBackground(Color.lightGray);
 		
+		
+
+		
+		contrastMenu = new JMenuItem("Adjust Brightness/Contrast");
+		contrastMenu.addActionListener(new ContrastListener());
+		contrastMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.SHIFT_MASK));
+		
+		
+		viewMenu = new JMenu("View Menu");
+		viewMenu.setBackground(Color.lightGray);
+		viewMenu.add(contrastMenu);
+		viewMenu.add(toggleOverlay);
+		viewMenu.addSeparator();
+		
+		
 		menuBar.add(fileMenu);
 		menuBar.add(editMenu);
+		menuBar.add(viewMenu);
 		menuBar.add(windowMenu);
 		menuBar.add(helpMenu);
 		menuBar.setBackground(Color.lightGray);
@@ -1149,6 +1166,16 @@ if(model.isStruckturalChange()){
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
 			viewModel.toggleDrawOverlays();	
+		}
+		
+	}
+	
+	public class ContrastListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			IJ.doCommand("Brightness/Contrast...");
 		}
 		
 	}
