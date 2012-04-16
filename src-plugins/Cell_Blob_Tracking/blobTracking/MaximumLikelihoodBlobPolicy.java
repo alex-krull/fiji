@@ -379,12 +379,12 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			Img<FloatType>srcFloat=floatFactory.create(movieFrame.getZProjections(), new FloatType());
 		    ImglibTools.convert(movieFrame.getZProjections(), srcFloat);
 		    srcFloat=ImglibTools.differenceOfGaussians(srcFloat, 1.2, 0.8);
-		    ImageJFunctions.show(srcFloat);
+		//    ImageJFunctions.show(srcFloat);
 			
 			
-			double gaussianStd =0.5;
-			double sf =0.9;
-			double steps=5;
+			double gaussianStd =1;
+			double sf =0.5;
+			double steps=4;
 			List <Img<FloatType>> pyramid= ImglibTools.generatePyramid(srcFloat, (int)steps, gaussianStd, sf);	
 			
 			
