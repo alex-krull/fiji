@@ -240,11 +240,5 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		return result;
 	}
 
-
-
-
-	
-
-
 }
 

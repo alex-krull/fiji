@@ -375,7 +375,17 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			ImgFactory <FloatType>floatFactory= new ArrayImgFactory<FloatType>();
 			Img<FloatType>srcFloat=floatFactory.create(movieFrame.getZProjections(), new FloatType());
 		    ImglibTools.convert(movieFrame.getZProjections(), srcFloat);
-		    srcFloat=ImglibTools.differenceOfGaussians(srcFloat, 1.2, 0.8);
+		    
+		    double maxSigma=0;
+		    double minSigma=Double.MAX_VALUE;
+		    for(Blob b:trackables){
+		    	maxSigma=Math.max(maxSigma, b.sigma);
+		    	minSigma=Math.min(minSigma, b.sigma);
+		    }
+		    
+		    
+		    
+		    srcFloat=ImglibTools.differenceOfGaussians(srcFloat, maxSigma*1.1, minSigma*0.9);
 		//    ImageJFunctions.show(srcFloat);
 			
 			
@@ -385,55 +395,72 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			List <Img<FloatType>> pyramid= ImglibTools.generatePyramid(srcFloat, (int)steps, gaussianStd, sf);	
 			
 			
-	//		List<Blob> tempBlobs= new ArrayList<Blob>();
-	//		for(Blob b:trackables){
-	//			tempBlobs.add(this.copy(b));
-	//		}
+			List<Blob> tempBlobs= new ArrayList<Blob>();
+			for(Blob b:trackables){
+				Blob tb= this.copy(b);
+				tb.autoSigma=false;
+				tempBlobs.add(tb);
+			}
+			
 			for(double iter=0;iter<steps;iter++){
 				for(int i=0;i<trackables.size();i++){
-					Blob ob= trackables.get(i);
-					ob.sigma=Math.sqrt(ob.sigma*ob.sigma +gaussianStd*gaussianStd);
-					ob.sigma*=sf;
-					ob.xPos=ob.xPos*sf;
-					ob.yPos=ob.yPos*sf;
+				
+					Blob tb= tempBlobs.get(i);
+					tb.sigma=Math.sqrt(tb.sigma*tb.sigma +gaussianStd*gaussianStd);
+					tb.sigma*=sf;
+					tb.maxSigma=Math.sqrt(tb.maxSigma*tb.maxSigma +gaussianStd*gaussianStd);
+					tb.maxSigma*=sf;
+					tb.minSigma=Math.sqrt(tb.minSigma*tb.minSigma +gaussianStd*gaussianStd);
+					tb.minSigma*=sf;
+					tb.xPos=tb.xPos*sf;
+					tb.yPos=tb.yPos*sf;
 				}
 			}
 			
 			
-			double scaleIndex=steps;
+			
 			MaximumLikelihoodBlobPolicy<FloatType> bp= new MaximumLikelihoodBlobPolicy<FloatType>();
 			for(Img<FloatType> currentScale: pyramid){
-		//		IJ.error("starting optimization");
-		//		ImagePlus imp= ImageJFunctions.show(currentScale);
-		//		for(int i=0;i<trackables.size();i++){
-		//			Blob tb= trackables.get(i);
-		//			Overlay ov= new Overlay();
-		//			tb.addShapeZ(ov, false, new Color(0,255,0));
-		//			imp.setOverlay(ov);
-		//		}
-				
-				bp.doOptimizationSingleScale(trackables, currentScale, 0.01, 0, 100);
+	
+				bp.doOptimizationSingleScale(tempBlobs, currentScale, 0.01, 0, 100);
 	//			IJ.error("done with optimization");
-				for(int i=0;i<trackables.size();i++){
-					Blob tb= trackables.get(i);
-		//			Overlay ov= new Overlay();
-		//			tb.addShapeZ(ov, false, new Color(255,0,0));
-		//			imp.setOverlay(ov);
+				for(int i=0;i<tempBlobs.size();i++){
+					Blob tb= tempBlobs.get(i);
+		
 					
 					tb.sigma/=sf;
 					tb.sigma=Math.sqrt(tb.sigma*tb.sigma -(gaussianStd)*(gaussianStd));		
+					tb.maxSigma/=sf;
+					tb.maxSigma=Math.sqrt(tb.maxSigma*tb.maxSigma -(gaussianStd)*(gaussianStd));		
+					tb.minSigma/=sf;
+					tb.minSigma=Math.sqrt(tb.minSigma*tb.minSigma -(gaussianStd)*(gaussianStd));		
 					
 					tb.xPos=tb.xPos/sf;
 					tb.yPos=tb.yPos/sf;
 					
 					
+					
 				}
 				
 				
 				
-				scaleIndex--;
+				
 			//	return;
 			}
+			
+			
+			for(double iter=0;iter<steps;iter++){
+				for(int i=0;i<trackables.size();i++){
+					Blob ob= trackables.get(i);
+					Blob tb= tempBlobs.get(i);				
+					ob.xPos=tb.xPos;
+					ob.yPos=tb.yPos;
+				}
+			}
+			
+			
+			
+			
 			
 			if(Model.getInstance().isVolume()){
 				Img<FloatType>threedFloat=floatFactory.create(movieFrame.getFrameView(), new FloatType());
