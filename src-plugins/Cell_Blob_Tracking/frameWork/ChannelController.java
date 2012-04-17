@@ -80,6 +80,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		
 		@Override
 		public void run(){
+			try{
 			
 			if(!currentlyTracking)	{
 			synchronized (trackingChannel){
@@ -125,12 +126,17 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			currentlyTracking=false;
 			}
 			}
+		}catch(Exception e){
+			e.printStackTrace(Model.errorWriter);
+			Model.errorWriter.flush();
 		}
+		
+	}
 	}
 	
 
 	public void startTracking(int frameId, boolean multiscale){
-		Thread thread= new TrackingThread(frameId, multiscale);
+		Thread thread= new TrackingThread(frameId, multiscale );
 		thread.start();
 	}
 	

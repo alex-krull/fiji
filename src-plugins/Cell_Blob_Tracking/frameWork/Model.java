@@ -4,6 +4,9 @@ package frameWork;
 import frameWork.gui.controlWindow.GlobalOptionsDialog;
 import ij.ImagePlus;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -44,6 +47,7 @@ private boolean structuralChange=true;
 private int intensityOffset=0;
 private double xyToZ=3.5;
 public final ReentrantReadWriteLock rwLock;
+
 
 public static Model<?> getInstance(){
 	return instance;
@@ -157,7 +161,10 @@ public void setMultiChannel(boolean isMultiChannel) {
 	this.isMultiChannel = isMultiChannel;
 }
 
+public static PrintWriter errorWriter;
+
 public Model(ImagePlus imp){
+	
 	new GlobalOptionsDialog(this);
 	rwLock= new ReentrantReadWriteLock();
 	
@@ -165,6 +172,17 @@ public Model(ImagePlus imp){
 	imageDrirectory=imp.getOriginalFileInfo().directory;
 	projectDirectory=imageDrirectory; // default projectDirectory is fileDirectory
 	image=ImagePlusAdapter.wrap(imp);	
+	
+	try {
+		errorWriter= new PrintWriter(new File(imageDrirectory+"/errors.txt"));
+	} catch (FileNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	
+	errorWriter.write("no errors up to here:\n");
+	errorWriter.flush();
 	
 	setTimeSequence(imp.getNFrames()>1);
 	setMultiChannel(imp.getNChannels()>1);

@@ -7,8 +7,6 @@ import ij.io.FileInfo;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import tools.ImglibTools;
-
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -25,17 +23,13 @@ import frameWork.gui.MaxProjectionZ;
 import frameWork.gui.ViewModel;
 import frameWork.gui.controlWindow.ControlWindow;
 
-import net.imglib2.algorithm.gauss.Gauss;
-import net.imglib2.img.ImagePlusAdapter;
-import net.imglib2.img.Img;
-import net.imglib2.img.display.imagej.ImageJFunctions;
-
 public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>>extends AbstractTool{
 
 	public class AddingViewsThread extends Thread{
 		private final Model <IT> model;
 		private final ViewModel<IT> viewModel;
 		private final ImagePlus imp;
+		
 		
 		AddingViewsThread(ViewModel<IT> vm, Model<IT> mod, ImagePlus im){
 			imp=im;
@@ -44,6 +38,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		}
 		@Override
 		public void run() {
+			
 			try {
 	            // Set cross-platform Java L&F (also called "Metal")
 	        UIManager.setLookAndFeel(
@@ -93,6 +88,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	    }
 	}
 	
+	@Override
 	public String getToolIcon(){
 		return "CeffD60CbbbD70C9aaD80CdeeD90"
 				+ "CbccD41C899D51C566D61C455L7181C566L91a1C999Db1"
@@ -117,6 +113,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	@Override
 	
 	public void run(String arg0) {
+try{
 		super.run(arg0);
 		
 		long time0= System.nanoTime();
@@ -161,6 +158,15 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		
 		
+}catch(Exception e){
+	if(Model.errorWriter!=null){
+		e.printStackTrace(Model.errorWriter);
+		Model.errorWriter.flush();
+	}
+	else e.printStackTrace();
+	
+}
+
 	}
 
 }

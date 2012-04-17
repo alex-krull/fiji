@@ -3,7 +3,6 @@ package frameWork;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
@@ -24,7 +23,7 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	private final long numOfFrames;
 	private final int MovieChannelId;
 	private final boolean isVolume;
-	private double xyToZ;
+	private final double xyToZ;
 	public boolean isVolume() {
 		return isVolume;
 	}
@@ -41,8 +40,13 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		
 		@Override
 		public void run() {
+			try{
 	       channel.getXTProjections();
 	       channel.getYTProjections();
+			}catch(Exception e){
+				e.printStackTrace(Model.errorWriter);
+				Model.errorWriter.flush();
+			}
 	    }
 	}
 	
@@ -51,18 +55,26 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		ProjectionThread(MovieChannel <IT> chan){
 			channel=chan;
 		}
-		
+
 		@Override
 		public void run() {
-	       for(int i=0;i<channel.getNumberOfFrames();i++){
-	    	   MovieFrame<IT> f=channel.getMovieFrame(i);
-	    	   f.getXProjections();
-	    	   f.getYProjections();
-	    	   f.getZProjections(); 
-	       }
-	    }
+			try{
+
+				for(int i=0;i<channel.getNumberOfFrames();i++){
+					MovieFrame<IT> f=channel.getMovieFrame(i);
+					f.getXProjections();
+					f.getYProjections();
+					f.getZProjections(); 
+					
+				}
+			}catch(Exception e){
+				e.printStackTrace(Model.errorWriter);
+				Model.errorWriter.flush();
+			}
+
+		}
 	}
-	
+
 	
 	
 	public MovieChannel(RandomAccessibleInterval<IT> view, int id, int nOfFrames, int cBackGround, double zRatio){

@@ -278,7 +278,12 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		}
 		@Override
 		public void run(){
+			try{
 			localChange=doMstepForBlob(blob, totalInten, iterableFrame);
+			}catch(Exception e){
+				e.printStackTrace(Model.errorWriter);
+				Model.errorWriter.flush();
+			}
 		}
 	}
 	

@@ -26,6 +26,10 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 	
 	protected double qualityThreshold=0.001;
 	
+	public int getChannelNumnber(){
+		return mChannel.getId();
+	}
+	
 	public double getQualityThreshold() {
 		return qualityThreshold;
 	}

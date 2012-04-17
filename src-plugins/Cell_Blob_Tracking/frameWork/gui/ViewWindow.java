@@ -82,6 +82,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	
 	@Override
 	public void run(){
+		try{
 		long time0= System.nanoTime();
 		int counter=1;
 		UpdateTask udt=null;	
@@ -118,6 +119,10 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 				long time1= System.nanoTime();	
 	//			System.out.println(this.getClass().getName()+": "+(1000000000*((double)counter/((double)(time1-time0)))));
 		
+		}
+		}catch(Exception e){
+			e.printStackTrace(Model.errorWriter);
+			Model.errorWriter.flush();
 		}
 	}
 	
