@@ -157,7 +157,7 @@ private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCr
  * @param position the position of the event as vector in 5D 
  * @param e the original MouseEvent
  */
-public void click(long[] position, int tChannel, MouseEvent e){
+public synchronized void click(long[] position, int tChannel, MouseEvent e){
 	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	

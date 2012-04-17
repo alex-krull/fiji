@@ -66,6 +66,11 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 			//		return;
 				}
 		
+				
+		//		System.out.println(xSize/baseTimeScale*Math.pow(1.1, tics));
+		//		while(xSize/baseTimeScale*Math.pow(1.1, tics)<5.0)
+		//			tics--;
+				
 				timeScale=baseTimeScale*Math.pow(1.1, tics);
 				viewModel.setPosition(-1, -1);				
 				

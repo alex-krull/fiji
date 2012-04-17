@@ -68,6 +68,9 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 			ControlWindow<IT> cw= new ControlWindow<IT>(model, "Control Window",viewModel);
 	        cw.go();
 	        
+	        MainWindow<IT> mw=new MainWindow<IT>(imp, model, viewModel);
+	        viewModel.addViewWindow(mw,initZoom);
+	        
 	        if(model.isVolume()){
 	        
 	        	
@@ -76,8 +79,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 			viewModel.addViewWindow(new MaxProjectionY<IT>(model, viewModel),initZoom);
 			viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel),initZoom);
 	        }
-	        MainWindow<IT> mw=new MainWindow<IT>(imp, model, viewModel);
-	        viewModel.addViewWindow(mw,initZoom);
+	        
 	
 			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel,mw),initZoom);		
 			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel,mw),initZoom);		
@@ -93,7 +95,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		return "CeffD60CbbbD70C9aaD80CdeeD90"
 				+ "CbccD41C899D51C566D61C455L7181C566L91a1C999Db1"
 				+ "C99aD32C566L4252C677D62C466D72C456D82C677L92a2C566Db2C677Dc2CeeeDd2"
-				+ "C9aaD23C566D33C677D43CdddD53CcccD63C566L7383CabbD93C999Db3C566Lc3d3CeeeDe3"
+				+ "C9aaD77D43CdddD53CcccD63C566L7383CabbD93C999Db3C566Lc3d3CeeeDe3"
 				+ "CbccD14C566D24C677D34CcccD64C566L7484CabbD94CaabDc4C566Dd4C899De4"
 				+ "D15C566D25CcddD35CcccD65C566L7585CabbD95C788Dd5C566De5CcccDf5"
 				+ "CeefD06C566D16C677D26CdddL3656CaaaD66C566L7686C899D96CdddLa6c6CaaaDd6C566De6C9aaDf6"
@@ -113,7 +115,6 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	@Override
 	
 	public void run(String arg0) {
-try{
 		super.run(arg0);
 		
 		long time0= System.nanoTime();
@@ -158,15 +159,6 @@ try{
 		
 		
 		
-}catch(Exception e){
-	if(Model.errorWriter!=null){
-		e.printStackTrace(Model.errorWriter);
-		Model.errorWriter.flush();
-	}
-	else e.printStackTrace();
-	
-}
-
 	}
 
 }

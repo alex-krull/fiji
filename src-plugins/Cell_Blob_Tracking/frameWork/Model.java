@@ -322,6 +322,7 @@ public void makeChangesPublic(Integer frameNumber){
 }
 
 public MovieChannel<IT> getMovieChannel(int id){
+
 	return channels.get(id);
 }
 

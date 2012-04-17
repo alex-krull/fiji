@@ -164,12 +164,12 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 	}
 	
 	@Override
-	public int click(long[] pos, MouseEvent e, Model<IT> model, List<Integer>  selectedIdList, Session<Blob,IT> trackingChannel, int selectedSequenceId){
+	public synchronized int click(long[] pos, MouseEvent e, Model<IT> model, List<Integer>  selectedIdList, Session<Blob,IT> trackingChannel, int selectedSequenceId){
 		
 		
 		Blob selectedTrackable;
 		
-		if(e.getID()==MouseEvent.MOUSE_PRESSED && e.getButton()==MouseEvent.BUTTON1){
+		if(e.getID()==MouseEvent.MOUSE_PRESSED && e.getButton()==MouseEvent.BUTTON1 && e.getClickCount()==1){
 			
 			if(e.getClickCount()==1){
 				
@@ -187,7 +187,9 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 			
 			
 			}
+			
 			model.makeStructuralChange();
+			
 		}
 		
 		if(e.getID()==MouseEvent.MOUSE_CLICKED){

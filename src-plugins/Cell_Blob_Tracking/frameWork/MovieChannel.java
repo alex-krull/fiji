@@ -59,6 +59,7 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		@Override
 		public void run() {
 			try{
+				Model.getInstance().rwLock.writeLock().lock();
 
 				for(int i=0;i<channel.getNumberOfFrames();i++){
 					MovieFrame<IT> f=channel.getMovieFrame(i);
@@ -67,6 +68,7 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 					f.getZProjections(); 
 					
 				}
+				Model.getInstance().rwLock.writeLock().unlock();
 			}catch(Exception e){
 				e.printStackTrace(Model.errorWriter);
 				Model.errorWriter.flush();
@@ -128,12 +130,12 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		return zProjections;
 	}
 	
-	public synchronized RandomAccessibleInterval<IT> getXTProjections(){
+	public RandomAccessibleInterval<IT> getXTProjections(){
 		if(xtProjections==null) xtProjections=Views.zeroMin( Views.invertAxis(    Views.rotate(ImglibTools.projection(getZProjections(),0),0,1 ),0 ) ) ;
 		return xtProjections;
 	}
 	
-	public synchronized RandomAccessibleInterval<IT> getYTProjections(){
+	public RandomAccessibleInterval<IT> getYTProjections(){
 		if(ytProjections==null) ytProjections=Views.zeroMin(    ImglibTools.projection(getZProjections(),1) )  ;
 		return ytProjections;
 	}

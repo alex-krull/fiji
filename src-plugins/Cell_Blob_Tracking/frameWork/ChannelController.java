@@ -28,7 +28,13 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	protected ControlWindow<IT> controllWindow;
 	
 	public void click(long[] pos, MouseEvent e){
+		try{
 		selectedSequenceId= policy.click(pos, e, model, selectedIdList, trackingChannel, selectedSequenceId);
+		}catch(Exception ex){
+			ex.printStackTrace(Model.errorWriter);
+			Model.errorWriter.flush();
+		}
+		
 		return;
 	}
 	
