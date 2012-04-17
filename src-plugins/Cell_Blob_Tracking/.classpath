@@ -12,6 +12,5 @@
 	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/imglib2-io.jar"/>
 	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/imglib2-ops.jar"/>
 	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/imglib2-ui.jar"/>
-	<classpathentry kind="lib" path="/home/alex/EclipseWorkspace/fiji/jars/imglib2-algorithm.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
