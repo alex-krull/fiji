@@ -54,16 +54,19 @@ public class MovieFrame <IT extends NumericType<IT> & NativeType<IT> & RealType<
 	}
 	
 	public synchronized RandomAccessibleInterval<IT> getXProjections(){
+		if(!this.isVolume) return this.getFrameView();
 		if(xProjection==null) xProjection=Views.zeroMin( Views.invertAxis( Views.zeroMin( Views.rotate( ImglibTools.projection(frameView,0),0,1) ),0  ) ); 
 		return xProjection;
 	}
 
 	public synchronized RandomAccessibleInterval<IT> getYProjections(){
+		if(!this.isVolume) return this.getFrameView();
 		if(yProjection==null) yProjection=ImglibTools.projection(frameView,1);
 		return yProjection;
 	}
 
 	public synchronized RandomAccessibleInterval<IT> getZProjections(){
+		if(!this.isVolume) return this.getFrameView();
 		if(zProjection==null) zProjection=ImglibTools.projection(frameView,2);
 		return zProjection;
 	}

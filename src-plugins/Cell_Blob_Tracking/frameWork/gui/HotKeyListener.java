@@ -20,7 +20,11 @@ public class HotKeyListener implements KeyListener {
 		      return;
 		      
 		  case KeyEvent.VK_G:			  
-			  viewModel.toggleTracking();		 
+			  viewModel.toggleTracking(false);		 
+		      return;
+		      
+		  case KeyEvent.VK_L:			  
+			  viewModel.toggleTracking(true);		 
 		      return;
 		      
 		  case KeyEvent.VK_T:			  
@@ -54,6 +58,8 @@ public class HotKeyListener implements KeyListener {
 		           
 		  case KeyEvent.VK_W:
 			  viewModel.getController().newSession(viewModel);
+			  
+	
 		  
 		        
 		}

@@ -174,36 +174,20 @@ public boolean isTracking(){
 	return false;
 }
 
-public void optimizeFrame(int frameNumber ){
+public void optimizeFrame(int frameNumber){
 	model.rwLock.writeLock().lock();
 		ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
-		if(cc!=null) cc.optimizeFrame(frameNumber);		
+//		if(cc!=null) cc.optimizeFrame(frameNumber);		
 	
 	model.makeStructuralChange();
 	model.rwLock.writeLock().unlock();
 }
 
-public void StartTracking(int frameNumber ){
-	
-	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
-	if(cc!=null) cc.startTracking(frameNumber);
-	
-	
-//	}
-}
 
-public void StopTracking(){
-	model.rwLock.writeLock().lock();
-	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
-	if(cc!=null) cc.stopTracking();
-	model.rwLock.writeLock().unlock();
-//	}
-}
-
-public void toggleTracking(int frameId){
+public void toggleTracking(int frameId, boolean multiscale){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null)
-		if(!cc.isTracking()) cc.startTracking(frameId);
+		if(!cc.isTracking()) cc.startTracking(frameId, multiscale);
 		else cc.stopTracking();
 	model.makeStructuralChange();
 }

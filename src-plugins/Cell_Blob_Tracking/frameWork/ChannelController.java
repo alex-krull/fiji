@@ -49,10 +49,10 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		}
 	}
 	
-	public void optimizeFrame(int frameNumber){
+	public void optimizeFrame(int frameNumber, boolean multiscale){
 		
 	//	model.rwLock.writeLock().lock();
-		trackingChannel.optimizeFrame(frameNumber,false, selectedIdList);
+		trackingChannel.optimizeFrame(frameNumber, multiscale, selectedIdList);
 	//	model.rwLock.writeLock().unlock();
 		model.makeChangesPublic(frameNumber);
 	
@@ -72,8 +72,10 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	
 	private class TrackingThread extends Thread{
 		private final int startingFrame;
-		TrackingThread(int frameToStart){
+		private final boolean multiscale;
+		TrackingThread(int frameToStart, boolean multi){
 			startingFrame=frameToStart;
+			multiscale=multi;
 		}
 		
 		@Override
@@ -95,7 +97,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames();i++){
 		//		System.out.println("trackingFrame:"+i);
 				
-				optimizeFrame( i);
+				optimizeFrame( i, multiscale);
 				
 				
 				if(!currentlyTracking){
@@ -127,8 +129,8 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	}
 	
 
-	public void startTracking(int frameId){
-		Thread thread= new TrackingThread(frameId);
+	public void startTracking(int frameId, boolean multiscale){
+		Thread thread= new TrackingThread(frameId, multiscale);
 		thread.start();
 	}
 	

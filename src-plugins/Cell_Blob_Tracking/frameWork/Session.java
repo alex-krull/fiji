@@ -99,7 +99,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 		return Sequences.get(id);
 	}
 
-	public void optimizeFrame(int frameId, boolean cheap, List <Integer> trackables){
+	public void optimizeFrame(int frameId, boolean multiscale, List <Integer> trackables){
 		
 		TrackingFrame<T,IT> f= this.getFrame(frameId);
 		List<T> results = new ArrayList<T>() ;
@@ -107,7 +107,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 			if(trackables.contains(new Integer( t.sequenceId)) ) results.add(t);
 		}
 		
-		policy.optimizeFrame(false, results, f.getMovieFrame(),this.qualityThreshold );
+		policy.optimizeFrame(multiscale, results, f.getMovieFrame(),this.qualityThreshold );
 	}
 
 	public int selectAt(int x, int y, int z, int frameId, int channel){

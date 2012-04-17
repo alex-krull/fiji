@@ -1,10 +1,5 @@
 package blobTracking;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.gui.Overlay;
-
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,12 +7,9 @@ import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.gauss.Gauss;
-import net.imglib2.converter.Converter;
-import net.imglib2.display.RealFloatConverter;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -372,9 +364,9 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	}
 	
 	@Override
-	public void optimizeFrame(boolean cheap, List<Blob> trackables,
+	public void optimizeFrame(boolean multiscale, List<Blob> trackables,
 			MovieFrame<IT> movieFrame,  double qualityT) {
-		
+		if(multiscale){
 			ImgFactory <FloatType>floatFactory= new ArrayImgFactory<FloatType>();
 			Img<FloatType>srcFloat=floatFactory.create(movieFrame.getZProjections(), new FloatType());
 		    ImglibTools.convert(movieFrame.getZProjections(), srcFloat);
@@ -448,10 +440,10 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 					tb.zPos=Model.getInstance().getXyToZ()*
 							//(double) ImglibTools.findBrightestPixelInColumn(movieFrame.getFrameView(),(int) tb.xPos,(int) tb.yPos);
 
-							(double) ImglibTools.findBrightestPixelInColumn(threedFloat,(int) tb.xPos,(int) tb.yPos);
+							ImglibTools.findBrightestPixelInColumn(threedFloat,(int) tb.xPos,(int) tb.yPos);
 				}
 			}
-	
+	}
 			doOptimizationSingleScale(trackables, movieFrame.getFrameView(),qualityT, movieFrame.getConstBackground(),100);
 	}
 

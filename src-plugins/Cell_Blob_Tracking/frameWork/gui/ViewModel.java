@@ -238,8 +238,8 @@ public boolean getDrawOverLays(){
 	return drawOverlays;
 }
 
-public void toggleTracking(){
-	controller.toggleTracking(currentFrameNumber);
+public void toggleTracking(boolean multiscale){
+	controller.toggleTracking(currentFrameNumber, multiscale);
 }
 
 public void deleteSequence(){

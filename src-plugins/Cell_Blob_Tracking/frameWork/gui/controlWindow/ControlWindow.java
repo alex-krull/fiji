@@ -1,7 +1,6 @@
 package frameWork.gui.controlWindow;
 
 import ij.IJ;
-import ij.gui.GenericDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Choice;
@@ -988,7 +987,7 @@ if(model.isStruckturalChange()){
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// Start Tracking
-			viewModel.toggleTracking();
+			viewModel.toggleTracking(false);
 
 
 		}
