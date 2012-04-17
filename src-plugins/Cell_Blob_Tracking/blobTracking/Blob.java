@@ -35,7 +35,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public double zPos;
 	public double sigma;
 	public double sigmaZ;
-	public double pK=0.5;
+	public double pK=0.1;
 	public double pKAkku; 
 	public double inten=0;
 	public int counter=0;
@@ -101,6 +101,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	}
 	
 	public double localLogLikelihood(double px, double py, double pz, double ps, double psz){
+		boolean isVolume= expectedValuesRoi.numDimensions()>2;
 		double denominator= calcDenominator(expectedValuesRoi, px,py,pz,ps,psz);
 	//	if(this.denominator<0.00000001) return 0;
 		double result=0;
@@ -110,7 +111,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
     		cursor.fwd();
     		double b=(cursor.get().get());
     		int zPos=0;
-    		if(Model.getInstance().isVolume()) zPos=cursor.getIntPosition(2);
+    		if(isVolume) zPos=cursor.getIntPosition(2);
     		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1),zPos,
     				px,py,pz,ps,psz,
     				denominator);  		
@@ -202,6 +203,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 
 	@Override
 	public double value(double[] position) {
+		boolean isVolume=this.expectedValuesRoi.numDimensions()>2;
 		counter++;
 		//if(position[2]<0.5) return Double.MIN_VALUE;
 	
@@ -211,12 +213,12 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		double pz=0;
 		double ps=this.sigma;
 		double psz=this.sigmaZ;
-		if(!Model.getInstance().isVolume()&& this.autoSigma) ps=Math.max(0.8,Math.min(3.0,Math.pow(position[2],0.5) ) );
-		if(Model.getInstance().isVolume()&& this.autoSigma){
+		if(!isVolume&& this.autoSigma) ps=Math.max(0.8,Math.min(3.0,Math.pow(position[2],0.5) ) );
+		if(isVolume&& this.autoSigma){
 			 pz=position[2];
 			 ps=Math.max(0.8,Math.min(3.0,Math.pow(position[3],0.5) ) );
 		}
-		if(Model.getInstance().isVolume()&& !this.autoSigma)
+		if(isVolume&& !this.autoSigma)
 			pz=position[2];
 		double value=this.localLogLikelihood(px,py,pz,ps,psz);
 		

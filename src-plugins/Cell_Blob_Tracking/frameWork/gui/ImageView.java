@@ -205,7 +205,8 @@ implements MouseListener, MouseMotionListener{
 		
 		upDateOverlay();
 		
-	//	imp.updateAndDraw();
+		
+		imp.updateAndDraw();
 		
 	//	model.rwLock.readLock().unlock();
 	}

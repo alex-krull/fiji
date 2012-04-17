@@ -1,5 +1,10 @@
 package tools;
 
+import ij.IJ;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,20 +13,26 @@ import java.util.concurrent.TimeUnit;
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
+import net.imglib2.Iterator;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.algorithm.gauss.Gauss;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
 import org.apache.commons.math.special.Erf;
+import net.imglib2.algorithm.gauss.GaussNativeType;
+import net.imglib2.display.RealFloatConverter;
 
 public class ImglibTools {
 	
@@ -38,7 +49,7 @@ public class ImglibTools {
 	  		
 	  		
 	   	        
-	       dims[d]=(long) (dims[d]*factor);
+	       dims[d]=(long) Math.max(1,(dims[d]*factor) );
 	       Img <T> result= imgFactory.create(dims, img.randomAccess().get().copy());      
 	       resize(img,result);
 	       return result;
@@ -369,5 +380,104 @@ scaleAndShift(RandomAccessibleInterval<T> src, int transX, int transY, double sc
 	return temp;
 }
 
+public static <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>> List<Img <IT>> generatePyramid(Img<IT> src, int steps, double std, double factor){
+	System.out.println("pyramid!");
+	List <Img <IT>> result = new LinkedList<Img <IT>>();
+//	result.add(src);
+	double sigma[]= new double[src.numDimensions()];
+	for(int i=0;i<src.numDimensions();i++){
+		if(i<2)sigma[i]=std;
+		else sigma[i]=0;
+	}
+	
+	Img <IT> lastImage= src;
+	Img <IT> currentImage= null;
+	for(int i= 0;i<steps;i++){
+		currentImage=Gauss.inNumericType(sigma, lastImage);
+		for(int d=0;d<currentImage.numDimensions();d++)
+			if(d<2) currentImage= scaleByFactor(currentImage, d, factor);
+			
+		result.add(0,currentImage);
+		
+		lastImage=currentImage;
+	//	ImageJFunctions.show(Gauss.inNumericType(sigma, currentImage));
+		
+	}
+	
+	//IJ.error("returning");
+	
+	
+	
+	return result;
+}
+
+public static  Img <FloatType> differenceOfGaussians(Img<FloatType> src, double stdA, double stdB){
+	ImgFactory <FloatType> factory= new ArrayImgFactory<FloatType>();
+	Img <FloatType> result = factory.create(src, new FloatType());
+	
+	
+	double sigmaA[]= new double[src.numDimensions()];
+	for(int i=0;i<src.numDimensions();i++){
+		if(i<2)sigmaA[i]=stdA;
+		else sigmaA[i]=0;
+	}
+	
+	
+	Img <FloatType> imgA=Gauss.inNumericType(sigmaA, src);
+	
+	double sigmaB[]= new double[src.numDimensions()];
+	for(int i=0;i<src.numDimensions();i++){
+		if(i<2)sigmaB[i]=stdB;
+		else sigmaB[i]=0;
+	}
+	Img <FloatType> imgB=Gauss.inNumericType(sigmaB, src);
+
+	
+	Cursor<FloatType> it= imgA.cursor();
+	RandomAccess<FloatType> ra= imgB.randomAccess();
+	RandomAccess<FloatType> raResult= result.randomAccess();
+	while(it.hasNext()){
+		it.fwd();
+		raResult.setPosition(it);
+		ra.setPosition(it);
+		double a=it.get().getPowerDouble();
+		double b=ra.get().getPowerDouble();
+		double res= Math.max(0, b-a);
+	//	System.out.println("a:"+a+ "  b:"+b + "  res:"+res);
+		raResult.get().set(new FloatType((float)res));
+	}
+	
+	return result;
+}
+
+public static <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>> void convert(RandomAccessibleInterval<IT> in, Img<FloatType> out ){
+	RealFloatConverter<IT> converter= new RealFloatConverter<IT>();
+	Cursor<FloatType> it= out.cursor();
+	RandomAccess<IT> ra= in.randomAccess();
+	while(it.hasNext()){
+		it.fwd();
+		ra.setPosition(it);
+		converter.convert(ra.get(), it.get());
+	}
+	
+}
+
+public static <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>> int findBrightestPixelInColumn(RandomAccessibleInterval<IT> in, int x, int y){
+	RandomAccess<IT> ra= in.randomAccess();
+	double bestValue=0;
+	int winner=0;
+	for(int i=(int)in.min(2);i<=in.max(2);i++){
+		int[] pos= {x, y, i};
+		ra.setPosition(pos);
+		if(ra.get().getRealDouble()>=bestValue){
+			bestValue=ra.get().getRealDouble();
+			winner=i;
+		}
+	}
+	
+	return winner;
+	
+}
 
 }
+

@@ -1,12 +1,20 @@
 package blobTracking;
 
 import ij.IJ;
+import ij.ImagePlus;
+import ij.gui.Overlay;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.algorithm.gauss.Gauss;
+import net.imglib2.converter.Converter;
+import net.imglib2.display.RealFloatConverter;
+import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
@@ -32,46 +40,63 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		return "Blob";
 	}
 
-	private IterableRandomAccessibleInterval<IT> makeIterableFrame(MovieFrame<IT> movieFrame,  List <Blob> trackables){
-		long[] mins=  {Long.MAX_VALUE,Long.MAX_VALUE,0};		
-		long[] maxs=  {Long.MIN_VALUE,Long.MIN_VALUE,movieFrame.getNumberOfPlanes()-1};
+	private IterableRandomAccessibleInterval<IT> makeIterableFrame(RandomAccessibleInterval <IT> movieFrame,  List <Blob> trackables){
+		boolean isVolume= movieFrame.numDimensions()>2;
+		long[] mins=  {Long.MAX_VALUE,Long.MAX_VALUE,0};	
+		int max2=1;
+		if(isVolume)max2=(int) movieFrame.max(2);
+		long[] maxs=  {Long.MIN_VALUE,Long.MIN_VALUE,max2};
 			
 		for(Blob b:trackables){
 			
 	
 			b.inten=0;
-			System.out.println(" mins[0]:"+ mins[0]);
+			
 			mins[0]=Math.min(mins[0],(long) (b.xPos-b.sigma*3-3));
 			mins[1]=Math.min(mins[1],(long) (b.yPos-b.sigma*3-3));
 			maxs[0]=Math.max(maxs[0],(long) (b.xPos+b.sigma*3+3));
 			maxs[1]=Math.max(maxs[1],(long) (b.yPos+b.sigma*3+3));
-			System.out.println(" mins[0] after:"+ mins[0]);
+			
 		}
 		
-		long frameMinX=movieFrame.getFrameView().min(0);
-		long frameMinY=movieFrame.getFrameView().min(1);
-		long frameMaxX=movieFrame.getFrameView().max(0);
-		long frameMaxY=movieFrame.getFrameView().max(1);
+		long frameMinX=movieFrame.min(0);
+		long frameMinY=movieFrame.min(1);
+		long frameMaxX=movieFrame.max(0);
+		long frameMaxY=movieFrame.max(1);
+			
 		
 		mins[0]=Math.max(mins[0],frameMinX);
 		mins[1]=Math.max(mins[1],frameMinY);
 		maxs[0]=Math.min(maxs[0],frameMaxX);
 		maxs[1]=Math.min(maxs[1],frameMaxY);
 		
+		mins[0]=Math.min(mins[0],maxs[0]);
+		mins[1]=Math.min(mins[1],maxs[1]);
+		maxs[0]=Math.max(maxs[0],mins[0]);
+		maxs[1]=Math.max(maxs[1],mins[1]);
 		
-				if(movieFrame.isVolume()){
-					return new IterableRandomAccessibleInterval<IT>(Views.interval(movieFrame.getFrameView(),mins,maxs ));
+		
+				if(isVolume){
+					System.out.println(" mins[0] after:"+ mins[0]+" max[0] after:"+ maxs[0]);
+					System.out.println(" mins[1] after:"+ mins[1]+" max[0] after:"+ maxs[1]);
+					System.out.println(" mins[2] after:"+ mins[2]+" max[2] after:"+ maxs[2]);
+					System.out.println(" movieFrame min[0] :"+movieFrame.min(0)+" movieFrame[0] max:"+ movieFrame.max(0));
+					System.out.println(" movieFrame min[1] :"+movieFrame.min(1)+" movieFrame[1] max:"+ movieFrame.max(1));
+					System.out.println(" movieFrame min[2] :"+movieFrame.min(2)+" movieFrame[2] max:"+ movieFrame.max(2));
+					return new IterableRandomAccessibleInterval<IT>(Views.interval(movieFrame,mins,maxs ));
 				}else{
 					long[] mins2D={mins[0],mins[1]};
 					long[] maxs2D={maxs[0],maxs[1]};
-					return new IterableRandomAccessibleInterval<IT>(Views.interval(movieFrame.getFrameView(),mins2D,maxs2D ));
+					return new IterableRandomAccessibleInterval<IT>(Views.interval(movieFrame,mins2D,maxs2D ));
 				}
 					
 	
 		
 	}
 	
-	private double doEStep( List <Blob> trackables, MovieFrame<IT> movieFrame, Double backProb, IterableRandomAccessibleInterval<IT> iterableFrame){
+	private double doEStep( List <Blob> trackables,  Double backProb, IterableRandomAccessibleInterval<IT> iterableFrame,
+			 int constBackground){
+		boolean isVolume=iterableFrame.numDimensions()>2;
 		double totalInten=0;
 	
 		for(Blob b:trackables)	
@@ -83,9 +108,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 		double pX=0;
 		
-		double cx=(iterableFrame.min(0)+iterableFrame.max(0))/2.0;
-    	double cy=(iterableFrame.min(1)+iterableFrame.max(1))/2.0;
-		
+	
 		while ( cursor.hasNext() )	{
 	    	cursor.fwd();
 	    	pX=backProb/ImglibTools.getNumOfPixels(iterableFrame); // init with probability for background
@@ -93,7 +116,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	    	int x=cursor.getIntPosition(0);
 	    	int y=cursor.getIntPosition(1);
 	    	int z=0;
-	    	if(movieFrame.isVolume()) z=cursor.getIntPosition(2);
+	    	if(isVolume) z=cursor.getIntPosition(2);
 	   // 	
 	 /*   	
 	    	boolean isIn=false;
@@ -110,7 +133,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	   // 	double overlap=dist-(-iterableFrame.min(0)+iterableFrame.max(0))/2.0-1;
 	   // 	if(overlap>0) sn=Math.max(0, sn-(overlap*2));
 	    		
-	    	float value= Math.max(0,cursor.get().getRealFloat()- movieFrame.getConstBackground());//*(float)sn; 
+	    	float value= Math.max(0,cursor.get().getRealFloat()- constBackground);//*(float)sn; 
 	    	totalInten+=value;
 	    	
 	    	for(Blob b:trackables){
@@ -147,6 +170,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		double newY=0;
 		double newSig=0;
 		double newZ=0;
+		boolean isVolume=iterableFrame.numDimensions()>2;
 		
 		long[] mins=null;
 		long[] maxs=null;
@@ -186,26 +210,26 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
     		    	
 		boolean findSigma=b.autoSigma;
 		double []startPoint=null;
-	    if(findSigma&& Model.getInstance().isVolume()){
+	    if(findSigma&&isVolume){
 	    	startPoint=new double [4];
 	    	startPoint[0]=b.xPos;
 	    	startPoint[1]=b.yPos;
 	    	startPoint[2]=b.zPos;
 	    	startPoint[3]=	b.sigma*b.sigma;
 	    }
-	    if(!findSigma&& Model.getInstance().isVolume()){
+	    if(!findSigma&&isVolume){
 	    	startPoint=new double [3];
 	    	startPoint[0]=b.xPos;
 	    	startPoint[1]=b.yPos;
 	    	startPoint[2]=b.zPos;
 	    }
-	    if(findSigma&& !Model.getInstance().isVolume()){
+	    if(findSigma&& !isVolume){
 	    	startPoint=new double [3];
 	    	startPoint[0]=b.xPos;
 	    	startPoint[1]=b.yPos;
 	    	startPoint[2]=b.sigma*b.sigma;
 	    }
-	    if(!findSigma&& !Model.getInstance().isVolume()){
+	    if(!findSigma&& !isVolume){
 	    	startPoint=new double [2];
 	    	startPoint[0]=b.xPos;
 	    	startPoint[1]=b.yPos;
@@ -219,14 +243,14 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 		newX=output[0];
 		newY=output[1];
-		if(Model.getInstance().isVolume())newZ=output[2];
-		if(findSigma&& !Model.getInstance().isVolume()) newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[2],0.5 )));
-		if(findSigma&& Model.getInstance().isVolume()) newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[3],0.5 )));
+		if(isVolume)newZ=output[2];
+		if(findSigma&& !isVolume) newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[2],0.5 )));
+		if(findSigma&& isVolume) newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[3],0.5 )));
 		
 	
     	change=Math.max(Math.abs((newX-b.xPos)),change);
     	change=Math.max(Math.abs((newY-b.yPos)), change);
-    	if(Model.getInstance().isVolume()) change=Math.max(Math.abs((newZ-b.zPos)), change);
+    	if(isVolume) change=Math.max(Math.abs((newZ-b.zPos)), change);
     	if(findSigma) change=Math.max(Math.abs((newSig*newSig-b.sigma*b.sigma)), change);
     	change=Math.max(Math.abs(((b.inten/totalInten)-b.pK)/b.pK), change);
  	
@@ -270,7 +294,6 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 		
 		double change=0;
-		double totalBlobsInten=0;
 		List<MstepThread> threads=new ArrayList<MstepThread>();
 		for(Blob b:trackables){   
 			MstepThread t= new MstepThread(b,totalInten, iFrame);
@@ -298,16 +321,15 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		return change;
 	}
 
-	@Override
-	public void optimizeFrame(boolean cheap, List<Blob> trackables,
-			MovieFrame<IT> movieFrame,  double qualityT) {
-		
+	private void doOptimizationSingleScale( List<Blob> trackables,
+			RandomAccessibleInterval <IT> movieFrame,  double qualityT, int constBackGround,
+			int maxIterations){
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();	
 		Double backProb=1.0;
 		
 		for(Blob b:trackables){
 			
-			b.expectedValues= imgFactory.create(movieFrame.getFrameView(), new FloatType());
+			b.expectedValues= imgFactory.create(movieFrame, new FloatType());
 			backProb-=b.pK;
 		}
 	
@@ -316,14 +338,14 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			long time0= System.nanoTime();	
 			long eTime=0;	
 			long mTime=0;
-			for(int i=0;i<100;i++){
+			for(int i=0;i<maxIterations;i++){
 				
 				IterableRandomAccessibleInterval<IT> iFrame= makeIterableFrame( movieFrame,  trackables);
 					
 					
 				
 					long eTime0= System.nanoTime();
-					double ti= doEStep(trackables,movieFrame,backProb,iFrame);
+					double ti= doEStep(trackables,backProb,iFrame,  constBackGround);
 			//		ImageJFunctions.show (trackables.get(0).expectedValues, "ev");
 			//		IJ.error("stop");
 					long eTime1= System.nanoTime();
@@ -346,7 +368,91 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			mTime/=1000000;
 			
 			System.out.println("totalTime:" +time+ "  fraction E:"+ ((double)eTime/(double)time)+ "  fraction M:"+ ((double)mTime/(double)time) );
+
+	}
+	
+	@Override
+	public void optimizeFrame(boolean cheap, List<Blob> trackables,
+			MovieFrame<IT> movieFrame,  double qualityT) {
+		
+			ImgFactory <FloatType>floatFactory= new ArrayImgFactory<FloatType>();
+			Img<FloatType>srcFloat=floatFactory.create(movieFrame.getZProjections(), new FloatType());
+		    ImglibTools.convert(movieFrame.getZProjections(), srcFloat);
+		    srcFloat=ImglibTools.differenceOfGaussians(srcFloat, 1.2, 0.8);
+		//    ImageJFunctions.show(srcFloat);
 			
+			
+			double gaussianStd =1;
+			double sf =0.5;
+			double steps=4;
+			List <Img<FloatType>> pyramid= ImglibTools.generatePyramid(srcFloat, (int)steps, gaussianStd, sf);	
+			
+			
+	//		List<Blob> tempBlobs= new ArrayList<Blob>();
+	//		for(Blob b:trackables){
+	//			tempBlobs.add(this.copy(b));
+	//		}
+			for(double iter=0;iter<steps;iter++){
+				for(int i=0;i<trackables.size();i++){
+					Blob ob= trackables.get(i);
+					ob.sigma=Math.sqrt(ob.sigma*ob.sigma +gaussianStd*gaussianStd);
+					ob.sigma*=sf;
+					ob.xPos=ob.xPos*sf;
+					ob.yPos=ob.yPos*sf;
+				}
+			}
+			
+			
+			double scaleIndex=steps;
+			MaximumLikelihoodBlobPolicy<FloatType> bp= new MaximumLikelihoodBlobPolicy<FloatType>();
+			for(Img<FloatType> currentScale: pyramid){
+		//		IJ.error("starting optimization");
+		//		ImagePlus imp= ImageJFunctions.show(currentScale);
+		//		for(int i=0;i<trackables.size();i++){
+		//			Blob tb= trackables.get(i);
+		//			Overlay ov= new Overlay();
+		//			tb.addShapeZ(ov, false, new Color(0,255,0));
+		//			imp.setOverlay(ov);
+		//		}
+				
+				bp.doOptimizationSingleScale(trackables, currentScale, 0.01, 0, 100);
+	//			IJ.error("done with optimization");
+				for(int i=0;i<trackables.size();i++){
+					Blob tb= trackables.get(i);
+		//			Overlay ov= new Overlay();
+		//			tb.addShapeZ(ov, false, new Color(255,0,0));
+		//			imp.setOverlay(ov);
+					
+					tb.sigma/=sf;
+					tb.sigma=Math.sqrt(tb.sigma*tb.sigma -(gaussianStd)*(gaussianStd));		
+					
+					tb.xPos=tb.xPos/sf;
+					tb.yPos=tb.yPos/sf;
+					
+					
+				}
+				
+				
+				
+				scaleIndex--;
+			//	return;
+			}
+			
+			if(Model.getInstance().isVolume()){
+				Img<FloatType>threedFloat=floatFactory.create(movieFrame.getFrameView(), new FloatType());
+				ImglibTools.convert(movieFrame.getFrameView(), threedFloat);
+				double sig[]= {0.5,0.5,0.5};
+				threedFloat=Gauss.inNumericType(sig, threedFloat);
+				for(int i=0;i<trackables.size();i++){
+					Blob tb= trackables.get(i);
+					tb.zPos=Model.getInstance().getXyToZ()*
+							//(double) ImglibTools.findBrightestPixelInColumn(movieFrame.getFrameView(),(int) tb.xPos,(int) tb.yPos);
+
+							(double) ImglibTools.findBrightestPixelInColumn(threedFloat,(int) tb.xPos,(int) tb.yPos);
+				}
+			}
+	
+			doOptimizationSingleScale(trackables, movieFrame.getFrameView(),qualityT, movieFrame.getConstBackground(),100);
 	}
 
 	
