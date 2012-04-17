@@ -19,8 +19,8 @@ public class MaxProjectionY < IT extends  NumericType<IT> & NativeType<IT> & Rea
 					//1,mod.xyToZ)
 					"max-Y-projection",vm,null);
 			this.scaleY=model.getXyToZ();
-		//	imp.getCanvas().addMouseListener(this);
-		//	imp.getCanvas().addMouseMotionListener(this);
+
+			
 		}
 		
 		@Override
@@ -51,6 +51,9 @@ public class MaxProjectionY < IT extends  NumericType<IT> & NativeType<IT> & Rea
 				pos[2]=y;
 			return pos;
 		}
+		
+		
+
 
 	
 }

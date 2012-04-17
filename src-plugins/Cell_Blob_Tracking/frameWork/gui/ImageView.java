@@ -18,6 +18,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.List;
@@ -440,6 +442,15 @@ implements MouseListener, MouseMotionListener{
 		imp.getCanvas().addMouseListener(this);
 		imp.getCanvas().addMouseMotionListener(this);
 		viewModel.setPosition(-1, -1);		}
+		
+		
+		MouseWheelListener [] wheelListeners=imp.getWindow().getMouseWheelListeners();
+		for(int i=0;i<wheelListeners.length;i++){
+			imp.getWindow().removeMouseWheelListener(wheelListeners[i]);
+		}
+		
+		imp.getWindow().addMouseWheelListener(new MyWheelListener());
+		
 	
 	}
 	
@@ -523,6 +534,31 @@ implements MouseListener, MouseMotionListener{
 	public void mouseMoved(MouseEvent e) {
 
 		viewModel.mouseAtPosition(positionFromEvent(e), e);
+		
+	}
+	
+	
+	public class MyWheelListener implements  MouseWheelListener{
+
+
+		@Override
+		public synchronized void  mouseWheelMoved(MouseWheelEvent e) {
+			
+					if(e.isShiftDown()){
+						int newPos= (int)(viewModel.getPosition()[2]+ e.getWheelRotation());
+						newPos=Math.min(Math.max(newPos, 0), model.getNumberOfFrames()-1);
+						viewModel.setPosition(2,newPos);
+						return;
+					}else{
+						int newPos= (int)(viewModel.getPosition()[3]+ e.getWheelRotation());
+						newPos=Math.min(Math.max(newPos, 0), model.getNumberOfFrames()-1);
+						viewModel.setPosition(3,newPos);
+						return;
+					}
+					
+				
+			
+		}
 		
 	}
 	

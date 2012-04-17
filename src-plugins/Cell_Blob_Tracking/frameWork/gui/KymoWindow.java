@@ -26,7 +26,12 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 		originalImage=img;
 		
 		
-		imp.getCanvas().addMouseWheelListener(new MyListener());
+		MouseWheelListener [] wheelListeners=imp.getWindow().getMouseWheelListeners();
+		for(int i=0;i<wheelListeners.length;i++){
+			imp.getWindow().removeMouseWheelListener(wheelListeners[i]);
+		}
+		
+		imp.getWindow().addMouseWheelListener(new MyListener());
 		
 	//	sb=new Scrollbar(Scrollbar.HORIZONTAL, 0, 1, 1, model.getNumberOfFrames()+1);
 	//	imp.getWindow().add(sb);

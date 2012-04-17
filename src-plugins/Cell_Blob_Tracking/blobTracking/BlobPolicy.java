@@ -173,7 +173,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 			
 			selectedSequenceId=trackingChannel.selectAt((int)pos[0],(int) pos[1],(int) pos[2],(int) pos[3],(int) pos[4]);	 
 		//	System.out.println("        new selected Sequence ID:"+selectedSequenceId);
-			if(!e.isControlDown()){
+			if(!e.isShiftDown()){
 				selectedIdList.clear();			
 			}
 			if(selectedIdList.contains(selectedSequenceId)){
@@ -192,7 +192,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		if(e.getID()==MouseEvent.MOUSE_CLICKED){
 			
-			if(e.isShiftDown() && e.getClickCount()==1){
+			if( e.getClickCount()==2){
 				Blob nB=new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], pos[2], 1, trackingChannel.getId());				
 				BlobSession<IT> bs= (BlobSession<IT>)trackingChannel;
 				nB.sigma=bs.getDefaultSigma();

@@ -1,8 +1,6 @@
 package frameWork.gui;
 
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
@@ -16,8 +14,8 @@ public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & Rea
 	
 	public MaxProjectionZ(Model<IT> mod, ViewModel<IT> vm){
 		super(mod, null, "max-Z-projection", vm, null);
-	//	imp.getCanvas().addMouseListener(this);
-	//	imp.getCanvas().addMouseMotionListener(this);
+
+	
 	}
 	
 	@Override
@@ -36,6 +34,7 @@ public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & Rea
 	}
 
 	
+	@Override
 	public long[] positionFromEvent(MouseEvent e){
 		int x=(int)(imp.getCanvas().offScreenX(e.getX())/this.scaleX);
 		int y=(int)(imp.getCanvas().offScreenY(e.getY())/this.scaleY);
@@ -48,6 +47,9 @@ public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & Rea
 			pos[2]=-1;
 		return pos;
 	}
+	
+	
+	
 	
 
 }
