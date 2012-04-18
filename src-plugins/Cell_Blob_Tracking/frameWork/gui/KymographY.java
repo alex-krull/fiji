@@ -25,7 +25,7 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		Rectangle r= mainWindow.getWindow().getBounds();
 	//	IJ.error("mw x:"+ String.valueOf(mainWindow.getWindow().getX()) +
 	//			 "kw x:"+ imp.getWindow().getX());
-		imp.getWindow().setLocation((int)r.getX(),(int)r.getMaxY());
+	//	imp.getWindow().setLocation((int)r.getX(),(int)r.getMaxY());
 	///	IJ.error("mw x:"+ String.valueOf(mainWindow.getWindow().getX()) +
 	//			 "kw x:"+ imp.getWindow().getX());
 		

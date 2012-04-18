@@ -44,7 +44,7 @@ public abstract class ImageView  < IT extends  NumericType<IT> & NativeType<IT> 
 implements MouseListener, MouseMotionListener{
 	
 	protected ImagePlus imp=null;
-	protected RandomAccessibleInterval<IT> image;
+	protected RandomAccessibleInterval<IT> image=null;
 	protected ImageCanvas canvas;
 	protected volatile Overlay ovTemplate;
 	protected double scaleX=1;
@@ -101,6 +101,8 @@ implements MouseListener, MouseMotionListener{
 		}
 		
 	}
+	
+	
 	
 	protected class MyCanvas extends ImageCanvas{
 		
@@ -162,14 +164,29 @@ implements MouseListener, MouseMotionListener{
 		
 		ovTemplate= new Overlay();
 		image=img;
-	 	if(imp==null) reFresh(vm.getPosition(),true);
-	 	initWindow();
+		
+	 	if(imp==null){
+	 	
+	 		
+	 	//	ImgFactory<IT> factory= new ArrayImgFactory<IT>();
+	 	//	int[] a= {2,2};
+	 		reFresh(vm.getPosition(),true);
+	 		initWindow();
+	 	//	initImp(model.getFrame(0, 0).getFrameView());
+	 	}
+	 	
 	 	
 	 	//imp.getCanvas().addComponentListener(new myPropChangeListener());
 	// 	imp.getCanvas().addPropertyChangeListener(new myPropChangeListener());
 	
 	// 	imp.addImageListener(new myPropChangeListener(imp));
 	 	
+	}
+	
+	@Override
+	public void startThread(){
+		
+		super.startThread();
 	}
 	
 	public synchronized void initImp(RandomAccessibleInterval<IT> toDraw){
@@ -185,8 +202,7 @@ implements MouseListener, MouseMotionListener{
 			
 			if (toDraw.numDimensions()>2) toDraw=Views.hyperSlice(toDraw,2,position[4] );
 			if(imp==null) {
-				initImp(toDraw);
-				
+				initImp(toDraw);	
 			}
 			else{
 						

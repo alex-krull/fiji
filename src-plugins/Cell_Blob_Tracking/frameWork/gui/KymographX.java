@@ -1,8 +1,5 @@
 package frameWork.gui;
 
-import ij.IJ;
-
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import net.imglib2.RandomAccessibleInterval;
@@ -31,7 +28,7 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	//	this.imp.getCanvas().addMouseListener(ml);
 	//	this.imp.getCanvas().addMouseMotionListener(ml);
 	//	sb.setOrientation(Scrollbar.HORIZONTAL);
-		Point p= mainWindow.getWindow().getLocation();
+	/*	Point p= mainWindow.getWindow().getLocation();
 		
 		
 		if(imp.getWindow().getParent()!= null){
@@ -44,9 +41,10 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 			mainWindow.getWindow().getParent().setLocation(0, 0);
 			IJ.error(mainWindow.getWindow().getParent().getClass().getName());
 		}
-	//	IJ.error("mw x:"+ String.valueOf(mainWindow.getWindow().getX()) +
+	*///	IJ.error("mw x:"+ String.valueOf(mainWindow.getWindow().getX()) +
 	//			 "kw x:"+ imp.getWindow().getX());
 	
+		
 		
 		this.startThread();
 	}
