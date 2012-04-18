@@ -172,6 +172,12 @@ implements MouseListener, MouseMotionListener{
 	 	
 	}
 	
+	public synchronized void initImp(RandomAccessibleInterval<IT> toDraw){
+		imp= ImageJFunctions.show(toDraw,caption);
+		ContrastEnhancer ce= new ContrastEnhancer();		
+		ce.stretchHistogram(imp, 0.5);
+	}
+	
 	public synchronized void reDraw(long[] position, boolean rePaintImage, RandomAccessibleInterval<IT> toDraw){
 		//model.rwLock.readLock().lock();
 		
@@ -179,9 +185,8 @@ implements MouseListener, MouseMotionListener{
 			
 			if (toDraw.numDimensions()>2) toDraw=Views.hyperSlice(toDraw,2,position[4] );
 			if(imp==null) {
-				imp= ImageJFunctions.show(toDraw,caption);
-				ContrastEnhancer ce= new ContrastEnhancer();		
-				ce.stretchHistogram(imp, 0.5);
+				initImp(toDraw);
+				
 			}
 			else{
 						

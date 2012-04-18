@@ -47,6 +47,7 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	//	IJ.error("mw x:"+ String.valueOf(mainWindow.getWindow().getX()) +
 	//			 "kw x:"+ imp.getWindow().getX());
 	
+		
 		this.startThread();
 	}
 	
