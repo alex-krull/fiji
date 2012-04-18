@@ -38,8 +38,8 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 
 	
 	@Override
-	public Sequence<Blob> produceSequence(int ident, String lab, Session<Blob, IT> session) {
-		return new Sequence<Blob>( ident,  lab, this, session);
+	public Sequence<Blob> produceSequence(int ident, String lab, Session<Blob, IT> session, String filePath) {
+		return new Sequence<Blob>( ident,  lab, this, session, filePath);
 	}
 	
 	

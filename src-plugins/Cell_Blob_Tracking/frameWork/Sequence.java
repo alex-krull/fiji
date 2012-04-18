@@ -14,6 +14,14 @@ import tools.OtherTools;
 public class Sequence<T extends Trackable> {
 	protected int id;
 	protected String label;
+	protected String filename;
+	protected SortedMap <Integer,T> trackables;
+	protected Color color;
+	protected Properties properties;
+	protected Policy<T,?> policy;
+	private final Session<T,?> session;
+	private final String path;
+	
 	
 	public String getLabel() {
 		return label;
@@ -23,13 +31,6 @@ public class Sequence<T extends Trackable> {
 		this.label = label;
 	}
 
-	protected SortedMap <Integer,T> trackables;
-
-	protected Color color;
-	protected Properties properties;
-	protected Policy<T,?> policy;
-	private final Session<T,?> session;
-	private final String path;
 	
 	public Session<T, ?> getSession() {
 		return session;
@@ -53,7 +54,7 @@ public class Sequence<T extends Trackable> {
 	
 	
 
-	public Sequence(int ident, String lab, Policy<T,?> pol,Session<T,?> sess){
+	public Sequence(int ident, String lab, Policy<T,?> pol,Session<T,?> sess, String filePath){
 		session=sess;
 		policy=pol;
 		color=new Color(255,0,0,255);
@@ -66,7 +67,7 @@ public class Sequence<T extends Trackable> {
 		properties.setProperty("a", "property");
 		properties.setProperty("test", "property");
 		color=OtherTools.colorFromIndex(id);
-		path="/seq"+getId()+".trcT";
+		path=filePath;
 		
 	}
 	

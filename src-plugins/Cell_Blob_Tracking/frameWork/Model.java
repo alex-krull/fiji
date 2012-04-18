@@ -90,6 +90,10 @@ public String getImageFileName() {
 	return imageFileName;
 }
 
+public String getImageFileNameNoEnding() {
+	return imageFileName.split(".")[0];
+}
+
 public void setImageFileName(String imageFileName) {
 	this.imageFileName = imageFileName;
 }

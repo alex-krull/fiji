@@ -125,7 +125,8 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 		Sequence<T> sequence= Sequences.get(trackable.sequenceId);
 		if(sequence==null){
 			
-			sequence=produceSequence(trackable.sequenceId, Integer.toString(trackable.sequenceId));
+			sequence=policy.produceSequence(trackable.sequenceId,Integer.toString(trackable.sequenceId)
+					,this,Model.getInstance().getImageFileName() + "_" +this.label+ "_" +trackable.sequenceId+ ".trcT");
 	//		System.out.println("Adding Seq!");
 			sequence.addTrackable(trackable);
 			Sequences.put(trackable.sequenceId, sequence);
@@ -188,9 +189,9 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 		return this.policy.getTypeName();
 	}
 	
-	protected Sequence<T> produceSequence(int ident, String lab){
-		return policy.produceSequence(ident, lab, this);
-	}
+//	protected Sequence<T> produceSequence(int ident, String lab){
+//		return policy.produceSequence(ident, lab, this);
+//	}
 	
 	public void addSequence(Sequence <T> seq){
 		this.Sequences.put(seq.getId(), seq);

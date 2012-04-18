@@ -24,7 +24,6 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 	
 	public abstract ChannelController<T,IT> produceControllerAndChannel(Properties sessionProps, Model <IT> model);
 	public abstract String getTypeName();
-	protected abstract Sequence<T> produceSequence(int ident, String lab, Session<T, IT> session);
 	
 	protected abstract TrackingFrame<T,IT> produceFrame(int frameNum, MovieChannel<IT> mc);
 	
@@ -41,5 +40,10 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 	
 	public abstract void  optimizeFrame(boolean cheap, List<T> trackables,
 			MovieFrame<IT> movieFrame, double qualityT);
+	public Sequence<T> produceSequence(int ident, String lab,
+			Session<T, IT> session, String filePath) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

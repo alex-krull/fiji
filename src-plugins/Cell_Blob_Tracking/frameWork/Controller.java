@@ -116,7 +116,7 @@ private void processFile(String fName){
 		  }
 		  reader= new StringReader(forReader);
 		  sequenceProps.load(reader);
-		  cc.CheckOrCreateSequence(sequenceProps);
+		  cc.CheckOrCreateSequence(sequenceProps, fName);
 		  		  
 		  
 		  while ((strLine = br.readLine()) != null)   {	// get data		  

@@ -166,13 +166,8 @@ implements MouseListener, MouseMotionListener{
 		image=img;
 		
 	 	if(imp==null){
-	 	
-	 		
-	 	//	ImgFactory<IT> factory= new ArrayImgFactory<IT>();
-	 	//	int[] a= {2,2};
 	 		reFresh(vm.getPosition(),true);
 	 		initWindow();
-	 	//	initImp(model.getFrame(0, 0).getFrameView());
 	 	}
 	 	
 	 	

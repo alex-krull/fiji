@@ -257,11 +257,12 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		}
 	}
 	
-	public boolean CheckOrCreateSequence(Properties seqProps){
+	public boolean CheckOrCreateSequence(Properties seqProps, String filePath){
 		int id=Integer.valueOf(seqProps.getProperty("seqId"));
 		Sequence<T> seq= trackingChannel.getSequence(id);
 		if (seq==null){
-			seq=trackingChannel.produceSequence(id, "");
+			seq=policy.produceSequence(id, "init", trackingChannel, filePath);
+		//	seq=trackingChannel.produceSequence(id, "");
 			trackingChannel.addSequence(seq);
 		}
 		seq.setProperties(seqProps);
