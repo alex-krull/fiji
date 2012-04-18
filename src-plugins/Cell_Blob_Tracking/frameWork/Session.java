@@ -185,7 +185,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 
 	
 	public String getTypeName(){
-		return produceSequence(-1,"").getTypeName();
+		return this.policy.getTypeName();
 	}
 	
 	protected Sequence<T> produceSequence(int ident, String lab){
