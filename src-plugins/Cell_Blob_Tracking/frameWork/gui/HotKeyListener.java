@@ -19,6 +19,10 @@ public class HotKeyListener implements KeyListener {
 			  viewModel.toggleDrawOverlays();		 
 		      return;
 		      
+		  case KeyEvent.VK_C:
+		  IJ.doCommand("Brightness/Contrast...");
+		  return;
+		      
 		  case KeyEvent.VK_G:			  
 			  viewModel.toggleTracking(false);		 
 		      return;
