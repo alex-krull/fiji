@@ -69,7 +69,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	public ControlWindow(Model <IT> mod, String title, ViewModel <IT> vm) {
 		super(mod, title, vm);
-		// TODO Auto-generated constructor stub
+		go();
+		startThread();
 	}
 
 
@@ -136,6 +137,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		window.go();
 	}
 	 */
+
 
 
 	public void go(){
@@ -624,6 +626,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		zSpinner.addChangeListener(new ZSpinnerListener());
 		cSpinner.addChangeListener(new CSpinnerListener());
 
+		
 	}
 
 
@@ -756,7 +759,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	@Override
 	public synchronized void reFresh(long[] position, boolean rePaintImage) {
-		//System.out.println("updating Spinners !!!!!!!!!!!");
+		System.out.println("updating !!!!!!!!!!!");
 		//System.out.println("position[3]+1: "+(position[3]+1));
 		
 		//This section puts frame number in console area

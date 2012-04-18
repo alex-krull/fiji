@@ -19,6 +19,7 @@ import frameWork.Model;
 					"max-X-projection",vm, null);
 			this.scaleX=model.getXyToZ();
 	
+			startThread();
 		
 		}
 		

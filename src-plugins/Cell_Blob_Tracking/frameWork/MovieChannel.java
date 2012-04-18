@@ -107,8 +107,10 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 			pt.start();
 		}
 		
-		//ProjectionThreadKymographs ptk= new ProjectionThreadKymographs(this);
-		//ptk.start();
+		
+		ProjectionThreadKymographs ptk= new ProjectionThreadKymographs(this);
+		ptk.setPriority(Thread.MIN_PRIORITY);
+		ptk.start();
 	}
 	
 	public RandomAccessibleInterval<IT> getXProjections(){

@@ -25,19 +25,9 @@ import frameWork.gui.controlWindow.ControlWindow;
 
 public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>>extends AbstractTool{
 
-	public class AddingViewsThread extends Thread{
-		private final Model <IT> model;
-		private final ViewModel<IT> viewModel;
-		private final ImagePlus imp;
-		
-		
-		AddingViewsThread(ViewModel<IT> vm, Model<IT> mod, ImagePlus im){
-			imp=im;
-			model= mod;
-			viewModel=vm;
-		}
-		@Override
-		public void run() {
+	
+	
+		public void addWindows(Model<IT> model, ImagePlus imp, ViewModel<IT> viewModel) {
 			
 			try {
 	            // Set cross-platform Java L&F (also called "Metal")
@@ -60,13 +50,12 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 			//super.run();
 			
 			
-			System.out.println("iv:" + model.isVolume()+ "  its:" +model.isTimeSequence() + "  imc:"+ model.isMultiChannel() );
 			double initZoom=imp.getCanvas().getMagnification();
 			
 			
 			
 			ControlWindow<IT> cw= new ControlWindow<IT>(model, "Control Window",viewModel);
-	        cw.go();
+	        viewModel.addViewWindow(cw,initZoom);
 	        
 	        MainWindow<IT> mw=new MainWindow<IT>(imp, model, viewModel);
 	        viewModel.addViewWindow(mw,initZoom);
@@ -75,20 +64,21 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	        
 	        	
 	        System.out.println("adding projections");
+	        viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel),initZoom);
 			viewModel.addViewWindow(new MaxProjectionX<IT>(model, viewModel),initZoom);
 			viewModel.addViewWindow(new MaxProjectionY<IT>(model, viewModel),initZoom);
-			viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel),initZoom);
+			
 	        }
 	        
 	
 			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel,mw),initZoom);		
 			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel,mw),initZoom);		
 		
-	        viewModel.addViewWindow(cw,initZoom);
+	        
 			
-	        viewModel.update(model, null);
+	 //       viewModel.update(model, null);
 	    }
-	}
+	
 	
 	@Override
 	public String getToolIcon(){
@@ -147,15 +137,13 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		model.addObserver(vm);
 		System.out.println("Time taken:"+((time1-time0)/1000000));
 		
+		System.out.println("adding windows...");
+		this.addWindows(model, imp, vm);
 		
-		AddingViewsThread awt= new AddingViewsThread(vm,model, imp);
-		cont.load(vm);
-		awt.run();
-//		for(int i=0; i< 100000000;i++)
-//			vm.setPosition(3, i%20);
+//		System.out.println("loading traces...");
+	//	cont.load(vm);
+	
 		
-		
-
 		
 		
 		

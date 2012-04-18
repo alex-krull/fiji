@@ -1,16 +1,7 @@
 package frameWork.gui;
 
-import ij.IJ;
-
 import java.awt.Rectangle;
-import java.awt.Scrollbar;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
@@ -22,11 +13,11 @@ import frameWork.Model;
 public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends KymoWindow<IT> {
 
 	
-	private boolean buisy=false;
+	private final boolean buisy=false;
 	
 	public KymographY(Model< IT> mod, RandomAccessibleInterval<IT> img, ViewModel<IT> vm, MainWindow<IT> mainWindow) {
 		super(mod, img,vm, "Kymograph Y");
-		ySize=(int)model.getYTProjections(0).dimension(1);
+		ySize=model.getNumberOfFrames();
 		if(ySize>500) ySize=500;
 		if(ySize<100) ySize=100;
 	    baseTimeScale=(double)ySize/(double)model.getNumberOfFrames();	
@@ -43,8 +34,11 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	//	this.imp.getCanvas().addMouseListener(this);
 	//	sb.setLocation(0, 0);
 	//	sb.setOrientation(Scrollbar.VERTICAL);
+	
+		this.startThread();
 	}
 	
+	@Override
 	public void reFresh(long[] position, boolean rePaintImage){
 		
 		scaleY=timeScale;	
@@ -57,15 +51,15 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 		if(viewModel.mouseIsInWindow)  this.addXShortLineOverlay(position[0], position[3],10);
 		RandomAccessibleInterval<IT> toDraw=model.getYTProjections((int)position[4]);
 		reDraw(position, rePaintImage,toDraw);
-		//super.reFresh(position, rePaintImage);
+	
 	}
 
 	
 	
 	@Override
 	public long[] positionFromEvent(MouseEvent e){
-		int x=(int)((double)(imp.getCanvas().offScreenX(e.getX())+transX)/this.scaleX);
-		int t=(int)((double)(imp.getCanvas().offScreenY(e.getY())+transY)/this.scaleY);
+		int x=(int)((imp.getCanvas().offScreenX(e.getX())+transX)/this.scaleX);
+		int t=(int)((imp.getCanvas().offScreenY(e.getY())+transY)/this.scaleY);
 	//	System.out.println("x:"+ x +"  y:"+y);
 		
 		

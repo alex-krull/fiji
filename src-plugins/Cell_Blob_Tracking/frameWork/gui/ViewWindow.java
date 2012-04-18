@@ -26,10 +26,12 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		model=mod;
 		caption= title;
 		
-		
+	}
+	
+	public void startThread(){
 		thread= new Thread(this);
-	//.setPriority(Thread.MIN_PRIORITY);
 		thread.start();
+		
 	}
 	
 	
@@ -46,7 +48,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	
 	/**
 	 * update the view using its own thread 
-	 *
+	 *iv:
 	 * The task of updating the window is, added to the job-queue of the ViewWindows thread
 	 * 
 	 * @param position The position the ViewWindow should switch to.

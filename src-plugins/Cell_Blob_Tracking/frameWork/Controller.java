@@ -268,6 +268,7 @@ public void processDirectory(String directory){
 public List<Integer> getSelectionList(){
 	
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
+	if(cc==null) return new ArrayList<Integer>();
 	return cc.getSelectionList();
 	
 }

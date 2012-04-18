@@ -20,7 +20,7 @@ public class MaxProjectionY < IT extends  NumericType<IT> & NativeType<IT> & Rea
 					"max-Y-projection",vm,null);
 			this.scaleY=model.getXyToZ();
 
-			
+			startThread();
 		}
 		
 		@Override

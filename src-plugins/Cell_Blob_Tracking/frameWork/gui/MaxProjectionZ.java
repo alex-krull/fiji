@@ -14,7 +14,7 @@ public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & Rea
 	
 	public MaxProjectionZ(Model<IT> mod, ViewModel<IT> vm){
 		super(mod, null, "max-Z-projection", vm, null);
-
+		startThread();
 	
 	}
 	

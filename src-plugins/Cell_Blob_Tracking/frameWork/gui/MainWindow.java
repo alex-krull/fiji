@@ -86,6 +86,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	 	ySize=imp.getHeight();
 		initWindow();
 		
+		this.startThread();
 	}
 
 	@Override
