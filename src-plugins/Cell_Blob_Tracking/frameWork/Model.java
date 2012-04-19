@@ -91,7 +91,9 @@ public String getImageFileName() {
 }
 
 public String getImageFileNameNoEnding() {
-	return imageFileName.split(".")[0];
+
+	String[] a= imageFileName.split("\\.");
+	return a[0];
 }
 
 public void setImageFileName(String imageFileName) {
