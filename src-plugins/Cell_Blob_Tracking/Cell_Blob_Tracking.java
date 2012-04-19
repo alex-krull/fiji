@@ -141,7 +141,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		this.addWindows(model, imp, vm);
 		
 //		System.out.println("loading traces...");
-	//	cont.load(vm);
+		cont.load(vm);
 	
 		
 		
