@@ -171,8 +171,7 @@ public synchronized void click(long[] position, int tChannel, MouseEvent e){
 
 public boolean isTracking(){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
-	if(cc!=null) return cc.isTracking();
-	return false;
+	return Model.getInstance().isCurrentlyTracking();
 }
 
 public boolean isAlternateMethodUsed(){
@@ -192,7 +191,7 @@ public void optimizeFrame(int frameNumber){
 public void toggleTracking(int frameId, boolean multiscale){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null)
-		if(!cc.isTracking()){
+		if(!Model.getInstance().isCurrentlyTracking()){
 			cc.startTracking(frameId, multiscale);
 			alternateMethodUsed=multiscale;
 		}
