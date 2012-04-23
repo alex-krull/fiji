@@ -130,6 +130,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JMenuItem contrastMenu;
 	private JButton altTracking;
 	private JMenuItem altMenu;
+	private JMenuItem altOptionMenu;
 
 	/*
 	public static void main(String[] args) {
@@ -527,6 +528,10 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		altMenu.addActionListener(new AltTrackingListener());
 		altMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.SHIFT_MASK));
 		
+		altOptionMenu = new JMenuItem("");
+		altOptionMenu.addActionListener(new AltOptionListener());
+		altOptionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ActionEvent.SHIFT_MASK));
+		
 		deleteSeqMenu = new JMenuItem("Delete Sequence");
 		deleteSeqMenu.addActionListener(new DeleteListener());
 		deleteSeqMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.SHIFT_MASK));
@@ -565,6 +570,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		editMenu.add(editSession);
 		editMenu.add(editBlob);
+		editMenu.add(altOptionMenu);
 		editMenu.addSeparator();
 		editMenu.add(startMenu);
 		editMenu.add(altMenu);
@@ -784,10 +790,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			currentMethod.setText(viewModel.getController().getCurrentSession().getTypeName());
 			if(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking()==null){
 				altTracking.setVisible(false);
+				altOptionMenu.setVisible(false);
 			}else{
 			altTracking.setText(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
 			altMenu.setText("Start " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
+			altOptionMenu.setText(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking() + " Options");
 			altTracking.setVisible(true);
+			altOptionMenu.setVisible(true);
 			
 			}
 			
@@ -796,6 +805,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				start.setForeground(Color.red);
 				startMenu.setText("Stop Tracking");
 				altMenu.setVisible(false);
+				altOptionMenu.setVisible(false);
 				
 				altTracking.setVisible(false);;
 			} else {
@@ -803,6 +813,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				startMenu.setText("Start Tracking");
 				start.setForeground(Color.blue);
 				altMenu.setVisible(true);
+				altOptionMenu.setVisible(true);
 				if(!(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking()==null)){
 				altTracking.setVisible(true);
 				}
@@ -960,6 +971,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			this.saveAll.setEnabled(false);
 			altMenu.setEnabled(false);
 			altMenu.setVisible(false);
+			altOptionMenu.setEnabled(false);
+			altOptionMenu.setVisible(false);
+			
 			
 			startMenu.setEnabled(false);
 			altTracking.setVisible(false);
@@ -970,6 +984,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		this.deleteSession.setEnabled(true);
 		this.start.setEnabled(true);
 		altMenu.setEnabled(true);
+		altOptionMenu.setEnabled(true);
 		startMenu.setEnabled(true);
 		this.altTracking.setEnabled(true);
 
@@ -1259,6 +1274,17 @@ public class AltTrackingListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
 			viewModel.getController().mergeSequenences();
+		}
+
+	}
+	
+	
+	public class AltOptionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			viewModel.getController().getCurrentSession().showAlternatePropertiesDialog();
+			
 		}
 
 	}
