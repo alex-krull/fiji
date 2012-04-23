@@ -197,7 +197,10 @@ public void toggleTracking(int frameId, boolean multiscale){
 			alternateMethodUsed=multiscale;
 		}
 		else cc.stopTracking();
+	
 	model.makeStructuralChange();
+	model.makeChangesPublic();
+	
 }
 
 public void splitSequence(int frameId){
