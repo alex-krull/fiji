@@ -193,7 +193,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		if(e.getID()==MouseEvent.MOUSE_CLICKED){
 			
 			if( e.getClickCount()==2){
-				Blob nB=new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], pos[2], 1, trackingChannel.getId());				
+				Blob nB=new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], pos[2]*Model.getInstance().getXyToZ(), 1, trackingChannel.getId());				
 				BlobSession<IT> bs= (BlobSession<IT>)trackingChannel;
 				nB.sigma=bs.getDefaultSigma();
 				nB.sigmaZ=bs.getDefaultSigmaZ();
