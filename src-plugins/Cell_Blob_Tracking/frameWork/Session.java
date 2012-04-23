@@ -225,6 +225,6 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 	
 	public abstract void showPropertiesDialog();
 	public abstract void showObjectPropertiesDialog(T t);
-	
+	public abstract void showAlternatePropertiesDialog();
 	
 }

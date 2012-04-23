@@ -102,6 +102,14 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	public void showObjectPropertiesDialog(Blob b) {
 		 new BlobOptionDialog(b,this.isVolune());
 	}
+	
+	@Override
+	public void showAlternatePropertiesDialog() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 
 
 	public int getMscaleIterations() {
@@ -132,6 +140,9 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	public void setMscaleSigma(double mscaleSigma) {
 		this.mscaleSigma = mscaleSigma;
 	}
+
+
+	
 	
 
 }
