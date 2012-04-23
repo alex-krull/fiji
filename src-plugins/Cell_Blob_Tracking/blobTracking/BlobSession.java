@@ -19,7 +19,9 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	private double defaultMaxSigmaZ=2;
 	private double defaultMinSigmaZ=0.5;
 	private boolean autoSigmaZ=false;
-	
+	private double downscaleFactor = .5;
+	private double mscaleSigma = 1;
+	private int mscaleIterations = 5;
 	
 	public BlobSession(int newID, Policy<Blob, IT> pol, MovieChannel<IT> mc) {
 		super(newID, pol, mc);
@@ -98,6 +100,36 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	
 	public void showObjectPropertiesDialog(Blob b) {
 		 new BlobOptionDialog(b,this.isVolune());
+	}
+
+
+	public int getMscaleIterations() {
+		return mscaleIterations;
+	}
+
+
+	public void setMscaleIterations(int mscaleIterations) {
+		this.mscaleIterations = mscaleIterations;
+	}
+
+
+	public double getDownscaleFactor() {
+		return downscaleFactor;
+	}
+
+
+	public void setDownscaleFactor(double downscaleFactor) {
+		this.downscaleFactor = downscaleFactor;
+	}
+
+
+	public double getMscaleSigma() {
+		return mscaleSigma;
+	}
+
+
+	public void setMscaleSigma(double mscaleSigma) {
+		this.mscaleSigma = mscaleSigma;
 	}
 	
 
