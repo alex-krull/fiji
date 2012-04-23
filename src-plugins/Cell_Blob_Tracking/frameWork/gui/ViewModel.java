@@ -209,11 +209,13 @@ public int getCurrentChannelNumber(){
 }
 
 public void addViewWindow( ViewWindow<IT> vw, double initialZoom){
+	model.rwLock.writeLock().lock();
 	views.add(vw);
 	vw.addKeyListener(hotKeyListener);
 	
 	this.upDateImages(0, 0, 0,true);
 	vw.setZoom(initialZoom);
+	model.rwLock.writeLock().unlock();
 }
 
 public List<Session<? extends Trackable,IT>> getSessionsToBeDisplayed(){
