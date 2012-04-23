@@ -807,7 +807,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				altTracking.setVisible(true);
 				}
 			}
-		}
+		}else currentMethod.setText("");
 		trackerTable.removeListener();
 
 
