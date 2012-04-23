@@ -478,8 +478,13 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	}
 			doOptimizationSingleScale(trackables, movieFrame.getFrameView(),qualityT, movieFrame.getConstBackground(),100);
 	}
-
 	
+	
+
+	@Override
+	public String getLableForAlternateTracking(){
+		return "Multiscale";
+	}
 	
 	
 }
