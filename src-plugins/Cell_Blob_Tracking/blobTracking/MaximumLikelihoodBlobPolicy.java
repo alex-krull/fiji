@@ -24,6 +24,7 @@ import org.apache.commons.math.optimization.direct.PowellOptimizer;
 import tools.ImglibTools;
 import frameWork.Model;
 import frameWork.MovieFrame;
+import frameWork.Session;
 
 public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends BlobPolicy<IT>{
 
@@ -372,7 +373,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	
 	@Override
 	public void optimizeFrame(boolean multiscale, List<Blob> trackables,
-			MovieFrame<IT> movieFrame,  double qualityT) {
+			MovieFrame<IT> movieFrame,  double qualityT, Session<Blob,IT> session) {
+		BlobSession<IT> blobS= (BlobSession<IT>) session;
 		if(multiscale){
 			ImgFactory <FloatType>floatFactory= new ArrayImgFactory<FloatType>();
 			Img<FloatType>srcFloat=floatFactory.create(movieFrame.getZProjections(), new FloatType());
@@ -391,9 +393,9 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		//    ImageJFunctions.show(srcFloat);
 			
 			
-			double gaussianStd =1;
-			double sf =0.5;
-			double steps=14;
+			double gaussianStd =blobS.getMscaleSigma();
+			double sf =blobS.getDownscaleFactor();
+			double steps=blobS.getMscaleIterations();
 			double minDimension=Math.min(srcFloat.dimension(0),srcFloat.dimension(1));
 			while(minDimension*Math.pow(sf,steps)<5){
 				steps--;

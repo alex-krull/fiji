@@ -111,7 +111,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 			if(trackables.contains(new Integer( t.sequenceId)) ) results.add(t);
 		}
 		
-		policy.optimizeFrame(multiscale, results, f.getMovieFrame(),this.qualityThreshold);
+		policy.optimizeFrame(multiscale, results, f.getMovieFrame(),this.qualityThreshold, this);
 	}
 
 	public int selectAt(int x, int y, int z, int frameId, int channel){

@@ -39,7 +39,7 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 	public abstract T copy(T toCopy);
 	
 	public abstract void  optimizeFrame(boolean cheap, List<T> trackables,
-			MovieFrame<IT> movieFrame, double qualityT);
+			MovieFrame<IT> movieFrame, double qualityT, Session<T,IT> session);
 	public Sequence<T> produceSequence(int ident, String lab,
 			Session<T, IT> session, String filePath) {
 		// TODO Auto-generated method stub
