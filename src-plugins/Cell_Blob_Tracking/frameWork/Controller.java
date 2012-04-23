@@ -35,6 +35,7 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 	protected ControlWindow<IT> controllWindow;
 	protected double xyToZ=3.5;
 	private int selectedTCId;
+	private volatile boolean alternateMethodUsed=false;
 	
 	protected Model<IT> model;
 
@@ -174,6 +175,10 @@ public boolean isTracking(){
 	return false;
 }
 
+public boolean isAlternateMethodUsed(){
+	return alternateMethodUsed;
+}
+
 public void optimizeFrame(int frameNumber){
 	model.rwLock.writeLock().lock();
 		ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
@@ -187,9 +192,15 @@ public void optimizeFrame(int frameNumber){
 public void toggleTracking(int frameId, boolean multiscale){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null)
-		if(!cc.isTracking()) cc.startTracking(frameId, multiscale);
+		if(!cc.isTracking()){
+			cc.startTracking(frameId, multiscale);
+			alternateMethodUsed=multiscale;
+		}
 		else cc.stopTracking();
+	
 	model.makeStructuralChange();
+	model.makeChangesPublic();
+	
 }
 
 public void splitSequence(int frameId){
