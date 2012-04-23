@@ -7,6 +7,7 @@ import frameWork.MovieChannel;
 import frameWork.Policy;
 import frameWork.Session;
 import frameWork.gui.controlWindow.BlobOptionDialog;
+import frameWork.gui.controlWindow.MScaleOption;
 import frameWork.gui.controlWindow.SessionOptionsDialog;
 
 public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends Session<Blob,IT>{
@@ -105,8 +106,8 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	
 	@Override
 	public void showAlternatePropertiesDialog() {
-		// TODO Auto-generated method stub
-		
+
+		new MScaleOption(this);
 	}
 	
 	
