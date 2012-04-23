@@ -482,7 +482,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	
 
 	@Override
-	public String getLableForAlternateTracking(){
+	public String getLabelForAlternateTracking(){
 		return "Multiscale";
 	}
 	

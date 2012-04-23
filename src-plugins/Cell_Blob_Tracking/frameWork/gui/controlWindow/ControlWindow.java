@@ -395,13 +395,19 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		rightButtonPanel.add(deleteSession);
 		//rightButtonPanel.add(new JLabel(""));
 		
+		altTracking = new JButton("M Tracking");
+		altTracking.addActionListener(new AltTrackingListener());
+		altTracking.setForeground(Color.blue);
+		altTracking.setVisible(false);
+		
+		rightButtonPanel.add(altTracking);
 		rightButtonPanel.add(start);
 		rightButtonPanel.setMaximumSize(new Dimension(1000, 300));
 				
-		altTracking = new JButton("M Tracking");
-		altTracking.addActionListener(new AltTrackingListener());
 		
-		rightButtonPanel.add(altTracking);
+		
+		
+		
 		
 		
 		//rightButtonPanel.add(changeSession);
@@ -517,7 +523,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		startMenu.addActionListener(new StartListener());
 		startMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.SHIFT_MASK));
 
-		altMenu = new JMenuItem("Start M Tracking");
+		altMenu = new JMenuItem("");
 		altMenu.addActionListener(new AltTrackingListener());
 		altMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.SHIFT_MASK));
 		
@@ -772,27 +778,38 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			text.append("Tracking Frame " + frameNumber + "\n");
 		}
 		
-		int tempMethod = viewModel.getController().getSessions().size();
+		int tempSessionSize = viewModel.getController().getSessions().size();
 		
-		if(tempMethod > 0){
+		if(tempSessionSize > 0){
 			currentMethod.setText(viewModel.getController().getCurrentSession().getTypeName());
+			if(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking()==null){
+				altTracking.setVisible(false);
+			}else{
+			altTracking.setText(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
+			altMenu.setText("Start " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
+			altTracking.setVisible(true);
+			
+			}
+			
+			if (viewModel.isTracking()){
+				start.setText("Stop Tracking");
+				start.setForeground(Color.red);
+				startMenu.setText("Stop Tracking");
+				altMenu.setVisible(false);
+				
+				altTracking.setVisible(false);;
+			} else {
+				start.setText("Start Tracking");
+				startMenu.setText("Start Tracking");
+				start.setForeground(Color.blue);
+				altMenu.setVisible(true);
+				if(!(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking()==null)){
+				altTracking.setVisible(true);
+				}
+			}
 		}
 		trackerTable.removeListener();
-		if (viewModel.isTracking()){
-			start.setText("Stop Tracking");
-			start.setForeground(Color.red);
-			startMenu.setText("Stop Tracking");
-			altMenu.setText("Stop M Tracking");
-			altTracking.setForeground(Color.red);
-			altTracking.setText("Stop M Tracking");
-		} else {
-			start.setText("Start Tracking");
-			startMenu.setText("Start Tracking");
-			start.setForeground(Color.blue);
-			altMenu.setText("Start M Tracking");
-			altTracking.setForeground(Color.blue);
-			altTracking.setText("Start M Tracking");
-		}
+
 
 		workingFolder.setText(viewModel.getController().getWorkspace());
 
@@ -942,7 +959,10 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			editBlob.setEnabled(false);
 			this.saveAll.setEnabled(false);
 			altMenu.setEnabled(false);
-			this.altTracking.setEnabled(false);
+			altMenu.setVisible(false);
+			
+			startMenu.setEnabled(false);
+			altTracking.setVisible(false);
 
 		}else
 		{editSession.setEnabled(true);
@@ -950,6 +970,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		this.deleteSession.setEnabled(true);
 		this.start.setEnabled(true);
 		altMenu.setEnabled(true);
+		startMenu.setEnabled(true);
 		this.altTracking.setEnabled(true);
 
 		if(viewModel.getController().getSelectionList().size()==0){

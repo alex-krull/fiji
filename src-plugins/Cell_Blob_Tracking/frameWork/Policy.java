@@ -46,7 +46,7 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 		return null;
 	}
 	
-	public String getLableForAlternateTracking(){
+	public String getLabelForAlternateTracking(){
 		return null;
 	}
 	
