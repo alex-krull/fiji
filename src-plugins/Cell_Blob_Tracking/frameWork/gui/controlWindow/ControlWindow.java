@@ -688,6 +688,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			viewModel.getController().setCurrentSession(session.getId(),viewModel);
 			viewModel.setPosition(4, tempChannelNumber);
 
+			currentMethod.setText(viewModel.getController().getCurrentSession().getTypeName());
 
 
 
@@ -713,7 +714,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			//newSessionDialog();
 
 			viewModel.getController().newSession(viewModel);
-
+			currentMethod.setText(viewModel.getController().getCurrentSession().getTypeName());
 
 
 
@@ -770,6 +771,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			text.selectAll();
 			text.append("Tracking Frame " + frameNumber + "\n");
 		}
+		
 		
 		
 		trackerTable.removeListener();
