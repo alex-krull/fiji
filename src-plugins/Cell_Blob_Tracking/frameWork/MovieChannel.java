@@ -96,7 +96,7 @@ public class MovieChannel <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		frames= new ArrayList<MovieFrame<IT>>();
 		
 		for(int i=0;i<numOfFrames;i++){
-			MovieFrame<IT> f=new MovieFrame<IT>(i, getFrameView(i),cBackGround, xyToZ);
+			MovieFrame<IT> f=new MovieFrame<IT>(i, getFrameView(i),cBackGround);
 			frames.add(f);
 			
 		}

@@ -326,7 +326,6 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		Double backProb=1.0;
 		
 		for(Blob b:trackables){
-			
 			b.expectedValues= imgFactory.create(movieFrame, new FloatType());
 			backProb-=b.pK;
 		}
@@ -486,7 +485,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			}
 	}
 			doOptimizationSingleScale(trackables, movieFrame.getFrameView(),qualityT,
-					movieFrame.getConstBackground(),100);
+					Model.getInstance().getIntensityOffset(),100);
 	}
 	
 	

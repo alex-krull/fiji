@@ -67,6 +67,7 @@ public double getXyToZ() {
 
 public void setXyToZ(double xyToZ) {
 	this.xyToZ = xyToZ;
+
 }
 
 public int getIntensityOffset() {
@@ -75,6 +76,7 @@ public int getIntensityOffset() {
 
 public void setIntensityOffset(int intensityOffset) {
 	this.intensityOffset = intensityOffset;
+
 }
 
 
