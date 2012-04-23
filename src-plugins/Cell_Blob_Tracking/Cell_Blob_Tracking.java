@@ -22,6 +22,7 @@ import frameWork.gui.MaxProjectionY;
 import frameWork.gui.MaxProjectionZ;
 import frameWork.gui.ViewModel;
 import frameWork.gui.controlWindow.ControlWindow;
+import frameWork.gui.controlWindow.GlobalOptionsDialog;
 
 public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>>extends AbstractTool{
 
@@ -137,11 +138,16 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		model.addObserver(vm);
 		System.out.println("Time taken:"+((time1-time0)/1000000));
 		
+		cont.load(vm);
+		
+		new GlobalOptionsDialog(model);
+		
 		System.out.println("adding windows...");
 		this.addWindows(model, imp, vm);
 		
+		
 //		System.out.println("loading traces...");
-		cont.load(vm);
+		
 	
 		
 		

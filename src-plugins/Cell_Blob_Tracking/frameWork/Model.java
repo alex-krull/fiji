@@ -1,7 +1,6 @@
 package frameWork;
 
 
-import frameWork.gui.controlWindow.GlobalOptionsDialog;
 import ij.ImagePlus;
 
 import java.io.File;
@@ -182,7 +181,7 @@ public Model(ImagePlus imp){
 	
 	
 	
-	new GlobalOptionsDialog(this);
+	
 	rwLock= new ReentrantReadWriteLock();
 	
 	instance=this;

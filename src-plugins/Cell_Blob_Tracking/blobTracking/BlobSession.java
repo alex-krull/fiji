@@ -15,7 +15,7 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	private double defaultMaxSigma=2;
 	private double defaultMinSigma=0.5;
 	private boolean autoSigma=false;
-	private double defaultSigmaZ=1;
+	private double defaultSigmaZ=2;
 	private double defaultMaxSigmaZ=2;
 	private double defaultMinSigmaZ=0.5;
 	private boolean autoSigmaZ=false;
@@ -98,6 +98,7 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		  new SessionOptionsDialog(this);
 	}
 	
+	@Override
 	public void showObjectPropertiesDialog(Blob b) {
 		 new BlobOptionDialog(b,this.isVolune());
 	}
