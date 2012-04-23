@@ -225,7 +225,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 		//rightPanel.setLayout(new GridLayout(16, 0));
-		SpinnerModel model1 = new SpinnerNumberModel();
+		SpinnerModel model1 = new SpinnerNumberModel(1, 1, model.getNumberOfFrames(), 1);
 		frameSpinner = new JSpinner(model1);
 
 
@@ -239,7 +239,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		frameSpinner.setPreferredSize(labelDim2);
 		frameSpinner.setMaximumSize(labelDim);
 
-		SpinnerModel zSpinnerModel = new SpinnerNumberModel();
+		SpinnerModel zSpinnerModel = new SpinnerNumberModel(1, 1, model.getNumberOfSlices(), 1);
 		zSpinner = new JSpinner(zSpinnerModel);
 
 
@@ -249,7 +249,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		zLabel.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
 
 
-		SpinnerModel cSpinnerModel = new SpinnerNumberModel(20, 0, 40, 1);
+		SpinnerModel cSpinnerModel = new SpinnerNumberModel(1, 1, model.getNumberOfChannels(), 1);
 		cSpinner = new JSpinner(cSpinnerModel);
 
 
