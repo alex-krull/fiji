@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -388,6 +389,32 @@ public void clearSessions(){
 
 public void deleteSession(int id){
 	this.trackingChannels.remove(id);
+}
+
+public boolean setProperties(Properties props){
+	String s;
+	int red=255; int green=0; int blue=0;
+	s= props.getProperty("projectDirectory"); if(s!=null){
+		if(!this.getProjectDirectory().equals(s)) return false;	
+	}
+	s= props.getProperty("imageName"); if(s!=null){
+	
+		if(!this.getImageFileName().equals(s)) return false;
+	}
+	s= props.getProperty("intensityOffset"); if(s!=null)this.setIntensityOffset(Integer.valueOf(s) );
+	s= props.getProperty("xyToZ");if(s!=null)this.setXyToZ(Double.valueOf(s) );
+	return true;
+}
+
+public Properties getProperties(){
+	Properties props= new Properties();
+	props.setProperty("projectDirectory",this.getProjectDirectory());
+	props.setProperty("imageName",this.getImageFileName());
+	props.setProperty("intensityOffset",String.valueOf(this.getIntensityOffset()));
+	props.setProperty("xyToZ",String.valueOf(this.getXyToZ()));
+
+	
+	return props;
 }
 
 }

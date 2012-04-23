@@ -127,7 +127,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 			
 			sequence=policy.produceSequence(trackable.sequenceId,Integer.toString(trackable.sequenceId)
 					,this,Model.getInstance().getImageFileNameNoEnding() + "_" +this.label+ "_" +trackable.sequenceId+ ".trcT");
-	//		System.out.println("Adding Seq!");
+	
 			sequence.addTrackable(trackable);
 			Sequences.put(trackable.sequenceId, sequence);
 		}else

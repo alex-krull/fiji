@@ -54,7 +54,7 @@ public class Sequence<T extends Trackable> {
 	
 	
 
-	public Sequence(int ident, String lab, Policy<T,?> pol,Session<T,?> sess, String filePath){
+	public Sequence(int ident, String lab, Policy<T,?> pol,Session<T,?> sess, String fileName){
 		session=sess;
 		policy=pol;
 		color=new Color(255,0,0,255);
@@ -67,7 +67,7 @@ public class Sequence<T extends Trackable> {
 		properties.setProperty("a", "property");
 		properties.setProperty("test", "property");
 		color=OtherTools.colorFromIndex(id);
-		path=filePath;
+		path=fileName;
 		
 	}
 	

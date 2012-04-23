@@ -12,7 +12,6 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,22 +89,41 @@ private void processFile(String fName){
 		  String strLine;
 		  //Read File Line By Line
 		  
+		  String forReader="";
 		  while ((strLine = br.readLine()) != null&& strLine.startsWith("%")){
-			  if(strLine.equals("%-session properties-")) break;	//skip through initial comments
-		//	  System.out.println(strLine);
+			 
+		
+			  
+			  if(strLine.equals("%-global properties-")){
+				  
+				  while ((strLine = br.readLine()) != null&& strLine.startsWith("%")){
+					  forReader= forReader+ strLine.replace("%","")+"\n";  
+					  if(strLine.equals("%-session properties-")) break;	
+				  }
+				  Properties globalProps= new Properties();
+				  globalProps.load(new StringReader(forReader));
+				  if(!model.setProperties(globalProps)) return;
+				  break;
+			  }
+			  
+			  if(strLine.equals("%-session properties-")) break;
 		  }
 		  
 		  
+		  
+		  
+		  
 		  Properties sessionProps= new Properties();	//Get SessionProperties
-		 
-		  String forReader="";
+		  
+		  forReader="";
+		  
 		  while ((strLine = br.readLine()) != null&& strLine.startsWith("%")){
 			  if(strLine.equals("%-sequence properties-")) break;
 			  forReader= forReader+ strLine.replace("%","")+"\n";  
 	//		  System.out.println(strLine);
 		  }
-		  Reader reader= new StringReader(forReader);
-		  sessionProps.load(reader);
+		  
+		  sessionProps.load(new StringReader(forReader));
 		  ChannelController<? extends Trackable, IT> cc = this.findOrCreateController(sessionProps);
 	  
 		  Properties sequenceProps= new Properties();	//Get SequenceProperties
@@ -115,9 +133,10 @@ private void processFile(String fName){
 			  forReader= forReader+ strLine.replace("%","")+"\n";
 		//	  System.out.println(strLine);
 		  }
-		  reader= new StringReader(forReader);
-		  sequenceProps.load(reader);
-		  cc.CheckOrCreateSequence(sequenceProps, fName);
+		  
+		  sequenceProps.load(new StringReader(forReader));
+		  File f= new File(fName);
+		  cc.CheckOrCreateSequence(sequenceProps, f.getName());
 		  		  
 		  
 		  while ((strLine = br.readLine()) != null)   {	// get data		  

@@ -238,6 +238,9 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		
 		try {
 			FileWriter fileWriter= new FileWriter(model.getProjectDirectory()+"/"+seq.getPath());
+			fileWriter.write("%-global properties-\n");
+			OtherTools.writeProperties(fileWriter, Model.getInstance().getProperties());
+			
 			fileWriter.write("%-session properties-\n");
 			OtherTools.writeProperties(fileWriter, trackingChannel.getProperties());	
 			

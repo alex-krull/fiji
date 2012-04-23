@@ -68,7 +68,6 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		yPos = y;
 		zPos = z;
 		sigma = sig;
-		
 		sigmaZ = sigma * 2;
 	}
 	
