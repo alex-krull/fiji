@@ -171,8 +171,12 @@ public static PrintWriter errorWriter;
 
 public Model(ImagePlus imp){
 	
+	
+	
 	new GlobalOptionsDialog(this);
 	rwLock= new ReentrantReadWriteLock();
+	
+	instance=this;
 	
 	imageFileName=imp.getOriginalFileInfo().fileName;
 	imageDrirectory=imp.getOriginalFileInfo().directory;
@@ -249,7 +253,7 @@ public Model(ImagePlus imp){
 	
 	
 //	System.out.println("numOfFrames:" +numberOfFrames);
-	instance=this;
+	
 }
 
 
