@@ -503,7 +503,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		saveAllMenu = new JMenuItem("Save");
 		saveAllMenu.addActionListener(new SaveAllListener());
-		saveAllMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.SHIFT_MASK));
+		saveAllMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.SHIFT_MASK));
 
 		JMenuItem saveTo = new JMenuItem("Save to");
 		saveTo.addActionListener(new SaveToListener());
