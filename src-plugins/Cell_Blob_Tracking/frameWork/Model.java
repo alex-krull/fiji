@@ -47,7 +47,16 @@ private boolean structuralChange=true;
 private int intensityOffset=0;
 private double xyToZ=3.5;
 public final ReentrantReadWriteLock rwLock;
+private boolean currentlyTracking=false;
 
+
+public boolean isCurrentlyTracking() {
+	return currentlyTracking;
+}
+
+public void setCurrentlyTracking(boolean currentlyTracking) {
+	this.currentlyTracking = currentlyTracking;
+}
 
 public static Model<?> getInstance(){
 	return instance;

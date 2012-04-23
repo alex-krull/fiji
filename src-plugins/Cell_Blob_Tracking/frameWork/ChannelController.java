@@ -27,6 +27,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	protected Policy <T,IT> policy;
 	protected ControlWindow<IT> controllWindow;
 	
+	
 	public void click(long[] pos, MouseEvent e){
 		try{
 		selectedSequenceId= policy.click(pos, e, model, selectedIdList, trackingChannel, selectedSequenceId);
@@ -36,9 +37,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		}
 		
 		return;
-	}
-	
-	private boolean currentlyTracking=false;
+	}	
 	
 	public List <Integer> getSelectionList(){
 		return selectedIdList;
@@ -88,7 +87,8 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		public void run(){
 			try{
 			
-			currentlyTracking=true;	
+			
+			Model.getInstance().setCurrentlyTracking(true);
 			synchronized (trackingChannel){
 			
 			boolean foundOne=false;
@@ -107,8 +107,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 				optimizeFrame( i, multiscale);
 				
 				
-				if(!currentlyTracking){
-					
+				if(!Model.getInstance().isCurrentlyTracking()){			
 					break;
 				}
 				
@@ -129,7 +128,8 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			}
 			
 			
-			currentlyTracking=false;
+			
+			Model.getInstance().setCurrentlyTracking(false);
 			}
 			
 		}catch(Exception e){
@@ -147,13 +147,12 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	}
 	
 	public void stopTracking(){
-		currentlyTracking=false;
+	
+		Model.getInstance().setCurrentlyTracking(false);
 		
 	}
 	
-	public boolean isTracking(){
-		return currentlyTracking;
-	}
+
 	
 	public void splitSequnce(int frameNumber){
 		

@@ -42,7 +42,6 @@ package frameWork.gui.controlWindow;
 import ij.IJ;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -236,7 +235,7 @@ public class MySelectionListener implements MouseListener, ListSelectionListener
     			}
     				
     		}
-    		//viewModel.setSelectionList(results);
+    		viewModel.setSelectionList(results);
     		tableSelected++;
 		}
 

@@ -356,8 +356,10 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 					mTime +=mTime1-mTime0;
 					eTime +=eTime1-eTime0;
 					
-					System.out.println("change:" +change);			
-					if(change<qualityT) break;
+					System.out.println("change:" +change);		
+				
+					if(change<qualityT ||!Model.getInstance().isCurrentlyTracking()) break;
+					
 			}
 			long time1= System.nanoTime();
 			long time= (time1-time0)/1000000;
@@ -391,7 +393,12 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			
 			double gaussianStd =1;
 			double sf =0.5;
-			double steps=4;
+			double steps=14;
+			double minDimension=Math.min(srcFloat.dimension(0),srcFloat.dimension(1));
+			while(minDimension*Math.pow(sf,steps)<5){
+				steps--;
+			}
+			
 			List <Img<FloatType>> pyramid= ImglibTools.generatePyramid(srcFloat, (int)steps, gaussianStd, sf);	
 			
 			
@@ -476,7 +483,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 				}
 			}
 	}
-			doOptimizationSingleScale(trackables, movieFrame.getFrameView(),qualityT, movieFrame.getConstBackground(),100);
+			doOptimizationSingleScale(trackables, movieFrame.getFrameView(),qualityT,
+					movieFrame.getConstBackground(),100);
 	}
 	
 	
