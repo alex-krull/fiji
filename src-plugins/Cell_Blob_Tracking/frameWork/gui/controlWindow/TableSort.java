@@ -103,7 +103,7 @@ public class TableSort extends JPanel {
         
         table.getSelectionModel().addListSelectionListener(selectionListener);
         table.addMouseListener(selectionListener);
-        table.getColumnModel().getColumn(0).setPreferredWidth(26);
+        table.getColumnModel().getColumn(0).setPreferredWidth(30);
         table.getColumnModel().getColumn(3).setPreferredWidth(26);
         
         
