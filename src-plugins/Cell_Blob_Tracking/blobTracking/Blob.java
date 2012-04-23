@@ -178,14 +178,23 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 
 	@Override
 	public double getDistanceTo(double x, double y, double z) {
-		// TODO Auto-generated method stub
+		
+
 		double xn= x;
 		double yn= y;
-		double zn= z;
+		double zn= z*Model.getInstance().getXyToZ();
 		if(x<0) xn=this.xPos;
 		if(y<0) yn=this.yPos;
 		if(z<0) zn=this.zPos;
-		return (xn-xPos)*(xn-xPos)+(yn-yPos)*(yn-yPos)+(zn-zPos)*(zn-zPos);
+		
+		System.out.println("x:"+xn+ "  xPos:"+ xPos+"  "+ (xn-xPos)*(xn-xPos));
+		System.out.println("y:"+yn+ "  yPos:"+ yPos+"  "+ (yn-yPos)*(yn-yPos));
+		System.out.println("z:"+zn+ "  zPos:"+ zPos+"  "+ (zn-zPos)*(zn-zPos)
+				);
+		
+		return (xn-xPos)*(xn-xPos)+
+				(yn-yPos)*(yn-yPos)+
+				(zn-zPos)*(zn-zPos);
 	}
 	
 	@Override

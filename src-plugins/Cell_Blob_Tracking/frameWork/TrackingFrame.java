@@ -52,7 +52,7 @@ public void removeTrackable(int id){
 }
 
 public int selectAt(int x, int y, int z){
-	double bestResponse=1;
+	double bestResponse=Double.MAX_VALUE;
 	int winner = -1;
 	for(T t: trackablesInFrame){
 		double currentResponse=t.getDistanceTo(x, y, z);

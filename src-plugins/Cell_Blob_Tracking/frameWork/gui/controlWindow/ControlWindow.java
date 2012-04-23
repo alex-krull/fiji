@@ -772,7 +772,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	@Override
 	public synchronized void reFresh(long[] position, boolean rePaintImage) {
-		System.out.println("updating !!!!!!!!!!!");
+	
 		//System.out.println("position[3]+1: "+(position[3]+1));
 		
 		//This section puts frame number in console area
