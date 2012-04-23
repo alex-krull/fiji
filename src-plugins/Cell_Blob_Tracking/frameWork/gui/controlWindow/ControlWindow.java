@@ -910,10 +910,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			for(Session<? extends Trackable, IT> session : tempSessionList){
 				sessionNamesList[i]=session.getLabel();
 
-
-				changeSession.addItem(session.getLabel());
-
 				int tempChannel = session.getChannelNumnber() + 1;
+				
+				changeSession.addItem(session.getLabel() + " Ch " + tempChannel);
+
+				
 				JCheckBox temps = new JCheckBox(sessionNamesList[i] + " Ch " + tempChannel);
 				checkPanel.add(temps);
 				cBoxes.add(temps);
