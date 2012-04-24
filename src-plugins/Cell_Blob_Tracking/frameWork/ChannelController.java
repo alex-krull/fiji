@@ -91,7 +91,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			try{
 			
 			
-			Model.getInstance().setCurrentlyTracking(true);
+			
 			synchronized (trackingChannel){
 			
 			boolean foundOne=false;
@@ -102,6 +102,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 					}
 				}
 				if(!foundOne) return;
+				Model.getInstance().setCurrentlyTracking(true);
 					
 			
 			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames();i++){

@@ -153,8 +153,15 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public void addShapeY(Overlay ov, boolean selected, Color c){
 		
 		
-		Roi roi=new EllipseRoi(0.5+ xPos ,0.5*Model.getInstance().getXyToZ()+ zPos-2*sigmaZ,0.5+ xPos ,
+		Roi roi;
+	//	if(sigma / sigmaZ<1)
+			roi=new EllipseRoi(0.5+ xPos ,0.5*Model.getInstance().getXyToZ()+ zPos-2*sigmaZ,0.5+ xPos ,
 				0.5*Model.getInstance().getXyToZ()+zPos+2*sigmaZ, sigma / sigmaZ);
+	//	else roi=new EllipseRoi(0.5*Model.getInstance().getXyToZ()+zPos,0.5+ xPos ,
+	//			0.5*Model.getInstance().getXyToZ()+ zPos-2*sigmaZ,0.5+ xPos ,
+	//			sigmaZ / sigma);
+		
+		
 		roi.setStrokeColor(c);
 		roi.setStrokeWidth(1);
 		if(selected) roi.setStrokeWidth(4);

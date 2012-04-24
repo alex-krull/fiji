@@ -90,6 +90,7 @@ private List <String> getFilesFromDirectory(String directory){
 private void processFile(String fName){
 		
 	try{
+		Model.getInstance().depositMsg("opning: "+fName);
 		  // Open the file that is the first 
 		  // command line parameter
 		  FileInputStream fstream = new FileInputStream(fName);
