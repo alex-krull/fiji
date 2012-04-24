@@ -49,7 +49,7 @@ private double xyToZ=3.5;
 public final ReentrantReadWriteLock rwLock;
 private boolean currentlyTracking=false;
 
-private volatile String msgBuffer="";
+private volatile StringBuffer msgBuffer=new StringBuffer();
 
 
 public boolean isCurrentlyTracking() {
@@ -417,15 +417,16 @@ public Properties getProperties(){
 }
 
 public void depositMsg(String msg){
-	synchronized (this){
-		
+	synchronized (msgBuffer){
+		msgBuffer.append(msg+ "\n");
 	}
 }
+
 public String getMsg(){
 	String result="";
-	synchronized (this){
-		result=msgBuffer;
-		msgBuffer="";
+	synchronized (msgBuffer){
+		result=msgBuffer.toString();
+		msgBuffer.delete(0, msgBuffer.length());
 	}
 	return result;
 }
