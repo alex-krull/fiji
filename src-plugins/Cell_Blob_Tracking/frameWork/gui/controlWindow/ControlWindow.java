@@ -1364,7 +1364,6 @@ public class AltTrackingListener implements ActionListener{
 	public void appendText(String arg){
 		if(arg.length()>0){
 		text.append(arg);
-		//text.selectAll();
 		text.select(text.getText().length(), text.getText().length());
 		}
 	}

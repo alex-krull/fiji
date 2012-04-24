@@ -357,6 +357,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 					eTime +=eTime1-eTime0;
 					
 					System.out.println("change:" +change);		
+					Model.getInstance().depositMsg("change: "+change);
+					Model.getInstance().makeChangesPublic();
 				
 					if(change<qualityT ||!Model.getInstance().isCurrentlyTracking()) break;
 					
@@ -374,6 +376,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	public void optimizeFrame(boolean multiscale, List<Blob> trackables,
 			MovieFrame<IT> movieFrame,  double qualityT, Session<Blob,IT> session) {
 		BlobSession<IT> blobS= (BlobSession<IT>) session;
+		
 		if(multiscale){
 			ImgFactory <FloatType>floatFactory= new ArrayImgFactory<FloatType>();
 			Img<FloatType>srcFloat=floatFactory.create(movieFrame.getZProjections(), new FloatType());

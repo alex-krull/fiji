@@ -56,6 +56,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	
 	public void optimizeFrame(int frameNumber, boolean multiscale){
 		
+		Model.getInstance().depositMsg("optimizing frame: "+frameNumber);
 	//	model.rwLock.writeLock().lock();
 		trackingChannel.optimizeFrame(frameNumber, multiscale, selectedIdList);
 	//	model.rwLock.writeLock().unlock();
@@ -175,13 +176,22 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		gd.showDialog();
 		if (gd.wasCanceled()) return;
 		
+		
 		for(Integer seqId: this.selectedIdList){
 			if(gd.wasOKed()){
 				
+				
 				File toDel= new File(model.getProjectDirectory()+"/"+trackingChannel.getSequence(seqId).getPath());
 				
-				toDel.delete();		
+				if(toDel.delete()){
+					Model.getInstance().depositMsg("deleted file:"+ toDel.getPath());
+				}else{
+					Model.getInstance().depositMsg("deletion failed:"+ toDel.getPath());
+				}
+				Model.getInstance().makeChangesPublic();
 			}
+			
+			Model.getInstance().depositMsg("deleting sequence "+trackingChannel.getSequence(seqId).getLabel());
 			trackingChannel.deleteSequence(seqId);
 			
 		}
