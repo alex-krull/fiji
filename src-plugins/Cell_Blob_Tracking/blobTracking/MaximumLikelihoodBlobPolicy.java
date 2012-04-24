@@ -231,8 +231,10 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			
 		
 	//	optimizer.setSimplex(new  NelderMeadSimplex(3));
-		double []output = optimizer.optimize(100000, b, GoalType.MAXIMIZE, startPoint).getPoint();
-		
+		double []output;
+		try{
+		output= optimizer.optimize(10000000, b, GoalType.MAXIMIZE, startPoint).getPoint();
+		}catch(Exception e){output=startPoint;};
 		
 		newX=output[0];
 		newY=output[1];
@@ -399,7 +401,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			double sf =blobS.getDownscaleFactor();
 			double steps=blobS.getMscaleIterations();
 			double minDimension=Math.min(srcFloat.dimension(0),srcFloat.dimension(1));
-			while(minDimension*Math.pow(sf,steps)<5){
+			while(minDimension*Math.pow(sf,steps)<10){
 				steps--;
 			}
 			
