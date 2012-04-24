@@ -78,9 +78,11 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	private class TrackingThread extends Thread{
 		private final int startingFrame;
 		private final boolean multiscale;
-		TrackingThread(int frameToStart, boolean multi){
+		private final boolean autoS;
+		TrackingThread(int frameToStart, boolean multi, boolean autosave){
 			startingFrame=frameToStart;
 			multiscale=multi;
+			autoS=autosave;
 		}
 		
 		@Override
@@ -105,7 +107,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		//		System.out.println("trackingFrame:"+i);
 				
 				optimizeFrame( i, multiscale);
-				
+				if(autoS) saveAll();
 				
 				if(!Model.getInstance().isCurrentlyTracking()){			
 					break;
@@ -141,8 +143,8 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	}
 	
 
-	public void startTracking(int frameId, boolean multiscale){
-		Thread thread= new TrackingThread(frameId, multiscale );
+	public void startTracking(int frameId, boolean multiscale, boolean autosave){
+		Thread thread= new TrackingThread(frameId, multiscale, autosave );
 		thread.start();
 	}
 	
