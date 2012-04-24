@@ -1,5 +1,10 @@
 package blobTracking;
 
+import frameWork.Model;
+import frameWork.MovieFrame;
+import frameWork.Session;
+import ij.IJ;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,14 +22,13 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
+import org.apache.commons.math.optimization.ConvergenceChecker;
 import org.apache.commons.math.optimization.GoalType;
-import org.apache.commons.math.optimization.SimpleScalarValueChecker;
-import org.apache.commons.math.optimization.direct.PowellOptimizer;
+import org.apache.commons.math.optimization.RealPointValuePair;
+import org.apache.commons.math.optimization.direct.NelderMeadSimplex;
+import org.apache.commons.math.optimization.direct.SimplexOptimizer;
 
 import tools.ImglibTools;
-import frameWork.Model;
-import frameWork.MovieFrame;
-import frameWork.Session;
 
 public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends BlobPolicy<IT>{
 
@@ -155,7 +159,26 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		return totalInten;
 	}
 
-	
+	private class myConvChecker implements ConvergenceChecker<RealPointValuePair>{
+
+		@Override
+		public boolean converged(int iteration, RealPointValuePair previous, RealPointValuePair current) {
+			if (iteration>10 && previous.getValue()<current.getValue() ) return true;
+			double akku=0;
+			for(int i=0; i<previous.getPoint().length;i++){
+				akku+=Math.abs(previous.getPoint()[i]-current.getPoint()[i]);
+			}
+		//	System.out.println("                akku:"+akku);
+			//if(akku<0.01) return true;
+			
+			return akku<0.01;
+		}
+
+
+
+		
+		
+	}
 	
 	private double doMstepForBlob(Blob b, double totalInten, IterableRandomAccessibleInterval<IT> iterableFrame){
 		double change=0;
@@ -167,7 +190,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 		long[] mins=null;
 		long[] maxs=null;
-		if(b.expectedValues.numDimensions()>2){
+		if(isVolume){
 			mins = new long[3];		
 			mins[2]= b.expectedValues.min(2);
 			
@@ -178,11 +201,11 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			maxs = new long[2];
 		}
 		
-		mins[0]=(long)Math.max(iterableFrame.min(0), b.xPos-b.sigma*3-3 );
-		mins[1]= (long)	Math.max(iterableFrame.min(1), b.yPos-b.sigma*3-3 );
+		mins[0]=(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3-3 );
+		mins[1]= (long)	Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3-3 );
 		
-		maxs[0]=(long)Math.min(iterableFrame.max(0), b.xPos+b.sigma*3+3 );
-		maxs[1]= (long)	Math.min(iterableFrame.max(1), b.yPos+b.sigma*3 +3);
+		maxs[0]=(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3+3 );
+		maxs[1]= (long)	Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 +3);
 		
 		
 	//	long[] mins=  {(long)Math.max(iterableFrame.min(0), b.xPos-b.sigma*3-3 ),(long)
@@ -192,14 +215,31 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	//	long[] maxs=  {(long)Math.min(iterableFrame.max(0), b.xPos+b.sigma*3+3 ),(long)
 	//			Math.min(iterableFrame.max(1), b.yPos+b.sigma*3 +3), b.expectedValues.max(2)};
 			
+		try{
 		b.expectedValuesRoi=new IterableRandomAccessibleInterval<FloatType>(Views.interval(b.expectedValues,mins,maxs ));
-
+		}catch(Exception e){
+			System.out.println("maxs.length: "+ maxs.length);
+			System.out.println("mins.length: "+ mins.length);
+			System.out.println("numDimensions: "+ b.expectedValues.numDimensions());
+		
+			for(int i=0; i<maxs.length;i++){
+				System.out.println("maxs["+i+"]: "+ maxs[i]);
+				System.out.println("mins["+i+"]: "+ mins[i]);
+				System.out.println("b.max("+i+"): "+ b.expectedValues.max(i));
+				System.out.println("b.min("+i+"): "+ b.expectedValues.min(i));
+				
+			}
+			System.out.println("b.xPos: "+ b.xPos);
+			System.out.println("b.yPos: "+ b.yPos);
+			IJ.error("stop");
+		}
 
 
     	b.counter=0;
-		PowellOptimizer optimizer = new PowellOptimizer(1,1);
-		optimizer.setConvergenceChecker(new SimpleScalarValueChecker() );
-  //  	SimplexOptimizer optimizer = new SimplexOptimizer();
+//		PowellOptimizer optimizer = new PowellOptimizer(0,0,new myConvChecker() );		
+		
+//		optimizer.setConvergenceChecker(new myConvChecker() );
+    	SimplexOptimizer optimizer = new SimplexOptimizer(new myConvChecker());
     		    	
 		boolean findSigma=b.autoSigma;
 		double []startPoint=null;
@@ -230,11 +270,11 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 			
 		
-	//	optimizer.setSimplex(new  NelderMeadSimplex(3));
-		double []output;
-		try{
+		optimizer.setSimplex(new  NelderMeadSimplex(startPoint.length));
+		double []output=null;
+	//	try{
 		output= optimizer.optimize(10000000, b, GoalType.MAXIMIZE, startPoint).getPoint();
-		}catch(Exception e){output=startPoint;};
+	//	}catch(Exception e){};
 		
 		newX=output[0];
 		newY=output[1];
@@ -434,6 +474,11 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			
 			MaximumLikelihoodBlobPolicy<FloatType> bp= new MaximumLikelihoodBlobPolicy<FloatType>();
 			for(Img<FloatType> currentScale: pyramid){
+				for(Blob tb:tempBlobs){
+					
+					tb.xPos=Math.min(Math.max(0,tb.xPos),currentScale.max(0));
+					tb.yPos=Math.min(Math.max(0,tb.yPos),currentScale.max(1));
+				}
 	
 				bp.doOptimizationSingleScale(tempBlobs, currentScale, 0.01, 0, 100);
 	//			IJ.error("done with optimization");
@@ -478,7 +523,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			if(Model.getInstance().isVolume()){
 				Img<FloatType>threedFloat=floatFactory.create(movieFrame.getFrameView(), new FloatType());
 				ImglibTools.convert(movieFrame.getFrameView(), threedFloat);
-				double sig[]= {0.5,0.5,0.5};
+				double sig[]= {0.1,0.1,0.1};
 				threedFloat=Gauss.inNumericType(sig, threedFloat);
 				for(int i=0;i<trackables.size();i++){
 					Blob tb= trackables.get(i);

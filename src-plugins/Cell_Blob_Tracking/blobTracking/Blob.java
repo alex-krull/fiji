@@ -116,7 +116,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
     				px,py,pz,ps,psz,
     				denominator);  		
     		
-    		if(a<0.0000000000001) continue;
+    		if(a<0.00000001) continue;
     		result+=Math.log(a)*b;
     		
     	}
