@@ -796,6 +796,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		//This section puts frame number in console area
 		toggleNumbers.setState(viewModel.isDrawNumbers());
 		
+		appendText(model.getMsg());
+		
 		if(viewModel.isTracking()){
 
 			int frameNumber = viewModel.getCurrentFrameNumber();
