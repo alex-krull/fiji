@@ -154,12 +154,16 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		
 		
 		Roi roi;
-	//	if(sigma / sigmaZ<1)
-			roi=new EllipseRoi(0.5+ xPos ,0.5*Model.getInstance().getXyToZ()+ zPos-2*sigmaZ,0.5+ xPos ,
-				0.5*Model.getInstance().getXyToZ()+zPos+2*sigmaZ, sigma / sigmaZ);
-	//	else roi=new EllipseRoi(0.5*Model.getInstance().getXyToZ()+zPos,0.5+ xPos ,
-	//			0.5*Model.getInstance().getXyToZ()+ zPos-2*sigmaZ,0.5+ xPos ,
-	//			sigmaZ / sigma);
+		if(sigma / sigmaZ<1)
+			roi=new EllipseRoi(
+				0.5+ xPos ,0.5*Model.getInstance().getXyToZ()+ zPos-2*sigmaZ,
+				0.5+ xPos ,	0.5*Model.getInstance().getXyToZ()+zPos+2*sigmaZ
+				, sigma / sigmaZ);
+		
+		else roi=new EllipseRoi(
+				0.5+ xPos -2*sigma,0.5*Model.getInstance().getXyToZ()+ zPos,
+				0.5+ xPos +2*sigma,	0.5*Model.getInstance().getXyToZ()+zPos
+				, sigmaZ / sigma);
 		
 		
 		roi.setStrokeColor(c);
@@ -173,9 +177,16 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public void addShapeX(Overlay ov, boolean selected, Color c){
 		
 		
-		Roi roi = new EllipseRoi(0.5*Model.getInstance().getXyToZ()+zPos + sigmaZ * 2,0.5+ yPos,
+		Roi roi;
+		if(sigma / sigmaZ<1) roi= new EllipseRoi(
+				0.5*Model.getInstance().getXyToZ()+zPos + sigmaZ * 2,0.5+ yPos,
 				0.5*Model.getInstance().getXyToZ()+ zPos - sigmaZ * 2,
 				0.5+yPos, sigma / sigmaZ);
+		else  roi= new EllipseRoi(
+				0.5*Model.getInstance().getXyToZ()+zPos ,0.5+ yPos+ sigma * 2,
+				0.5*Model.getInstance().getXyToZ()+ zPos ,
+				0.5+yPos- sigma * 2, sigmaZ / sigma);
+			
 		roi.setStrokeColor(c);
 		roi.setStrokeWidth(1);
 		if(selected) roi.setStrokeWidth(4);
