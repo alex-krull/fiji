@@ -38,7 +38,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
@@ -1365,8 +1364,8 @@ public class AltTrackingListener implements ActionListener{
 	public void appendText(String arg){
 		if(arg.length()>0){
 		text.append(arg);
-		text.selectAll();
-		
+		//text.selectAll();
+		text.select(text.getText().length(), text.getText().length());
 		}
 	}
 

@@ -239,8 +239,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	public void saveSequence(Sequence<T> seq){
 		
 		try {
-			Model.getInstance().depositMsg("saving file:"+ model.getProjectDirectory()+seq.getPath());
-			Model.getInstance().makeChangesPublic();
+			
 			
 			FileWriter fileWriter= new FileWriter(model.getProjectDirectory()+seq.getPath());
 			fileWriter.write("%-global properties-\n");
@@ -256,6 +255,9 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		Model.getInstance().depositMsg("saved file:"+ model.getProjectDirectory()+seq.getPath());
+		Model.getInstance().makeChangesPublic();
 	}
 	
 	public void saveAll(){
