@@ -782,6 +782,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		//System.out.println("position[3]+1: "+(position[3]+1));
 		
 		//This section puts frame number in console area
+		toggleNumbers.setState(viewModel.isDrawNumbers());
+		
 		if(viewModel.isTracking()){
 
 			int frameNumber = viewModel.getCurrentFrameNumber();
@@ -1314,8 +1316,8 @@ public class AltTrackingListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			
-			
+			viewModel.toggleDrawNumbers();
+			viewModel.update(null, null);
 		}
 		
 	}

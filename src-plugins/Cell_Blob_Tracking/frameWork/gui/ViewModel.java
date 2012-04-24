@@ -43,6 +43,9 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	protected volatile boolean mouseIsInWindow=false;
 	
 	protected boolean drawOverlays=true;
+	protected boolean drawNumbers=false;
+	
+
 	protected HotKeyListener hotKeyListener;
 	
 	
@@ -52,6 +55,18 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	protected List <ViewWindow<IT>> views;
 	protected boolean sessionsUpdate=true;
+	
+	public void toggleDrawNumbers() {
+		drawNumbers=!drawNumbers;
+	}
+	
+	public boolean isDrawNumbers() {
+		return drawNumbers;
+	}
+
+	public void setDrawNumbers(boolean drawNumbers) {
+		this.drawNumbers = drawNumbers;
+	}
 	
 	class ProjectionJob	implements Callable<RandomAccessibleInterval<IT> >{
 		RandomAccessibleInterval<IT> image;

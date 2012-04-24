@@ -125,7 +125,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	
 	
 	@Override
-	public void addShapeZ(Overlay ov, boolean selected, Color c){
+	public void addShapeZ(Overlay ov, boolean selected, Color c, boolean drawNumbers){
 		Font f=new Font(null,Font.PLAIN,8);
 			
 		Roi roi = new EllipseRoi(0.5+xPos + sigma * 2,0.5+ yPos,0.5+ xPos - sigma * 2,
@@ -136,11 +136,13 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		if(selected) roi.setStrokeWidth(4);
 		ov.add(roi);
 		
-		
+	if(drawNumbers){	
 		TextRoi troi = new TextRoi((int)xPos,(int)yPos,Integer.toString(this.sequenceId));
 		troi.setStrokeColor(c);
 		troi.setStrokeWidth(1);
 		ov.add(troi);
+	}
+	
 	}
 	
 	

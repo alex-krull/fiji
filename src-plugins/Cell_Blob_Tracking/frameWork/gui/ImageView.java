@@ -360,7 +360,7 @@ implements MouseListener, MouseMotionListener{
 		 if(trackables!=null)for(Trackable t : trackables){	
 			//   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId).getColor();
-			   t.addShapeZ(ovTemplate,viewModel.isSelected(t.sequenceId),c);
+			   t.addShapeZ(ovTemplate,viewModel.isSelected(t.sequenceId),c, viewModel.isDrawNumbers());
 			   
 		   }
 		} 
