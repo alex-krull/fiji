@@ -393,12 +393,9 @@ public void deleteSession(int id){
 
 public boolean setProperties(Properties props){
 	String s;
-	int red=255; int green=0; int blue=0;
-	s= props.getProperty("projectDirectory"); if(s!=null){
-		if(!this.getProjectDirectory().equals(s)) return false;	
-	}
-	s= props.getProperty("imageName"); if(s!=null){
 	
+	
+	s= props.getProperty("imageName"); if(s!=null){	
 		if(!this.getImageFileName().equals(s)) return false;
 	}
 	s= props.getProperty("intensityOffset"); if(s!=null)this.setIntensityOffset(Integer.valueOf(s) );

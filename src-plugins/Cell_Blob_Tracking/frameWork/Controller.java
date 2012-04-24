@@ -40,7 +40,9 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 
 	private final SortedMap <Integer, ChannelController <? extends Trackable,IT> > channelControllers;
 	private final SortedMap<String,Policy<? extends Trackable,IT>> policies;
+	private boolean autosave=true;
 	 
+	
 	public Controller( Model<IT> mod){
 		
 		policies= new TreeMap<String,Policy<? extends Trackable,IT>>();
@@ -49,6 +51,14 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		channelControllers=	new TreeMap<Integer, ChannelController<? extends Trackable,IT>>();
 		
 		
+	}
+	
+	public boolean isAutoSave(){
+		return autosave;
+	}
+	
+	public void toggleAutosave(){
+		autosave=!autosave;
 	}
 
 	public void addPolicy(Policy<? extends Trackable,IT> policy){
@@ -211,7 +221,7 @@ public void toggleTracking(int frameId, boolean multiscale){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null)
 		if(!Model.getInstance().isCurrentlyTracking()){
-			cc.startTracking(frameId, multiscale);
+			cc.startTracking(frameId, multiscale, autosave);
 			alternateMethodUsed=multiscale;
 		}
 		else cc.stopTracking();
