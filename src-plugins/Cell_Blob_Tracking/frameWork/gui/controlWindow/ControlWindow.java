@@ -38,6 +38,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
@@ -132,6 +133,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JMenuItem altMenu;
 	private JMenuItem altOptionMenu;
 	private JCheckBoxMenuItem toggleNumbers;
+	private JCheckBox autoSaveButton;
 
 	/*
 	public static void main(String[] args) {
@@ -274,6 +276,14 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		spinnerPanel.add(cLabel);
 		spinnerPanel.add(cSpinner);
+		spinnerPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+		
+		autoSaveButton = new JCheckBox("Auto Save", true);
+		autoSaveButton.setBorderPainted(false);
+		autoSaveButton.setBorder(BorderFactory.createRaisedBevelBorder());
+		
+		spinnerPanel.add(autoSaveButton);
+		
 		spinnerPanel.add(Box.createHorizontalGlue());
 		//Create the tracking method pair.
 
