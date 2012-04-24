@@ -1,6 +1,7 @@
 package frameWork.gui;
 import java.awt.Scrollbar;
 import java.awt.event.AdjustmentEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
@@ -54,6 +55,11 @@ public abstract class KymoWindow <  IT extends  NumericType<IT> & NativeType<IT>
 		System.err.println(" SLIDER HAS CHANGED !  ! ! !  ");
 			if(sb.hasFocus());
 			viewModel.setPosition(3,e.getValue()-1);
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		//no manipulation in the kymograph;
 	}
 
 	

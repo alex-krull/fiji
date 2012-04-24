@@ -8,6 +8,7 @@ import ij.gui.TextRoi;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.text.DecimalFormat;
 
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
@@ -237,14 +238,16 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	
 	@Override
 	public String toSaveString() {
+		DecimalFormat df = new DecimalFormat("#0.00000");
+
 		String result;
 		result= this.sequenceId + "\t"
 				+ this.frameId + "\t"
-				+ this.xPos+ "\t"
-				+ this.yPos+ "\t"
-				+ this.zPos+ "\t"
-				+ this.sigma+ "\t"
-				+ this.sigmaZ;
+				+ df.format(this.xPos)+ "\t"
+				+ df.format( this.yPos)+ "\t"
+				+  df.format(this.zPos)+ "\t"
+				+  df.format(this.sigma)+ "\t"
+				+  df.format(this.sigmaZ);
 		return result;
 	}
 

@@ -1,11 +1,7 @@
 package frameWork.gui.controlWindow;
 
-import java.awt.Dimension;
-
-import frameWork.Model;
 import ij.gui.GenericDialog;
-
-import javax.swing.JDialog;
+import frameWork.Model;
 
 public class GlobalOptionsDialog {
 
@@ -16,12 +12,12 @@ public class GlobalOptionsDialog {
 	      GenericDialog gd = new GenericDialog("Global Options");
 	      //gd.setPreferredSize(new Dimension(300,200));
 	      gd.addNumericField("Intensity Offset: ", mod.getIntensityOffset(), 0);
-	      gd.addNumericField("\u0394 Z (in pixels): ", mod.getXyToZ(), 0);
+	      gd.addNumericField("\u0394 Z (in pixels): ", mod.getXyToZ(), 3);
 	      gd.showDialog();
 	      if (gd.wasCanceled()) return;
 
 	      intensityOffset = (int)gd.getNextNumber();
-	      deltaZ = (double)gd.getNextNumber();
+	      deltaZ = gd.getNextNumber();
 	      
 	      
 	      if (gd.wasOKed()){
