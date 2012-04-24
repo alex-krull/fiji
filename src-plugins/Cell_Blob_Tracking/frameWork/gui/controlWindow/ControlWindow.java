@@ -507,7 +507,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		//Edit items
 
-		editSession = new JMenuItem("Edit Session Defaults");
+		editSession = new JMenuItem("Session Options");
 		editSession.addActionListener(new EditMenuListener());
 		editSession.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.SHIFT_MASK));
 
@@ -582,8 +582,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		editMenu.add(mergeMenu);
 		editMenu.addSeparator();
 
-		editMenu.add(editSession);
 		editMenu.add(editBlob);
+		editMenu.add(editSession);
 		editMenu.add(altOptionMenu);
 		editMenu.addSeparator();
 		editMenu.add(startMenu);
@@ -817,7 +817,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			}else{
 			altTracking.setText(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
 			altMenu.setText("Start " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
-			altOptionMenu.setText(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking() + " Options");
+			altOptionMenu.setText("Session " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking() + " Options");
 			altTracking.setVisible(true);
 			altOptionMenu.setVisible(true);
 			
