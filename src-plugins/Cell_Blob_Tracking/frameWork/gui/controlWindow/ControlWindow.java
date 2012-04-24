@@ -131,6 +131,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JButton altTracking;
 	private JMenuItem altMenu;
 	private JMenuItem altOptionMenu;
+	private JCheckBoxMenuItem toggleNumbers;
 
 	/*
 	public static void main(String[] args) {
@@ -583,12 +584,17 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		contrastMenu = new JMenuItem("Adjust Brightness/Contrast");
 		contrastMenu.addActionListener(new ContrastListener());
 		contrastMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.SHIFT_MASK));
+		
+		toggleNumbers = new JCheckBoxMenuItem("Toggle Numbers");
+		toggleNumbers.addActionListener(new ToggleNumberListener());
+		toggleNumbers.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.SHIFT_MASK));
 
 
 		viewMenu = new JMenu("View Menu");
 		viewMenu.setBackground(Color.lightGray);
 		viewMenu.add(contrastMenu);
 		viewMenu.add(toggleOverlay);
+		viewMenu.add(toggleNumbers);
 		viewMenu.addSeparator();
 
 
@@ -1304,6 +1310,15 @@ public class AltTrackingListener implements ActionListener{
 
 	}
 
+	public class ToggleNumberListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			
+			
+		}
+		
+	}
 
 	@Override
 	public boolean showInWindowList(){
