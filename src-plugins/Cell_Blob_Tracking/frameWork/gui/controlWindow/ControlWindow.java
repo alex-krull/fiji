@@ -278,7 +278,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		spinnerPanel.add(cSpinner);
 		spinnerPanel.add(Box.createRigidArea(new Dimension(20, 0)));
 		
-		autoSaveButton = new JCheckBox("Auto Save", true);
+		autoSaveButton = new JCheckBox("Auto Save", viewModel.getController().isAutoSave());
+		autoSaveButton.addItemListener(new AutoSaveListener());
+		
 		autoSaveButton.setBorderPainted(false);
 		autoSaveButton.setBorder(BorderFactory.createRaisedBevelBorder());
 		
@@ -1328,6 +1330,16 @@ public class AltTrackingListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
 			viewModel.toggleDrawNumbers();
 			viewModel.update(null, null);
+		}
+		
+	}
+	
+	public class AutoSaveListener implements ItemListener{
+
+		@Override
+		public void itemStateChanged(ItemEvent arg0) {
+			viewModel.getController().toggleAutosave();
+			
 		}
 		
 	}
