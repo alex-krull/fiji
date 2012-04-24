@@ -994,7 +994,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			delete.setEnabled(false);
 			split.setEnabled(false);
 			trim.setEnabled(false);
-			this.saveAll.setEnabled(false);
+			//this.saveAll.setEnabled(false);
 			editBlob.setEnabled(false);
 			
 		}else{
