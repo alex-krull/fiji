@@ -798,13 +798,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		appendText(model.getMsg());
 		
-		if(viewModel.isTracking()){
+/*		if(viewModel.isTracking()){
 
 			int frameNumber = viewModel.getCurrentFrameNumber();
 
 			text.selectAll();
 			text.append("Tracking Frame " + frameNumber + "\n");
-		}
+		}*/
 		
 		int tempSessionSize = viewModel.getController().getSessions().size();
 		
@@ -1362,7 +1362,7 @@ public class AltTrackingListener implements ActionListener{
 	}
 
 	public void appendText(String arg){
-		text.append(arg + "\n");
+		text.append(arg);
 	}
 
 	private class ControlWindowListener implements WindowListener{
