@@ -172,6 +172,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		text.setLineWrap(true);
 		text.setText("Ready to start tracking!");
+		text.setEditable(false);
 		text.append("\n");
 
 		JScrollPane feedbackPanel = new JScrollPane(text);
@@ -1365,6 +1366,7 @@ public class AltTrackingListener implements ActionListener{
 		if(arg.length()>0){
 		text.append(arg);
 		text.selectAll();
+		
 		}
 	}
 
