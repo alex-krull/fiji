@@ -111,7 +111,12 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 			if(trackables.contains(new Integer( t.sequenceId)) ) results.add(t);
 		}
 		
+		long t0= System.nanoTime();
 		policy.optimizeFrame(multiscale, results, f.getMovieFrame(),this.qualityThreshold, this);
+		long t1= System.nanoTime();
+		long diff= t1-t0;
+		Model.errorWriter.write(frameId+ "\t"+diff+ "\n");
+		Model.errorWriter.flush();
 	}
 
 	public int selectAt(int x, int y, int z, int frameId, int channel){

@@ -86,9 +86,9 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	
 	public double pXunderK(int x, int y, int z,
 			double px, double py, double pz, double ps, double psz,
-			double denominator){
+			double denominator, double xyToZ){
 		//return ImglibTools.gaussPixelIntegral(x, y, xPos, yPos, sigma)/denominator;
-		return ImglibTools.gaussPixelIntegral2dIn3d(x, y, z* Model.getInstance().getXyToZ()
+		return ImglibTools.gaussPixelIntegral2dIn3d(x, y, z* xyToZ
 				, px, py, pz, ps, psz)/denominator;
 	}
 	
@@ -96,7 +96,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public double pXandK(int x, int y, int z,
 			double px, double py, double pz, double ps, double psz,
 			double denominator){
-		return pXunderK(x,y,z, px, py, pz, ps, psz, denominator)*pK;
+		return pXunderK(x,y,z, px, py, pz, ps, psz, denominator, Model.getInstance().getXyToZ())*pK;
 		
 	}
 	
@@ -106,15 +106,23 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	//	if(this.denominator<0.00000001) return 0;
 		double result=0;
 		Cursor<FloatType> cursor= expectedValuesRoi.cursor();	
-		
+		double xyToZ= Model.getInstance().getXyToZ();
     	while ( cursor.hasNext() )	{
+    		
     		cursor.fwd();
     		double b=(cursor.get().get());
-    		int zPos=0;
+    		int xPos=cursor.getIntPosition(0);int yPos=cursor.getIntPosition(1);int zPos=0;
     		if(isVolume) zPos=cursor.getIntPosition(2);
-    		double a=pXunderK(cursor.getIntPosition(0), cursor.getIntPosition(1),zPos,
+    		
+    		double tx=xPos;
+    		double ty=yPos;
+    		double dist= (tx-px)*(tx-px) + (ty-py)*(ty-py);
+    //		System.out.println("dist:"+dist+ " (ps*3+1)*(ps*3+1):"+(ps*3+1)*(ps*3+1) + " ps:"+ps);
+    //		if(dist>(ps*3+2)*(ps*3+2)) continue;
+    		
+    		double a=pXunderK(xPos, yPos, zPos,
     				px,py,pz,ps,psz,
-    				denominator);  		
+    				denominator, xyToZ);  		
     		
     		if(a<0.00000001) continue;
     		result+=Math.log(a)*b;
