@@ -188,7 +188,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	}
 	
 	private double doMstepForBlob(Blob b, double totalInten, IterableRandomAccessibleInterval<IT> iterableFrame){
-		System.out.println("1");
+	//	System.out.println("1");
 		double change=0;
 		double newX=0;
 		double newY=0;
@@ -217,7 +217,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			maxs = new long[2];
 		}
 		
-		System.out.println("2");
+	//	System.out.println("2");
 		
 		mins[0]=(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3-1 );
 		mins[1]= (long)	Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3-1 );
@@ -226,7 +226,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		maxs[0]=(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3+1 );
 		maxs[1]= (long)	Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 +1);
 		
-		System.out.println("3");
+	//	System.out.println("3");
 		
 		
 	//	long[] mins=  {(long)Math.max(iterableFrame.min(0), b.xPos-b.sigma*3-3 ),(long)
@@ -237,7 +237,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	//			Math.min(iterableFrame.max(1), b.yPos+b.sigma*3 +3), b.expectedValues.max(2)};
 			
 	//	try{
-		
+	/*	
 		System.out.println("maxs.length: "+ maxs.length);
 		System.out.println("mins.length: "+ mins.length);
 		System.out.println("numDimensions: "+ b.expectedValues.numDimensions());
@@ -251,10 +251,10 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		}
 		System.out.println("b.xPos: "+ b.xPos);
 		System.out.println("b.yPos: "+ b.yPos);
-		
+	*/	
 		b.expectedValuesRoi=new IterableRandomAccessibleInterval<FloatType>(Views.interval(b.expectedValues,mins,maxs ));
 //		}catch(Exception e){
-		System.out.println("4");
+	//	System.out.println("4");
 			
 //			IJ.error("stop");
 //		}
