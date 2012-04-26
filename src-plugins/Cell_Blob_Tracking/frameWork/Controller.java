@@ -211,7 +211,7 @@ public boolean isAlternateMethodUsed(){
 public void optimizeFrame(int frameNumber){
 	//model.rwLock.writeLock().lock();
 		ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
-		if(cc!=null) cc.optimizeFrame(frameNumber);		
+		if(cc!=null) cc.optimizeFrame(frameNumber, autosave);		
 	
 	model.makeStructuralChange();
 	//model.rwLock.writeLock().unlock();

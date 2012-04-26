@@ -77,20 +77,26 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		return results;
 	}
 	
-	public void optimizeFrame(int frameNumber){
-		Model.getInstance().setCurrentlyTracking(true);
-		policy.optimizeFrame(false, this.getSelectedTrackables(frameNumber),
-				trackingChannel.getFrame(frameNumber).getMovieFrame(),
-				trackingChannel.qualityThreshold, trackingChannel);
-		Model.getInstance().setCurrentlyTracking(false);
+	public void optimizeFrame(int frameNumber, boolean autosave){
+		Thread thread= new TrackingThread(frameNumber, false, autosave,frameNumber);
+		thread.setPriority(Thread.MIN_PRIORITY);
+		thread.start();
+		
+	//	Model.getInstance().setCurrentlyTracking(true);
+	//	policy.optimizeFrame(false, this.getSelectedTrackables(frameNumber),
+	//			trackingChannel.getFrame(frameNumber).getMovieFrame(),
+	//			trackingChannel.qualityThreshold, trackingChannel);
+	//	Model.getInstance().setCurrentlyTracking(false);
 	}
 	
 	
 	private class TrackingThread extends Thread{
 		private final int startingFrame;
+		private final int stoppingFrame;
 		private final boolean multiscale;
 		private final boolean autoS;
-		TrackingThread(int frameToStart, boolean multi, boolean autosave){
+		TrackingThread(int frameToStart, boolean multi, boolean autosave, int frameToStop){
+			stoppingFrame=frameToStop;
 			startingFrame=frameToStart;
 			multiscale=multi;
 			autoS=autosave;
@@ -110,7 +116,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 				Model.getInstance().setCurrentlyTracking(true);
 					
 			
-			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames();i++){
+			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames()&& i<=stoppingFrame;i++){
 				
 				
 			//	Model.getInstance().rwLock.writeLock().lock();
@@ -178,7 +184,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	
 
 	public void startTracking(int frameId, boolean multiscale, boolean autosave){
-		Thread thread= new TrackingThread(frameId, multiscale, autosave );
+		Thread thread= new TrackingThread(frameId, multiscale, autosave, (int)trackingChannel.getNumberOfFrames());
 		thread.setPriority(Thread.MIN_PRIORITY);
 		thread.start();
 	}
