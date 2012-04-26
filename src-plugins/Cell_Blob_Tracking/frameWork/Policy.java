@@ -1,5 +1,6 @@
 package frameWork;
 
+import frameWork.gui.ViewModel;
 import ij.gui.Overlay;
 
 import java.awt.Color;
@@ -34,7 +35,7 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 	public abstract void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected,
 			SortedMap <Integer,T> trackables, Color color);
 	
-	public abstract int click(long[] pos, MouseEvent e, Model<IT> model, List<Integer>  selectedIdList, Session<T,IT> trackingChannel, int selectedSequenceId);
+	public abstract int click(long[] pos, MouseEvent e, Model<IT> model, List<Integer>  selectedIdList, Session<T,IT> trackingChannel, int selectedSequenceId, ViewModel <IT> vm);
 
 	public abstract T copy(T toCopy);
 	

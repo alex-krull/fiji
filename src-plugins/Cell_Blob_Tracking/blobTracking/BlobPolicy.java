@@ -19,6 +19,7 @@ import frameWork.Policy;
 import frameWork.Sequence;
 import frameWork.Session;
 import frameWork.TrackingFrame;
+import frameWork.gui.ViewModel;
 
 public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends Policy<Blob, IT>{
 
@@ -164,7 +165,9 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 	}
 	
 	@Override
-	public synchronized int click(long[] pos, MouseEvent e, Model<IT> model, List<Integer>  selectedIdList, Session<Blob,IT> trackingChannel, int selectedSequenceId){
+	public synchronized int click(long[] pos, MouseEvent e, Model<IT> model,
+			List<Integer>  selectedIdList, Session<Blob,IT> trackingChannel,
+			int selectedSequenceId, ViewModel <IT> vm){
 		
 		
 		Blob selectedTrackable;
@@ -193,7 +196,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		if(e.getID()==MouseEvent.MOUSE_CLICKED){
 			
 			if( e.getClickCount()==2){
-				Blob nB=new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], pos[2]*Model.getInstance().getXyToZ(), 1, trackingChannel.getId());				
+				Blob nB=new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], vm.getCurrentSliceNumber()*Model.getInstance().getXyToZ(), 1, trackingChannel.getId());				
 				BlobSession<IT> bs= (BlobSession<IT>)trackingChannel;
 				nB.sigma=bs.getDefaultSigma();
 				nB.sigmaZ=bs.getDefaultSigmaZ();
@@ -218,6 +221,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 
 		
 		if(e.getID()==MouseEvent.MOUSE_DRAGGED){
+			if(pos[0]>=0&&pos[1]>=0)pos[2]=-1;
 			selectedTrackable=trackingChannel.getTrackable(selectedSequenceId, (int)pos[3]);
 			if(selectedTrackable==null){
 	//			System.out.println("selectedTrackable==null");

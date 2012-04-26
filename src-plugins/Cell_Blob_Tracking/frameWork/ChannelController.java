@@ -16,6 +16,7 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import tools.OtherTools;
+import frameWork.gui.ViewModel;
 import frameWork.gui.controlWindow.ControlWindow;
 
 public class ChannelController<T extends Trackable,  IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> >{
@@ -28,10 +29,10 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	protected ControlWindow<IT> controllWindow;
 	
 	
-	public void click(long[] pos, MouseEvent e){
+	public void click(long[] pos, MouseEvent e, ViewModel<IT> vm){
 		try{
 		
-		selectedSequenceId= policy.click(pos, e, model, selectedIdList, trackingChannel, selectedSequenceId);
+		selectedSequenceId= policy.click(pos, e, model, selectedIdList, trackingChannel, selectedSequenceId, vm);
 		}catch(Exception ex){
 			ex.printStackTrace(Model.errorWriter);
 			Model.errorWriter.flush();

@@ -183,7 +183,7 @@ public void mouseAtPosition(long [] pos, MouseEvent me){
 	else this.mouseIsInWindow=true;
 	
 	
-	controller.click(pos, currentTrackingChannel, me);
+	controller.click(pos, currentTrackingChannel, me, this);
 	
 	upDateImages(this.currentFrameNumber,this.currentSliceNumber, this.currentChannelNumber, redraw);
 }
@@ -221,6 +221,10 @@ public boolean isSelected(int sId){
 
 public int getCurrentChannelNumber(){
 	return currentChannelNumber;
+}
+
+public int getCurrentSliceNumber(){
+	return currentSliceNumber;
 }
 
 public void addViewWindow( ViewWindow<IT> vw, double initialZoom){
