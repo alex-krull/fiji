@@ -67,6 +67,10 @@ public class HotKeyListener implements KeyListener {
 		  case KeyEvent.VK_1:
 			  viewModel.toggleDrawNumbers();
 			  return;
+		
+		  case KeyEvent.VK_F:
+			  viewModel.getController().optimizeFrame(viewModel.currentFrameNumber);
+			  return;
 			  
 	
 		  

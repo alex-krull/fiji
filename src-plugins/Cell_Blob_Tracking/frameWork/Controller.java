@@ -209,12 +209,12 @@ public boolean isAlternateMethodUsed(){
 }
 
 public void optimizeFrame(int frameNumber){
-	model.rwLock.writeLock().lock();
+	//model.rwLock.writeLock().lock();
 		ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
-//		if(cc!=null) cc.optimizeFrame(frameNumber);		
+		if(cc!=null) cc.optimizeFrame(frameNumber);		
 	
 	model.makeStructuralChange();
-	model.rwLock.writeLock().unlock();
+	//model.rwLock.writeLock().unlock();
 }
 
 
@@ -223,6 +223,7 @@ public void toggleTracking(int frameId, boolean multiscale){
 	if(cc!=null)
 		if(!Model.getInstance().isCurrentlyTracking()){
 			cc.startTracking(frameId, multiscale, autosave);
+			
 			alternateMethodUsed=multiscale;
 		}
 		else cc.stopTracking();

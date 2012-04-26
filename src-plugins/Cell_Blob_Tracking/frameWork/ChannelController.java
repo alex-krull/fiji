@@ -69,6 +69,22 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		policy=pol;
 	}
 	
+	public List<T> getSelectedTrackables(int frameNumber){
+		List<T> results= new ArrayList<T>();
+		for(Integer i:this.selectedIdList){
+			results.add(trackingChannel.getTrackable(i, frameNumber));
+		}
+		return results;
+	}
+	
+	public void optimizeFrame(int frameNumber){
+		Model.getInstance().setCurrentlyTracking(true);
+		policy.optimizeFrame(false, this.getSelectedTrackables(frameNumber),
+				trackingChannel.getFrame(frameNumber).getMovieFrame(),
+				trackingChannel.qualityThreshold, trackingChannel);
+		Model.getInstance().setCurrentlyTracking(false);
+	}
+	
 	
 	private class TrackingThread extends Thread{
 		private final int startingFrame;
@@ -88,35 +104,27 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			
 			synchronized (trackingChannel){
 			
-			boolean foundOne=false;
-				for(T t :trackingChannel.getTrackablesForFrame(startingFrame)){
-					if(selectedIdList.contains(t.sequenceId)){
-						foundOne=true;
-						break;
-					}
-				}
-				if(!foundOne) return;
+				List<T> trackingCandidates=	getSelectedTrackables( startingFrame );
+				if(trackingCandidates.isEmpty()) return;
+				
 				Model.getInstance().setCurrentlyTracking(true);
 					
 			
 			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames();i++){
 				
 				
-				List<T> trackingCandidates=new ArrayList<T>();
-				List<T> newTrackables=null;
-			
-				
 			//	Model.getInstance().rwLock.writeLock().lock();
-				if(i!=startingFrame) newTrackables= trackingChannel.getFrame(i-1).cloneTrackablesForFrame(i);
-				else newTrackables=trackingChannel.getTrackablesForFrame(i);
-						
+			// newTrackables=trackingChannel.getTrackablesForFrame(i);
 				
-					for(T t: newTrackables){
+			 if(i!=startingFrame){
+				 trackingCandidates.clear();
+				 List<T> newTrackables= trackingChannel.getFrame(i-1).cloneTrackablesForFrame(i);		
+				 for(T t: newTrackables){
 						
-						if(selectedIdList.contains( t.sequenceId))
+					if(selectedIdList.contains( t.sequenceId))
 							trackingCandidates.add(t);
-							//trackingChannel.addTrackable(t);
 					}
+			 }
 				
 				
 				
