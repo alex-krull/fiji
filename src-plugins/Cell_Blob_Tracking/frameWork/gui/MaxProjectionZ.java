@@ -1,5 +1,6 @@
 package frameWork.gui;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import net.imglib2.RandomAccessibleInterval;
@@ -50,7 +51,8 @@ public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & Rea
 
 	@Override
 	public void setWindowPosition(MainWindow<IT> mainWindow) {
-		// TODO Auto-generated method stub
+		Point windowLoc = mainWindow.getWindow().getLocation();
+		imp.getWindow().setLocation(windowLoc.x+mainWindow.getWindow().getWidth(), windowLoc.y+mainWindow.getWindow().getHeight());
 		
 	}
 	

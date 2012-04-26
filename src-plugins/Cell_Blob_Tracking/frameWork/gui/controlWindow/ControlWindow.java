@@ -7,6 +7,7 @@ import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -640,12 +641,21 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		// This puts everything in the frame
 		//frame.getContentPane().add(BorderLayout.SOUTH, feedbackPanel);
+		
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Dimension screen = toolkit.getScreenSize();
+		
+		
+		frame.setLocation(screen.width-650, 0);
+		
 		frame.getContentPane().add(BorderLayout.EAST, rightPanel);
 		frame.getContentPane().add(BorderLayout.CENTER, centerPanel);
 		frame.getContentPane().add(BorderLayout.WEST, leftPanel);
 		frame.setSize(650,350);
 		frame.setVisible(true);
 		frame.setMinimumSize(new Dimension(650, 350));
+		
+
 
 		//frame.setFocusable(true);
 		//HotKeyListener keyListener = new HotKeyListener(viewModel);
@@ -1419,7 +1429,9 @@ public class AltTrackingListener implements ActionListener{
 
 	@Override
 	public void setWindowPosition(MainWindow<IT> mainWindow) {
-		// TODO Auto-generated method stub
+		
+		
+		
 		
 	}
 
