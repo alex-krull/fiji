@@ -55,6 +55,9 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	protected List <ViewWindow<IT>> views;
 	protected boolean sessionsUpdate=true;
+
+
+	private MainWindow<IT> mainWindow;
 	
 	public void toggleDrawNumbers() {
 		drawNumbers=!drawNumbers;
@@ -326,5 +329,15 @@ public void toggleSessionTobeDisplayed(Session<? extends Trackable,IT> ses){
 
 public List<ViewWindow<IT>> getViewWindows(){
 	return this.views;
+}
+
+public void addMainWindow(MainWindow<IT> mWindow, double initialZoom){
+	 mainWindow = mWindow;
+	 this.addViewWindow(mainWindow, initialZoom);
+}
+public void resetWindowsPositions(){
+	for(ViewWindow<IT> vw:  views){
+		vw.setWindowPosition(mainWindow);
+	}
 }
 }

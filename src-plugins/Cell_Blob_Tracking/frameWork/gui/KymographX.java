@@ -45,11 +45,8 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	*///	IJ.error("mw x:"+ String.valueOf(mainWindow.getWindow().getX()) +
 	//			 "kw x:"+ imp.getWindow().getX());
 	
-		Point windowLoc = mainWindow.getWindow().getLocation();
-		
-		//imp.getWindow().setLocation(windowLoc.x-imp.getWindow().getWidth(), windowLoc.y);
-		imp.getWindow().setLocation(windowLoc.x+mainWindow.getWindow().getWidth(), windowLoc.y);
-		
+
+
 		this.startThread();
 	}
 	
@@ -83,6 +80,15 @@ public class KymographX <IT extends  NumericType<IT> & NativeType<IT> & RealType
 			pos[1]=y; 
 			pos[3]=t;
 		return pos;
+	}
+
+	@Override
+	public void setWindowPosition(MainWindow<IT> mainWindow) {
+		Point windowLoc = mainWindow.getWindow().getLocation();
+		
+		//imp.getWindow().setLocation(windowLoc.x-imp.getWindow().getWidth(), windowLoc.y);
+		imp.getWindow().setLocation(windowLoc.x+mainWindow.getWindow().getWidth(), windowLoc.y);
+		
 	}
 
 	
