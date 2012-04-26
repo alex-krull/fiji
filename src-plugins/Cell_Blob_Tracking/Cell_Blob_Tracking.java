@@ -66,7 +66,8 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	        
 	        	
 	        System.out.println("adding projections");
-	        viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel),initZoom);
+	        //viewModel.addViewWindow(new MaxProjectionZ<IT>(model, viewModel),initZoom);
+	        viewModel.addMaxZWindow(new MaxProjectionZ<IT>(model, viewModel),initZoom);
 			viewModel.addViewWindow(new MaxProjectionX<IT>(model, viewModel),initZoom);
 			viewModel.addViewWindow(new MaxProjectionY<IT>(model, viewModel),initZoom);
 			

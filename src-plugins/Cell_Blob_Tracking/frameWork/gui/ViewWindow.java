@@ -152,7 +152,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		
 	}
 	
-	public abstract void setWindowPosition(MainWindow<IT> mainWindow);
+	public abstract void setWindowPosition(MainWindow<IT> mainWindow, MaxProjectionZ<IT> maxZWindow);
 	public abstract void initWindow();
 	public abstract void close();
 	public abstract void open();

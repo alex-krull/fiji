@@ -211,7 +211,7 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 	//}
 
 	@Override
-	public void setWindowPosition(MainWindow<IT> mainWindow) {
+	public void setWindowPosition(MainWindow<IT> mainWindow, MaxProjectionZ<IT> maxZmaxZWindow) {
 		imp.getWindow().setLocation(0, 0);
 		
 	}

@@ -72,7 +72,7 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	}
 
 	@Override
-	public void setWindowPosition(MainWindow<IT> mainWindow) {
+	public void setWindowPosition(MainWindow<IT> mainWindow,MaxProjectionZ<IT> maxZWindow) {
 		Point windowLoc = mainWindow.getWindow().getLocation();
 		
 		

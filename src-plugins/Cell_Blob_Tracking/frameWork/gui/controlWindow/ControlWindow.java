@@ -60,6 +60,7 @@ import frameWork.Session;
 import frameWork.Trackable;
 import frameWork.gui.HotKeyListener;
 import frameWork.gui.MainWindow;
+import frameWork.gui.MaxProjectionZ;
 import frameWork.gui.ViewModel;
 import frameWork.gui.ViewWindow;
 
@@ -1428,7 +1429,7 @@ public class AltTrackingListener implements ActionListener{
 	}
 
 	@Override
-	public void setWindowPosition(MainWindow<IT> mainWindow) {
+	public void setWindowPosition(MainWindow<IT> mainWindow, MaxProjectionZ<IT> maxZWindow) {
 		
 		
 		

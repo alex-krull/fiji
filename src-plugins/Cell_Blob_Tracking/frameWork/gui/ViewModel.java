@@ -58,6 +58,9 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 
 
 	private MainWindow<IT> mainWindow;
+
+
+	private MaxProjectionZ<IT> maxZWindow;
 	
 	public void toggleDrawNumbers() {
 		drawNumbers=!drawNumbers;
@@ -335,9 +338,14 @@ public void addMainWindow(MainWindow<IT> mWindow, double initialZoom){
 	 mainWindow = mWindow;
 	 this.addViewWindow(mainWindow, initialZoom);
 }
+
+public void addMaxZWindow(MaxProjectionZ<IT> maxZ, double initialZoom){
+	maxZWindow = maxZ;
+	this.addViewWindow(maxZWindow, initialZoom);
+}
 public void resetWindowsPositions(){
 	for(ViewWindow<IT> vw:  views){
-		vw.setWindowPosition(mainWindow);
+		vw.setWindowPosition(mainWindow, maxZWindow);
 	}
 }
 }

@@ -54,9 +54,9 @@ public class MaxProjectionY < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		}
 
 		@Override
-		public void setWindowPosition(MainWindow<IT> mainWindow) {
-			//Point windowLoc = mainWindow.getWindow().getLocation();
-			//imp.getWindow().setLocation(windowLoc.x, windowLoc.y+mainWindow.getWindow().getHeight());
+		public void setWindowPosition(MainWindow<IT> mainWindow,MaxProjectionZ<IT> maxZWindow) {
+			Point maxZLoc = maxZWindow.imp.getWindow().getLocation();
+			imp.getWindow().setLocation(maxZLoc.x, maxZLoc.y+maxZWindow.imp.getWindow().getHeight());
 			
 		}
 		

@@ -52,9 +52,9 @@ import frameWork.Model;
 		}
 
 		@Override
-		public void setWindowPosition(MainWindow<IT> mainWindow) {
-			//Point windowLoc = mainWindow.getWindow().getLocation();
-			//imp.getWindow().setLocation(windowLoc.x+mainWindow.getWindow().getWidth(), windowLoc.y);
+		public void setWindowPosition(MainWindow<IT> mainWindow,MaxProjectionZ<IT> maxZWindow) {
+			Point maxZLoc = maxZWindow.imp.getWindow().getLocation();
+			imp.getWindow().setLocation(maxZLoc.x+maxZWindow.imp.getWindow().getWidth(), maxZLoc.y);
 			
 		}
 		
