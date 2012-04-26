@@ -106,7 +106,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 				List<T> newTrackables=null;
 			
 				
-				Model.getInstance().rwLock.writeLock().lock();
+			//	Model.getInstance().rwLock.writeLock().lock();
 				if(i!=startingFrame) newTrackables= trackingChannel.getFrame(i-1).cloneTrackablesForFrame(i);
 				else newTrackables=trackingChannel.getTrackablesForFrame(i);
 						
@@ -120,7 +120,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 				
 				
 				
-					Model.getInstance().rwLock.writeLock().unlock();
+		//			Model.getInstance().rwLock.writeLock().unlock();
 				policy.optimizeFrame(multiscale, trackingCandidates, trackingChannel.getFrame(i).getMovieFrame(),
 						trackingChannel.qualityThreshold, trackingChannel);
 				Model.getInstance().rwLock.writeLock().lock();
@@ -171,6 +171,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 
 	public void startTracking(int frameId, boolean multiscale, boolean autosave){
 		Thread thread= new TrackingThread(frameId, multiscale, autosave );
+		thread.setPriority(Thread.MIN_PRIORITY);
 		thread.start();
 	}
 	

@@ -59,9 +59,11 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 			if(!this.isOpen()) return;
 		
 	//	reFresh( position,  rePaintImage);
-			UpdateTask udt= new UpdateTask(position,rePaintImage);
-			currentUpdateTask=udt;
 			synchronized( thread){
+			UpdateTask udt= new UpdateTask(position,rePaintImage);
+			if(currentUpdateTask!=null && currentUpdateTask.rePaintImage) udt.rePaintImage=true;
+			currentUpdateTask=udt;
+			
 				thread.notify();
 			}
 			

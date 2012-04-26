@@ -375,7 +375,8 @@ Model.getInstance().rwLock.writeLock().unlock();
 		for(Blob b:trackables){   
 			MstepThread t= new MstepThread(b,totalInten, iFrame);
 			threads.add(t);
-		t.start();
+			t.setPriority(Thread.MIN_PRIORITY);
+			t.start();
 	//		t.run();
 	//	change=Math.max(change, this.doMstepForBlob(b, totalInten));	
 	//		totalBlobsInten+=b.inten;
@@ -437,7 +438,7 @@ Model.getInstance().rwLock.writeLock().unlock();
 					
 					System.out.println("change:" +change);		
 					Model.getInstance().depositMsg("change: "+change);
-					//Model.getInstance().makeChangesPublic();
+					Model.getInstance().makeChangesPublic();
 				
 					if(change<qualityT ||!Model.getInstance().isCurrentlyTracking()) break;
 					
