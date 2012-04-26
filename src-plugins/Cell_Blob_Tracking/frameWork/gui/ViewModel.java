@@ -205,10 +205,12 @@ protected void upDateImages(int frame, int slice, int channel, boolean init){
 
 
 @Override
-public void update(Observable arg0, Object arg1) {
-	if(arg1!=null)
-		currentFrameNumber=(Integer)arg1;
-	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, arg1!=null );
+public synchronized void update(Observable arg0, Object arg1) {
+	if(arg1==null)
+		this.setPosition(-1, -1);
+	else
+		this.setPosition(3, ((Integer)arg1).intValue());
+//	upDateImages(currentFrameNumber, this.currentSliceNumber, this.currentChannelNumber, arg1!=null );
 }
 
 //public int getSelectedSequenceId(){

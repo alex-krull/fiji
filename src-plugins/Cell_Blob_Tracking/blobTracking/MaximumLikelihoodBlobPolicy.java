@@ -437,7 +437,7 @@ Model.getInstance().rwLock.writeLock().unlock();
 					
 					System.out.println("change:" +change);		
 					Model.getInstance().depositMsg("change: "+change);
-					Model.getInstance().makeChangesPublic();
+					//Model.getInstance().makeChangesPublic();
 				
 					if(change<qualityT ||!Model.getInstance().isCurrentlyTracking()) break;
 					

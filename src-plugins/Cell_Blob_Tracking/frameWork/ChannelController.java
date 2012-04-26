@@ -56,15 +56,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		}
 	}
 	
-	public void optimizeFrame(int frameNumber, boolean multiscale){
-		
-		Model.getInstance().depositMsg("optimizing frame: "+frameNumber);
-	//	model.rwLock.writeLock().lock();
-		trackingChannel.optimizeFrame(frameNumber, multiscale, selectedIdList);
-	//	model.rwLock.writeLock().unlock();
-		model.makeChangesPublic(frameNumber);
 	
-	}
 //	protected int getSelectedSeqId(){
 //		return selectedSequenceId;
 //	}
@@ -108,9 +100,45 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 					
 			
 			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames();i++){
+				
+				
+				List<T> trackingCandidates=new ArrayList<T>();
+				List<T> newTrackables=null;
+			
+				
+				Model.getInstance().rwLock.writeLock().lock();
+				if(i!=startingFrame) newTrackables= trackingChannel.getFrame(i-1).cloneTrackablesForFrame(i);
+				else newTrackables=trackingChannel.getTrackablesForFrame(i);
+						
+				
+					for(T t: newTrackables){
+						
+						if(selectedIdList.contains( t.sequenceId))
+							trackingCandidates.add(t);
+							//trackingChannel.addTrackable(t);
+					}
+				
+				
+				
+					Model.getInstance().rwLock.writeLock().unlock();
+				policy.optimizeFrame(multiscale, trackingCandidates, trackingChannel.getFrame(i).getMovieFrame(),
+						trackingChannel.qualityThreshold, trackingChannel);
+				Model.getInstance().rwLock.writeLock().lock();
+				
+				
+				for(T t: trackingCandidates){
+					trackingChannel.addTrackable(t);
+				}
+				
+				Model.getInstance().makeStructuralChange();
+				Model.getInstance().makeChangesPublic(Math.max(i,startingFrame));
+				Model.getInstance().rwLock.writeLock().unlock();
+				
+		//		optimizeFrame( i, multiscale);
+				
 		//		System.out.println("trackingFrame:"+i);
 				
-				optimizeFrame( i, multiscale);
+				
 				if(autoS) saveAll();
 				
 				if(!Model.getInstance().isCurrentlyTracking()){			
@@ -120,14 +148,8 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 				
 			//	model.makeStructuralChange();
 			//	model.makeChangesPublic();
-				List<T> newTrackables= trackingChannel.getFrame(i).cloneTrackablesForFrame(i+1);
 				
-			
-				for(T t: newTrackables){
-					
-					if(selectedIdList.contains( t.sequenceId))
-						trackingChannel.addTrackable(t);
-				}
+				
 				
 				
 				

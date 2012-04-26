@@ -190,8 +190,8 @@ implements MouseListener, MouseMotionListener{
 		ce.stretchHistogram(imp, 0.5);
 	}
 	
-	public synchronized void reDraw(long[] position, boolean rePaintImage, RandomAccessibleInterval<IT> toDraw){
-		//model.rwLock.readLock().lock();
+	public void reDraw(long[] position, boolean rePaintImage, RandomAccessibleInterval<IT> toDraw){
+		model.rwLock.readLock().lock();
 		
 		if(rePaintImage){
 			
@@ -220,16 +220,17 @@ implements MouseListener, MouseMotionListener{
 		}
 		
 		
-		
+		imp.updateAndDraw();
 		upDateOverlay();
 		
 		
-		imp.updateAndDraw();
 		
-	//	model.rwLock.readLock().unlock();
+		
+		model.rwLock.readLock().unlock();
 	}
 
 	protected void upDateOverlay(){
+		synchronized (ovTemplate){
 		
 			
 		if(viewModel.getDrawOverLays()){
@@ -238,14 +239,16 @@ implements MouseListener, MouseMotionListener{
 				Roi roi=ov.get(i);
 				roi.setStrokeWidth(Math.min(3, roi.getStrokeWidth()/imp.getCanvas().getMagnification() ));
 			}
-			synchronized (ovTemplate){
+			
 			imp.setOverlay(ov);
-			}
+			
 		}
 		else {
-			synchronized (ovTemplate){
+			
 				imp.setOverlay(null);	
-			}
+			
+		
+		}
 		
 		}
 	}
