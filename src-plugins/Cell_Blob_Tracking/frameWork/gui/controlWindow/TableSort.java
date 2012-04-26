@@ -229,8 +229,10 @@ public class MySelectionListener implements MouseListener, ListSelectionListener
     				
     				results.add((Integer)table.getModel().getValueAt(i, 0));
     				if(e.getClickCount()>1){
-    					int ff= model.getSequence((Integer)table.getModel().getValueAt(i, 0)).getFirstFrame();
-    					viewModel.setPosition(3, ff);
+    					int f= model.getSequence((Integer)table.getModel().getValueAt(i, 0)).getFirstFrame();
+    					if(f==viewModel.getCurrentFrameNumber()) 
+    						f=model.getSequence((Integer)table.getModel().getValueAt(i, 0)).getLastFrame();
+    					viewModel.setPosition(3, f);
     				}
     			}
     				

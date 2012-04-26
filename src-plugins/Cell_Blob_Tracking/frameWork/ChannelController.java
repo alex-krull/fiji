@@ -76,18 +76,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		}
 		return results;
 	}
-	
-	public void optimizeFrame(int frameNumber, boolean autosave){
-		Thread thread= new TrackingThread(frameNumber, false, autosave,frameNumber);
-		thread.setPriority(Thread.MIN_PRIORITY);
-		thread.start();
-		
-	//	Model.getInstance().setCurrentlyTracking(true);
-	//	policy.optimizeFrame(false, this.getSelectedTrackables(frameNumber),
-	//			trackingChannel.getFrame(frameNumber).getMovieFrame(),
-	//			trackingChannel.qualityThreshold, trackingChannel);
-	//	Model.getInstance().setCurrentlyTracking(false);
-	}
+
 	
 	
 	private class TrackingThread extends Thread{
@@ -183,8 +172,8 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	}
 	
 
-	public void startTracking(int frameId, boolean multiscale, boolean autosave){
-		Thread thread= new TrackingThread(frameId, multiscale, autosave, (int)trackingChannel.getNumberOfFrames());
+	public void startTracking(int frameId, boolean multiscale, boolean autosave, int lastFrame){
+		Thread thread= new TrackingThread(frameId, multiscale, autosave, lastFrame);
 		thread.setPriority(Thread.MIN_PRIORITY);
 		thread.start();
 	}

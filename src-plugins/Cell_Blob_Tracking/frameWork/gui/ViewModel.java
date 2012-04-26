@@ -264,7 +264,7 @@ public boolean getDrawOverLays(){
 }
 
 public void toggleTracking(boolean multiscale){
-	controller.toggleTracking(currentFrameNumber, multiscale);
+	controller.toggleTracking(currentFrameNumber, multiscale, model.getNumberOfFrames());
 }
 
 public void deleteSequence(){
