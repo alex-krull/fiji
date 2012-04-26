@@ -170,7 +170,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		Blob selectedTrackable;
 		
 		if(e.getID()==MouseEvent.MOUSE_PRESSED && e.getButton()==MouseEvent.BUTTON1 && e.getClickCount()==1){
-			
+			if(pos[0]>=0&&pos[1]>=0)pos[2]=-1;
 			selectedSequenceId=trackingChannel.selectAt((int)pos[0],(int) pos[1],(int) pos[2],(int) pos[3],(int) pos[4]);	 
 		//	System.out.println("        new selected Sequence ID:"+selectedSequenceId);
 			if(!e.isShiftDown()){
