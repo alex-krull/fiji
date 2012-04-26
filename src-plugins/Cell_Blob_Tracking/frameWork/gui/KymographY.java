@@ -1,5 +1,6 @@
 package frameWork.gui;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
@@ -34,7 +35,10 @@ public class KymographY <IT extends  NumericType<IT> & NativeType<IT> & RealType
 	//	this.imp.getCanvas().addMouseListener(this);
 	//	sb.setLocation(0, 0);
 	//	sb.setOrientation(Scrollbar.VERTICAL);
-	
+		Point windowLoc = mainWindow.getWindow().getLocation();
+		
+		
+		imp.getWindow().setLocation(windowLoc.x, windowLoc.y+mainWindow.getWindow().getHeight());
 		this.startThread();
 	}
 	
