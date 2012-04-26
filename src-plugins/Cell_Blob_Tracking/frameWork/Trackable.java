@@ -25,4 +25,5 @@ public abstract double getDistanceTo(double x, double y, double z);
 public abstract String toSaveString();
 
 
+
 }

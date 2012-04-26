@@ -254,5 +254,16 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		return result;
 	}
 
+	@Override
+	public void copyOptions(Blob src, Blob dst){
+		dst.autoSigma=src.autoSigma;
+		dst.autoSigmaZ=src.autoSigmaZ;
+		dst.sigma=src.sigma;
+		dst.sigmaZ=src.sigmaZ;
+		dst.minSigma=src.minSigma;
+		dst.maxSigma=src.maxSigma;
+		dst.minSigmaZ=src.minSigmaZ;
+		dst.maxSigmaZ=src.maxSigmaZ;
+	}
 
 }

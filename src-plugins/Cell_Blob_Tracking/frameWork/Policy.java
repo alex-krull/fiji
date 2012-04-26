@@ -51,4 +51,6 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 		return null;
 	}
 	
+	public abstract void copyOptions(T src, T dst);
+	
 }
