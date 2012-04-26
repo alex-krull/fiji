@@ -58,6 +58,7 @@ import frameWork.Sequence;
 import frameWork.Session;
 import frameWork.Trackable;
 import frameWork.gui.HotKeyListener;
+import frameWork.gui.MainWindow;
 import frameWork.gui.ViewModel;
 import frameWork.gui.ViewWindow;
 
@@ -1416,7 +1417,11 @@ public class AltTrackingListener implements ActionListener{
 
 	}
 
-
+	@Override
+	public void setWindowPosition(MainWindow<IT> mainWindow) {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }

@@ -86,6 +86,8 @@ implements ImageListener, MouseListener, MouseMotionListener{
 	 	ySize=imp.getHeight();
 		initWindow();
 		
+		imp.getWindow().setLocation(0, 400);
+		
 		this.startThread();
 	}
 
@@ -208,6 +210,11 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 	//	reFresh(position,rePaintImage);
 	//}
 
+	@Override
+	public void setWindowPosition(MainWindow<IT> mainWindow) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public long[] positionFromEvent(MouseEvent e){

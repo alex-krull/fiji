@@ -47,6 +47,12 @@ public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & Rea
 			pos[2]=-1;
 		return pos;
 	}
+
+	@Override
+	public void setWindowPosition(MainWindow<IT> mainWindow) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 	

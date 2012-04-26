@@ -49,6 +49,12 @@ import frameWork.Model;
 				pos[2]=x;
 			return pos;
 		}
+
+		@Override
+		public void setWindowPosition(MainWindow<IT> mainWindow) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 		
 
