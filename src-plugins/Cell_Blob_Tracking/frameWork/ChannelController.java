@@ -31,7 +31,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	
 	public void click(long[] pos, MouseEvent e, ViewModel<IT> vm){
 		try{
-		
+		if (model.isCurrentlyTracking()) return;
 		selectedSequenceId= policy.click(pos, e, model, selectedIdList, trackingChannel, selectedSequenceId, vm);
 		}catch(Exception ex){
 			ex.printStackTrace(Model.errorWriter);
