@@ -87,6 +87,7 @@ implements ImageListener, MouseListener, MouseMotionListener{
 		initWindow();
 		
 		
+			imp.getWindow().setLocation(0, 0);
 		
 		this.startThread();
 	}
@@ -212,8 +213,9 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 
 	@Override
 	public void setWindowPosition(MainWindow<IT> mainWindow, MaxProjectionZ<IT> maxZmaxZWindow) {
+
 		imp.getWindow().setLocation(50, 50);
-		
+
 	}
 
 	@Override
