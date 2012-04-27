@@ -444,6 +444,7 @@ implements MouseListener, MouseMotionListener{
 			canvas.zoomIn(imp.getWidth()/2, imp.getHeight()/2);
 			cm=canvas.getMagnification();
 		}
+		//imp.updateAndDraw();
 		
 	}
 	
