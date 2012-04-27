@@ -187,17 +187,20 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 	}
 	
-	private double doMstepForBlob(Blob b, double totalInten, IterableRandomAccessibleInterval<IT> iterableFrame){
+	private void doMstepForBlob(Blob b, double totalInten, IterableRandomAccessibleInterval<IT> iterableFrame){
 	//	System.out.println("1");
-		double change=0;
-		double newX=0;
-		double newY=0;
-		double newSig=0;
-		double newZ=0;
+		b.newPK=b.pK;
+		b.newSig=b.sigma;
+		b.newX=b.xPos;
+		b.newY=b.yPos;
+		b.newZ=b.zPos;
+		
 		boolean isVolume=iterableFrame.numDimensions()>2;
 		
 		long[] mins=null;
 		long[] maxs=null;
+		
+		
 		
 		if(b.xPos<b.expectedValues.min(0)) b.xPos=b.expectedValues.min(0);
 		if(b.yPos<b.expectedValues.min(1)) b.yPos=b.expectedValues.min(1);
@@ -219,12 +222,12 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 	//	System.out.println("2");
 		
-		mins[0]=(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3-1 );
-		mins[1]= (long)	Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3-1 );
+		mins[0]=(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3-3 );
+		mins[1]= (long)	Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3-3 );
 		
 		
-		maxs[0]=(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3+1 );
-		maxs[1]= (long)	Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 +1);
+		maxs[0]=(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3+3 );
+		maxs[1]= (long)	Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 +3);
 		
 	//	System.out.println("3");
 		
@@ -313,39 +316,30 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		output= optimizer.optimize(10000000, b, GoalType.MAXIMIZE, startPoint).getPoint();
 	//	}catch(Exception e){};
 		
-		newX=output[0];
-		newY=output[1];
-		if(isVolume)newZ=output[2];
-		if(findSigma&& !isVolume) newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[2],0.5 )));
-		if(findSigma&& isVolume) newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[3],0.5 )));
+		b.newX=output[0];
+		b.newY=output[1];
+		if(isVolume)b.newZ=output[2];
+		if(findSigma&& !isVolume) b.newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[2],0.5 )));
+		if(findSigma&& isVolume) b.newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[3],0.5 )));
 		
+		b.newPK=b.inten/totalInten;
 	
-    	change=Math.max(Math.abs((newX-b.xPos)),change);
-    	change=Math.max(Math.abs((newY-b.yPos)), change);
-    	if(isVolume) change=Math.max(Math.abs((newZ-b.zPos)), change);
-    	if(findSigma) change=Math.max(Math.abs((newSig*newSig-b.sigma*b.sigma)), change);
-    	change=Math.max(Math.abs(((b.inten/totalInten)-b.pK)/b.pK), change);
+
  	
     	
-Model.getInstance().rwLock.writeLock().lock();   
-    	b.xPos=newX;
-    	b.yPos=newY;
-    	b.zPos=newZ;
-    	if(findSigma) b.sigma=newSig;
-
-    	b.pK=b.inten/totalInten;
-Model.getInstance().rwLock.writeLock().unlock();   
+    	
+ 
     	
     	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~pk: " +b.pK);
     	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~totalInten: " +totalInten);
      	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~inten: " +b.inten);
 		
-		return change;
+		return;
 	}
 	
 	
 	private class MstepThread extends Thread{
-		public double localChange=0;
+		
 		public Blob blob;
 		public double totalInten;		
 		public IterableRandomAccessibleInterval<IT> iterableFrame;
@@ -359,7 +353,7 @@ Model.getInstance().rwLock.writeLock().unlock();
 		@Override
 		public void run(){
 			try{
-			localChange=doMstepForBlob(blob, totalInten, iterableFrame);
+			doMstepForBlob(blob, totalInten, iterableFrame);
 			}catch(Exception e){
 				e.printStackTrace(Model.errorWriter);
 				Model.errorWriter.flush();
@@ -386,17 +380,49 @@ Model.getInstance().rwLock.writeLock().unlock();
 			try{
 			t.join();
 			}catch(Exception e){}
-			change=Math.max(change,t.localChange);
+			
 			
 		}
 		
 		backProb=1.0;
+		
+		double couplePK=0;
+		double coupleCount=0;
+		for(Blob b:trackables){
+			if(b.coupled){
+				coupleCount++;
+				couplePK+=b.newPK;
+			}
+		}
+		
+		for(Blob b:trackables){
+			if(b.coupled){
+				b.newPK=couplePK/coupleCount;
+			}
+		}
+		
 		for(Blob b:trackables){  
 			backProb-=b.pK;
+			
+			double changePos=Math.sqrt(
+					(b.newX-b.xPos)*(b.newX-b.xPos)+
+					(b.newY-b.yPos)*(b.newY-b.yPos)+
+					(b.newZ-b.zPos)*(b.newZ-b.zPos)
+					);
+			change=Math.max(Math.abs( changePos),change);
+	    	change=Math.max(Math.abs((b.newSig*b.newSig-b.sigma*b.sigma)), change);
+	   // 	change=Math.max(Math.abs(b.newPK-b.pK), change);
+	    	
+	    	b.xPos=b.newX;
+	    	b.yPos=b.newY;
+	    	b.zPos=b.newZ;
+	    	b.sigma=b.newSig;
+	    	b.pK=b.newPK;
 		}
 		
 		
 		return change;
+		
 	}
 
 	private void doOptimizationSingleScale( List<Blob> trackables,
@@ -450,6 +476,7 @@ Model.getInstance().rwLock.writeLock().unlock();
 			
 			System.out.println("totalTime:" +time+ "  fraction E:"+ ((double)eTime/(double)time)+ "  fraction M:"+ ((double)mTime/(double)time) );
 
+			
 	}
 	
 	@Override

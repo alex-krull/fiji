@@ -47,6 +47,12 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public boolean autoSigma=false;
 	public boolean autoSigmaZ=false;
 	public double denom=0;
+	public boolean coupled=false;
+	public double newX=0;
+	public double newY=0;
+	public double newSig=0;
+	public double newZ=0;
+	public double newPK=0;
 	
 	
 	public Img<FloatType> expectedValues=null;

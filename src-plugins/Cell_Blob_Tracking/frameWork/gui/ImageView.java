@@ -447,6 +447,10 @@ implements MouseListener, MouseMotionListener{
 		
 	}
 	
+	public double getZoom(){
+		return imp.getCanvas().getMagnification();
+	}
+	
 	@Override
 	public void initWindow() {
 		synchronized (this){

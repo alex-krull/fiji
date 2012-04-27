@@ -234,13 +234,13 @@ public int getCurrentSliceNumber(){
 	return currentSliceNumber;
 }
 
-public void addViewWindow( ViewWindow<IT> vw, double initialZoom){
+public void addViewWindow( ViewWindow<IT> vw){
 	model.rwLock.writeLock().lock();
 	views.add(vw);
 	vw.addKeyListener(hotKeyListener);
 	
 	this.upDateImages(0, 0, 0,true);
-	vw.setZoom(initialZoom);
+
 	model.rwLock.writeLock().unlock();
 }
 
@@ -334,18 +334,25 @@ public List<ViewWindow<IT>> getViewWindows(){
 	return this.views;
 }
 
-public void addMainWindow(MainWindow<IT> mWindow, double initialZoom){
+public void addMainWindow(MainWindow<IT> mWindow){
 	 mainWindow = mWindow;
-	 this.addViewWindow(mainWindow, initialZoom);
+	 this.addViewWindow(mainWindow);
 }
 
-public void addMaxZWindow(MaxProjectionZ<IT> maxZ, double initialZoom){
+public void addMaxZWindow(MaxProjectionZ<IT> maxZ){
 	maxZWindow = maxZ;
-	this.addViewWindow(maxZWindow, initialZoom);
+	this.addViewWindow(maxZWindow);
 }
 public void resetWindowsPositions(){
-	for(ViewWindow<IT> vw:  views){
+	
+	for(ViewWindow<IT> vw:  views)
+		vw.setZoom(mainWindow.getZoom());
+	
+	for(ViewWindow<IT> vw:  views)
 		vw.setWindowPosition(mainWindow, maxZWindow);
-	}
+	
+	mainWindow.getWindow().toFront();
+	
+	
 }
 }
