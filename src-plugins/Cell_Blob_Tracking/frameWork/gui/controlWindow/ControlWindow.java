@@ -136,6 +136,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JMenuItem altOptionMenu;
 	private JCheckBoxMenuItem toggleNumbers;
 	private JCheckBox autoSaveButton;
+	private JButton optimizeFrame;
+	private JMenuItem resetWindows;
+	private JMenuItem optimizeFrameMenu;
 
 	/*
 	public static void main(String[] args) {
@@ -383,11 +386,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		checkScroll.setMinimumSize(new Dimension(50, 200));
 		rightPanel.add(checkScroll);
 
-		rightButtonPanel = new JPanel(new GridLayout(4,0));
+		rightButtonPanel = new JPanel(new GridLayout(5,0));
 
 		start = new JButton("Start Tracking");
 		start.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		start.addActionListener(new StartListener());
+
 
 
 
@@ -406,6 +410,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		changeSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		changeSession.addActionListener(new ChangeSessionListener());*/
 
+		 optimizeFrame = new JButton("Optimize");
+		optimizeFrame.addActionListener(new OptimizeFrameListener());
 
 
 		rightButtonPanel.add(newSession);
@@ -417,6 +423,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		altTracking.setForeground(Color.blue);
 		altTracking.setVisible(false);
 		
+		rightButtonPanel.add(optimizeFrame);
 		rightButtonPanel.add(altTracking);
 		rightButtonPanel.add(start);
 		rightButtonPanel.setMaximumSize(new Dimension(1000, 300));
@@ -533,7 +540,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		newSessionMenu = new JMenuItem("New Session");
 		newSessionMenu.addActionListener(new NewSessionListener());
-		newSessionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.SHIFT_MASK));
+		newSessionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.SHIFT_MASK));
 
 
 		startMenu = new JMenuItem("Start Tracking");
@@ -567,6 +574,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		toggleOverlay = new JMenuItem("Toggle Overlay");
 		toggleOverlay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.SHIFT_MASK));
 		toggleOverlay.addActionListener(new ToggleListener());
+		
+		optimizeFrameMenu = new JMenuItem("Optimize");
+		optimizeFrameMenu.addActionListener(new OptimizeFrameListener());
+		optimizeFrameMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.SHIFT_MASK));
+		
 
 		fileMenu.setBackground(Color.lightGray);
 		fileMenu.add(newSessionMenu);
@@ -582,6 +594,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		editMenu.add(this.splitSeqMenu);
 		editMenu.add(trimSeqMenu);
 		editMenu.add(mergeMenu);
+		editMenu.add(optimizeFrameMenu);
 		editMenu.addSeparator();
 
 		editMenu.add(editBlob);
@@ -604,14 +617,19 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		toggleNumbers.addActionListener(new ToggleNumberListener());
 		toggleNumbers.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.SHIFT_MASK));
 
+		resetWindows = new JMenuItem("Arrange Windows");
+		resetWindows.addActionListener(new ResetWindowsListener());
+		resetWindows.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.SHIFT_MASK));
+		
+		
 
-		viewMenu = new JMenu("View Menu");
+		viewMenu = new JMenu("View");
 		viewMenu.setBackground(Color.lightGray);
 		viewMenu.add(contrastMenu);
 		viewMenu.add(toggleOverlay);
 		viewMenu.add(toggleNumbers);
 		viewMenu.addSeparator();
-
+		viewMenu.add(resetWindows);
 
 		menuBar.add(fileMenu);
 		menuBar.add(editMenu);
@@ -652,9 +670,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		frame.getContentPane().add(BorderLayout.EAST, rightPanel);
 		frame.getContentPane().add(BorderLayout.CENTER, centerPanel);
 		frame.getContentPane().add(BorderLayout.WEST, leftPanel);
-		frame.setSize(650,350);
+		frame.setSize(650,380);
 		frame.setVisible(true);
-		frame.setMinimumSize(new Dimension(650, 350));
+		frame.setMinimumSize(new Dimension(650, 380));
 		
 
 
@@ -841,7 +859,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				altMenu.setVisible(false);
 				altOptionMenu.setVisible(false);
 				
-				altTracking.setVisible(false);;
+				altTracking.setVisible(false);
+				optimizeFrame.setVisible(false);
 			} else {
 				start.setText("Start Tracking");
 				startMenu.setText("Start Tracking");
@@ -850,6 +869,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				altOptionMenu.setVisible(true);
 				if(!(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking()==null)){
 				altTracking.setVisible(true);
+				optimizeFrame.setVisible(true);
 				}
 			}
 		}else currentMethod.setText("");
@@ -1365,7 +1385,15 @@ public class AltTrackingListener implements ActionListener{
 
 
 
+	public class OptimizeFrameListener implements ActionListener{
 
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			viewModel.getController().optimizeFrame(viewModel.getCurrentFrameNumber());
+			
+		}
+		
+	}
 
 	@Override
 	public void open() {
@@ -1378,6 +1406,16 @@ public class AltTrackingListener implements ActionListener{
 		text.append(arg);
 		text.select(text.getText().length(), text.getText().length());
 		}
+	}
+	
+	public class ResetWindowsListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			 viewModel.resetWindowsPositions();
+			
+		}
+		
 	}
 
 	private class ControlWindowListener implements WindowListener{

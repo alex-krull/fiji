@@ -60,7 +60,7 @@ public class HotKeyListener implements KeyListener {
 			  viewModel.getController().showOjectOptions(viewModel.getCurrentFrameNumber());
 			  return;
 		           
-		  case KeyEvent.VK_W:
+		  case KeyEvent.VK_N:
 			  viewModel.getController().newSession(viewModel);
 			  return;
 			  
@@ -72,6 +72,9 @@ public class HotKeyListener implements KeyListener {
 			  viewModel.getController().optimizeFrame(viewModel.currentFrameNumber);
 			  return;
 			  
+		  case KeyEvent.VK_W:
+			  viewModel.resetWindowsPositions();
+			  return;
 	
 		  
 		        
