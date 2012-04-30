@@ -1032,6 +1032,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			
 			startMenu.setEnabled(false);
 			altTracking.setVisible(false);
+			this.optimizeFrame.setVisible(false);
 
 		}else
 		{editSession.setEnabled(true);
