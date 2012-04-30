@@ -847,8 +847,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			altTracking.setText(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
 			altMenu.setText("Start " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
 			altOptionMenu.setText("Session " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking() + " Options");
-			altTracking.setVisible(true);
-			altOptionMenu.setVisible(true);
+			//altTracking.setVisible(true);
+			//altOptionMenu.setVisible(true);
 			
 			}
 			
@@ -1042,7 +1042,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		altMenu.setEnabled(true);
 		altOptionMenu.setEnabled(true);
 		startMenu.setEnabled(true);
-		this.altTracking.setEnabled(true);
+		
 
 		if(viewModel.getController().getSelectionList().size()==0){
 			merge.setEnabled(false);
