@@ -472,7 +472,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		trackerTable = new TableSort(viewModel, model);
 		trackerTable.setOpaque(true);
-		//trackerTable.setPreferredSize(new Dimension(300, 100));
+		trackerTable.setPreferredSize(new Dimension(300, 300));
 		/*
 		tableScroll = new JScrollPane(trackerTable);
 		tableScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
