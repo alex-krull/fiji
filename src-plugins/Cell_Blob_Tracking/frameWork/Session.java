@@ -220,6 +220,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 	public void setProperties(Properties props){
 		String s;
 		s= props.getProperty("sessionLabel"); if(s!=null) this.label=s;
+		s= props.getProperty("qualityThreshold"); if(s!=null) this.qualityThreshold=Double.valueOf(s);
 	}
 	
 	public Properties getProperties(){
@@ -230,6 +231,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 		props.setProperty("typeName", this.getTypeName());
 		props.setProperty("numberOfFrames", String.valueOf(this.getNumberOfFrames()));
 		props.setProperty("channelId", String.valueOf(this.mChannel.getId()));
+		props.setProperty("qualityThreshold", String.valueOf(this.qualityThreshold));
 		return props;
 	}
 	

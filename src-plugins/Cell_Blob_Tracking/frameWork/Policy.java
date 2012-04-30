@@ -51,6 +51,10 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 		return null;
 	}
 	
+	public boolean isHidden(){
+		return false;
+	}
+	
 	public abstract void copyOptions(T src, T dst);
 	
 }
