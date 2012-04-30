@@ -53,6 +53,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public double newSig=0;
 	public double newZ=0;
 	public double newPK=0;
+	public double newInten=0;
 	
 	
 	public Img<FloatType> expectedValues=null;
@@ -70,8 +71,9 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	 * @param chan the channel the blob belongs to
 	 */
 	public Blob(int seqId, int FrameId, double x, double y, double z, double sig, int chan, 
-			boolean autoS, double sigZ) {
+			boolean autoS, double sigZ, double maxSig) {
 		super(seqId, FrameId, chan);
+		maxSigma=maxSig;
 		xPos = x;
 		yPos = y;
 		zPos = z;
@@ -258,10 +260,10 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		double pz=0;
 		double ps=this.sigma;
 		double psz=this.sigmaZ;
-		if(!isVolume&& this.autoSigma) ps=Math.max(0.8,Math.min(3.0,Math.pow(position[2],0.5) ) );
+		if(!isVolume&& this.autoSigma) ps=Math.min(Math.max(this.minSigma, Math.pow(position[2],0.5) ), this.maxSigma ) ;
 		if(isVolume&& this.autoSigma){
 			 pz=position[2];
-			 ps=Math.max(0.8,Math.min(3.0,Math.pow(position[3],0.5) ) );
+			 ps=Math.min(Math.max(this.minSigma, Math.pow(position[3],0.5) ), this.maxSigma ) ;
 		}
 		if(isVolume&& !this.autoSigma)
 			pz=position[2];
@@ -281,11 +283,12 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 				+ this.sequenceId + "\t" 
 				+ df.format(this.xPos)+ "\t"
 				+ df.format( this.yPos)+ "\t"
-				+  df.format(this.zPos)+ "\t"
-				+  df.format(this.sigma)+ "\t"
-				+  df.format(this.sigmaZ)+"\t"
+				+ df.format(this.zPos)+ "\t"
+				+ df.format(this.sigma)+ "\t"
+				+ df.format(this.sigmaZ)+"\t"
 				+ df.format(this.maxSigma)+"\t"
-				+ String.valueOf(!this.autoSigma);
+				+ String.valueOf(!this.autoSigma)+"\t"
+				+ String.valueOf(this.inten);
 		return result;
 	}
 

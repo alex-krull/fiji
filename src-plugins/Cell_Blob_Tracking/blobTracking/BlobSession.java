@@ -24,6 +24,31 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	private double mscaleSigma = 1;
 	private int mscaleIterations = 5;
 	
+	private double changeFactorSigma=10;
+	private double changeFactorPK=1;
+	
+	public void setChangeFactorSigma(double changeFactorSigma) {
+		this.changeFactorSigma = changeFactorSigma;
+	}
+
+
+	public void setChangeFactorPK(double changeFactorPK) {
+		this.changeFactorPK = changeFactorPK;
+	}
+
+
+	
+	
+	public double getChangeFactorSigma() {
+		return changeFactorSigma;
+	}
+
+
+	public double getChangeFactorPK() {
+		return changeFactorPK;
+	}
+
+
 	public BlobSession(int newID, Policy<Blob, IT> pol, MovieChannel<IT> mc) {
 		super(newID, pol, mc);
 	}

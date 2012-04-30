@@ -162,7 +162,10 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		double sigmaZ= Double.valueOf(values[6]);
 		double maxSigma= Double.valueOf(values[7]);
 		boolean sigmaConst =Boolean.valueOf(values[8]);
-		Blob nB=new Blob(sId, fNum, x, y, z, sigma, sessionId, !sigmaConst, sigmaZ);
+		double inten= Double.valueOf(values[9]);
+		Blob nB=new Blob(sId, fNum, x, y, z, sigma, sessionId, !sigmaConst, sigmaZ, maxSigma);
+		nB.inten=inten;
+		
 		
 		return nB;
 	}
@@ -200,7 +203,8 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 			
 			if( e.getClickCount()==2){
 				BlobSession<IT> bs= (BlobSession<IT>)trackingChannel;
-				Blob nB=new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], vm.getCurrentSliceNumber()*Model.getInstance().getXyToZ(), 1, trackingChannel.getId(), false, bs.getDefaultSigmaZ());				
+				Blob nB=new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], vm.getCurrentSliceNumber()*Model.getInstance().getXyToZ(), 1,
+						trackingChannel.getId(), false, bs.getDefaultSigmaZ(), bs.getDefaultMaxSigma());				
 				
 				nB.sigma=bs.getDefaultSigma();
 				nB.sigmaZ=bs.getDefaultSigmaZ();
@@ -245,7 +249,8 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 	@Override
 	public Blob copy(Blob toCopy){
 		if(toCopy==null) return null;
-		Blob result=new Blob(toCopy.sequenceId, toCopy.frameId, toCopy.xPos, toCopy.yPos, toCopy.zPos, toCopy.sigma, toCopy.channel, toCopy.autoSigma,toCopy.sigmaZ);
+		Blob result=new Blob(toCopy.sequenceId, toCopy.frameId, toCopy.xPos, toCopy.yPos, toCopy.zPos,
+				toCopy.sigma, toCopy.channel, toCopy.autoSigma,toCopy.sigmaZ, toCopy.maxSigma);
 		result.pK=toCopy.pK;
 		result.sigma=toCopy.sigma;
 		result.sigmaZ=toCopy.sigmaZ;
