@@ -69,13 +69,15 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	 * @param sig the standard deviation of the blob
 	 * @param chan the channel the blob belongs to
 	 */
-	public Blob(int seqId, int FrameId, double x, double y, double z, double sig, int chan) {
+	public Blob(int seqId, int FrameId, double x, double y, double z, double sig, int chan, 
+			boolean autoS, double sigZ) {
 		super(seqId, FrameId, chan);
 		xPos = x;
 		yPos = y;
 		zPos = z;
 		sigma = sig;
-		sigmaZ = sigma * 2;
+		sigmaZ = sigZ;
+		this.autoSigma=autoS;
 	}
 	
 	public double calcDenominator(Interval img, double px,double py,double pz,double ps,double psz){
@@ -281,7 +283,9 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 				+ df.format( this.yPos)+ "\t"
 				+  df.format(this.zPos)+ "\t"
 				+  df.format(this.sigma)+ "\t"
-				+  df.format(this.sigmaZ);
+				+  df.format(this.sigmaZ)+"\t"
+				+ df.format(this.maxSigma)+"\t"
+				+ String.valueOf(!this.autoSigma);
 		return result;
 	}
 

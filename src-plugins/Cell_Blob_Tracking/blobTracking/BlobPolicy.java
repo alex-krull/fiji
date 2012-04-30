@@ -158,10 +158,11 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		double x= Double.valueOf(values[2]);
 		double y= Double.valueOf(values[3]);
 		double z= Double.valueOf(values[4]);
-		double sigma= Double.valueOf(values[5]);
+		double sigma= Double.valueOf(values[5]); 
 		double sigmaZ= Double.valueOf(values[6]);
-		
-		Blob nB=new Blob(sId, fNum, x, y, z, sigma, sessionId);
+		double maxSigma= Double.valueOf(values[7]);
+		boolean sigmaConst =Boolean.valueOf(values[8]);
+		Blob nB=new Blob(sId, fNum, x, y, z, sigma, sessionId, !sigmaConst, sigmaZ);
 		
 		return nB;
 	}
@@ -198,8 +199,9 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		if(e.getID()==MouseEvent.MOUSE_CLICKED){
 			
 			if( e.getClickCount()==2){
-				Blob nB=new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], vm.getCurrentSliceNumber()*Model.getInstance().getXyToZ(), 1, trackingChannel.getId());				
 				BlobSession<IT> bs= (BlobSession<IT>)trackingChannel;
+				Blob nB=new Blob(model.getNextSequqnceId(), (int)pos[3], pos[0], pos[1], vm.getCurrentSliceNumber()*Model.getInstance().getXyToZ(), 1, trackingChannel.getId(), false, bs.getDefaultSigmaZ());				
+				
 				nB.sigma=bs.getDefaultSigma();
 				nB.sigmaZ=bs.getDefaultSigmaZ();
 				nB.minSigma=bs.getDefaultMinSigma();
@@ -243,7 +245,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 	@Override
 	public Blob copy(Blob toCopy){
 		if(toCopy==null) return null;
-		Blob result=new Blob(toCopy.sequenceId, toCopy.frameId, toCopy.xPos, toCopy.yPos, toCopy.zPos, toCopy.sigma, toCopy.channel);
+		Blob result=new Blob(toCopy.sequenceId, toCopy.frameId, toCopy.xPos, toCopy.yPos, toCopy.zPos, toCopy.sigma, toCopy.channel, toCopy.autoSigma,toCopy.sigmaZ);
 		result.pK=toCopy.pK;
 		result.sigma=toCopy.sigma;
 		result.sigmaZ=toCopy.sigmaZ;
