@@ -275,8 +275,8 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		DecimalFormat df = new DecimalFormat("#0.00000");
 
 		String result;
-		result= this.sequenceId + "\t"
-				+ this.frameId + "\t"
+		result= this.frameId + "\t"
+				+ this.sequenceId + "\t" 
 				+ df.format(this.xPos)+ "\t"
 				+ df.format( this.yPos)+ "\t"
 				+  df.format(this.zPos)+ "\t"

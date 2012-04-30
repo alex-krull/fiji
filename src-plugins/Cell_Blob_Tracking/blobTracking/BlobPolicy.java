@@ -151,8 +151,10 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 	//	System.out.println(values[1]);
 	//	System.out.println(values[2]);
 	//	System.out.println(values[0]);
-		int sId= Integer.valueOf(values[0]);
-		int fNum= Integer.valueOf(values[1]);
+		
+		
+		int fNum= Integer.valueOf(values[0]); 
+		int sId= Integer.valueOf(values[1]);
 		double x= Double.valueOf(values[2]);
 		double y= Double.valueOf(values[3]);
 		double z= Double.valueOf(values[4]);

@@ -66,6 +66,11 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 		
 	}
 	
+	public void addPolicy(String s, Policy<? extends Trackable,IT> policy){
+		policies.put(s, policy);
+		
+	}
+	
 private List <String> getFilesFromDirectory(String directory){
 	File dir = new File(directory);
 	
@@ -339,12 +344,22 @@ public void addSession(String typeName, String label, int channelID, ViewModel<I
 }
 
 public String[] getPossibleSessionTypes(){
+	
 	Set<String> keySet=policies.keySet();
-	String[] results= new String[keySet.size()];
 	int c=0;
 	for(String key:keySet){
-		results[c]=key;
-		c++;
+		if(!policies.get(key).isHidden())
+			c++;		
+	}
+	
+	
+	String[] results= new String[c];
+	c=0;
+	for(String key:keySet){
+		if(!policies.get(key).isHidden()){
+			results[c]=key;
+			c++;
+		}
 	}
 	return results;
 }
