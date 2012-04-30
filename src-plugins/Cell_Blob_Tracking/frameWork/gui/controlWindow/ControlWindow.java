@@ -471,6 +471,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		trackerTable = new TableSort(viewModel, model);
+	
 		trackerTable.setOpaque(true);
 		trackerTable.setPreferredSize(new Dimension(300, 300));
 		/*
@@ -594,15 +595,16 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		editMenu.add(this.splitSeqMenu);
 		editMenu.add(trimSeqMenu);
 		editMenu.add(mergeMenu);
-		editMenu.add(optimizeFrameMenu);
-		editMenu.addSeparator();
+				editMenu.addSeparator();
 
 		editMenu.add(editBlob);
 		editMenu.add(editSession);
 		editMenu.add(altOptionMenu);
 		editMenu.addSeparator();
 		editMenu.add(startMenu);
+		editMenu.add(optimizeFrameMenu);
 		editMenu.add(altMenu);
+		
 		windowMenu.setBackground(Color.lightGray);
 		helpMenu.setBackground(Color.lightGray);
 
