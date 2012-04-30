@@ -847,8 +847,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			altTracking.setText(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
 			altMenu.setText("Start " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
 			altOptionMenu.setText("Session " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking() + " Options");
-			altTracking.setVisible(true);
-			altOptionMenu.setVisible(true);
+			//altTracking.setVisible(true);
+			//altOptionMenu.setVisible(true);
 			
 			}
 			
@@ -1012,7 +1012,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 
 
-		if (viewModel.getController().getCurrentSessionId()==-1){
+		if (viewModel.getController().getSessions().size() <= 0){
 			editSession.setEnabled(false);
 			this.changeSession.setEnabled(false);
 			this.deleteSession.setEnabled(false);
@@ -1032,6 +1032,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			
 			startMenu.setEnabled(false);
 			altTracking.setVisible(false);
+			this.optimizeFrame.setVisible(false);
 
 		}else
 		{editSession.setEnabled(true);
@@ -1041,7 +1042,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		altMenu.setEnabled(true);
 		altOptionMenu.setEnabled(true);
 		startMenu.setEnabled(true);
-		this.altTracking.setEnabled(true);
+		saveAll.setEnabled(true);
 
 		if(viewModel.getController().getSelectionList().size()==0){
 			merge.setEnabled(false);
