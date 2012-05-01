@@ -151,7 +151,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	public void go(){
 		cBoxes= new ArrayList<JCheckBox>();
-		frame = new JFrame("Control Window");
+		frame = new JFrame("Control Panel");
 		frame.addWindowListener(new ControlWindowListener());
 
 		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
