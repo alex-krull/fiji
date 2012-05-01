@@ -1,5 +1,6 @@
 
 
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.io.FileInfo;
@@ -12,9 +13,9 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import blobTracking.CompatiblePolicy;
 import blobTracking.MaximumLikelihoodBlobPolicy;
-import fiji.tool.AbstractTool;
 import frameWork.Controller;
 import frameWork.Model;
+import frameWork.MyTool;
 import frameWork.gui.KymographX;
 import frameWork.gui.KymographY;
 import frameWork.gui.MainWindow;
@@ -25,8 +26,14 @@ import frameWork.gui.ViewModel;
 import frameWork.gui.controlWindow.ControlWindow;
 import frameWork.gui.controlWindow.GlobalOptionsDialog;
 
-public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>>extends AbstractTool{
+public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>>extends MyTool{
 
+	
+	
+	@Override
+	public String getToolName(){
+		return "trackingTool";
+	}
 	
 	
 		public void addWindows(Model<IT> model, ImagePlus imp, ViewModel<IT> viewModel) {
@@ -133,7 +140,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 				System.out.println("creating Controller...");
 					
 		
-		Controller<IT> cont= new Controller<IT>(model);
+		Controller<IT> cont= new Controller<IT>(model,this);
 		cont.addPolicy(new MaximumLikelihoodBlobPolicy<IT>());
 		cont.addPolicy("Blob", new CompatiblePolicy<IT>());
 		

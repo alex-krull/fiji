@@ -55,7 +55,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	
 	protected List <ViewWindow<IT>> views;
 	protected boolean sessionsUpdate=true;
-
+	
 
 	private MainWindow<IT> mainWindow;
 

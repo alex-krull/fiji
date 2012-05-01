@@ -1435,9 +1435,8 @@ public class AltTrackingListener implements ActionListener{
 
 		@Override
 		public void windowClosing(WindowEvent arg0) {
-			for(ViewWindow<IT> vw: viewModel.getViewWindows()){
-				vw.terminate();
-			}
+			
+			viewModel.getController().shutdown(viewModel.getViewWindows());
 
 		}
 

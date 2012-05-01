@@ -1,6 +1,5 @@
 package frameWork;
 
-
 import ij.IJ;
 
 import java.awt.Color;
@@ -24,11 +23,15 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import frameWork.gui.ViewModel;
+import frameWork.gui.ViewWindow;
 import frameWork.gui.controlWindow.ControlWindow;
 import frameWork.gui.controlWindow.NewSessionDialog;
 
 
+
 public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > {
+	
+	
 	
 	
 	protected ControlWindow<IT> controllWindow;
@@ -41,10 +44,11 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 	private final SortedMap <Integer, ChannelController <? extends Trackable,IT> > channelControllers;
 	private final SortedMap<String,Policy<? extends Trackable,IT>> policies;
 	private boolean autosave=true;
+	private final  MyTool abstractTool;
 	 
 	
-	public Controller( Model<IT> mod){
-		
+	public Controller( Model<IT> mod, MyTool at){
+		abstractTool=at;
 		policies= new TreeMap<String,Policy<? extends Trackable,IT>>();
 		
 		model =mod;
@@ -194,6 +198,10 @@ private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCr
  * @param e the original MouseEvent
  */
 public synchronized void click(long[] position, int tChannel, MouseEvent e, ViewModel<IT> vm){
+	//if(!IJ.getToolName().equals("trackingTool")){
+	if(!abstractTool.isThisTool()){
+		return;
+	}
 	model.rwLock.writeLock().lock();
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);
 	
@@ -475,6 +483,19 @@ public void newSession(ViewModel<IT> viewModel){
 	viewModel.getController().getCurrentSession().showPropertiesDialog();
 	viewModel.setPosition(4, newDialog.getChannelChoice()-1);
 }
+
+public void shutdown(List<ViewWindow<IT>> windows){
+	//abstractTool.shutDown();
+	for(ViewWindow<IT> vw: windows){
+		vw.terminate();		
+	}
+	
+//	Toolbar.getInstance().restorePreviousTool();
+	
+//	Toolbar.getInstance().
+}
+
+
 
 
 
