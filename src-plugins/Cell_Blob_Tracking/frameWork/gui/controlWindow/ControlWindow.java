@@ -943,7 +943,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			int index=0;
 			int count=0;
 
-
+			//This makes the changeSession and Visible Session Lists not update during tracking
+			if(!(viewModel.isTracking())){
 			for(Session<? extends Trackable, IT> session : tempSessionList){
 
 				if(session.getId()==viewModel.getController().getCurrentSessionId())
@@ -952,7 +953,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				count++;
 
 			}
-
+			
 			//Takes care of the session list.
 
 			String[] sessionNamesList = new String[tempSessionList.size()];
@@ -985,7 +986,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			}
 			checkPanel.revalidate();
 			checkPanel.repaint();
-
+			
 			//Change Session drop menu
 
 			if(index>0 && changeSession.getItemCount()>0 )
@@ -993,7 +994,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 			selectSessionList.setListData(sessionNamesList);
-
+			}
 			trackerTable.addListener();
 		}
 
