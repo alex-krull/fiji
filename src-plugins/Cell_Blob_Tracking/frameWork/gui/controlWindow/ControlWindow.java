@@ -151,7 +151,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	public void go(){
 		cBoxes= new ArrayList<JCheckBox>();
-		frame = new JFrame("Control Window");
+		frame = new JFrame("Control Panel");
 		frame.addWindowListener(new ControlWindowListener());
 
 		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -471,8 +471,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		trackerTable = new TableSort(viewModel, model);
+	
 		trackerTable.setOpaque(true);
-		//trackerTable.setPreferredSize(new Dimension(300, 100));
+		trackerTable.setPreferredSize(new Dimension(300, 300));
 		/*
 		tableScroll = new JScrollPane(trackerTable);
 		tableScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -594,15 +595,16 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		editMenu.add(this.splitSeqMenu);
 		editMenu.add(trimSeqMenu);
 		editMenu.add(mergeMenu);
-		editMenu.add(optimizeFrameMenu);
-		editMenu.addSeparator();
+				editMenu.addSeparator();
 
 		editMenu.add(editBlob);
 		editMenu.add(editSession);
 		editMenu.add(altOptionMenu);
 		editMenu.addSeparator();
 		editMenu.add(startMenu);
+		editMenu.add(optimizeFrameMenu);
 		editMenu.add(altMenu);
+		
 		windowMenu.setBackground(Color.lightGray);
 		helpMenu.setBackground(Color.lightGray);
 
@@ -941,7 +943,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			int index=0;
 			int count=0;
 
-
+			//This makes the changeSession and Visible Session Lists not update during tracking
+			if(!(viewModel.isTracking())){
 			for(Session<? extends Trackable, IT> session : tempSessionList){
 
 				if(session.getId()==viewModel.getController().getCurrentSessionId())
@@ -950,7 +953,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				count++;
 
 			}
-
+			
 			//Takes care of the session list.
 
 			String[] sessionNamesList = new String[tempSessionList.size()];
@@ -983,7 +986,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			}
 			checkPanel.revalidate();
 			checkPanel.repaint();
-
+			
 			//Change Session drop menu
 
 			if(index>0 && changeSession.getItemCount()>0 )
@@ -991,7 +994,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 			selectSessionList.setListData(sessionNamesList);
-
+			}
 			trackerTable.addListener();
 		}
 
