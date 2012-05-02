@@ -519,15 +519,15 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		editSession = new JMenuItem("Session Options");
 		editSession.addActionListener(new EditMenuListener());
-		editSession.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.SHIFT_MASK));
+		editSession.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.ALT_MASK));
 
 		editBlob = new JMenuItem("Edit Object");
 		editBlob.addActionListener(new BlobMenuListener());
-		editBlob.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.SHIFT_MASK));
+		editBlob.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK));
 
 		saveAllMenu = new JMenuItem("Save");
 		saveAllMenu.addActionListener(new SaveAllListener());
-		saveAllMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.SHIFT_MASK));
+		saveAllMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
 
 		JMenuItem saveTo = new JMenuItem("Save to");
 		saveTo.addActionListener(new SaveToListener());
@@ -537,48 +537,48 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		JMenuItem loadAll = new JMenuItem("Load");
 		loadAll.addActionListener(new LoadAllListener());
-		loadAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.SHIFT_MASK));
+		loadAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.ALT_MASK));
 
 		newSessionMenu = new JMenuItem("New Session");
 		newSessionMenu.addActionListener(new NewSessionListener());
-		newSessionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.SHIFT_MASK));
+		newSessionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK));
 
 
 		startMenu = new JMenuItem("Start Tracking");
 		startMenu.addActionListener(new StartListener());
-		startMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.SHIFT_MASK));
+		startMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
 
 		altMenu = new JMenuItem("");
 		altMenu.addActionListener(new AltTrackingListener());
-		altMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.SHIFT_MASK));
+		altMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.ALT_MASK));
 		
 		altOptionMenu = new JMenuItem("");
 		altOptionMenu.addActionListener(new AltOptionListener());
-		altOptionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ActionEvent.SHIFT_MASK));
+		altOptionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ActionEvent.ALT_MASK));
 		
 		deleteSeqMenu = new JMenuItem("Delete Sequence");
 		deleteSeqMenu.addActionListener(new DeleteListener());
-		deleteSeqMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.SHIFT_MASK));
+		deleteSeqMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.ALT_MASK));
 
 		splitSeqMenu = new JMenuItem("Split Sequence");
 		splitSeqMenu.addActionListener(new SplitListener());
-		splitSeqMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.SHIFT_MASK));
+		splitSeqMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
 
 		trimSeqMenu = new JMenuItem("Trim Sequence");
 		trimSeqMenu.addActionListener(new TrimListener());
-		trimSeqMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.SHIFT_MASK));
+		trimSeqMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.ALT_MASK));
 
 		mergeMenu = new JMenuItem("Merge Sequence");
 		mergeMenu.addActionListener(new MergeListener());
-		mergeMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.SHIFT_MASK));
+		mergeMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.ALT_MASK));
 
 		toggleOverlay = new JMenuItem("Toggle Overlay");
-		toggleOverlay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.SHIFT_MASK));
+		toggleOverlay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.ALT_MASK));
 		toggleOverlay.addActionListener(new ToggleListener());
 		
 		optimizeFrameMenu = new JMenuItem("Optimize");
 		optimizeFrameMenu.addActionListener(new OptimizeFrameListener());
-		optimizeFrameMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.SHIFT_MASK));
+		optimizeFrameMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.ALT_MASK));
 		
 
 		fileMenu.setBackground(Color.lightGray);
@@ -613,15 +613,15 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		contrastMenu = new JMenuItem("Adjust Brightness/Contrast");
 		contrastMenu.addActionListener(new ContrastListener());
-		contrastMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.SHIFT_MASK));
+		contrastMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
 		
 		toggleNumbers = new JCheckBoxMenuItem("Toggle Numbers");
 		toggleNumbers.addActionListener(new ToggleNumberListener());
-		toggleNumbers.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.SHIFT_MASK));
+		toggleNumbers.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 
 		resetWindows = new JMenuItem("Arrange Windows");
 		resetWindows.addActionListener(new ResetWindowsListener());
-		resetWindows.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.SHIFT_MASK));
+		resetWindows.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.ALT_MASK));
 		
 		
 
