@@ -30,9 +30,11 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 
 	
 	
+	private String ijTool;
+	private String currentTool;
 	@Override
 	public String getToolName(){
-		return "trackingTool";
+		return "Tracking Tool";
 	}
 	
 	
@@ -117,7 +119,18 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	@Override
 	
 	public void run(String arg0) {
-		super.run(arg0);
+		
+			
+			ijTool= IJ.getToolName().toString();
+			currentTool = getToolName().toString();
+			if (!ijTool.equals(currentTool)){
+				super.run(arg0);;
+			
+				
+			}
+				
+
+		
 		
 		long time0= System.nanoTime();
 		ImagePlus imp=IJ.getImage();

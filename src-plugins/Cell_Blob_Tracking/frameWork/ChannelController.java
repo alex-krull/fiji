@@ -200,7 +200,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	public void deleteSequence(){
 		if(selectedIdList.isEmpty()) return;
 		GenericDialog gd = new GenericDialog("delete files?");
-		gd.addMessage("Shuold the files be deleted as well?");
+		gd.addMessage("Should the files be deleted as well?");
 		gd.enableYesNoCancel("Yes", "No");
 		gd.showDialog();
 		if (gd.wasCanceled()) return;

@@ -26,7 +26,7 @@ public class MScaleOption{
 
 		gd.addNumericField("Downscaling:", mod.getDownscaleFactor(), 2);
 		gd.addNumericField("Smoothing \u03C3:", mod.getMscaleSigma(), 2);
-		gd.addNumericField("Iterations \u03C3:", mod.getMscaleIterations(), 2);
+		gd.addNumericField("Iterations ", mod.getMscaleIterations(), 2);
 
 
 
