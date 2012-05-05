@@ -31,7 +31,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	
 	
 	private String ijTool;
-	private String currentTool;
+	private String trackingTool;
 	@Override
 	public String getToolName(){
 		return "Tracking Tool";
@@ -122,8 +122,8 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		
 			
 			ijTool= IJ.getToolName().toString();
-			currentTool = getToolName().toString();
-			if (!ijTool.equals(currentTool)){
+			trackingTool = getToolName().toString();
+			if (!ijTool.equals(trackingTool)){
 				super.run(arg0);;
 			
 				

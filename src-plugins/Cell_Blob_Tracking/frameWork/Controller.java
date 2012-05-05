@@ -199,7 +199,8 @@ private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCr
  */
 public synchronized void click(long[] position, int tChannel, MouseEvent e, ViewModel<IT> vm){
 	//if(!IJ.getToolName().equals("trackingTool")){
-	if(!abstractTool.isThisTool()){
+	if(!abstractTool.getToolName().equals(IJ.getToolName())){
+		System.out.println("Wrong Tool");
 		return;
 	}
 	model.rwLock.writeLock().lock();
