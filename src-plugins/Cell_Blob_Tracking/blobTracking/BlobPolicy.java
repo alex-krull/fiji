@@ -161,14 +161,23 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		double sigma= Double.valueOf(values[5]); 
 		double sigmaZ= Double.valueOf(values[6]);
 		double maxSigma= Double.valueOf(values[7]);
+		
 		boolean sigmaConst = values[8].equals("1");
 		
-			
-				
-		double inten= Double.valueOf(values[9]);
+		boolean coupled=false;
+		double inten=0;
+		
+		if(values.length>10){					// the colomn for coupled is optional
+		coupled= values[9].equals("1");		
+		inten= Double.valueOf(values[10]);
+		}
+		else{
+			inten= Double.valueOf(values[9]);
+		}
+		
 		Blob nB=new Blob(sId, fNum, x, y, z, sigma, sessionId, !sigmaConst, sigmaZ, maxSigma);
 		nB.inten=inten;
-		
+		nB.coupled=coupled;
 		
 		return nB;
 	}
