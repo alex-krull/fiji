@@ -347,16 +347,23 @@ public void resetWindowsPositions(){
 	
 	//for(int i=0;i<2;i++){
 	
+//	for(ViewWindow<IT> vw:  views)
+//		vw.close();
+	
 	for(ViewWindow<IT> vw:  views)
 		vw.setZoom(mainWindow.getZoom());
 	
 	try {
-		Thread.sleep(10);
+		Thread.sleep(100);
 	} catch (InterruptedException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-			
+	
+	
+//for(ViewWindow<IT> vw:  views)
+//		vw.open();
+	
 	for(ViewWindow<IT> vw:  views)
 		vw.setWindowPosition(mainWindow, maxZWindow);
 	
