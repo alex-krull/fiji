@@ -350,8 +350,8 @@ public void resetWindowsPositions(){
 //	for(ViewWindow<IT> vw:  views)
 //		vw.close();
 	
-	for(ViewWindow<IT> vw:  views)
-		vw.setZoom(mainWindow.getZoom());
+//	for(ViewWindow<IT> vw:  views)
+//		vw.setZoom(mainWindow.getZoom());
 	
 	try {
 		Thread.sleep(100);
