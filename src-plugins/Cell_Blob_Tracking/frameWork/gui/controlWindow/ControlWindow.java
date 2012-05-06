@@ -437,6 +437,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		//rightButtonPanel.add(changeSession);
 
 		rightPanel.add(rightButtonPanel);
+		rightPanel.revalidate();
+		rightPanel.repaint();
 		
 
 
