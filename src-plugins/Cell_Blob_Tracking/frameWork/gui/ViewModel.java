@@ -349,16 +349,19 @@ public void resetWindowsPositions(){
 	
 //	for(ViewWindow<IT> vw:  views)
 //		vw.close();
+	model.rwLock.writeLock().lock();
 	
-//	for(ViewWindow<IT> vw:  views)
-//		vw.setZoom(mainWindow.getZoom());
+	for(ViewWindow<IT> vw:  views)
+		vw.setZoom(mainWindow.getZoom());
 	
 	try {
-		Thread.sleep(100);
+		Thread.sleep(50);
 	} catch (InterruptedException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+	
+	model.rwLock.writeLock().unlock();
 	
 	
 //for(ViewWindow<IT> vw:  views)
