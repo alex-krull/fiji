@@ -270,7 +270,7 @@ public void trimSequence(int frameId){
 	
 }
 
-public void saveAll(){
+public void saveAll() throws IOException{
 	for(ChannelController<? extends Trackable,IT> cc: this.channelControllers.values()){
 		cc.saveAll();
 	}

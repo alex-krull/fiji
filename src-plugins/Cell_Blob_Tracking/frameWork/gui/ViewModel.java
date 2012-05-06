@@ -2,6 +2,7 @@ package frameWork.gui;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -287,7 +288,13 @@ return controller.isTracking();
 }
 
 public void saveAll(){
-	controller.saveAll();
+	try {
+		controller.saveAll();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace(Model.errorWriter);
+		Model.errorWriter.flush();
+	}
 }
 
 public void setColor(Color c){

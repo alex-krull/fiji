@@ -14,13 +14,12 @@ import tools.OtherTools;
 public class Sequence<T extends Trackable> {
 	protected int id;
 	protected String label;
-	protected String filename;
 	protected SortedMap <Integer,T> trackables;
 	protected Color color;
 	protected Properties properties;
 	protected Policy<T,?> policy;
 	private final Session<T,?> session;
-	private final String path;
+	private String path;
 	
 	
 	public String getLabel() {
@@ -67,8 +66,16 @@ public class Sequence<T extends Trackable> {
 		properties.setProperty("a", "property");
 		properties.setProperty("test", "property");
 		color=OtherTools.colorFromIndex(id);
-		path=fileName;
-		
+		if(fileName==null){
+			createFileName();
+		}else{
+			path=fileName;
+		}
+	}
+	
+	public void createFileName(){
+		path= Model.getInstance().getImageFileNameNoEnding() + "_" +session.getLabel()+ "_" +
+				this.getLabel()	+ ".trcT";
 	}
 	
 	public String getPath() {

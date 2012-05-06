@@ -275,10 +275,19 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		trackingChannel.addTrackable(policy.loadTrackableFromString(line, this.getId()));
 	}
 	
-	public void saveSequence(Sequence<T> seq){
+	public void saveSequence(Sequence<T> seq) throws IOException{
 		
-		try {
-			
+		model.rwLock.writeLock().lock();
+		File toDel= new File(model.getProjectDirectory()+"/"+seq.getPath());
+		
+		if(toDel.delete()){
+			Model.getInstance().depositMsg("deleted file:"+ toDel.getPath());
+		}else{
+			Model.getInstance().depositMsg("deletion failed:"+ toDel.getPath());
+		}
+		
+		seq.createFileName();
+		model.rwLock.writeLock().unlock();
 			
 			FileWriter fileWriter= new FileWriter(model.getProjectDirectory()+seq.getPath());
 			fileWriter.write("%-global properties-\n");
@@ -290,16 +299,13 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			
 			
 			seq.writeToFile(fileWriter);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		
 		Model.getInstance().depositMsg("saved file:"+ model.getProjectDirectory()+seq.getPath());
 		Model.getInstance().makeChangesPublic();
 	}
 	
-	public void saveAll(){
+	public void saveAll() throws IOException{
 		
 		for(Sequence<T> seq: trackingChannel.getSeqsCollection()){
 			saveSequence(seq);
@@ -332,6 +338,9 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	}
 	
 	public void setSequenceLabel(int id, String newLabel){
+		for(Sequence <T> seq: trackingChannel.getSeqsCollection()){
+			if(newLabel.equals(seq.getLabel())) return;
+		}
 		Sequence<T> s= this.trackingChannel.getSequence(id);
 		if(s!=null) s.setLabel(newLabel);
 		

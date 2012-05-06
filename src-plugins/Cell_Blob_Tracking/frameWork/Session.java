@@ -1,7 +1,6 @@
 package frameWork;
 
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -132,11 +131,10 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 		Sequence<T> sequence= Sequences.get(trackable.sequenceId);
 		if(sequence==null){
 			
-			DecimalFormat df = new DecimalFormat("00");
+			
 		
 			sequence=policy.produceSequence(trackable.sequenceId,Integer.toString(trackable.sequenceId)
-					,this,Model.getInstance().getImageFileNameNoEnding() + "_" +this.label+ "_" +
-							df.format(trackable.sequenceId)	+ ".trcT");
+					,this,null);
 	
 			sequence.addTrackable(trackable);
 			Sequences.put(trackable.sequenceId, sequence);
