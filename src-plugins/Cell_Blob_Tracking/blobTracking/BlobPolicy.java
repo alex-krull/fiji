@@ -161,7 +161,10 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		double sigma= Double.valueOf(values[5]); 
 		double sigmaZ= Double.valueOf(values[6]);
 		double maxSigma= Double.valueOf(values[7]);
-		boolean sigmaConst =Boolean.valueOf(values[8]);
+		boolean sigmaConst = values[8].equals("1");
+		
+			
+				
 		double inten= Double.valueOf(values[9]);
 		Blob nB=new Blob(sId, fNum, x, y, z, sigma, sessionId, !sigmaConst, sigmaZ, maxSigma);
 		nB.inten=inten;

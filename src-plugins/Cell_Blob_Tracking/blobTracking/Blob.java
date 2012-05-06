@@ -277,8 +277,8 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	@Override
 	public String toSaveString() {
 		DecimalFormat df = new DecimalFormat("#0.00000");
-		double tempAuto=1;
-		if(!autoSigma == false){
+		int tempAuto=1;
+		if(autoSigma ){
 			tempAuto=0;
 		}
 		String result;
@@ -290,7 +290,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 				+ df.format(this.sigma)+ "\t"
 				+ df.format(this.sigmaZ)+"\t"
 				+ df.format(this.maxSigma)+"\t"
-				+ df.format(tempAuto)+"\t"
+				+ String.valueOf(tempAuto)+"\t"
 				+ df.format(this.inten);
 		return result;
 	}
