@@ -29,6 +29,11 @@ import frameWork.Session;
 
 public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends BlobPolicy<IT>{
 
+	
+	protected long numOfPixelsUsed;
+
+
+
 	@Override
 	public String getTypeName() {
 		return "M.L.GaussianTracking";
@@ -107,9 +112,10 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		double pX=0;
 		
 	
+		numOfPixelsUsed=ImglibTools.getNumOfPixels(iterableFrame);
 		while ( cursor.hasNext() )	{
 	    	cursor.fwd();
-	    	pX=backProb/ImglibTools.getNumOfPixels(iterableFrame); // init with probability for background
+	    	pX=backProb/numOfPixelsUsed; // init with probability for background
 
 	    	int x=cursor.getIntPosition(0);
 	    	int y=cursor.getIntPosition(1);
@@ -426,6 +432,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	    	b.sigma=b.newSig;
 	    	b.inten=b.newInten;
 	    	b.pK=b.newPK;
+	    	b.denom=b.calcDenominator(iFrame, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ); // important for EMCCD
 		}
 		
 		
@@ -433,7 +440,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 	}
 
-	private void doOptimizationSingleScale( List<Blob> trackables,
+	protected double doOptimizationSingleScale( List<Blob> trackables,
 			RandomAccessibleInterval <IT> movieFrame,  double qualityT, int constBackGround,
 			int maxIterations, BlobSession<?> session){
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();	
@@ -450,6 +457,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			long time0= System.nanoTime();	
 			long eTime=0;	
 			long mTime=0;
+			double ti=0;
 			for(int i=0;i<maxIterations;i++){
 				backProb=1.0;
 				for(Blob b:trackables)
@@ -464,7 +472,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			//	}
 				
 					long eTime0= System.nanoTime();
-					double ti= doEStep(trackables,backProb,iFrame,  constBackGround);
+					ti = doEStep(trackables,backProb,iFrame,  constBackGround);
 			//		ImageJFunctions.show (trackables.get(0).expectedValues, "ev");
 			//		IJ.error("stop");
 					long eTime1= System.nanoTime();
@@ -492,7 +500,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			
 			System.out.println("totalTime:" +time+ "  fraction E:"+ ((double)eTime/(double)time)+ "  fraction M:"+ ((double)mTime/(double)time) );
 
-			
+			return ti;
 	}
 	
 	@Override

@@ -138,7 +138,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 	
 	@Override
 	public TrackingFrame<Blob,IT> produceFrame(int frameNum, MovieChannel<IT> mChannel) {
-		return new BlobFrame<IT>(frameNum, mChannel.getMovieFrame(frameNum));
+		return new BlobFrame<IT>(frameNum, mChannel.getMovieFrame(frameNum), this);
 	}
 	
 	@Override
