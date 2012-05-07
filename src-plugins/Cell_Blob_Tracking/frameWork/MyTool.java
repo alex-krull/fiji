@@ -10,6 +10,8 @@ public class MyTool extends AbstractTool{
 	public void run(String s){
 	//clearToolsIfNecessary=true;
 
+		
+		
 		super.run(s);
 	}
 	
