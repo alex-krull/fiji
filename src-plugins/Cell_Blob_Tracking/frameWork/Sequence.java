@@ -5,6 +5,7 @@ import ij.gui.Overlay;
 import java.awt.Color;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -74,8 +75,9 @@ public class Sequence<T extends Trackable> {
 	}
 	
 	public void createFileName(){
+		DecimalFormat df = new DecimalFormat("00");
 		path= Model.getInstance().getImageFileNameNoEnding() + "_" +session.getLabel()+ "_" +
-				this.getLabel()	+ ".trcT";
+				this.getLabel()	+ "_"+df.format(this.getId())+".trcT";
 	}
 	
 	public String getPath() {

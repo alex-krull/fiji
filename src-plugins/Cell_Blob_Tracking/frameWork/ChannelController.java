@@ -28,6 +28,9 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	protected Policy <T,IT> policy;
 	protected ControlWindow<IT> controllWindow;
 	
+	public String getLabel(){
+		return trackingChannel.getLabel();
+	}
 	
 	public void click(long[] pos, MouseEvent e, ViewModel<IT> vm){
 		try{
@@ -338,9 +341,9 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	}
 	
 	public void setSequenceLabel(int id, String newLabel){
-		for(Sequence <T> seq: trackingChannel.getSeqsCollection()){
-			if(newLabel.equals(seq.getLabel())) return;
-		}
+	//	for(Sequence <T> seq: trackingChannel.getSeqsCollection()){
+	//		if(newLabel.equals(seq.getLabel())) return;
+	//	}
 		Sequence<T> s= this.trackingChannel.getSequence(id);
 		if(s!=null) s.setLabel(newLabel);
 		
