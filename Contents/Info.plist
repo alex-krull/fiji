@@ -49,7 +49,7 @@
 	<key>fiji</key>
 	<dict>
 		<key>memory</key>
-		<string>1000m</string>
+		<string>auto</string>
 		<key>system</key>
 		<string>0</string>
 		<key>allowMultiple</key>
