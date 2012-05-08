@@ -220,4 +220,11 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 		
 	}
+	
+	@Override
+	public boolean isHidden(){
+		return true;
+	}
+
+
 }

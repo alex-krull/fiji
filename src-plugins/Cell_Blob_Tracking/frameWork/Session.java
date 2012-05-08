@@ -172,8 +172,9 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 			Sequence<T> partA=this.getSequence(SequenceId);
 			Sequence<T> partB=this.getSequence(newSequenceId);
 			String label=s.getLabel();
-			partA.setLabel(label+" (1st part)");
-			partB.setLabel(label+" (2nd part)");
+			
+			partB.setLabel(label+"(2nd part)");
+			
 		}
 		
 		
