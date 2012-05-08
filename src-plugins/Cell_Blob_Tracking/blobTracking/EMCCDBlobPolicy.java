@@ -155,7 +155,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			}
 			
 		
-			if(akkuDenom>0.00000000001) cursor.get().set((float)(akku/akkuDenom));
+			if(akkuDenom>0) cursor.get().set((float)(akku/akkuDenom));
 			else  cursor.get().set((0));
 		
 		}
