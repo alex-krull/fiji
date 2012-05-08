@@ -22,6 +22,7 @@ import org.apache.commons.math.distribution.PoissonDistributionImpl;
 
 import tools.ErlangDist;
 import tools.ImglibTools;
+import tools.OtherTools;
 
 
 
@@ -31,7 +32,10 @@ public class Blob_Simulator implements PlugIn{
 	
 	@Override
 	public void run(String arg0) {
-		doErlangExperiment(23,300);
+	//	doErlangExperiment(1,300);
+	//	doErlangExperiment(2,300);
+	//	doErlangExperiment(3,300);
+	//	doErlangExperiment(4,300);
 		
 		erlangDists= new TreeMap<Integer,ErlangDist>();
 		
@@ -122,16 +126,17 @@ public class Blob_Simulator implements PlugIn{
 			hist[i]=0;
 		}
 			
-		for(int i=0;i<100000;i++){
-			double rv= rand.nextDouble();
-			hist[e.drawOutput(rv)]++;
-		}
+	//	for(int i=0;i<100000;i++){
+	//		double rv= rand.nextDouble();
+	//		hist[e.drawOutput(rv)]++;
+	//	}
 		
 		
-		for(int i=0;i<hist.length;i++){
-			
-		
-			String s= String.valueOf(i)+ "\t"+ hist[i]+ "\n";
+	//	for(int i=0;i<hist.length;i++){
+			for(int i=0;i<20000;i++){	
+			String s= String.valueOf(i)+ "\t"+OtherTools.getErlangProp(inp, i, g)
+					+ "\t"+OtherTools.getErlangProbAlternative(inp, i, g)+"\n";
+		//	String s= String.valueOf(i)+ "\t"+ hist[i]+ "\n";
 			fw.write(s);
 			fw.flush();
 			System.out.println(s);

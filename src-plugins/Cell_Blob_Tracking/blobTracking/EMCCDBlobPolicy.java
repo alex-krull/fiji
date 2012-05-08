@@ -1,5 +1,6 @@
 package blobTracking;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -42,6 +43,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			Session<Blob, IT> session) {
 		
 		
+		BlobSession<IT> bSession=(BlobSession<IT>) session;
 	    
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();
 		Img<FloatType> expectedValues=imgFactory.create(movieFrame.getFrameView(), new FloatType());
@@ -51,19 +53,48 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 	//		return;
 	//	}
 		
-		int maxIterations=30;
+		int maxIterations=100;
 		double totalInten=1000;
 		super.numOfPixelsUsed=ImglibTools.getNumOfPixels(movieFrame.getFrameView());
 		
 		for(Blob b: trackables){
 			b.denom=b.calcDenominator(movieFrame.getFrameView(), b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
 		}
+		List<Blob> refBlobs=new ArrayList<Blob>();
 		
+		double change=0;
 		for(int i=0;i<maxIterations;i++){
 			
+			refBlobs.clear();
+			for(Blob b: trackables){
+				refBlobs.add(this.copy(b));
+			}
+			
+					
 			doEstep(expectedValues, movieFrame.getFrameView(), trackables, totalInten);
 			totalInten=	doMstep(alternateMethod, trackables, expectedValues, qualityT, session);
+		
+			
+			change=0;
+			int index=0;
+			for(Blob b: trackables){
+				Blob bOld=refBlobs.get(index);
+				double changePos=Math.sqrt(
+						(bOld.xPos-b.xPos)*(bOld.xPos-b.xPos)+
+						(bOld.yPos-b.yPos)*(bOld.yPos-b.yPos)+
+						(bOld.zPos-b.zPos)*(bOld.zPos-b.zPos)
+						);
+				
+				change=Math.max(change, changePos);
+		    	change=Math.max(bSession.getChangeFactorSigma()*Math.abs((bOld.sigma*bOld.sigma-b.sigma*b.sigma)), change);
+		    	change=Math.max(bSession.getChangeFactorPK()*Math.abs(bOld.pK-b.pK), change);		
+				index++;
+			}
+			
+			System.out.println("                REAL CHANGE: "+change);
+			if(change<qualityT) break;
 		}
+		
 	} 
 	
 	private void doEstep(Img<FloatType> expectedValues, RandomAccessibleInterval<IT> image,
@@ -77,32 +108,36 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		while(cursor.hasNext()){
 			cursor.fwd();
-			System.out.println("j:"+j);
+			
 			j++;
 			ra.setPosition(cursor);
 			int value= Math.max(0, ((IntegerType)ra.get()).getInteger()-offSet);
-			System.out.println("value:"+value);
 			
 			
 			
-			if(value!=0){
+			
+			
 				int x= ra.getIntPosition(0);
 				int y= ra.getIntPosition(1);
 				int z= 0;
 				if(expectedValues.numDimensions()>2) z= ra.getIntPosition(2);
 				double flux=calcFlux(totalInten, blobs, x,  y, z);
-				poissonDist= new PoissonDistributionImpl(flux);
-			}
-					
-			else poissonDist=null;
+				if(flux>0.0000000000001)
+					poissonDist= new PoissonDistributionImpl(flux);					
+				else 
+					poissonDist=null;
 			
 			
 			double akkuDenom=0;
 			double akku=0;
 			double currentP=0;
 			double aErlang=0;
-			for(int i=0;i<10;i++){
 			
+			
+			for(int i=0;i<10;i++){
+				
+				
+				
 				currentP=eSet.getErlangProb(i, value);
 				aErlang+=currentP;
 				if(poissonDist!=null)currentP*=poissonDist.probability(i);
@@ -112,14 +147,15 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			
 				akku+=currentP*i;
 				akkuDenom+=currentP;
-				if(value!=0){
-					System.out.println("i:"+i+" akku:"+akku+ " dnom:"+akkuDenom);
-				}
+				
+				
+				
+				
 				if(aErlang>0.99) break;
 			}
 			
-			System.out.println("leaving subloop:"+ (float)(akku/akkuDenom));
-			if(akkuDenom>0.00001) cursor.get().set((float)(akku/akkuDenom));
+		
+			if(akkuDenom>0.00000000001) cursor.get().set((float)(akku/akkuDenom));
 			else  cursor.get().set((0));
 		
 		}
@@ -145,7 +181,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			Img<FloatType> expectedValues, double qualityT,
 			Session<Blob, IT> session){
 		MaximumLikelihoodBlobPolicy<FloatType> bp= new MaximumLikelihoodBlobPolicy<FloatType>();
-		return bp.doOptimizationSingleScale(trackables, expectedValues, 0.1, 0, 100,(BlobSession<IT>) session);
+		return bp.doOptimizationSingleScale(trackables, expectedValues, qualityT, 0, 1,(BlobSession<IT>) session);
 		
 	}
 	
