@@ -1,7 +1,5 @@
 package tools;
 
-import ij.IJ;
-
 import java.awt.Color;
 import java.io.IOException;
 import java.io.Writer;
@@ -19,6 +17,44 @@ public class OtherTools {
 			
 			fileWriter.write("%"+s+"\n");
 		}
+	}
+	
+	public static long fak(int n){
+		long l=1;
+		for(int i=1;i<=n;i++)
+			l*=i;
+		return l;
+	}
+	
+	public static double getErlangProp(int n, int x, double g){
+		if(n==0){
+			
+			if(x==0) return 1;
+			else return 0;
+		}
+		double result=(Math.pow(x,(double) n-1)*Math.exp(-(double)x/g))
+				/(Math.pow(g, n) * fak(n-1));
+		
+		if(result<0) System.out.println("n:"+n+ " x:"+x + " g:"+g);
+				
+		return Math.max(0, result);
+	}
+	
+	public static double getErlangProbAlternative(int n, int x, double g){
+		if(n==0){			
+			if(x==0) return 1;
+			else return 0;
+		}
+
+		double currentLogProb=Math.log(getErlangProp(1,x,g));
+		
+		for(int i=2;i<=n;i++){
+		currentLogProb=currentLogProb
+				+(Math.log(x) )
+				-(Math.log(g)+Math.log(i-1));
+		}
+		
+		return Math.exp(currentLogProb);
 	}
 	
 	public static Color colorFromIndex(int i){
