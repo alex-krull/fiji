@@ -85,9 +85,13 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public double calcDenominator(Interval img, double px,double py,double pz,double ps,double psz){
 		//denominator=ImglibTools.gaussIntegral(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5,xPos,yPos,sigma );
 		double akku=0;
-		int zDim=1;
-		if(img.numDimensions()>2 ) zDim=(int)img.dimension(2);
-		for(double i=0;i<zDim;i++){
+		int zmax=1;
+		int zmin=1;
+		if(img.numDimensions()>2 ){
+			zmax=(int)img.max(2);
+			zmin=(int)img.min(2);
+		}
+		for(double i=zmin;i<=zmax;i++){
 			akku+=ImglibTools.gaussIntegral2dIn3d(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5, i*Model.getInstance().getXyToZ(),
 					px, py, pz, ps, psz);
 		
@@ -136,7 +140,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
     				px,py,pz,ps,psz,
     				denominator, xyToZ);  		
     		
-    		if(a<0.00000001) continue;
+    		if(a<0.00000000001) continue;
     		result+=Math.log(a)*b;
     		
     	}

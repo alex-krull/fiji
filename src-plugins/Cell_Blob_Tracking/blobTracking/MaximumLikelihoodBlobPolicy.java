@@ -220,11 +220,11 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		if(isVolume){
 			mins = new long[3];		
 		//	mins[2]= b.expectedValues.min(2);
-			mins[2]= (long)	Math.max(b.expectedValues.min(2), (b.zPos-b.sigmaZ*3)/Model.getInstance().getXyToZ()-3 );
+			mins[2]= (long)	Math.max(b.expectedValues.min(2), ((b.zPos-b.sigmaZ*3)/Model.getInstance().getXyToZ())-1 );
 			
 			maxs = new long[3];
-		//	maxs[2]= b.expectedValues.max(2);
-			maxs[2]= (long)	Math.min(b.expectedValues.max(2), (b.zPos+b.sigmaZ*3)/Model.getInstance().getXyToZ() +3);
+	//		maxs[2]= b.expectedValues.max(2);
+			maxs[2]= (long)	Math.min(b.expectedValues.max(2), (b.zPos+b.sigmaZ*3)/Model.getInstance().getXyToZ() +1);
 		}else{
 			mins = new long[2];
 			maxs = new long[2];
@@ -234,7 +234,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 		mins[0]=(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3-3 );
 		mins[1]= (long)	Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3-3 );
-		
+		System.out.println(mins[2]+" " +maxs[2]);
 		
 		maxs[0]=(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3+3 );
 		maxs[1]= (long)	Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 +3);
@@ -303,7 +303,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	    }
 		
 			
-		PowellOptimizer optimizer = new PowellOptimizer(1, 1);		
+		PowellOptimizer optimizer = new PowellOptimizer(0.0001, 0.0001);		
 		
 
   //  	SimplexOptimizer optimizer = new SimplexOptimizer();
@@ -328,10 +328,10 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 		b.newX=output[0];
 		b.newY=output[1];
-		if(isVolume)b.newZ=output[2];
+		if(isVolume)b.newZ= Math.min(output[2], b.expectedValues.max(2)*Model.getInstance().getXyToZ());
 		if(findSigma&& !isVolume) b.newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[2],0.5 )));
 		if(findSigma&& isVolume) b.newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[3],0.5 )));
-		
+	
 		b.newPK=b.newInten/totalInten;
 	
 
