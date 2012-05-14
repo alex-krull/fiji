@@ -29,7 +29,7 @@ public class ErlangDist {
 		
 		while(acProb<1-thresh &&i<100000){
 			accProbFunc.put(acProb, i);
-			System.out.println(i);
+	//		System.out.println(i);
 			i++;
 			 temp=OtherTools.getErlangProbAlternative(input, i, gain);
 			

@@ -151,7 +151,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 				
 				
 				
-				if(aErlang>0.99) break;
+		//		if(i>flux*3+2) break;
 			}
 			
 		

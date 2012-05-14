@@ -95,7 +95,7 @@ public class Sequence<T extends Trackable> {
 	}
 	
 	
-	protected  SortedMap <Integer,T> getTrackables(){
+	public  SortedMap <Integer,T> getTrackables(){
 		return trackables;
 	}
 	
@@ -155,6 +155,8 @@ public class Sequence<T extends Trackable> {
 	public void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected){
 		policy.getKymoOverlayY(ov, scaleX, scaleY, transX, transY, selected, trackables, color);
 	}
+	
+	
 	
 
 }

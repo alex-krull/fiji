@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import net.imglib2.img.Img;
@@ -51,5 +52,50 @@ public class Experiment {
 		seq=(Sequence<Blob>) cont.getSessions().get(0).getSequence(1);
 	}
 	
+	public double getMeanX(){
+		Collection<Blob> c= seq.getTrackables().values();
+		double akku=0;
+		double count=0;
+		for(Blob b: c){
+			akku+=b.xPos;
+			count++;
+		}
+		return akku/count;
+		
+	}
+	
+	public double getMeanY(){
+		Collection<Blob> c= seq.getTrackables().values();
+		double akku=0;
+		double count=0;
+		for(Blob b: c){
+			akku+=b.yPos;
+			count++;
+		}
+		return akku/count;
+		
+	}
+	
+	public double getStdX(double mean){
+		Collection<Blob> c= seq.getTrackables().values();
+		double akku=0;
+		double count=0;
+		for(Blob b: c){
+			akku+=(mean-b.xPos)*(mean-b.xPos);
+			count++;
+		}
+		return Math.sqrt(akku/count);
+	}
+	
+	public double getStdY(double mean){
+		Collection<Blob> c= seq.getTrackables().values();
+		double akku=0;
+		double count=0;
+		for(Blob b: c){
+			akku+=(mean-b.yPos)*(mean-b.yPos);
+			count++;
+		}
+		return Math.sqrt(akku/count);
+	}
 	
 }

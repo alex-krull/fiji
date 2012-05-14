@@ -28,7 +28,13 @@ import tools.OtherTools;
 
 public class Blob_Simulator implements PlugIn{
 
-	private SortedMap<Integer,ErlangDist> erlangDists;
+	
+	private final SortedMap<Integer,ErlangDist> erlangDists;
+	
+	
+	public Blob_Simulator(){
+		erlangDists= new TreeMap<Integer,ErlangDist>();
+	}
 	
 	@Override
 	public void run(String arg0) {
@@ -37,7 +43,7 @@ public class Blob_Simulator implements PlugIn{
 	//	doErlangExperiment(3,300);
 	//	doErlangExperiment(4,300);
 		
-		erlangDists= new TreeMap<Integer,ErlangDist>();
+		
 		
 		GenericDialog gd = new GenericDialog("blob simulator");
 		gd.addNumericField("x-Size", 100, 0);
@@ -72,7 +78,7 @@ public class Blob_Simulator implements PlugIn{
 	
 		Img <UnsignedShortType> image= makeImg( xSize,  ySize,  frames, 
 				 xPos,  yPos,  sig,
-				 blobFlux,  backFlux, false, 300);
+				 blobFlux,  backFlux, false, 300, new Random(1));
 		
 		
 		ImagePlus impTemp= ImageJFunctions.wrap(image,"no EMCCD");
@@ -99,11 +105,11 @@ public class Blob_Simulator implements PlugIn{
 	}
 	public Img <UnsignedShortType> makeImg(int xSize, int ySize, int frames, 
 			double xPos, double yPos, double sig,
-			double blobFlux, double backFlux, boolean emccd, double gain){
+			double blobFlux, double backFlux, boolean emccd, double gain, Random r){
 		ImgFactory<UnsignedShortType> imgFactory = new ArrayImgFactory<UnsignedShortType>();
 		long[] dims = {xSize,ySize,frames};
 		Img <UnsignedShortType> image= imgFactory.create(dims, new UnsignedShortType());
-		fillImage(image,xPos,yPos,sig,blobFlux,backFlux);
+		fillImage(image,xPos,yPos,sig,blobFlux,backFlux,r);
 		if(emccd) applyEMCCD(image, gain);
 		return image;
 	}
@@ -162,13 +168,13 @@ public class Blob_Simulator implements PlugIn{
 	
 	
 	
-	public void fillImage (Img <UnsignedShortType> image , double posX, double posY, double sig, double flux, double backFlux) {
+	public void fillImage (Img <UnsignedShortType> image , double posX, double posY, double sig, double flux, double backFlux, Random r) {
 		
 		Cursor<UnsignedShortType> it=image.cursor();
 		int nop=(int) image.dimension(0)*(int)image.dimension(1);
 		double pixelBackFlux=backFlux/nop;
 		double normBlobFlux		=flux/ImglibTools.gaussIntegral(image.min(0)-0.5,image.min(1)-0.5,image.max(0)+0.5,image.max(1)+0.5,posX,posY,sig );
-		Random r= new Random(1);
+		//Random r= new Random(1);
 		
 		
 		while(it.hasNext()){
@@ -177,7 +183,7 @@ public class Blob_Simulator implements PlugIn{
 			
 			
 			int sample=0;
-			mean=Math.max(0, mean);
+			mean=Math.max(0.0000000000001, mean);
 			
 			
 			PoissonDistributionImpl poissonDist= new PoissonDistributionImpl(mean);				
