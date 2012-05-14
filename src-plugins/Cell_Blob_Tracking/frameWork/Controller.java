@@ -345,7 +345,7 @@ public void addSession(String typeName, String label, int channelID, ViewModel<I
 	if(this.selectedTCId==-1) this.selectedTCId=cc.getId();
 	
 	model.makeStructuralChange();
-	viewModel.reFreshSessionToBeDisplayed();
+	if(viewModel!=null)viewModel.reFreshSessionToBeDisplayed();
 	model.makeChangesPublic();
 	
 	model.rwLock.writeLock().unlock();

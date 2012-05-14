@@ -34,19 +34,19 @@ private boolean isVolume=false;
 private boolean isTimeSequence=false;
 private boolean isMultiChannel=false;
 private boolean switchedDimensions=false;
-private final int numberOfChannels;
+private int numberOfChannels;
 private int numberOfFrames;
-private final int numberOfSlices;
+private int numberOfSlices;
 private	RandomAccessibleInterval<IT> image;
-private final SortedMap <Integer, MovieChannel <IT> > channels;
-private final SortedMap <Integer, Session <? extends Trackable,IT> > trackingChannels;
+private SortedMap <Integer, MovieChannel <IT> > channels;
+private SortedMap <Integer, Session <? extends Trackable,IT> > trackingChannels;
 private String imageFileName;
 private String imageDrirectory;
 private String projectDirectory;
 private boolean structuralChange=true;
 private int intensityOffset=0;
 private double xyToZ=3.5;
-public final ReentrantReadWriteLock rwLock;
+public ReentrantReadWriteLock rwLock;
 private boolean currentlyTracking=false;
 
 private volatile StringBuffer msgBuffer=new StringBuffer();
@@ -183,18 +183,33 @@ public void setMultiChannel(boolean isMultiChannel) {
 public static PrintWriter errorWriter;
 
 public Model(ImagePlus imp){
+	boolean sDims=imp.getNSlices()>1&&!(imp.getNFrames()>1)&& !imp.isHyperStack();
+	 RandomAccessibleInterval<IT> temp= ImagePlusAdapter.wrap(imp);
+	initModel(imp.getOriginalFileInfo().fileName, imp.getOriginalFileInfo().directory, 
+			temp,
+			imp.getNFrames(), imp.getNSlices(), imp.getNChannels(),sDims );
+}
+
+public Model(String fName, String dName, RandomAccessibleInterval<IT> img,
+		int nFrames, int nSlices, int nChannels, boolean sDims){
 	
-	
-	
-	
+	initModel(fName, dName, 
+			img,
+			nFrames, nSlices, nChannels,sDims );
+}
+
+public void initModel(String fName, String dName, RandomAccessibleInterval<IT> img,
+		int nFrames, int nSlices, int nChannels, boolean sDims){
+
+	switchedDimensions=sDims;
 	rwLock= new ReentrantReadWriteLock();
 	
 	instance=this;
 	
-	imageFileName=imp.getOriginalFileInfo().fileName;
-	imageDrirectory=imp.getOriginalFileInfo().directory;
+	imageFileName=fName;
+	imageDrirectory=dName;
 	projectDirectory=imageDrirectory; // default projectDirectory is fileDirectory
-	image=ImagePlusAdapter.wrap(imp);	
+	image=img;	
 	
 	try {
 		errorWriter= new PrintWriter(new File(imageDrirectory+"/errors.txt"));
@@ -207,21 +222,22 @@ public Model(ImagePlus imp){
 	errorWriter.write("no errors up to here:\n");
 	errorWriter.flush();
 	
-	setTimeSequence(imp.getNFrames()>1);
-	setMultiChannel(imp.getNChannels()>1);
-	setVolume(imp.getNSlices()>1);	
+	setTimeSequence(nFrames>1);
+	setMultiChannel(nChannels>1);
+	setVolume(nSlices>1);	
 	
 	//System.out.println("iv:" + isVolume+ "  its:" +isTimeSequence + "  imc:"+ isMultiChannel);
 	
 	
-	if(isVolume&&!isTimeSequence && !imp.isHyperStack()){
+//	if(isVolume&&!isTimeSequence && !imp.isHyperStack()){
+	if(switchedDimensions){
  	   isVolume=false;
  	   isTimeSequence=true;
- 	  switchedDimensions=true;
+ 	 
  //	   System.out.println("SWITCHING DIMENSIONS");
     }
 	
-	if(isMultiChannel)numberOfChannels=imp.getNChannels();
+	if(isMultiChannel)numberOfChannels=nChannels;
 	else numberOfChannels=1;
 	
 	
@@ -241,12 +257,12 @@ public Model(ImagePlus imp){
 	trackingChannels= new TreeMap<Integer, Session <? extends Trackable,IT> >();
 	
 	if(!switchedDimensions){
-		numberOfFrames=imp.getNFrames();
-		numberOfSlices=imp.getNSlices();
+		numberOfFrames=nFrames;
+		numberOfSlices=nSlices;
 	}
 	else {
-		numberOfFrames=imp.getNSlices();
-		numberOfSlices=imp.getNFrames();
+		numberOfFrames=nSlices;
+		numberOfSlices=nFrames;
 	}
 	
 	if(isMultiChannel){
@@ -265,12 +281,7 @@ public Model(ImagePlus imp){
 	
 	
 	
-//	System.out.println("numOfFrames:" +numberOfFrames);
-	
 }
-
-
-
 
 public RandomAccessibleInterval<IT> getImage(){
 	return image;
