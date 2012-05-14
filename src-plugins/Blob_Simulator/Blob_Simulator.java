@@ -69,16 +69,17 @@ public class Blob_Simulator implements PlugIn{
 		double blobFlux=gd.getNextNumber();
 		double backFlux=gd.getNextNumber();
 
-		ImgFactory<UnsignedShortType> imgFactory = new ArrayImgFactory<UnsignedShortType>();
-		long[] dims = {xSize,ySize,frames};
-		Img <UnsignedShortType> image= imgFactory.create(dims, new UnsignedShortType());
+	
+		Img <UnsignedShortType> image= makeImg( xSize,  ySize,  frames, 
+				 xPos,  yPos,  sig,
+				 blobFlux,  backFlux, false, 300);
 		
-		fillImage(image,xPos,yPos,sig,blobFlux,backFlux);
+		
 		ImagePlus impTemp= ImageJFunctions.wrap(image,"no EMCCD");
 		ImagePlus impTemp2 = impTemp.duplicate();
 		impTemp2.show();
 			
-			applyEMCCD(image, 300);
+		applyEMCCD(image, 300);
 			
 		//ImagePlus imp2= new ImagePlus();
 		
@@ -95,6 +96,16 @@ public class Blob_Simulator implements PlugIn{
 	//	doErlangExperiment(2,300);
 //		doErlangExperiment(3,300);
 //		doErlangExperiment(4,300);
+	}
+	public Img <UnsignedShortType> makeImg(int xSize, int ySize, int frames, 
+			double xPos, double yPos, double sig,
+			double blobFlux, double backFlux, boolean emccd, double gain){
+		ImgFactory<UnsignedShortType> imgFactory = new ArrayImgFactory<UnsignedShortType>();
+		long[] dims = {xSize,ySize,frames};
+		Img <UnsignedShortType> image= imgFactory.create(dims, new UnsignedShortType());
+		fillImage(image,xPos,yPos,sig,blobFlux,backFlux);
+		if(emccd) applyEMCCD(image, gain);
+		return image;
 	}
 	
 	public void applyEMCCD(Img <UnsignedShortType> img, double gain){
