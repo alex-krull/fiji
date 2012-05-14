@@ -181,6 +181,11 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		thread.start();
 	}
 	
+	public void startTrackingSingleThread(int frameId, boolean multiscale, boolean autosave, int lastFrame){
+		Thread thread= new TrackingThread(frameId, multiscale, autosave, lastFrame);
+		thread.run();
+	}
+	
 	public void stopTracking(){
 	
 		Model.getInstance().setCurrentlyTracking(false);

@@ -226,6 +226,9 @@ public void optimizeFrame(int frameNumber){
 	toggleTracking(frameNumber,false,frameNumber);
 }
 
+public ChannelController<? extends Trackable,IT> getCurrentSessionController(){
+	return channelControllers.get(selectedTCId);
+}
 
 public void toggleTracking(int frameId, boolean multiscale, int lastFrame){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
