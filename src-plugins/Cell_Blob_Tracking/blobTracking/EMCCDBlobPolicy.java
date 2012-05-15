@@ -20,6 +20,7 @@ import org.apache.commons.math.distribution.PoissonDistributionImpl;
 
 import tools.ErlangDist;
 import tools.ImglibTools;
+import tools.OtherTools;
 import frameWork.Model;
 import frameWork.MovieFrame;
 import frameWork.Session;
@@ -133,8 +134,9 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			double currentP=0;
 			double aErlang=0;
 			
+			double pZero=0;
 			
-			for(int i=0;i<10;i++){
+			for(int i=0;i<1;i++){
 				
 				
 				
@@ -148,15 +150,24 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 				akku+=currentP*i;
 				akkuDenom+=currentP;
 				
-				
+				if(i==0) pZero=currentP;
 				
 				
 		//		if(i>flux*3+2) break;
 			}
-			
+			double invGain=1.0/300.0;
+			double temp=Math.sqrt(invGain*flux*value);
+			double missingTerm=pZero/Math.exp(-invGain*value-flux)*invGain*flux;
+			double besselExpected=temp*OtherTools.bessi0(2*temp)/(OtherTools.bessi1(2*temp)+missingTerm);
+	//		System.out.println("iterative:"+ (akku/akkuDenom) + " bessel:"+ besselExpected);
 		
-			if(akkuDenom>0) cursor.get().set((float)(akku/akkuDenom));
-			else  cursor.get().set((0));
+			if(!Double.isNaN(besselExpected)){
+				cursor.get().set((float)(besselExpected));		
+			}
+			else {
+				System.out.println("NAN!!!!!!!!");
+				cursor.get().set((0));
+			}
 		
 		}
 	

@@ -45,8 +45,8 @@ public class Evaluator {
 			File f2= new File("/home/alex/Desktop/EMCCD.txt");
 			FileWriter fw2= new FileWriter(f2);
 		Random r= new SecureRandom();
-		for(double i=10;i<20;i+=1){
-			Img<UnsignedShortType> img=bs.makeImg(10, 10, 200,5, 5, 1, i, 0, true, 300,r);
+		for(double i=10;i<=500;i+=10){
+			Img<UnsignedShortType> img=bs.makeImg(10, 10, 500,5, 5, 1, i, 0, true, 300,r);
 			Experiment e=new Experiment(img, 0.1, 5, 5, 1, false, 0, 2, false, "M.L.GaussianTracking", "epxA");			
 			double meanX=e.getMeanX();
 			double meanY=e.getMeanY();
