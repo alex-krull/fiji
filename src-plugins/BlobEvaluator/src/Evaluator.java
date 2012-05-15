@@ -44,16 +44,15 @@ public class Evaluator {
 			
 			File f2= new File("/home/alex/Desktop/EMCCD.txt");
 			FileWriter fw2= new FileWriter(f2);
-		Random r= new SecureRandom();
-		for(double i=10;i<=500;i+=10){
-			Img<UnsignedShortType> img=bs.makeImg(10, 10, 500,5, 5, 1, i, 0, true, 300,r);
-			Experiment e=new Experiment(img, 0.1, 5, 5, 1, false, 0, 2, false, "M.L.GaussianTracking", "epxA");			
-			double meanX=e.getMeanX();
-			double meanY=e.getMeanY();
-			double stdX=e.getStdX(meanX);
-			double stdY=e.getStdY(meanY);
 			
-			String s= i+ "\t"+meanX+"\t"+ meanY+"\t"+ stdX+"\t"+ stdY+ "\n";
+	
+		Random r= new SecureRandom();
+		for(double i=780;i<=1000;i+=10){
+			Img<UnsignedShortType> img=bs.makeImg(10, 10, 1000,5, 5, 1, i, 0, true, 300,r);
+			Experiment e=new Experiment(img, 0.1, 5, 5, 1, false, 0, 2, false, "M.L.GaussianTracking", "epxA");			
+
+			
+			String s= i+ "\t"+e.toString();
 			fw.write(s);
 			fw.flush();
 			
@@ -61,13 +60,10 @@ public class Evaluator {
 			
 			
 			Experiment e2=new Experiment(img, 0.1, 5, 5, 1, false, 0, 2, false, "EMCCD-GaussianML", "epxB");			
-			double meanX2=e2.getMeanX();
-			double meanY2=e2.getMeanY();
-			double stdX2=e2.getStdX(meanX2);
-			double stdY2=e2.getStdY(meanY2);
+	
 			
-			String s2= i+ "\t"+meanX2+"\t"+ meanY2+"\t"+ stdX2+"\t"+ stdY2+ "\n";
-			fw2.write(s2);
+			 s= i+ "\t"+e2.toString();
+			fw2.write(s);
 			fw2.flush();
 				
 		}

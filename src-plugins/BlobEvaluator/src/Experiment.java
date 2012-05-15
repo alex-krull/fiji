@@ -42,6 +42,7 @@ public class Experiment {
 		
 	
 		((Session<Blob,UnsignedShortType>)cont.getCurrentSession()).addTrackable(new Blob(1, 0, initX, initY, 0, sigma, 0, autoSigma, 2, maxSigma));
+	
 		cont.getCurrentSession().setQualityThreshold(qualityThreshold);
 		List<Integer> sidl= new ArrayList<Integer>();
 		sidl.add(1);
@@ -50,6 +51,18 @@ public class Experiment {
 	//	cont.toggleTracking(0,true, model.getNumberOfFrames());
 		cont.getCurrentSessionController().startTrackingSingleThread(0, multiScale, true, model.getNumberOfFrames()-1);
 		seq=(Sequence<Blob>) cont.getSessions().get(0).getSequence(1);
+	}
+	
+	public double getMeanIntensity(){
+		Collection<Blob> c= seq.getTrackables().values();
+		double akku=0;
+		double count=0;
+		for(Blob b: c){
+			akku+=b.inten;
+			count++;
+		}
+		return akku/count;
+		
 	}
 	
 	public double getMeanX(){
@@ -98,4 +111,28 @@ public class Experiment {
 		return Math.sqrt(akku/count);
 	}
 	
+	public double getStdIntensity(double mean){
+		Collection<Blob> c= seq.getTrackables().values();
+		double akku=0;
+		double count=0;
+		for(Blob b: c){
+			akku+=(mean-b.inten)*(mean-b.inten);
+			count++;
+		}
+		return Math.sqrt(akku/count);
+	}
+	
+	@Override
+	public String toString(){
+		double meanX=getMeanX();
+		double meanY=getMeanY();
+		double meanInten=getMeanIntensity();
+		double stdX=getStdX(meanX);
+		double stdY=getStdY(meanY);
+		double stdIntensity=getStdIntensity(meanInten);
+		
+		String s= meanX+"\t"+ meanY+"\t"+meanInten+"\t"+ stdX+"\t"+ stdY+  "\t"+ stdIntensity +"\n";
+		return s;
+
+	}
 }

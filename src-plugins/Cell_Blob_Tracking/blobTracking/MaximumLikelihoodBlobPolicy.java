@@ -340,9 +340,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
     	
  
     	
-    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~pk: " +b.pK);
-    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~totalInten: " +totalInten);
-     	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~inten: " +b.inten);
+    	
 		
 		return;
 	}
@@ -424,7 +422,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	    	change=Math.max(session.getChangeFactorSigma()*Math.abs((b.newSig*b.newSig-b.sigma*b.sigma)), change);
 	    	change=Math.max(session.getChangeFactorPK()*Math.abs(b.newPK-b.pK), change);
 	    	//change=Math.max(session.getChangeFactorPK()*Math.abs(b.newInten-b.inten), change);
-	    	System.out.println("intenchange:"+Math.abs(b.newInten-b.inten));
+	 //   	System.out.println("intenchange:"+Math.abs(b.newInten-b.inten));
 	    	
 	    	b.xPos=b.newX;
 	    	b.yPos=b.newY;
@@ -433,6 +431,11 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	    	b.inten=b.newInten;
 	    	b.pK=b.newPK;
 	    	b.denom=b.calcDenominator(iFrame, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ); // important for EMCCD
+	  //  	if(totalInten<b.inten){
+	//    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~pk: " +b.pK);
+	//    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~totalInten: " +totalInten);
+	 //    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~inten: " +b.inten);
+	  //  	}
 		}
 		
 		
@@ -486,7 +489,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 					mTime +=mTime1-mTime0;
 					eTime +=eTime1-eTime0;
 					
-					System.out.println("change:" +change);		
+		//			System.out.println("change:" +change);		
 					Model.getInstance().depositMsg("change: "+change);
 					Model.getInstance().makeChangesPublic();
 				
