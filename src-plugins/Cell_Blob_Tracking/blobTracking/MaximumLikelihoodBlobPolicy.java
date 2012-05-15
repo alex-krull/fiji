@@ -220,11 +220,11 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		if(isVolume){
 			mins = new long[3];		
 		//	mins[2]= b.expectedValues.min(2);
-			mins[2]= (long)	Math.max(b.expectedValues.min(2), (b.zPos-b.sigmaZ*3)/Model.getInstance().getXyToZ()-3 );
+			mins[2]= (long)	Math.max(b.expectedValues.min(2), (b.zPos-b.sigmaZ*3)/Model.getInstance().getXyToZ()-1 );
 			
 			maxs = new long[3];
 		//	maxs[2]= b.expectedValues.max(2);
-			maxs[2]= (long)	Math.min(b.expectedValues.max(2), (b.zPos+b.sigmaZ*3)/Model.getInstance().getXyToZ() +3);
+			maxs[2]= (long)	Math.min(b.expectedValues.max(2), (b.zPos+b.sigmaZ*3)/Model.getInstance().getXyToZ() +1);
 		}else{
 			mins = new long[2];
 			maxs = new long[2];
@@ -518,14 +518,16 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		    
 		    double maxSigma=0;
 		    double minSigma=Double.MAX_VALUE;
+		    double maxSigmaZ=0;
 		    for(Blob b:trackables){
+		    	maxSigmaZ=Math.max(maxSigmaZ, b.sigmaZ);
 		    	maxSigma=Math.max(maxSigma, b.sigma);
 		    	minSigma=Math.min(minSigma, b.sigma);
 		    }
 		    
 		    
 		    
-		    srcFloat=ImglibTools.differenceOfGaussians(srcFloat, maxSigma*1.1, minSigma*0.9);
+		    srcFloat=ImglibTools.differenceOfGaussians(srcFloat, maxSigma*1.2, minSigma*0.8);
 		//    ImageJFunctions.show(srcFloat);
 			
 			
@@ -615,8 +617,9 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			if(Model.getInstance().isVolume()){
 				Img<FloatType>threedFloat=floatFactory.create(movieFrame.getFrameView(), new FloatType());
 				ImglibTools.convert(movieFrame.getFrameView(), threedFloat);
-				double sig[]= {0.1,0.1,0.1};
+				double sig[]= {maxSigma*2,maxSigma*2,maxSigma*2};
 				threedFloat=Gauss.inNumericType(sig, threedFloat);
+				//ImglibTools.differenceOfGaussians(threedFloat, maxSigma*1.1, minSigma*0.9);
 				for(int i=0;i<trackables.size();i++){
 					Blob tb= trackables.get(i);
 					tb.zPos=Model.getInstance().getXyToZ()*

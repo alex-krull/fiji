@@ -47,9 +47,9 @@ public class Evaluator {
 			
 	
 		Random r= new SecureRandom();
-		for(double i=780;i<=1000;i+=10){
-			Img<UnsignedShortType> img=bs.makeImg(10, 10, 1000,5, 5, 1, i, 0, true, 300,r);
-			Experiment e=new Experiment(img, 0.1, 5, 5, 1, false, 0, 2, false, "M.L.GaussianTracking", "epxA");			
+		for(double i=100;i<=1000;i+=10){
+			Img<UnsignedShortType> img=bs.makeImg(13, 13, 100,6.5, 6.5, 0.64788, i, 0, false, 300,r);
+			Experiment e=new Experiment(img, 0.001, 5, 5, 1, false, 0, 2, false, "M.L.GaussianTracking", "epxA");			
 
 			
 			String s= i+ "\t"+e.toString();
@@ -59,12 +59,12 @@ public class Evaluator {
 		
 			
 			
-			Experiment e2=new Experiment(img, 0.1, 5, 5, 1, false, 0, 2, false, "EMCCD-GaussianML", "epxB");			
+		//	Experiment e2=new Experiment(img, 0.1, 5, 5, 1, false, 0, 2, false, "EMCCD-GaussianML", "epxB");			
 	
 			
-			 s= i+ "\t"+e2.toString();
-			fw2.write(s);
-			fw2.flush();
+		//	 s= i+ "\t"+e2.toString();
+		//	fw2.write(s);
+		//	fw2.flush();
 				
 		}
 		
