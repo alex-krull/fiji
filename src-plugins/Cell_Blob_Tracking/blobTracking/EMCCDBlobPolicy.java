@@ -28,10 +28,10 @@ import frameWork.Session;
 
 public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends MaximumLikelihoodBlobPolicy<IT>
 {
-	private ErlangSet eSet=null;
+	
 
 	public EMCCDBlobPolicy(){
-		eSet=new ErlangSet(300);
+	
 	}
 	
 	@Override
@@ -105,7 +105,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 				index++;
 			}
 			
-			System.out.println("                REAL CHANGE: "+change);
+		//	System.out.println("                REAL CHANGE: "+change);
 			if(change<qualityT) break;
 		}
 		
@@ -113,7 +113,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 	
 	private void doEstep(Img<FloatType> expectedValues, RandomAccessibleInterval<IT> image,
 			List<Blob> blobs, double totalInten){
-		System.out.println("entering");
+	
 		Cursor<FloatType> cursor =expectedValues.cursor();
 		RandomAccess<IT> ra= image.randomAccess();
 		int offSet=Model.getInstance().getIntensityOffset();
@@ -126,7 +126,10 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			
 			ra.setPosition(cursor);
 			int value= Math.max(0, ((IntegerType)ra.get()).getInteger()-offSet);
-			
+			if(value==0){
+				cursor.get().set((0));
+				continue;
+			}
 			
 			
 			
@@ -136,15 +139,22 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 				int z= 0;
 				if(expectedValues.numDimensions()>2) z= ra.getIntPosition(2);
 				double flux=calcFlux(totalInten, blobs, x,  y, z);
-				if(flux>0.0000000000001)
-					poissonDist= new PoissonDistributionImpl(flux);					
-				else 
+				double pZero=0;
+				if(flux>0.0000000000001){
+					poissonDist= new PoissonDistributionImpl(flux);	
+					pZero=OtherTools.getErlangProp(0, value, 300)*poissonDist.probability(0);
+				}
+									
+				else{
 					poissonDist=null;
+					pZero=OtherTools.getErlangProp(0, value, 300);
+				}
+					
 			
 			
-			double pZero=0;
 			
-			pZero=OtherTools.getErlangProp(0, value, 300)*poissonDist.probability(0);
+			
+			
 			
 	/*		for(int i=0;i<1;i++){
 				
@@ -176,8 +186,13 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 			}
 			else {
-				System.out.println("NAN!!!!!!!!");
+				System.out.println("NAN!!!!!!!!");	
+				System.out.println("value:"+ value+ " flux:" +flux+" temp:"+ temp+ 
+						" OtherTools.bessi0(2*temp):"+OtherTools.bessi0(2*temp)+
+						" OtherTools.bessi1(2*temp):"+OtherTools.bessi1(2*temp));	
+				
 				cursor.get().set((0));
+				calcFlux(totalInten, blobs, x,  y, z);
 			}
 		
 		}

@@ -1,8 +1,5 @@
 package tools;
 
-import ij.IJ;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -13,14 +10,13 @@ import java.util.concurrent.TimeUnit;
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
-import net.imglib2.Iterator;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.gauss.Gauss;
+import net.imglib2.display.RealFloatConverter;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.NumericType;
@@ -31,8 +27,6 @@ import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
 import org.apache.commons.math.special.Erf;
-import net.imglib2.algorithm.gauss.GaussNativeType;
-import net.imglib2.display.RealFloatConverter;
 
 public class ImglibTools {
 	
@@ -280,8 +274,10 @@ public static long getNumOfPixels(Interval img){
 
 public static double gaussPixelIntegral(int x , int y, double cx, double cy, double sig){
   //  double sq=Math.sqrt(2);
-    double calcX=0.5*Erf.erf( (x-cx+0.5)/(sq*sig) )-0.5*Erf.erf( (x-cx-0.5)/(sq*sig) );
-    double calcY=0.5*Erf.erf( (y-cy+0.5)/(sq*sig) )-0.5*Erf.erf( (y-cy-0.5)/(sq*sig) );
+	double xd=x;
+	double yd=y;
+    double calcX=0.5*Erf.erf( (xd-cx+0.5)/(sq*sig) )-0.5*Erf.erf( (xd-cx-0.5)/(sq*sig) );
+    double calcY=0.5*Erf.erf( (yd-cy+0.5)/(sq*sig) )-0.5*Erf.erf( (yd-cy-0.5)/(sq*sig) );
 
     return calcX*calcY;
 }

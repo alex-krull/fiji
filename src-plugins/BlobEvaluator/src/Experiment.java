@@ -49,7 +49,14 @@ public class Experiment {
 		cont.setSelectionList(sidl);
 		
 	//	cont.toggleTracking(0,true, model.getNumberOfFrames());
-		cont.getCurrentSessionController().startTrackingSingleThread(0, multiScale, true, model.getNumberOfFrames()-1);
+		
+		try {
+			cont.getCurrentSessionController().startTrackingSingleThread(0, multiScale, false, model.getNumberOfFrames()-1);
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		
 		seq=(Sequence<Blob>) cont.getSessions().get(0).getSequence(1);
 	}
 	

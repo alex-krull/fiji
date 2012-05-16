@@ -69,9 +69,9 @@ public class Blob_Simulator implements PlugIn{
 		int ySize= (int)gd.getNextNumber();
 		int frames= (int)gd.getNextNumber();
 	
-		double xPos=(int)gd.getNextNumber();
-		double yPos=(int)gd.getNextNumber();
-		double sig=(int)gd.getNextNumber();
+		double xPos=gd.getNextNumber();
+		double yPos=gd.getNextNumber();
+		double sig=gd.getNextNumber();
 		double blobFlux=gd.getNextNumber();
 		double backFlux=gd.getNextNumber();
 
@@ -85,7 +85,7 @@ public class Blob_Simulator implements PlugIn{
 		ImagePlus impTemp2 = impTemp.duplicate();
 		impTemp2.show();
 			
-		applyEMCCD(image, 300);
+		applyEMCCD(image, 300,new Random(1));
 			
 		//ImagePlus imp2= new ImagePlus();
 		
@@ -110,13 +110,13 @@ public class Blob_Simulator implements PlugIn{
 		long[] dims = {xSize,ySize,frames};
 		Img <UnsignedShortType> image= imgFactory.create(dims, new UnsignedShortType());
 		fillImage(image,xPos,yPos,sig,blobFlux,backFlux,r);
-		if(emccd) applyEMCCD(image, gain);
+		if(emccd) applyEMCCD(image, gain,r);
 		return image;
 	}
 	
-	public void applyEMCCD(Img <UnsignedShortType> img, double gain){
+	public void applyEMCCD(Img <UnsignedShortType> img, double gain, Random rand){
 		Cursor<UnsignedShortType> it=img.cursor();
-		Random rand= new Random(1);
+		
 		
 		while(it.hasNext()){
 			it.fwd();
@@ -183,18 +183,18 @@ public class Blob_Simulator implements PlugIn{
 			
 			
 			int sample=0;
-			mean=Math.max(0.0000000000001, mean);
+			//mean=Math.max(0.0000000000001, mean);
 			
 			
-			PoissonDistributionImpl poissonDist= new PoissonDistributionImpl(mean);				
-			poissonDist.reseedRandomGenerator(r.nextLong());
+			
 			
 			if(0>=mean) sample=0;
 			
 			
 			else{
 				
-				
+				PoissonDistributionImpl poissonDist= new PoissonDistributionImpl(mean);				
+				poissonDist.reseedRandomGenerator(r.nextLong());
 				
 				try {
 					
@@ -206,6 +206,8 @@ public class Blob_Simulator implements PlugIn{
 			}
 			
 			
+		//	System.out.println("xPos: "+ posX+ "yPos: "+ posY+
+		//			" x:"+ it.getIntPosition(0)+ " y:"+ it.getIntPosition(1)+ " mean:"+mean+ " sample:"+ sample);
 			
 			it.get().set(sample);
 		}

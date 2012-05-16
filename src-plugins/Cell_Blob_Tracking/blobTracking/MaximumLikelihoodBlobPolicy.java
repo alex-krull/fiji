@@ -149,15 +149,31 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	    	for(Blob b:trackables){
 	    		RandomAccess<FloatType> ra= b.expectedValues.randomAccess();
 	    		ra.setPosition(cursor);
-	    		double currentInten=value*
+	    		double currentInten=0;
+	    		if(value>0 && pX>0){			// avoid NAN
+	    			currentInten=value*
 	    				b.pXandK(x, y, z,
 	    				b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ,
 	    				b.denom)/pX;
+	    		}
 	    		
 	    		
 	
 	    		ra.get().set((float)(currentInten  ) );
-	    		b.newInten+=currentInten;    		
+	    		b.newInten+=currentInten;  
+	    		
+	    		
+	    		
+	   		if(Double.isNaN(b.newInten)){
+	    			System.out.println("problem!!!!"); 
+	    			b.pXandK(x, y, z,
+		    				b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ,
+		    				b.denom);
+	    		}
+	   		
+	   		
+	   		
+	   		
 	    	}
 	    	
 	    	
@@ -332,8 +348,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		if(findSigma&& !isVolume) b.newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[2],0.5 )));
 		if(findSigma&& isVolume) b.newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[3],0.5 )));
 		
-		b.newPK=b.newInten/totalInten;
-	
+		 b.newPK=b.newInten/totalInten;
+		
 
  	
     	
@@ -501,7 +517,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			eTime/=1000000;
 			mTime/=1000000;
 			
-			System.out.println("totalTime:" +time+ "  fraction E:"+ ((double)eTime/(double)time)+ "  fraction M:"+ ((double)mTime/(double)time) );
+	//		System.out.println("totalTime:" +time+ "  fraction E:"+ ((double)eTime/(double)time)+ "  fraction M:"+ ((double)mTime/(double)time) );
 
 			return ti;
 	}
@@ -509,6 +525,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	@Override
 	public void optimizeFrame(boolean multiscale, List<Blob> trackables,
 			MovieFrame<IT> movieFrame,  double qualityT, Session<Blob,IT> session) {
+		
 		BlobSession<IT> blobS= (BlobSession<IT>) session;
 		
 		if(multiscale){
