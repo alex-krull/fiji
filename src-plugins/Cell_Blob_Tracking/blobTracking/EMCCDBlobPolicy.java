@@ -224,7 +224,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			Img<FloatType> expectedValues, double qualityT,
 			Session<Blob, IT> session){
 		MaximumLikelihoodBlobPolicy<FloatType> bp= new MaximumLikelihoodBlobPolicy<FloatType>();
-		return bp.doOptimizationSingleScale(trackables, expectedValues, qualityT, 0, 1,(BlobSession<IT>) session);
+		return bp.doOptimizationSingleScale(trackables, expectedValues, qualityT, 0, 100,(BlobSession<IT>) session);
 		
 	}
 	
@@ -241,7 +241,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			ErlangDist e= dists.get(input);
 			if(e==null){
 				
-				e=new ErlangDist(input, gain, 0.01);
+				e=new ErlangDist(input, gain, 0.01, true);
 				synchronized (this){
 				dists.put(input, e);
 				}
@@ -253,7 +253,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		public synchronized double draw(int input, double rv){
 			ErlangDist e= dists.get(input);
 			if(e==null){
-				e=new ErlangDist(input, gain, 0.01);
+				e=new ErlangDist(input, gain, 0.01, true);
 				synchronized (this){
 				dists.put(input, e);
 				}

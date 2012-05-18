@@ -35,7 +35,7 @@ public class Evaluator {
 		
 		
 		System.out.println("creating Model...");
-		Blob_Simulator bs= new Blob_Simulator();
+		
 		
 		
 		try {
@@ -51,13 +51,16 @@ public class Evaluator {
 	
 		
 		//Random r= new SecureRandom();
-		double i=100;
+		double i=600;
 		double bc=0;
+		
+		Blob_Simulator bs= new Blob_Simulator();
 		while(i<=1000){
-			Random r= new HighQualityRandom(1);
+			
+			Random r= new HighQualityRandom((long)i);
 	//		bc=Math.pow(10, i/4);
 			System.out.println("                  next Experiment:"+bc);
-			Img<UnsignedShortType> img=bs.makeImg(13, 13, 4000,6.5, 6.5, 0.64788, i,0, false, 300,r);
+			Img<UnsignedShortType> img=bs.makeImg(13, 13, 1000,6, 6, 0.64788, i,0, false, 300,r);
 			
 			
 			
@@ -70,20 +73,22 @@ public class Evaluator {
 			
 			bs.applyEMCCD(img, 300,r);
 			
+		//	img=bs.makeImg(13, 13, 1000,6.5, 6.5, 0.64788, i,0, true, 300,r);
+			
 			Experiment e2=new Experiment(img, 0.01, 5, 5, 0.64788, false, 0, 2, false, "M.L.GaussianTracking", "epxA");			
 
 			
-			 s= i+ "\t"+e2.toString();
+			s= i+ "\t"+e2.toString();
 			fw2.write(s);
 			fw2.flush();
 			
 			
-			Experiment e3=new Experiment(img, 0.01, 5, 5, 0.64788, false, 0, 2, false, "EMCCD-GaussianML", "epxB");			
+	//		Experiment e3=new Experiment(img, 0.01, 5, 5, 0.64788, false, 0, 2, false, "EMCCD-GaussianML", "epxB");			
 	
 			
-			 s= i+ "\t"+e3.toString();
-			fw3.write(s);
-			fw3.flush();
+	//		 s= i+ "\t"+e3.toString();
+	//		fw3.write(s);
+	//		fw3.flush();
 				
 			i+=100;
 		}

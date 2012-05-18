@@ -5,7 +5,6 @@ import ij.plugin.PlugIn;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -18,11 +17,12 @@ import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.distribution.GammaDistributionImpl;
 import org.apache.commons.math.distribution.PoissonDistributionImpl;
 
 import tools.ErlangDist;
+import tools.HighQualityRandom;
 import tools.ImglibTools;
-import tools.OtherTools;
 
 
 
@@ -38,11 +38,10 @@ public class Blob_Simulator implements PlugIn{
 	
 	@Override
 	public void run(String arg0) {
-	//	doErlangExperiment(1,300);
-	//	doErlangExperiment(2,300);
-	//	doErlangExperiment(3,300);
-	//	doErlangExperiment(4,300);
-		
+		doErlangExperiment(1,300);
+		doErlangExperiment(2,300);
+		doErlangExperiment(3,300);
+		doErlangExperiment(4,300);
 		
 		
 		GenericDialog gd = new GenericDialog("blob simulator");
@@ -116,51 +115,80 @@ public class Blob_Simulator implements PlugIn{
 	
 	public void applyEMCCD(Img <UnsignedShortType> img, double gain, Random rand){
 		Cursor<UnsignedShortType> it=img.cursor();
-		
-		
+	
+		int c=0;
 		while(it.hasNext()){
 			it.fwd();
 			int value= it.get().get();
-			ErlangDist e= erlangDists.get(value);
-			if(e==null){
-				e=new ErlangDist(value, gain, 0.001);
-				erlangDists.put(value, e);
-			}
-			it.get().set(e.drawOutput(rand.nextDouble()));
+			int emccdValue;
 			
+			if(value>0){
+				GammaDistributionImpl gamma = new GammaDistributionImpl(value,gain);
+			gamma.reseedRandomGenerator(rand.nextLong());
+			try {
+				emccdValue=(int)Math.ceil(gamma.sample());
+			
+			
+	//		ErlangDist e= erlangDists.get(value);
+	//		if(e==null ){
+	//			e=new ErlangDist(value, gain, 0.001, false);
+	//			if(erlangDists.size()<200)erlangDists.put(value, e);
+				
+//			}
+	//		if(e!=null){
+	//			emccdValue=e.drawOutput(rand.nextDouble());
+	//		}else{
+			
+	//			emccdValue=emccd.draw(value, rand);
+	//		}
+			
+			
+			it.get().set((int)Math.min(Math.pow(2, 16)-1, emccdValue));
+			
+			} catch (MathException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			}else it.get().set(0);
+			
+			if(c%1000==0)System.out.println("pixel:"+ c+ "size:"+erlangDists.size());
+			c++;
 		}
 	}
 	
 	public void doErlangExperiment(int inp, double g){
-		ErlangDist e= new ErlangDist(inp, g, 0.0001);
+		GammaDistributionImpl e= new GammaDistributionImpl(inp,g);
 		try {
 			FileWriter fw= new FileWriter(new File("erlangDist"+inp+".txt") );
 		
-		Random rand= new Random(1);
+		Random rand= new HighQualityRandom(1);
+		e.reseedRandomGenerator(rand.nextLong());
 		
-		int[] hist= new int[e.getLastPossibleOutput()+1];
+		
+		int[] hist= new int[100000];
 		for(int i=0;i<hist.length;i++){
 			hist[i]=0;
 		}
 			
-	//	for(int i=0;i<100000;i++){
-	//		double rv= rand.nextDouble();
-	//		hist[e.drawOutput(rv)]++;
-	//	}
+		for(int i=0;i<100000;i++){
+			int sample = (int)Math.ceil(e.sample());
+			hist[sample]++;
+		}
 		
 		
-	//	for(int i=0;i<hist.length;i++){
-			for(int i=0;i<20000;i++){	
-			String s= String.valueOf(i)+ "\t"+OtherTools.getErlangProp(inp, i, g)
-					+ "\t"+OtherTools.getErlangProbAlternative(inp, i, g)+"\n";
-		//	String s= String.valueOf(i)+ "\t"+ hist[i]+ "\n";
+		for(int i=0;i<hist.length;i++){
+		
+	//		String s= String.valueOf(i)+ "\t"+OtherTools.getErlangProp(inp, i, g)
+	//				+ "\t"+OtherTools.getErlangProbAlternative(inp, i, g)+"\n";
+			String s= String.valueOf(i)+ "\t"+ hist[i]+ "\n";
 			fw.write(s);
 			fw.flush();
 			System.out.println(s);
 		}
 		
 		
-		} catch (IOException e1) {
+		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
