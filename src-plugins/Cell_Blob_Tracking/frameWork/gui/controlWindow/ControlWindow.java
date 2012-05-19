@@ -77,9 +77,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	}
 
 
-	/**
-	 * @param args
-	 */
+
 
 
 	JTextField currentSession;

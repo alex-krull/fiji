@@ -177,20 +177,22 @@ public class TableSort extends JPanel {
     	synchronized (viewModel){
     	
     	tableModel.setTableData(data);
+		table.revalidate();	
+    	table.repaint();
+    	
     	//table.setRowSelectionInterval(0, 0);
     	int cnt = 0;
     	table.clearSelection();
     	for(int i=0; i<table.getRowCount();i++){
     		
-			int currentId=(Integer)table.getValueAt(i, 0);
+			int currentId=(Integer)table.getModel().getValueAt(i, 0);
 			if(viewModel.isSelected( currentId)){					
 					table.addRowSelectionInterval(i, i);
 			}
 		}
     	
     	}
-		table.revalidate();	
-    	table.repaint();
+
     //	IJ.error(tableModel.getTableModelListeners()[0].getClass().getName());
     }
     
@@ -317,7 +319,10 @@ public class MySelectionListener implements MouseListener, ListSelectionListener
 
         @Override
 		public Object getValueAt(int row, int col) {
-            return data[row][col];
+           
+
+        	return data[row][col];
+
         }
 
         /*
