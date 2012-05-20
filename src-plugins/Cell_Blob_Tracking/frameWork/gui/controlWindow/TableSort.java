@@ -114,7 +114,7 @@ public class TableSort extends JPanel {
         
         //table.setPreferredScrollableViewportSize(new Dimension(500, 200));
         table.setFillsViewportHeight(true);
-        table.setAutoCreateRowSorter(true);
+        //table.setAutoCreateRowSorter(true);
 
         //Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);
@@ -175,8 +175,9 @@ public class TableSort extends JPanel {
 
     public void updateData(Object[][] data){
     	synchronized (viewModel){
-    	
+    	table.setAutoCreateRowSorter(false);	
     	tableModel.setTableData(data);
+    	table.setAutoCreateRowSorter(true);
 		table.revalidate();	
     	table.repaint();
     	
