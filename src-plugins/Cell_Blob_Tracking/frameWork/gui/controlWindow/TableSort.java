@@ -114,7 +114,7 @@ public class TableSort extends JPanel {
         
         //table.setPreferredScrollableViewportSize(new Dimension(500, 200));
         table.setFillsViewportHeight(true);
-        //table.setAutoCreateRowSorter(true);
+        table.setAutoCreateRowSorter(true);
 
         //Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);
@@ -175,23 +175,29 @@ public class TableSort extends JPanel {
 
     public void updateData(Object[][] data){
     	synchronized (viewModel){
-    	table.setAutoCreateRowSorter(false);	
-    	tableModel.setTableData(data);
-    	table.setAutoCreateRowSorter(true);
-		table.revalidate();	
-    	table.repaint();
-    	
-    	//table.setRowSelectionInterval(0, 0);
-    	int cnt = 0;
-    	table.clearSelection();
-    	for(int i=0; i<table.getRowCount();i++){
+    	//table.setAutoCreateRowSorter(false);	
+    
+    		//if(!(data.length==0)){
+    			tableModel.setTableData(data);
+
+
+    			table.getRowSorter().allRowsChanged();
+    			table.revalidate();	
+    			table.repaint();
+
+    			//table.setRowSelectionInterval(0, 0);
+    			int cnt = 0;
+    			table.clearSelection();
+    			for(int i=0; i<table.getRowCount();i++){
+
+    				int currentId=(Integer)table.getModel().getValueAt(i, 0);
+    				if(viewModel.isSelected( currentId)){					
+    					table.addRowSelectionInterval(i, i);
+    				}
+    			}
     		
-			int currentId=(Integer)table.getModel().getValueAt(i, 0);
-			if(viewModel.isSelected( currentId)){					
-					table.addRowSelectionInterval(i, i);
-			}
-		}
-    	
+    			
+    		//}
     	}
 
     //	IJ.error(tableModel.getTableModelListeners()[0].getClass().getName());
@@ -292,14 +298,13 @@ public class MySelectionListener implements MouseListener, ListSelectionListener
                                         "Length"};
         public Object[][] data = {
 	    {"Blob 1", new Color(255, 0, 0), "Place holder",
-	     "Session 1", "Blob", new Integer(5)},
+	     "Session 1", "Blob", new Integer(5), new Integer(4)},
 
         };
         
 
         public void setTableData(Object[][] temp){
         	    	
-       			
        	data = temp;
        }
 
@@ -333,8 +338,17 @@ public class MySelectionListener implements MouseListener, ListSelectionListener
          * rather than a check box.
          */
         @Override
-		public Class getColumnClass(int c) {
-            return getValueAt(0, c).getClass();
+		public Class<?> getColumnClass(int c) {
+        	switch (c){
+        	case 0: return Integer.class;
+        	case 1: return Color.class;
+        	case 2: return String.class;
+        	case 3: return Integer.class;
+        	case 4: return String.class;
+        	case 5: return String.class;
+        	case 6: return Integer.class;
+        	default: return null;
+        	}
         }
 
         /*
