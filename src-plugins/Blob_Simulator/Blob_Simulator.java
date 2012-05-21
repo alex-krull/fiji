@@ -126,7 +126,7 @@ public class Blob_Simulator implements PlugIn{
 				GammaDistributionImpl gamma = new GammaDistributionImpl(value,gain);
 			gamma.reseedRandomGenerator(rand.nextLong());
 			try {
-				emccdValue=(int)Math.ceil(gamma.sample());
+				emccdValue=(int)Math.floor(gamma.sample());
 			
 			
 	//		ErlangDist e= erlangDists.get(value);

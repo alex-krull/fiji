@@ -191,8 +191,9 @@ public class TableSort extends JPanel {
     			for(int i=0; i<table.getRowCount();i++){
 
     				int currentId=(Integer)table.getModel().getValueAt(i, 0);
-    				if(viewModel.isSelected( currentId)){					
-    					table.addRowSelectionInterval(i, i);
+    				if(viewModel.isSelected( currentId)){
+    					int viewIndex= table.convertRowIndexToView(i);
+    					table.addRowSelectionInterval(viewIndex, viewIndex);
     				}
     			}
     		
@@ -233,14 +234,14 @@ public class MySelectionListener implements MouseListener, ListSelectionListener
 			List <Integer> results = new ArrayList<Integer>();
     		for(int i=0; i<table.getRowCount();i++){
     			if(table.isRowSelected(i)&&
-    					model.getSequence((Integer)table.getModel().getValueAt(i, 0)).getSession().getId()
+    					model.getSequence((Integer)table.getValueAt(i, 0)).getSession().getId()
     					==viewModel.getController().getCurrentSessionId() ){
     				
-    				results.add((Integer)table.getModel().getValueAt(i, 0));
+    				results.add((Integer)table.getValueAt(i, 0));
     				if(e.getClickCount()>1){
-    					int f= model.getSequence((Integer)table.getModel().getValueAt(i, 0)).getFirstFrame();
+    					int f= model.getSequence((Integer)table.getValueAt(i, 0)).getFirstFrame();
     					if(f==viewModel.getCurrentFrameNumber()) 
-    						f=model.getSequence((Integer)table.getModel().getValueAt(i, 0)).getLastFrame();
+    						f=model.getSequence((Integer)table.getValueAt(i, 0)).getLastFrame();
     					viewModel.setPosition(3, f);
     				}
     			}
@@ -275,10 +276,10 @@ public class MySelectionListener implements MouseListener, ListSelectionListener
 			List <Integer> results = new ArrayList<Integer>();
     		for(int i=0; i<table.getRowCount();i++){
     			if(table.isRowSelected(i)&&
-    					model.getSequence((Integer)table.getModel().getValueAt(i, 0)).getSession().getId()
+    					model.getSequence((Integer)table.getValueAt(i, 0)).getSession().getId()
     					==viewModel.getController().getCurrentSessionId() ){
     				
-    				results.add((Integer)table.getModel().getValueAt(i, 0));
+    				results.add((Integer)table.getValueAt(i, 0));
     			}
     				
     		}
