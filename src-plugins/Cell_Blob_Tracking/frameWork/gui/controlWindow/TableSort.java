@@ -296,10 +296,10 @@ public class MySelectionListener implements MouseListener, ListSelectionListener
                                         "Color", "Label","Ch",
                                         "Session",
                                         "Method",
-                                        "Length"};
+                                        "Frist Frame", "Last Frame"};
         public Object[][] data = {
 	    {"Blob 1", new Color(255, 0, 0), "Place holder",
-	     "Session 1", "Blob", new Integer(5), new Integer(4)},
+	     "Session 1", "Blob", new Integer(5), new Integer(4), new Integer(4)},
 
         };
         
@@ -348,6 +348,7 @@ public class MySelectionListener implements MouseListener, ListSelectionListener
         	case 4: return String.class;
         	case 5: return String.class;
         	case 6: return Integer.class;
+        	case 7: return Integer.class;
         	default: return null;
         	}
         }

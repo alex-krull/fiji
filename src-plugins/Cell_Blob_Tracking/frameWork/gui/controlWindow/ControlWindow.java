@@ -615,7 +615,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		contrastMenu.addActionListener(new ContrastListener());
 		contrastMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
 		
-		toggleNumbers = new JCheckBoxMenuItem("Toggle Numbers");
+		toggleNumbers = new JCheckBoxMenuItem("Show Numbers");
 		toggleNumbers.addActionListener(new ToggleNumberListener());
 		toggleNumbers.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.CTRL_MASK));
 
@@ -912,7 +912,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 
-			Object[][]trace = new Object[test.size()][7];
+			Object[][]trace = new Object[test.size()][8];
 			int i = 0;
 			for(Sequence<? extends Trackable> seq : test){
 
@@ -922,7 +922,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				trace[i][3]=seq.getSession().getChannelNumnber()+1;
 				trace[i][4]=seq.getSession().getLabel();
 				trace[i][5]=seq.getTypeName();
-				trace[i][6]=seq.getLastFrame()-seq.getFirstFrame()+1;
+				trace[i][6]=seq.getFirstFrame()+1;
+				trace[i][7]=seq.getLastFrame()+1;
 				i++;
 
 
