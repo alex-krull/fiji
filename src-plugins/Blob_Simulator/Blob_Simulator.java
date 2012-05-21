@@ -5,6 +5,7 @@ import ij.plugin.PlugIn;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -23,6 +24,7 @@ import org.apache.commons.math.distribution.PoissonDistributionImpl;
 import tools.ErlangDist;
 import tools.HighQualityRandom;
 import tools.ImglibTools;
+import tools.OtherTools;
 
 
 
@@ -38,10 +40,11 @@ public class Blob_Simulator implements PlugIn{
 	
 	@Override
 	public void run(String arg0) {
-		doErlangExperiment(1,300);
-		doErlangExperiment(2,300);
-		doErlangExperiment(3,300);
-		doErlangExperiment(4,300);
+	//	doErlangExperiment(1,300);
+	//	doErlangExperiment(2,300);
+	//	doErlangExperiment(3,300);
+	//	doErlangExperiment(4,300);
+		
 		
 		
 		GenericDialog gd = new GenericDialog("blob simulator");
@@ -68,9 +71,9 @@ public class Blob_Simulator implements PlugIn{
 		int ySize= (int)gd.getNextNumber();
 		int frames= (int)gd.getNextNumber();
 	
-		double xPos=gd.getNextNumber();
-		double yPos=gd.getNextNumber();
-		double sig=gd.getNextNumber();
+		double xPos=(int)gd.getNextNumber();
+		double yPos=(int)gd.getNextNumber();
+		double sig=(int)gd.getNextNumber();
 		double blobFlux=gd.getNextNumber();
 		double backFlux=gd.getNextNumber();
 
@@ -84,7 +87,7 @@ public class Blob_Simulator implements PlugIn{
 		ImagePlus impTemp2 = impTemp.duplicate();
 		impTemp2.show();
 			
-		applyEMCCD(image, 300,new Random(1));
+		applyEMCCD(image, 300, new HighQualityRandom(1));
 			
 		//ImagePlus imp2= new ImagePlus();
 		
@@ -109,86 +112,73 @@ public class Blob_Simulator implements PlugIn{
 		long[] dims = {xSize,ySize,frames};
 		Img <UnsignedShortType> image= imgFactory.create(dims, new UnsignedShortType());
 		fillImage(image,xPos,yPos,sig,blobFlux,backFlux,r);
-		if(emccd) applyEMCCD(image, gain,r);
+		if(emccd) applyEMCCD(image, gain, r);
 		return image;
 	}
 	
 	public void applyEMCCD(Img <UnsignedShortType> img, double gain, Random rand){
 		Cursor<UnsignedShortType> it=img.cursor();
-	
-		int c=0;
+		rand= new Random(1);
+		
 		while(it.hasNext()){
 			it.fwd();
 			int value= it.get().get();
-			int emccdValue;
-			
-			if(value>0){
-				GammaDistributionImpl gamma = new GammaDistributionImpl(value,gain);
-			gamma.reseedRandomGenerator(rand.nextLong());
-			try {
-				emccdValue=(int)Math.floor(gamma.sample());
-			
-			
-	//		ErlangDist e= erlangDists.get(value);
-	//		if(e==null ){
-	//			e=new ErlangDist(value, gain, 0.001, false);
-	//			if(erlangDists.size()<200)erlangDists.put(value, e);
-				
-//			}
-	//		if(e!=null){
-	//			emccdValue=e.drawOutput(rand.nextDouble());
-	//		}else{
-			
-	//			emccdValue=emccd.draw(value, rand);
-	//		}
-			
-			
-			it.get().set((int)Math.min(Math.pow(2, 16)-1, emccdValue));
-			
-			} catch (MathException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		/*	
+			ErlangDist e= erlangDists.get(value);
+			if(e==null){
+				e=new ErlangDist(value, gain, 0.001);
+				erlangDists.put(value, e);
 			}
+			it.get().set(e.drawOutput(rand.nextDouble()));
+		*/	
+			int sample=0;
+			if(value>0){
+				try {
+					GammaDistributionImpl erl= new GammaDistributionImpl( value, gain);
+					erl.reseedRandomGenerator(rand.nextLong());
+					sample=(int) erl.sample();
+
+				} catch (MathException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			sample= Math.min(sample, (int)Math.pow(2, 16)-1);
+			it.get().set(sample);
 			
-			}else it.get().set(0);
-			
-			if(c%1000==0)System.out.println("pixel:"+ c+ "size:"+erlangDists.size());
-			c++;
 		}
 	}
 	
 	public void doErlangExperiment(int inp, double g){
-		GammaDistributionImpl e= new GammaDistributionImpl(inp,g);
+		ErlangDist e= new ErlangDist(inp, g, 0.0001);
 		try {
 			FileWriter fw= new FileWriter(new File("erlangDist"+inp+".txt") );
 		
-		Random rand= new HighQualityRandom(1);
-		e.reseedRandomGenerator(rand.nextLong());
+		Random rand= new Random(1);
 		
-		
-		int[] hist= new int[100000];
+		int[] hist= new int[e.getLastPossibleOutput()+1];
 		for(int i=0;i<hist.length;i++){
 			hist[i]=0;
 		}
 			
-		for(int i=0;i<100000;i++){
-			int sample = (int)Math.ceil(e.sample());
-			hist[sample]++;
-		}
+	//	for(int i=0;i<100000;i++){
+	//		double rv= rand.nextDouble();
+	//		hist[e.drawOutput(rv)]++;
+	//	}
 		
 		
-		for(int i=0;i<hist.length;i++){
-		
-	//		String s= String.valueOf(i)+ "\t"+OtherTools.getErlangProp(inp, i, g)
-	//				+ "\t"+OtherTools.getErlangProbAlternative(inp, i, g)+"\n";
-			String s= String.valueOf(i)+ "\t"+ hist[i]+ "\n";
+	//	for(int i=0;i<hist.length;i++){
+			for(int i=0;i<20000;i++){	
+			String s= String.valueOf(i)+ "\t"+OtherTools.getErlangProp(inp, i, g)
+					+ "\t"+OtherTools.getErlangProbAlternative(inp, i, g)+"\n";
+		//	String s= String.valueOf(i)+ "\t"+ hist[i]+ "\n";
 			fw.write(s);
 			fw.flush();
 			System.out.println(s);
 		}
 		
 		
-		} catch (Exception e1) {
+		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -211,18 +201,18 @@ public class Blob_Simulator implements PlugIn{
 			
 			
 			int sample=0;
-			//mean=Math.max(0.0000000000001, mean);
+			mean=Math.max(0.0000000000001, mean);
 			
 			
-			
+			PoissonDistributionImpl poissonDist= new PoissonDistributionImpl(mean);				
+			poissonDist.reseedRandomGenerator(r.nextLong());
 			
 			if(0>=mean) sample=0;
 			
 			
 			else{
 				
-				PoissonDistributionImpl poissonDist= new PoissonDistributionImpl(mean);				
-				poissonDist.reseedRandomGenerator(r.nextLong());
+				
 				
 				try {
 					
@@ -234,8 +224,6 @@ public class Blob_Simulator implements PlugIn{
 			}
 			
 			
-		//	System.out.println("xPos: "+ posX+ "yPos: "+ posY+
-		//			" x:"+ it.getIntPosition(0)+ " y:"+ it.getIntPosition(1)+ " mean:"+mean+ " sample:"+ sample);
 			
 			it.get().set(sample);
 		}

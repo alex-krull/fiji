@@ -39,12 +39,12 @@ public class Evaluator {
 		
 		
 		try {
-	/*		File f= new File("/home/alex/Desktop/noEMCCD.txt");
+			File f= new File("/home/alex/Desktop/noEMCCD.txt");
 			FileWriter fw= new FileWriter(f);
 			
-			File f2= new File("/home/alex/Desktop/EMCCD.txt");
+			File f2= new File("/home/alex/Desktop/EMCCDA.txt");
 			FileWriter fw2= new FileWriter(f2);
-	*/		
+			
 			File f3= new File("/home/alex/Desktop/EMCCDcorrectionA.txt");
 			FileWriter fw3= new FileWriter(f3);
 			
@@ -63,18 +63,18 @@ public class Evaluator {
 			Img<UnsignedShortType> img=bs.makeImg(13, 13, 1000,6, 6, 0.64788, i,0, false, 300,r);
 			
 			
-	/*		
+			
 			Experiment e=new Experiment(img, 0.01, 5, 5, 0.64788, false, 0, 2, false, "M.L.GaussianTracking", "epxA");			
 
 			
 			String s= i+ "\t"+e.toString();
 			fw.write(s);
 			fw.flush();
-	*/		
-			bs.applyEMCCD(img, 300,r);
+			
+			bs.applyEMCCD(img, 300, r);
 			
 		//	img=bs.makeImg(13, 13, 1000,6.5, 6.5, 0.64788, i,0, true, 300,r);
-	/*		
+			
 			Experiment e2=new Experiment(img, 0.01, 5, 5, 0.64788, false, 0, 2, false, "M.L.GaussianTracking", "epxA");			
 
 			
@@ -82,11 +82,11 @@ public class Evaluator {
 			fw2.write(s);
 			fw2.flush();
 			
-	*/		
+			
 			Experiment e3=new Experiment(img, 0.01, 5, 5, 0.64788, false, 0, 2, false, "EMCCD-GaussianML", "epxB");			
 	
 			
-			String s= i+ "\t"+e3.toString();
+			s= i+ "\t"+e3.toString();
 			fw3.write(s);
 			fw3.flush();
 				
