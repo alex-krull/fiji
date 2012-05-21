@@ -182,8 +182,7 @@ public class TableSort extends JPanel {
 
 
     			table.getRowSorter().allRowsChanged();
-    			table.revalidate();	
-    			table.repaint();
+    			
 
     			//table.setRowSelectionInterval(0, 0);
     			int cnt = 0;
@@ -192,12 +191,16 @@ public class TableSort extends JPanel {
 
     				int currentId=(Integer)table.getModel().getValueAt(i, 0);
     				if(viewModel.isSelected( currentId)){					
-    					table.addRowSelectionInterval(i, i);
+    					int selectedRow = table.convertRowIndexToView(i);
+    					table.addRowSelectionInterval(selectedRow, selectedRow);
     				}
     			}
     		
     			
     		//}
+    			
+    			table.revalidate();
+    			table.repaint();
     	}
 
     //	IJ.error(tableModel.getTableModelListeners()[0].getClass().getName());
