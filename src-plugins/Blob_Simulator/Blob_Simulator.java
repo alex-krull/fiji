@@ -71,9 +71,9 @@ public class Blob_Simulator implements PlugIn{
 		int ySize= (int)gd.getNextNumber();
 		int frames= (int)gd.getNextNumber();
 	
-		double xPos=(int)gd.getNextNumber();
-		double yPos=(int)gd.getNextNumber();
-		double sig=(int)gd.getNextNumber();
+		double xPos=gd.getNextNumber();
+		double yPos=gd.getNextNumber();
+		double sig=gd.getNextNumber();
 		double blobFlux=gd.getNextNumber();
 		double backFlux=gd.getNextNumber();
 
@@ -119,7 +119,7 @@ public class Blob_Simulator implements PlugIn{
 	public void applyEMCCD(Img <UnsignedShortType> img, double gain, Random rand){
 		Cursor<UnsignedShortType> it=img.cursor();
 		rand= new Random(1);
-		
+		int i=0;
 		while(it.hasNext()){
 			it.fwd();
 			int value= it.get().get();
@@ -146,6 +146,8 @@ public class Blob_Simulator implements PlugIn{
 			sample= Math.min(sample, (int)Math.pow(2, 16)-1);
 			it.get().set(sample);
 			
+		if(i%1000==0)	System.out.println("pixel:"+ i);
+			i++;
 		}
 	}
 	
@@ -224,7 +226,7 @@ public class Blob_Simulator implements PlugIn{
 			}
 			
 			
-			
+			sample= Math.min(sample, (int)Math.pow(2, 16)-1);
 			it.get().set(sample);
 		}
 	}

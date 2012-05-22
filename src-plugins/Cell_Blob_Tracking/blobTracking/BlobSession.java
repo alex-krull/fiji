@@ -1,5 +1,7 @@
 package blobTracking;
 
+import java.util.Properties;
+
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -168,6 +170,28 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	}
 
 
+	@Override
+	public void setProperties(Properties props){
+		super.setProperties(props);
+		String s;
+		s= props.getProperty("mscaleIterations"); if(s!=null) this.mscaleIterations=Integer.valueOf(s);
+		s= props.getProperty("mscaleSigma"); if(s!=null) this.mscaleSigma=Double.valueOf(s);
+		s= props.getProperty("downscaleFactor"); if(s!=null) this.downscaleFactor=Double.valueOf(s);
+		
+		
+	}
+	
+	@Override
+	public Properties getProperties(){
+		Properties props= super.getProperties();
+		
+		props.setProperty("mscaleIterations",String.valueOf(mscaleIterations));
+		props.setProperty("mscaleSigma", String.valueOf(mscaleSigma));
+		props.setProperty("downscaleFactor", String.valueOf(downscaleFactor));
+		
+	
+		return props;
+	}
 	
 	
 

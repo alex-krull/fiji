@@ -178,7 +178,12 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		*/	double invGain=1.0/300.0;
 			double temp=Math.sqrt(invGain*flux*value);
 			double missingTerm=pZero/Math.exp(-invGain*value-flux)*invGain*flux;
-			double besselExpected=temp*OtherTools.bessi0(2*temp)/(OtherTools.bessi1(2*temp)+missingTerm);
+			double tempA=temp*OtherTools.bessi0(2*temp);
+			double tempB=(OtherTools.bessi1(2*temp)+missingTerm);
+			
+			double besselExpected=0;
+			if(tempB!=0) besselExpected=tempA/tempB;
+			
 	//		System.out.println("iterative:"+ (akku/akkuDenom) + " bessel:"+ besselExpected);
 		
 			if(!Double.isNaN(besselExpected)){

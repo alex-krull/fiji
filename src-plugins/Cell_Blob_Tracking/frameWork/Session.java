@@ -221,6 +221,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 		String s;
 		s= props.getProperty("sessionLabel"); if(s!=null) this.label=s;
 		s= props.getProperty("qualityThreshold"); if(s!=null) this.qualityThreshold=Double.valueOf(s);
+		
 	}
 	
 	public Properties getProperties(){
