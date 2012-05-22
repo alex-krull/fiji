@@ -148,9 +148,9 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 		
 		return numOfFrames;
 	}
-	// position:
+
 	public TrackingFrame<T,IT> getFrame(int frameNumber) {	
-//		System.out.println("size:"+ frames.size()+ "   fn:"+frameNumber);
+
 		return frames.get(frameNumber);
 	}
 	
