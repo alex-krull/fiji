@@ -103,9 +103,10 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		    	change=Math.max(bSession.getChangeFactorSigma()*Math.abs((bOld.sigma*bOld.sigma-b.sigma*b.sigma)), change);
 		    	change=Math.max(bSession.getChangeFactorPK()*Math.abs(bOld.pK-b.pK), change);		
 				index++;
+			
 			}
 			
-		//	System.out.println("                REAL CHANGE: "+change);
+			
 			if(change<qualityT) break;
 		}
 		

@@ -25,8 +25,7 @@ public class Experiment {
 			String typeName, String sessionLabel){
 		
 		
-		model= 
-				new Model<UnsignedShortType>("eval.tif", "/home/alex/Desktop/", data,
+		model= 	new Model<UnsignedShortType>("eval.tif", "D:/experiments", data,
 						(int) data.dimension(2), 1, 1, false);
 				System.out.println("creating Controller...");
 					

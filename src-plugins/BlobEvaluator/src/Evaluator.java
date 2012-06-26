@@ -40,40 +40,51 @@ public class Evaluator {
 		
 		
 		try {
-			File f= new File("/home/alex/Desktop/noEMCCDBack.txt");
+			File f= new File("D:/experiments/noEMCCD1kBack.txt");
 			FileWriter fw= new FileWriter(f);
 			
-			File f2= new File("/home/alex/Desktop/EMCCDBack.txt");
+			File f2= new File("D:/experiments/EMCCD1kBack.txt");
 			FileWriter fw2= new FileWriter(f2);
 			
-			File f3= new File("/home/alex/Desktop/EMCCDcorrectionBack.txt");
+			File f3= new File("D:/experiments/EMCCDcorrection1kBack.txt");
 			FileWriter fw3= new FileWriter(f3);
 		
 	
 		
 		//Random r= new SecureRandom();
-		double i=20;
+		double i=0;
 		double bc=0;
 		
 		Blob_Simulator bs= new Blob_Simulator();
 		double background=0;
-		double inten=25;
+		double inten=100;
 	//	while(background<=200){
-			while(inten<1000){
-			inten=i;
+		
+		
+		
+		
+			while(i<=2000){
+				
+			inten=250;
 		//	background=Math.pow(5, i/4);
-		//	background=i*5;
-			Random r= new HighQualityRandom((long)i);
+			background=i;
+	
 	//		bc=Math.pow(10, i/4);
 			System.out.println("                  next Experiment:"+bc);
-			Img<UnsignedShortType> img=bs.makeImg(13, 13, 1000,6, 6, 0.64788, inten,background, false, 300,r);
 			
 			
 			
-			Experiment e=new Experiment(img, 0.01, 5, 5, 0.64788, false, 0, 2, false, "M.L.GaussianTracking", "epxA");			
+			
+				System.out.println("                  next Experiment:"+bc);
+			
+		
+			Random r= new HighQualityRandom((long)(i*100));
+			//Img<UnsignedShortType> img=bs.makeImg(13, 13, 25000,6, 6, 1, inten,background, false, 300,r);
+			Img<UnsignedShortType> img=bs.makeImg(13, 13, 10000,6, 6, 1, inten,background, false, 300,r);
+			Experiment e=new Experiment(img, 0.001, 6, 6, 1, false, 0, 2, false, "M.L.GaussianTracking", "epxA");			
 
 			
-			String s= inten+ "\t"+e.toString();
+			String s= inten+ "\t"+ background+"\t "+e.toString();
 			fw.write(s);
 			fw.flush();
 			
@@ -81,22 +92,24 @@ public class Evaluator {
 			
 		//	img=bs.makeImg(13, 13, 1000,6.5, 6.5, 0.64788, i,0, true, 300,r);
 			
-			Experiment e2=new Experiment(img, 0.01, 5, 5, 0.64788, false, 0, 2, false, "M.L.GaussianTracking", "epxA");			
+			Experiment e2=new Experiment(img, 0.001,6, 6, 1, false, 0, 2, false, "M.L.GaussianTracking", "epxA");	
+			//Experiment e2=new Experiment(img, 0.001,6, 6, 0.64788, false, 0, 2, false, "M.L.GaussianTracking", "epxA");	
 
 			
-			s= inten+ "\t"+e2.toString();
+			s= inten+ "\t"+ background+"\t "+e2.toString();
 			fw2.write(s);
 			fw2.flush();
 			
 			
-			Experiment e3=new Experiment(img, 0.01, 5, 5, 0.64788, false, 0, 2, false, "EMCCD-GaussianML", "epxB");			
-	
+			Experiment e3=new Experiment(img, 0.001, 6, 6, 1, false, 0, 2, false, "EMCCD-GaussianML", "epxB");	
+			//Experiment e3=new Experiment(img, 0.001, 6, 6, 0.64788, false, 0, 2, false, "EMCCD-GaussianML", "epxB");
 			
-			s= inten+ "\t"+e3.toString();
+			
+			s= inten+ "\t"+ background+"\t "+e3.toString();
 			fw3.write(s);
 			fw3.flush();
-				
-			i+=5;
+			
+			i+=100;
 		}
 		
 		

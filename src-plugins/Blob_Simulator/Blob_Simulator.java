@@ -123,28 +123,29 @@ public class Blob_Simulator implements PlugIn{
 		while(it.hasNext()){
 			it.fwd();
 			int value= it.get().get();
-		/*	
+			
 			ErlangDist e= erlangDists.get(value);
 			if(e==null){
 				e=new ErlangDist(value, gain, 0.001);
 				erlangDists.put(value, e);
 			}
 			it.get().set(e.drawOutput(rand.nextDouble()));
-		*/	
-			int sample=0;
+	/*	
+			int sample=0;		
 			if(value>0){
 				try {
 					GammaDistributionImpl erl= new GammaDistributionImpl( value, gain);
 					erl.reseedRandomGenerator(rand.nextLong());
-					sample=(int) erl.sample();
+					sample=(int) erl.sample()+1;
 
 				} catch (MathException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-			sample= Math.min(sample, (int)Math.pow(2, 16)-1);
+  		sample= Math.min(sample, (int)Math.pow(2, 16)-1);
 			it.get().set(sample);
+*/			
 			
 		if(i%1000==0)	System.out.println("pixel:"+ i);
 			i++;
