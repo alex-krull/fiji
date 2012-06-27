@@ -299,6 +299,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 				+ String.valueOf(fixedSigma)+"\t"
 				+ String.valueOf(coup)+"\t"
 				+ df.format(this.inten);
+		result= result.replace(",", ".");
 		return result;
 	}
 
