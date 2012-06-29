@@ -1,20 +1,28 @@
 package frameWork.gui;
 
 import frameWork.Model;
+import ij.IJ;
 import ij.ImageListener;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
+import ij.process.ImageProcessor;
 
 import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowListener;
+import java.io.File;
+import java.text.DecimalFormat;
 
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.IntervalView;
+import net.imglib2.view.Views;
 
 
 public class MainWindow  < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends ImageView<IT> 
@@ -233,5 +241,32 @@ public synchronized void imageUpdated(ImagePlus arg0) {
 	
 	public Window getWindow(){
 		return imp.getWindow();
+	}
+
+	@Override
+	public void saveWindow(double magnification) {
+	
+
+		ImageProcessor ipro= imp.getProcessor().convertToRGB();
+		ImagePlus ip= new ImagePlus();
+		
+		
+		ipro=ipro.resize((int)(ipro.getWidth()*magnification) , (int)(ipro.getHeight()*magnification));
+		ip.setProcessor(ipro);
+	//	IJ.save(ip, model.getProjectDirectory()+ "save"); 
+		this.clearOverlay();
+		addZOverlayes(viewModel.getCurrentFrameNumber(),magnification);
+		ip.getProcessor().drawOverlay(this.upDateOverlay(1.0/magnification));
+		
+		DecimalFormat df = new DecimalFormat("0000");
+		String path= model.getProjectDirectory()+ "movieMain";
+		
+		File f= new File(path);
+		f.mkdir();
+		
+		path= model.getProjectDirectory()+ "movieMain/"+df.format(viewModel.getCurrentFrameNumber())+"main"+".bmp";
+		IJ.save(ip, path ); 
+	
+		
 	}
 }

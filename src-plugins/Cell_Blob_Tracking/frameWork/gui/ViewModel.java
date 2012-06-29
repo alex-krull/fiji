@@ -1,5 +1,7 @@
 package frameWork.gui;
 
+import ij.IJ;
+
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -63,11 +65,26 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 
 	private MaxProjectionZ<IT> maxZWindow;
 	
+	public void exportImages(){
+		for(int i=0;i<model.getNumberOfFrames();i++){
+			this.setPosition(3, i);	
+			for(ViewWindow vw: views){
+				vw.reFresh(this.getPosition(), true);
+				vw.saveWindow(8);
+			}
+		}
+	}
+	
 	public void toggleDrawNumbers() {
+	
+		
+		
 		drawNumbers=!drawNumbers;
+		
 	}
 	
 	public boolean isDrawNumbers() {
+		
 		return drawNumbers;
 	}
 

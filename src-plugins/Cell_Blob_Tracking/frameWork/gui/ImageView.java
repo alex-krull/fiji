@@ -229,15 +229,18 @@ implements MouseListener, MouseMotionListener{
 		model.rwLock.readLock().unlock();
 	}
 
-	protected void upDateOverlay(){
+	protected Overlay upDateOverlay(double mag){
+		Overlay ov=ovTemplate.duplicate();	
 		synchronized (ovTemplate){
 		
-			
+		
 		if(viewModel.getDrawOverLays()){
-			Overlay ov=ovTemplate.duplicate();
+			ov=ovTemplate.duplicate();
 			for(int i=0;i<ov.size();i++){
 				Roi roi=ov.get(i);
-				roi.setStrokeWidth(Math.min(3, roi.getStrokeWidth()/imp.getCanvas().getMagnification() ));
+				roi.setStrokeWidth(Math.min(3, roi.getStrokeWidth()/mag ));
+				
+				
 			}
 			
 			imp.setOverlay(ov);
@@ -251,6 +254,12 @@ implements MouseListener, MouseMotionListener{
 		}
 		
 		}
+		return ov;
+	}
+	
+	protected Overlay upDateOverlay(){
+		return upDateOverlay(imp.getCanvas().getMagnification());
+		
 	}
 	
 	protected void clearOverlay(){
@@ -311,6 +320,10 @@ implements MouseListener, MouseMotionListener{
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addXOverlayes(int frameNumber){
+		addXOverlayes(frameNumber,1);
+		
+	}
+	protected void addXOverlayes(int frameNumber, double mag){
 		
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		for(Session<? extends Trackable,IT> tc: tcs){	
@@ -319,7 +332,7 @@ implements MouseListener, MouseMotionListener{
 		   if(trackables!=null) for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);		  
 			   Color c= model.getSequence(t.sequenceId).getColor();
-			   t.addShapeX(ovTemplate,viewModel.isSelected(t.sequenceId),c);
+			   t.addShapeX(ovTemplate,viewModel.isSelected(t.sequenceId),c,mag);
 			   
 		   }
 		   
@@ -334,6 +347,9 @@ implements MouseListener, MouseMotionListener{
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addYOverlayes(int frameNumber){
+		addYOverlayes( frameNumber, 1);
+	}
+	protected void addYOverlayes(int frameNumber, double mag){
 		
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		for(Session<? extends Trackable,IT> tc: tcs){	
@@ -342,12 +358,14 @@ implements MouseListener, MouseMotionListener{
 		 if(trackables!=null) for(Trackable t : trackables){	
 	//		   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId ).getColor();
-			   t.addShapeY(ovTemplate,viewModel.isSelected(t.sequenceId),c);
+			   t.addShapeY(ovTemplate,viewModel.isSelected(t.sequenceId),c,mag);
 			   
 		   }
 		}
 		
 	}
+	
+	
 	
 	/**
 	 * add the overlays for the maximum-z-projections of a specific Frame
@@ -355,6 +373,9 @@ implements MouseListener, MouseMotionListener{
 	 * @param frameNumber the number of the frame to be used
 	 */
 	protected void addZOverlayes(int frameNumber){
+		addZOverlayes( frameNumber,1);
+	}
+	protected void addZOverlayes(int frameNumber, double mag){
 		
 		List <Session<? extends Trackable,IT>> tcs = viewModel.getSessionsToBeDisplayed();
 		for(Session<? extends Trackable,IT> tc: tcs){	
@@ -363,7 +384,7 @@ implements MouseListener, MouseMotionListener{
 		 if(trackables!=null)for(Trackable t : trackables){	
 			//   System.out.println("selectedSequenceId:"+selectedSequenceId +"  t.sequenceId:"+t.sequenceId);
 			   Color c= model.getSequence(t.sequenceId).getColor();
-			   t.addShapeZ(ovTemplate,viewModel.isSelected(t.sequenceId),c, viewModel.isDrawNumbers());
+			   t.addShapeZ(ovTemplate,viewModel.isSelected(t.sequenceId),c, viewModel.isDrawNumbers(),mag);
 			   
 		   }
 		} 

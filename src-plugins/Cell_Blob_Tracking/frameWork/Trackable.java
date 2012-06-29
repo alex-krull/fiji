@@ -18,9 +18,9 @@ public abstract class Trackable {
 		channel=chan;
 	}
 
-public abstract void addShapeZ(Overlay ov, boolean selected, Color c, boolean drawNumbers);
-public abstract void addShapeX(Overlay ov, boolean selected, Color c);
-public abstract void addShapeY(Overlay ov, boolean selected, Color c);
+public abstract void addShapeZ(Overlay ov, boolean selected, Color c, boolean drawNumbers, double mag);
+public abstract void addShapeX(Overlay ov, boolean selected, Color c, double mag);
+public abstract void addShapeY(Overlay ov, boolean selected, Color c, double mag);
 public abstract double getDistanceTo(double x, double y, double z);
 public abstract String toSaveString();
 

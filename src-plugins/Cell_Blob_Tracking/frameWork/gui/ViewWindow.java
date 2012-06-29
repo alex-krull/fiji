@@ -28,6 +28,8 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 		
 	}
 	
+	
+	
 	public void startThread(){
 		thread= new Thread(this);
 		thread.start();
@@ -44,6 +46,7 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	 * @param rePaintImage if true, the image in the View will be redrawn.
 	 **/
 	public abstract void reFresh(long[] position, boolean rePaintImage) ;
+	
 	
 	
 	/**
@@ -159,5 +162,9 @@ public abstract class ViewWindow < IT extends  NumericType<IT> & NativeType<IT> 
 	public abstract boolean isOpen();
 	public boolean showInWindowList(){
 		return true;
+	}
+	
+	public void saveWindow(double magnification){
+		
 	}
 }
