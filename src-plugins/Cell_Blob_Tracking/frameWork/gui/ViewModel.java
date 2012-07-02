@@ -1,6 +1,7 @@
 package frameWork.gui;
 
 import ij.IJ;
+import ij.gui.GenericDialog;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
@@ -66,11 +67,16 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 	private MaxProjectionZ<IT> maxZWindow;
 	
 	public void exportImages(){
+		GenericDialog gd = new GenericDialog("export images");
+		gd.addNumericField("magnification:", 4.0, 2);
+		gd.showDialog();
+		double mag= gd.getNextNumber();
+		
 		for(int i=0;i<model.getNumberOfFrames();i++){
 			this.setPosition(3, i);	
 			for(ViewWindow vw: views){
 				vw.reFresh(this.getPosition(), true);
-				vw.saveWindow(8);
+				vw.saveWindow(mag);
 			}
 		}
 	}

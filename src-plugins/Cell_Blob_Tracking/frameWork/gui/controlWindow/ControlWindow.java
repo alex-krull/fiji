@@ -126,6 +126,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JMenuItem mergeMenu;
 	private JMenuItem saveAllMenu;
 	private JMenuItem newSessionMenu;
+	private JMenuItem exportImagesMenu;
 	private JMenuItem toggleOverlay;
 	private JMenu viewMenu;
 	private JMenuItem contrastMenu;
@@ -542,7 +543,10 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		newSessionMenu = new JMenuItem("New Session");
 		newSessionMenu.addActionListener(new NewSessionListener());
 		newSessionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
-
+		
+		exportImagesMenu = new JMenuItem("Export images");
+		exportImagesMenu.addActionListener(new ExportImagesListener());
+	//	exportImagesMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
 
 		startMenu = new JMenuItem("Start Tracking");
 		startMenu.addActionListener(new StartListener());
@@ -584,10 +588,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		fileMenu.setBackground(Color.lightGray);
 		fileMenu.add(newSessionMenu);
 		fileMenu.add(saveAllMenu);
+		fileMenu.add(exportImagesMenu);
 		fileMenu.add(saveTo);
 		fileMenu.add(loadAll);
 		fileMenu.add(loadFrom);
-
+		
 		editMenu.setBackground(Color.lightGray);
 
 
@@ -776,9 +781,17 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			//newSessionDialog();
 
 			viewModel.getController().newSession(viewModel);
-			
 
+		}
 
+	}
+	
+	public class ExportImagesListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent a) {
+			//newSessionDialog();
+
+			viewModel.exportImages();
 
 		}
 
