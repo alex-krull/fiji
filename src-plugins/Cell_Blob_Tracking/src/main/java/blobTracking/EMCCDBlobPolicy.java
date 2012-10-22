@@ -19,6 +19,8 @@ import net.imglib2.view.IterableRandomAccessibleInterval;
 
 import org.apache.commons.math.distribution.PoissonDistributionImpl;
 
+import cern.jet.math.Bessel;
+
 import tools.ErlangDist;
 import tools.ImglibTools;
 import tools.OtherTools;
@@ -26,9 +28,12 @@ import frameWork.Model;
 import frameWork.MovieFrame;
 import frameWork.Session;
 
+
 public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends MaximumLikelihoodBlobPolicy<IT>
+
+
 {
-	
+	private static double  GAIN=500;
 
 	public EMCCDBlobPolicy(){
 	
@@ -43,6 +48,8 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 	public void optimizeFrame(boolean alternateMethod, List<Blob> trackables,
 			MovieFrame<IT> movieFrame, double qualityT,
 			Session<Blob, IT> session) {
+		
+		super.optimizeFrame(false, trackables, movieFrame, qualityT, session);
 		
 		
 		BlobSession<IT> bSession=(BlobSession<IT>) session;
@@ -66,12 +73,14 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			c.fwd();
 			totalInten+=c.get().getRealDouble();
 		}
-		totalInten/=300.0;
+		totalInten/=GAIN;
 		
 		super.numOfPixelsUsed=ImglibTools.getNumOfPixels(movieFrame.getFrameView());
 		
 		for(Blob b: trackables){
 			b.denom=b.calcDenominator(movieFrame.getFrameView(), b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
+			b.pK=Math.min(0.999, Math.max(0.001, b.pK));
+	//		b.pK=0.01;
 		}
 		List<Blob> refBlobs=new ArrayList<Blob>();
 		
@@ -80,11 +89,15 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			
 			refBlobs.clear();
 			for(Blob b: trackables){
-				refBlobs.add(this.copy(b));
+				
+				Blob cb= this.copy(b);
+				refBlobs.add(cb);
+				
 			}
 			
-					
-			doEstep(expectedValues, movieFrame.getFrameView(), trackables, totalInten);
+			
+			
+			totalInten=doEstep(expectedValues, movieFrame.getFrameView(), trackables, totalInten);
 			//totalInten=	
 					doMstep(alternateMethod, trackables, expectedValues, qualityT, session);
 		
@@ -112,9 +125,10 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 	} 
 	
-	private void doEstep(Img<FloatType> expectedValues, RandomAccessibleInterval<IT> image,
+	private double doEstep(Img<FloatType> expectedValues, RandomAccessibleInterval<IT> image,
 			List<Blob> blobs, double totalInten){
 	
+		double newTotalInt=0;
 		Cursor<FloatType> cursor =expectedValues.cursor();
 		RandomAccess<IT> ra= image.randomAccess();
 		int offSet=Model.getInstance().getIntensityOffset();
@@ -141,14 +155,14 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 				if(expectedValues.numDimensions()>2) z= ra.getIntPosition(2);
 				double flux=calcFlux(totalInten, blobs, x,  y, z);
 				double pZero=0;
-				if(flux>0.0000000000001){
+				if(flux>0){
 					poissonDist= new PoissonDistributionImpl(flux);	
-					pZero=OtherTools.getErlangProp(0, value, 300)*poissonDist.probability(0);
+					pZero=OtherTools.getErlangProp(0, value, GAIN)*poissonDist.probability(0);
 				}
 									
 				else{
 					poissonDist=null;
-					pZero=OtherTools.getErlangProp(0, value, 300);
+					pZero=OtherTools.getErlangProp(0, value, GAIN);
 				}
 					
 			
@@ -176,26 +190,37 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 				
 		//		if(i>flux*3+2) break;
 			}
-		*/	double invGain=1.0/300.0;
+		*/	double invGain=1.0/GAIN;
 			double temp=Math.sqrt(invGain*flux*value);
-			double missingTerm=pZero/Math.exp(-invGain*value-flux)*invGain*flux;
-			double tempA=temp*OtherTools.bessi0(2*temp);
-			double tempB=(OtherTools.bessi1(2*temp)+missingTerm);
-			
+			double missingTerm=0;
+			if(pZero!=0) missingTerm=pZero/Math.exp(-invGain*value-flux)*invGain*flux;
+		
+			//double tempA=temp*OtherTools.bessi0(2*temp);
+			//double tempB=(OtherTools.bessi1(2*temp)+missingTerm);
+			double tempA=temp*Bessel.i0(2*temp);
+			double tempB=(double)Bessel.i1(2*temp)+missingTerm;
+							
 			double besselExpected=0;
+			
 			if(tempB!=0) besselExpected=tempA/tempB;
+			if(Double.isNaN(besselExpected) || Double.isInfinite(besselExpected)) 
+				besselExpected=Bessel.i0e(2*temp) / Bessel.i1e(2*temp);
 			
 	//		System.out.println("iterative:"+ (akku/akkuDenom) + " bessel:"+ besselExpected);
 		
 			if(!Double.isNaN(besselExpected)){
 				cursor.get().set((float)(besselExpected));		
-		
-			}
-			else {
+				newTotalInt+=besselExpected;
+			}else {
+				newTotalInt+=value/GAIN;
 				System.out.println("NAN!!!!!!!!");	
-				System.out.println("value:"+ value+ " flux:" +flux+" temp:"+ temp+ 
-						" OtherTools.bessi0(2*temp):"+OtherTools.bessi0(2*temp)+
-						" OtherTools.bessi1(2*temp):"+OtherTools.bessi1(2*temp));	
+				System.out.println("value:"+ value+ " flux:" +flux+" temp:"+ temp+
+						"x:"+ x+" y:"+y+ 
+						" missingTerm:"+missingTerm+
+						" pZero:"+pZero+
+						" Math.exp(-invGain*value-flux):"+ Math.exp(-invGain*value-flux)+
+						" OtherTools.bessi0(2*temp):"+Bessel.i0(2*temp)+
+						" OtherTools.bessi1(2*temp):"+Bessel.i1(2*temp));	
 				
 				cursor.get().set((0));
 				calcFlux(totalInten, blobs, x,  y, z);
@@ -207,6 +232,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
     //	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~totalInten: " +totalInten);
     //	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~fluxAkku: " +fluxAkku);
     //	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~valueAkku: " +valueAkku);
+		return newTotalInt;
 	}
 	
 	private double calcFlux(double totalInten, List<Blob> blobs, int x, int y, int z){
@@ -222,6 +248,10 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		for(Blob b: blobs){
 			
 			akku+=b.pXunderK(x, y, z, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ, b.denom, xyToZ)*b.pK;
+		}
+		if(Double.isNaN(akku)||Double.isNaN(totalInten) || Double.isInfinite(akku*totalInten)){
+			System.out.println("akku:"+akku+" totalInten:"+totalInten+ " x:"+x+ " y:"+y);
+			return 0;
 		}
 		return akku*totalInten;
 	}

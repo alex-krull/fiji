@@ -26,7 +26,7 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 	private double mscaleSigma = 1;
 	private int mscaleIterations = 5;
 	
-	private double changeFactorSigma=10;
+	private double changeFactorSigma=1;
 	private double changeFactorPK=1;
 	
 	public void setChangeFactorSigma(double changeFactorSigma) {

@@ -51,10 +51,10 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	
 			
 			
-			mins[0]=Math.min(mins[0],(long) (b.xPos-b.sigma*3-3));
-			mins[1]=Math.min(mins[1],(long) (b.yPos-b.sigma*3-3));
-			maxs[0]=Math.max(maxs[0],(long) (b.xPos+b.sigma*3+3));
-			maxs[1]=Math.max(maxs[1],(long) (b.yPos+b.sigma*3+3));
+			mins[0]=Math.min(mins[0],(long) (b.xPos-b.sigma*3-6));
+			mins[1]=Math.min(mins[1],(long) (b.yPos-b.sigma*3-6));
+			maxs[0]=Math.max(maxs[0],(long) (b.xPos+b.sigma*3+6));
+			maxs[1]=Math.max(maxs[1],(long) (b.yPos+b.sigma*3+6));
 			
 		}
 		
@@ -115,7 +115,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		numOfPixelsUsed=ImglibTools.getNumOfPixels(iterableFrame);
 		while ( cursor.hasNext() )	{
 	    	cursor.fwd();
-	    	pX=backProb/numOfPixelsUsed; // init with probability for background
+	    	pX=backProb/(double)numOfPixelsUsed; // init with probability for background
 
 	    	int x=cursor.getIntPosition(0);
 	    	int y=cursor.getIntPosition(1);
@@ -248,12 +248,12 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 	//	System.out.println("2");
 		
-		mins[0]=(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3-3 );
-		mins[1]= (long)	Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3-3 );
+		mins[0]=(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3-6 );
+		mins[1]= (long)	Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3-6 );
 		
 		
-		maxs[0]=(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3+3 );
-		maxs[1]= (long)	Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 +3);
+		maxs[0]=(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3+6 );
+		maxs[1]= (long)	Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 +6);
 		
 	//	System.out.println("3");
 		
