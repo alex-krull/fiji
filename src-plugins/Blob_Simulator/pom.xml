@@ -16,6 +16,7 @@
 	<name>plugins/Blob_Simulator.jar</name>
 	<description></description>
 
+
 	<dependencies>
 		<dependency>
 			<groupId>net.imagej</groupId>
@@ -49,16 +50,15 @@
 			<version>3.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>sc.fiji</groupId>
-			<artifactId>Cell_Blob_Tracking</artifactId>
-			<version>0.1</version>
-		</dependency>
-		<dependency>
     		<groupId>coltGId</groupId>
     		<artifactId>coltAId</artifactId>
     		<version>0.9.2</version>
     		<scope>system</scope>
     		<systemPath>/home/alex/freshClone/fiji/src-plugins/Cell_Blob_Tracking/colt.jar</systemPath>
+		</dependency>
+		<dependency>
+			<artifactId>Cell_Blob_Tracking</artifactId>
+			<version>2.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

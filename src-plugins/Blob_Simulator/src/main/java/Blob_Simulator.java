@@ -40,7 +40,7 @@ import cern.jet.random.Gamma;
 
 public class Blob_Simulator implements PlugIn{
 
-	private MersenneTwister mT= new MersenneTwister(42);
+	private MersenneTwister mT= new MersenneTwister();
 	private final SortedMap<Integer,ErlangDist> erlangDists;
 	
 	
@@ -50,7 +50,7 @@ public class Blob_Simulator implements PlugIn{
 	
 	@Override
 	public void run(String arg0) {
-	double GAIN=50;
+	double gain=50;
 	//	doErlangExperiment(1,300);
 	//	doErlangExperiment(2,300);
 	//	doErlangExperiment(3,300);
@@ -59,15 +59,16 @@ public class Blob_Simulator implements PlugIn{
 		
 		
 		GenericDialog gd = new GenericDialog("blob simulator");
-		gd.addNumericField("x-Size", 100, 0);
-		gd.addNumericField("y-Size", 100, 0);
-		gd.addNumericField("frames", 100, 0);
+		gd.addNumericField("x-Size", 7, 0);
+		gd.addNumericField("y-Size", 7, 0);
+		gd.addNumericField("frames", 1000, 0);
 		
-		gd.addNumericField("x-position", 50, 0);
-		gd.addNumericField("y-position", 50, 0);
-		gd.addNumericField("sigma", 2, 0);
+		gd.addNumericField("x-position", 3, 0);
+		gd.addNumericField("y-position", 3, 0);
+		gd.addNumericField("sigma", 1, 0);
 		gd.addNumericField("flux of blob", 100, 0);
 		gd.addNumericField("flux of background", 100, 0);
+		gd.addNumericField("emccd gain", 100, 0);
 		
 		gd.showDialog();
 		
@@ -87,18 +88,19 @@ public class Blob_Simulator implements PlugIn{
 		double sig=gd.getNextNumber();
 		double blobFlux=gd.getNextNumber();
 		double backFlux=gd.getNextNumber();
+		gain = gd.getNextNumber();
 
 	
 		Img <UnsignedShortType> image= makeImg( xSize,  ySize,  frames, 
 				 xPos,  yPos,  sig,
-				 blobFlux,  backFlux, false, GAIN, new Random(1));
+				 blobFlux,  backFlux, false, gain, new Random(1));
 		
 		
 		ImagePlus impTemp= ImageJFunctions.wrap(image,"no EMCCD");
 		ImagePlus impTemp2 = impTemp.duplicate();
 		impTemp2.show();
 			
-		applyEMCCD(image, GAIN, new HighQualityRandom(1));
+		applyEMCCD(image, gain, new HighQualityRandom(1));
 			
 		//ImagePlus imp2= new ImagePlus();
 		
@@ -152,7 +154,7 @@ public class Blob_Simulator implements PlugIn{
 			int sample=0;		
 			if(value>0){
 				
-				sample= (int)g.nextDouble((double) value,1.0/gain)+1;
+				sample= (int)g.nextDouble((double) value,1.0/gain);
 	/*			
 				try {
 					GammaDistributionImpl erl= new GammaDistributionImpl( value, gain);

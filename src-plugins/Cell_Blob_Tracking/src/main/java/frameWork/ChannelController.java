@@ -8,9 +8,13 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
+
+import blobTracking.Blob;
 
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
@@ -27,6 +31,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	protected List <Integer> selectedIdList;
 	protected Policy <T,IT> policy;
 	protected ControlWindow<IT> controllWindow;
+	private Random rand;
 	
 	public String getLabel(){
 		return trackingChannel.getLabel();
@@ -65,7 +70,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 //	}
 	
 	public ChannelController( Model<IT> mod,Session<T,IT> tc, Policy<T,IT> pol ){
-		
+		rand = new SecureRandom();
 		selectedIdList=new ArrayList<Integer>();
 		model =mod;
 		trackingChannel=tc;
@@ -124,7 +129,13 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 					}
 			 }
 				
-				
+			
+				for(T t: trackingCandidates){
+					Blob b = (Blob)t;
+				b.xPos=0.25*rand.nextGaussian()+(double)(model.getFrame(0, 0).getFrameView().dimension(0)-1)/2.0;
+				b.yPos=0.25*rand.nextGaussian()+(double)(model.getFrame(0, 0).getFrameView().dimension(1)-1)/2.0;
+				}
+			 
 				
 		//			Model.getInstance().rwLock.writeLock().unlock();
 			 if(i%100==0)System.out.println("frame:"+i);

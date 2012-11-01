@@ -54,6 +54,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public double newZ=0;
 	public double newPK=0;
 	public double newInten=0;
+	public int iterations=0;
 	
 	
 	public Img<FloatType> expectedValues=null;

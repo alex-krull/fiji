@@ -27,8 +27,7 @@ public class OtherTools {
 	}
 	
 	public static double getErlangProp(int n, int x, double g){
-		if(n==0){
-			
+		if(n==0){		
 			if(x==0) return 1;
 			else return 0;
 		}
