@@ -10,6 +10,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.NumericType;
@@ -37,6 +38,8 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 //	private static double  PAG=12.17;
 //	private static double  PAG=11.3;
 	private static double  PAG=1;
+	private static Img<FloatType> fluxValues;
+	
 
 	public EMCCDBlobPolicy(){
 	
@@ -52,20 +55,21 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			MovieFrame<IT> movieFrame, double qualityT,
 			Session<Blob, IT> session) {
 		
-		//super.optimizeFrame(false, trackables, movieFrame, qualityT, session);
+		super.optimizeFrame(false, trackables, movieFrame, qualityT, session);
 		
 		
 		BlobSession<IT> bSession=(BlobSession<IT>) session;
 	    
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();
 		Img<FloatType> expectedValues=imgFactory.create(movieFrame.getFrameView(), new FloatType());
+		fluxValues=imgFactory.create(movieFrame.getFrameView(), new FloatType());
 		
 	//	if(!alternateMethod){
 //			super.optimizeFrame(false, trackables, movieFrame, qualityT, session);
 	//		return;
 	//	}
 		
-		int maxIterations=100;
+		int maxIterations=30;
 		
 		
 		double totalInten=0;
@@ -81,11 +85,10 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		super.numOfPixelsUsed=ImglibTools.getNumOfPixels(movieFrame.getFrameView());
 		
 		
-		for(Blob b: trackables){
-			b.denom=b.calcDenominator(movieFrame.getFrameView(), b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
-		//	b.pK=(0.5/(double)trackables.size());
-
-		}
+	//	for(Blob b: trackables){
+	//		b.denom=b.calcDenominator(movieFrame.getFrameView(), b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
+			
+	//	}
 		List<Blob> refBlobs=new ArrayList<Blob>();
 		
 		double change=0;
@@ -93,7 +96,8 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			
 			refBlobs.clear();
 			for(Blob b: trackables){
-				
+		//		b.pK=(b.pK*totalInten-2.5)/totalInten;
+		//		b.calcDenominator(movieFrame.getFrameView(), b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
 				Blob cb= this.copy(b);
 				refBlobs.add(cb);
 				
@@ -101,14 +105,15 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			
 			
 			
-			totalInten=doEstep(expectedValues, movieFrame.getFrameView(), trackables, totalInten);
+			doEstep(expectedValues, movieFrame.getFrameView(), trackables, totalInten);
 			//totalInten=	
-					doMstep(alternateMethod, trackables, expectedValues, qualityT, session);
-		
+			totalInten=doMstep(alternateMethod, trackables, expectedValues, qualityT, session);
+			
 			
 			change=0;
 			int index=0;
 			for(Blob b: trackables){
+				
 				Blob bOld=refBlobs.get(index);
 				double changePos=Math.sqrt(
 						(bOld.xPos-b.xPos)*(bOld.xPos-b.xPos)+
@@ -121,11 +126,13 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		    	change=Math.max(bSession.getChangeFactorPK()*Math.abs(bOld.pK-b.pK), change);		
 				index++;
 				b.iterations=i;
+				
 			}
 			
 			
 			if(change<qualityT) break;
 		}
+	//	ImageJFunctions.show (fluxValues, "ev");
 		
 	} 
 	
@@ -134,6 +141,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 	
 		double newTotalInt=0;
 		Cursor<FloatType> cursor =expectedValues.cursor();
+		Cursor<FloatType> cursorFlux =fluxValues.cursor();
 		RandomAccess<IT> ra= image.randomAccess();
 		int offSet=Model.getInstance().getIntensityOffset();
 		PoissonDistributionImpl poissonDist=null;
@@ -141,10 +149,11 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		while(cursor.hasNext()){
 			cursor.fwd();
+			cursorFlux.fwd();
 			
 			
 			ra.setPosition(cursor);
-			int value=(int) (((double)Math.max(0, ((IntegerType)ra.get()).getInteger()-offSet))*PAG);
+			int value=(int) (((double)Math.max(0, (ra.get()).getRealDouble()-offSet))*PAG);
 	/*		if(value==0){
 				cursor.get().set((0));
 				continue;
@@ -173,17 +182,19 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			
 			
 			
-			
-			
-	/*		for(int i=0;i<1;i++){
+		/*	
+			double aErlang=0;
+			double akku=0;
+			double akkuDenom=0;
+			for(int i=0;i<20;i++){
 				
 				
 				
-				currentP=eSet.getErlangProb(i, value);
+				Double currentP=OtherTools.getErlangProp(i, value, GAIN);
 				aErlang+=currentP;
 				if(poissonDist!=null)currentP*=poissonDist.probability(i);
 				else{
-					if(i>0)currentP=0;
+					if(i>0)currentP=0.0;
 				}
 			
 				akku+=currentP*i;
@@ -194,8 +205,13 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 				
 		//		if(i>flux*3+2) break;
 			}
-		*/	double invGain=1.0/GAIN;
-			double temp=Math.sqrt(invGain*flux*value);
+			double expected=akku/akkuDenom;
+			cursor.get().set((float)(expected));
+			cursorFlux.get().set((float)flux);
+			newTotalInt+=expected;
+	*/		
+			double invGain=1.0/GAIN;
+			double temp=Math.sqrt(invGain*flux*(double)value);
 			double missingTerm=0;
 			if(pZero!=0) missingTerm=pZero/Math.exp(-invGain*value-flux)*invGain*flux;
 		
@@ -211,7 +227,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 				besselExpected=(temp*Bessel.i0e(2*temp)) / (Bessel.i1e(2*temp)+missingTerm*Math.exp(-2*temp));
 			
 	//		System.out.println("iterative:"+ (akku/akkuDenom) + " bessel:"+ besselExpected);
-		
+			
 			if(!Double.isNaN(besselExpected)){
 				cursor.get().set((float)(besselExpected));		
 				newTotalInt+=besselExpected;
@@ -246,18 +262,19 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			backProb-=b.pK;
 		}
 		
-		double akku=backProb/numOfPixels;
+		double akku=0;
 		
-		double xyToZ=Model.getInstance().getXyToZ();
-		for(Blob b: blobs){
-			
-			akku+=b.pXunderK(x, y, z, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ, b.denom, xyToZ)*b.pK;
+		
+		
+		for(Blob b: blobs){		
+			akku+=b.pXandK(x, y, z, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ, b.denom);
 		}
 		if(Double.isNaN(akku)||Double.isNaN(totalInten) || Double.isInfinite(akku*totalInten)){
 			System.out.println("akku:"+akku+" totalInten:"+totalInten+ " x:"+x+ " y:"+y);
 			return 0;
 		}
-		return akku*totalInten;
+		return akku*totalInten+((totalInten*backProb)/numOfPixels);
+		//return 1;
 	}
 	
 	private double doMstep(boolean alternateMethod, List<Blob> trackables,
@@ -265,7 +282,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			Session<Blob, IT> session){
 		MaximumLikelihoodBlobPolicy<FloatType> bp= new MaximumLikelihoodBlobPolicy<FloatType>();
 		
-		return bp.doOptimizationSingleScale(trackables, expectedValues, qualityT, 0, 10000,(BlobSession<IT>) session);
+		return bp.doOptimizationSingleScale(trackables, expectedValues, qualityT, 0, 30,(BlobSession<IT>) session);
 		
 	}
 	

@@ -132,13 +132,15 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			
 				for(T t: trackingCandidates){
 					Blob b = (Blob)t;
-				b.xPos=0.25*rand.nextGaussian()+(double)(model.getFrame(0, 0).getFrameView().dimension(0)-1)/2.0;
-				b.yPos=0.25*rand.nextGaussian()+(double)(model.getFrame(0, 0).getFrameView().dimension(1)-1)/2.0;
+					b.xPos=0*rand.nextGaussian()+(double)(model.getFrame(0, 0).getFrameView().dimension(0)-1)/2.0;
+		
+					b.yPos=0*rand.nextGaussian()+(double)(model.getFrame(0, 0).getFrameView().dimension(1)-1)/2.0;
+					b.pK=(0.5/(double)trackingCandidates.size());
 				}
 			 
 				
 		//			Model.getInstance().rwLock.writeLock().unlock();
-			 if(i%100==0)System.out.println("frame:"+i);
+			 if(i%1==0)System.out.println("frame:"+i);
 				policy.optimizeFrame(multiscale, trackingCandidates, trackingChannel.getFrame(i).getMovieFrame(),
 						trackingChannel.qualityThreshold, trackingChannel);
 			

@@ -69,6 +69,7 @@ public class Blob_Simulator implements PlugIn{
 		gd.addNumericField("flux of blob", 100, 0);
 		gd.addNumericField("flux of background", 100, 0);
 		gd.addNumericField("emccd gain", 100, 0);
+		gd.addNumericField("pre amp", 1, 5);
 		
 		gd.showDialog();
 		
@@ -89,6 +90,7 @@ public class Blob_Simulator implements PlugIn{
 		double blobFlux=gd.getNextNumber();
 		double backFlux=gd.getNextNumber();
 		gain = gd.getNextNumber();
+		double pag=gd.getNextNumber();
 
 	
 		Img <UnsignedShortType> image= makeImg( xSize,  ySize,  frames, 
@@ -100,7 +102,7 @@ public class Blob_Simulator implements PlugIn{
 		ImagePlus impTemp2 = impTemp.duplicate();
 		impTemp2.show();
 			
-		applyEMCCD(image, gain, new HighQualityRandom(1));
+		applyEMCCD(image, gain, new HighQualityRandom(1),pag);
 			
 		//ImagePlus imp2= new ImagePlus();
 		
@@ -121,15 +123,18 @@ public class Blob_Simulator implements PlugIn{
 	public Img <UnsignedShortType> makeImg(int xSize, int ySize, int frames, 
 			double xPos, double yPos, double sig,
 			double blobFlux, double backFlux, boolean emccd, double gain, Random r){
+		mT= new MersenneTwister((int)((blobFlux+backFlux)*10000));
+		
 		ImgFactory<UnsignedShortType> imgFactory = new ArrayImgFactory<UnsignedShortType>();
 		long[] dims = {xSize,ySize,frames};
 		Img <UnsignedShortType> image= imgFactory.create(dims, new UnsignedShortType());
 		fillImage(image,xPos,yPos,sig,blobFlux,backFlux,r);
-		if(emccd) applyEMCCD(image, gain, r);
+		if(emccd) applyEMCCD(image, gain, r,1);
 		return image;
 	}
 	
-	public void applyEMCCD(Img <UnsignedShortType> img, double gain, Random rand){
+	public void applyEMCCD(Img <UnsignedShortType> img, double gain, Random rand, double pag){
+		
 		Cursor<UnsignedShortType> it=img.cursor();
 		Gamma g= new Gamma( 1.0,1.0, mT);
 	//	rand= new  HighQualityRandom(System.currentTimeMillis());
@@ -154,7 +159,7 @@ public class Blob_Simulator implements PlugIn{
 			int sample=0;		
 			if(value>0){
 				
-				sample= (int)g.nextDouble((double) value,1.0/gain);
+				sample= (int)g.nextDouble((double) value,1.0/gain)+1;
 	/*			
 				try {
 					GammaDistributionImpl erl= new GammaDistributionImpl( value, gain);
@@ -173,6 +178,7 @@ public class Blob_Simulator implements PlugIn{
 			System.out.println("SATCOUNT:"+satCount);
 		}
 		
+		sample/=pag;
   		sample= Math.min(sample, (int)Math.pow(2, 16)-1);
 			it.get().set(sample);
 	}
@@ -226,12 +232,13 @@ public class Blob_Simulator implements PlugIn{
 		
 		RandomAccess <UnsignedShortType> ra =image.randomAccess();
 		double sq= Math.sqrt(2);
-		double temp=flux/(Math.sqrt(2*Math.PI)*sig);
+		
 		double nop=(int) image.dimension(0)*(int)image.dimension(1);
 		
 		double pixelBackFlux=backFlux/nop;
 		double normBlobFlux		=flux/ImglibTools.gaussIntegral(image.min(0)-0.5,image.min(1)-0.5,image.max(0)+0.5,image.max(1)+0.5,posX,posY,sig );
-
+		normBlobFlux=flux;
+		double temp=normBlobFlux/(Math.sqrt(2*Math.PI)*sig);
 			
 		double[][] dxSum= new double [(int)image.dimension(0)][(int)image.dimension(1)];	//auxiliary variables
 		double[][] dySum= new double [(int)image.dimension(0)][(int)image.dimension(1)];
@@ -288,7 +295,7 @@ public class Blob_Simulator implements PlugIn{
 								)*(0.5*Erf.erf( (x-posX+0.5)/(sq*sig) )-0.5*Erf.erf( (x-posX-0.5)/(sq*sig) ));
 						double di=ImglibTools.gaussPixelIntegral((int)x, (int)y, posX, posY, sig);	//derivative of E_i in direction blob intensity
 						double db=1;	//derivative of E_i in direction background intensity
-						
+	//					db=2*backFlux/49.0;
 						
 						double qA;     			//the function q
 						double qdeA;			//the derivative of log(q) in the direction of the mean E_i
@@ -409,6 +416,7 @@ public class Blob_Simulator implements PlugIn{
 		int nop=(int) image.dimension(0)*(int)image.dimension(1);
 		double pixelBackFlux=backFlux/nop;
 		double normBlobFlux		=flux/ImglibTools.gaussIntegral(image.min(0)-0.5,image.min(1)-0.5,image.max(0)+0.5,image.max(1)+0.5,posX,posY,sig );
+		normBlobFlux=flux;
 		//Random r= new Random(1);
 		
 		
@@ -473,8 +481,9 @@ public class Blob_Simulator implements PlugIn{
 		
 		Cursor<UnsignedShortType> it=image.cursor();
 		int nop=(int) image.dimension(0)*(int)image.dimension(1);
-		double pixelBackFlux=backFlux/nop;
+		double pixelBackFlux=backFlux/(double)nop;
 		double normBlobFlux		=flux/ImglibTools.gaussIntegral(image.min(0)-0.5,image.min(1)-0.5,image.max(0)+0.5,image.max(1)+0.5,posX,posY,sig );
+		normBlobFlux=flux;
 		//Random r= new Random(1);
 		Poisson p= new Poisson(2, mT) ;
 		
@@ -527,7 +536,7 @@ public class Blob_Simulator implements PlugIn{
 		int nop=(int) image.dimension(0)*(int)image.dimension(1);
 		double pixelBackFlux=backFlux/nop;
 		double normBlobFlux		=flux/ImglibTools.gaussIntegral(image.min(0)-0.5,image.min(1)-0.5,image.max(0)+0.5,image.max(1)+0.5,posX,posY,sig );
-
+		normBlobFlux=flux;
 		
 		
 		for(int z=0;z<image.dimension(2);z++){

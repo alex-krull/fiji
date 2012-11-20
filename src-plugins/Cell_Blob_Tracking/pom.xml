@@ -12,6 +12,8 @@
 	</parent>
 
 	<artifactId>Cell_Blob_Tracking</artifactId>
+	<version>0.1</version>
+	<groupId>cbGId</groupId>
 
 	<name>plugins/Cell_Blob Tracking.jar</name>
 	<description></description>
@@ -50,6 +52,7 @@
 			<artifactId>commons-math</artifactId>
 			<version>3.0-SNAPSHOT</version>
 		</dependency>
+
 		<dependency>
     		<groupId>coltGId</groupId>
     		<artifactId>coltAId</artifactId>
@@ -57,6 +60,9 @@
     		<scope>system</scope>
     		<systemPath>/home/alex/freshClone/fiji/src-plugins/Cell_Blob_Tracking/colt.jar</systemPath>
 		</dependency>
+			
+
+
 	</dependencies>
 
 	

@@ -142,8 +142,11 @@
 		<module>registration_3d</module>
 		<module>wavelets</module>
 		<module>weave_jy2java</module>
-		<module>Cell_Blob_Tracking</module>
-		<module>Blob_Simulator</module>
+		
+<!-- 	
+<module>Cell_Blob_Tracking</module>		
+<module>Blob_Simulator</module>
+ -->
 	</modules>
 
 	<build>

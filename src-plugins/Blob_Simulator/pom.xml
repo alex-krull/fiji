@@ -56,10 +56,14 @@
     		<scope>system</scope>
     		<systemPath>/home/alex/freshClone/fiji/src-plugins/Cell_Blob_Tracking/colt.jar</systemPath>
 		</dependency>
+
 		<dependency>
+			<groupId>cbGId</groupId>
 			<artifactId>Cell_Blob_Tracking</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<version>0.1</version>
 		</dependency>
+
+
 	</dependencies>
 
 </project>

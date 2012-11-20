@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.imglib2.Cursor;
+import net.imglib2.Interval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.gauss.Gauss;
@@ -20,7 +21,9 @@ import net.imglib2.view.Views;
 import org.apache.commons.math.optimization.ConvergenceChecker;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.RealPointValuePair;
+import org.apache.commons.math.optimization.direct.BOBYQAOptimizer;
 import org.apache.commons.math.optimization.direct.PowellOptimizer;
+import org.apache.commons.math.optimization.direct.CMAESOptimizer;
 
 import tools.ImglibTools;
 import frameWork.Model;
@@ -29,7 +32,7 @@ import frameWork.Session;
 
 public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends BlobPolicy<IT>{
 
-	
+	private static double  BORDERSIZE=20;
 	protected long numOfPixelsUsed;
 
 
@@ -51,10 +54,10 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	
 			
 			
-			mins[0]=Math.min(mins[0],(long) (b.xPos-b.sigma*3-6));
-			mins[1]=Math.min(mins[1],(long) (b.yPos-b.sigma*3-6));
-			maxs[0]=Math.max(maxs[0],(long) (b.xPos+b.sigma*3+6));
-			maxs[1]=Math.max(maxs[1],(long) (b.yPos+b.sigma*3+6));
+			mins[0]=Math.min(mins[0],(long) (b.xPos-b.sigma*3-BORDERSIZE));
+			mins[1]=Math.min(mins[1],(long) (b.yPos-b.sigma*3-BORDERSIZE));
+			maxs[0]=Math.max(maxs[0],(long) (b.xPos+b.sigma*3+BORDERSIZE));
+			maxs[1]=Math.max(maxs[1],(long) (b.yPos+b.sigma*3+BORDERSIZE));
 			
 		}
 		
@@ -137,7 +140,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	   // 	double overlap=dist-(-iterableFrame.min(0)+iterableFrame.max(0))/2.0-1;
 	   // 	if(overlap>0) sn=Math.max(0, sn-(overlap*2));
 	    		
-	    	float value= Math.max(0,cursor.get().getRealFloat()- constBackground);//*(float)sn; 
+	    	float value= Math.max(0,cursor.get().getRealFloat()- constBackground);
 	    	totalInten+=value;
 	    	
 	    	for(Blob b:trackables){
@@ -248,12 +251,27 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 	//	System.out.println("2");
 		
-		mins[0]=(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3-6 );
-		mins[1]= (long)	Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3-6 );
+		mins[0]=(long)Math.max(b.expectedValues.min(0), b.xPos-b.sigma*3-BORDERSIZE );
+		mins[1]= (long)	Math.max(b.expectedValues.min(1), b.yPos-b.sigma*3-BORDERSIZE );
 		
 		
-		maxs[0]=(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3+6 );
-		maxs[1]= (long)	Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 +6);
+		maxs[0]=(long)Math.min(b.expectedValues.max(0), b.xPos+b.sigma*3+BORDERSIZE );
+		maxs[1]= (long)	Math.min(b.expectedValues.max(1), b.yPos+b.sigma*3 +BORDERSIZE);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+//		mins[0]=(long)b.expectedValues.min(0) ;
+//		mins[1]=(long)b.expectedValues.min(1);
+		
+		
+//		maxs[0]=(long)b.expectedValues.max(0);
+//		maxs[1]= (long)	b.expectedValues.max(1);
 		
 	//	System.out.println("3");
 		
@@ -323,7 +341,15 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		
 
   //  	SimplexOptimizer optimizer = new SimplexOptimizer();
-  //  	CMAESOptimizer optimizer= new CMAESOptimizer();
+	    double [][] bounds= new double [startPoint.length][2];
+	    bounds[0][0]=iterableFrame.realMin(0);bounds[1][0]=iterableFrame.realMax(0);
+	    bounds[0][1]=iterableFrame.realMin(1);bounds[1][1]=iterableFrame.realMax(1);
+	    
+	    double []lowerB={iterableFrame.realMin(0),iterableFrame.realMin(1)};
+	    double []upperB={iterableFrame.realMax(0),iterableFrame.realMax(1)};
+	    
+//	    BOBYQAOptimizer optimizer= new BOBYQAOptimizer(6);
+   // 	CMAESOptimizer optimizer= new CMAESOptimizer(0,null,bounds);
   //  	NonLinearConjugateGradientOptimizer optimizer
    // 	= new NonLinearConjugateGradientOptimizer(ConjugateGradientFormula.POLAK_RIBIERE);
   //  	optimizer.setInitialStep(0.001);
@@ -348,7 +374,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		if(findSigma&& !isVolume) b.newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[2],0.5 )));
 		if(findSigma&& isVolume) b.newSig=Math.max(b.minSigma,Math.min(b.maxSigma,Math.pow(output[3],0.5 )));
 		
-		 b.newPK=b.newInten/totalInten;
+		b.newPK=(b.newInten/totalInten);
+		
 		
 
  	
@@ -454,16 +481,31 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	  //  	}
 		}
 		
+		for(Blob b:trackables){
+			b.backInten=totalInten*backProb;
+			b.totalInt=totalInten;
+		}
+		
 		
 		return change;
 		
 	}
 
+	public int calcNumberOfPixels(Interval img){
+		int akku=1;
+		
+		for(int i=0;i<img.numDimensions();i++ ){
+			akku*=((int)img.max(i)-(int)img.min(i));
+		}
+			
+		return akku;
+	}
+	
 	protected double doOptimizationSingleScale( List<Blob> trackables,
 			RandomAccessibleInterval <IT> movieFrame,  double qualityT, int constBackGround,
 			int maxIterations, BlobSession<?> session){
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();	
-		Double backProb=1.0;
+		double backProb=1.0;
 		
 		
 		for(Blob b:trackables){
@@ -479,10 +521,14 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			double ti=0;
 			for(int i=0;i<maxIterations;i++){
 				backProb=1.0;
-				for(Blob b:trackables)
-					backProb-=b.pK;	
+				
 				
 				IterableRandomAccessibleInterval<IT> iFrame= makeIterableFrame( movieFrame,  trackables);
+				int nop=calcNumberOfPixels(iFrame);
+				for(Blob b:trackables){
+					backProb-=b.pK;	
+					b.numberOfPixels=nop;
+				}
 				
 			//	backProb=1.0;	
 			//	for(Blob b:trackables){
@@ -490,20 +536,20 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			//		backProb-=b.pK;
 			//	}
 				
-					long eTime0= System.nanoTime();
+	//				long eTime0= System.nanoTime();
 					ti = doEStep(trackables,backProb,iFrame,  constBackGround);
-			//		ImageJFunctions.show (trackables.get(0).expectedValues, "ev");
+			//		ImageJFunctions.show (trackables.get(0).expectedValues, "ev");					
 			//		IJ.error("stop");
-					long eTime1= System.nanoTime();
+		//			long eTime1= System.nanoTime();
 					double change=0;
 			
-					long mTime0= System.nanoTime();
+	//				long mTime0= System.nanoTime();
 					change=this.doMstep(ti, trackables,backProb, iFrame, session);
 					//System.out.println("value:"+ trackables.get(0).localLogLikelihood());
-					long mTime1= System.nanoTime();
+	//				long mTime1= System.nanoTime();
 					
-					mTime +=mTime1-mTime0;
-					eTime +=eTime1-eTime0;
+		//			mTime +=mTime1-mTime0;
+		//			eTime +=eTime1-eTime0;
 					
 		//			System.out.println("change:" +change);		
 					Model.getInstance().depositMsg("change: "+change);
@@ -511,11 +557,17 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 				
 					if(change<qualityT ||!Model.getInstance().isCurrentlyTracking()) break;
 					
+					
+			//		for(Blob b:trackables){
+					//	b.iterations=Math.max(b.iterations, i);
+			//			backProb-=b.pK;
+			//		}
+					
 			}
-			long time1= System.nanoTime();
-			long time= (time1-time0)/1000000;
-			eTime/=1000000;
-			mTime/=1000000;
+	//		long time1= System.nanoTime();
+	//		long time= (time1-time0)/1000000;
+	//		eTime/=1000000;
+	//		mTime/=1000000;
 			
 	//		System.out.println("totalTime:" +time+ "  fraction E:"+ ((double)eTime/(double)time)+ "  fraction M:"+ ((double)mTime/(double)time) );
 

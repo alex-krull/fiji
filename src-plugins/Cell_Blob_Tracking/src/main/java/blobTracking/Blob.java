@@ -55,7 +55,10 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public double newPK=0;
 	public double newInten=0;
 	public int iterations=0;
-	
+	public double backInten=0;
+	public int numberOfPixels=0;
+	public double totalInt=0;
+
 	
 	public Img<FloatType> expectedValues=null;
 	public IterableRandomAccessibleInterval <FloatType> expectedValuesRoi;
@@ -101,10 +104,12 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		return akku;
 	}
 	
+	
+	
 	public double pXunderK(int x, int y, int z,
 			double px, double py, double pz, double ps, double psz,
 			double denominator, double xyToZ){
-		//return ImglibTools.gaussPixelIntegral(x, y, xPos, yPos, sigma)/denominator;
+		//return ImglibTools.gaussPixelIntegral(x, y, px, py, sigma)/denominator;
 		return ImglibTools.gaussPixelIntegral2dIn3d(x, y, z* xyToZ
 				, px, py, pz, ps, psz)/denominator;
 	}
@@ -133,7 +138,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
     		
     		double tx=xPos;
     		double ty=yPos;
-    		double dist= (tx-px)*(tx-px) + (ty-py)*(ty-py);
+    //		double dist= (tx-px)*(tx-px) + (ty-py)*(ty-py);
     //		System.out.println("dist:"+dist+ " (ps*3+1)*(ps*3+1):"+(ps*3+1)*(ps*3+1) + " ps:"+ps);
     //		if(dist>(ps*3+2)*(ps*3+2)) continue;
     		
@@ -141,7 +146,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
     				px,py,pz,ps,psz,
     				denominator, xyToZ);  		
     		
-    		if(a<0.00000000001) continue;
+    		if(a<1e-100) continue;
     		result+=Math.log(a)*b;
     		
     	}
@@ -289,17 +294,24 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		
 		
 		String result;
-		result= this.frameId + "\t"
-				+ this.sequenceId + "\t" 
-				+ df.format(this.xPos)+ "\t"
-				+ df.format( this.yPos)+ "\t"
-				+ df.format(this.zPos)+ "\t"
-				+ df.format(this.sigma)+ "\t"
-				+ df.format(this.sigmaZ)+"\t"
-				+ df.format(this.maxSigma)+"\t"
-				+ String.valueOf(fixedSigma)+"\t"
-				+ String.valueOf(coup)+"\t"
-				+ df.format(this.inten);
+		result= this.frameId + "\t"							// column 1
+				+ this.sequenceId + "\t" 					// column 2
+				+ df.format(this.xPos)+ "\t"				// column 3	
+				+ df.format( this.yPos)+ "\t"				// column 4
+				+ df.format(this.zPos)+ "\t"				// column 5
+				+ df.format(this.sigma)+ "\t"				// column 6
+				+ df.format(this.sigmaZ)+"\t"				// column 7
+				+ df.format(this.maxSigma)+"\t"				// column 8
+				+ String.valueOf(fixedSigma)+"\t"			// column 9
+				+ String.valueOf(coup)+"\t"					// column 10
+				+ df.format(this.inten)+"\t"				// column 11
+				+ df.format(this.backInten/((double)this.numberOfPixels))+"\t"	// column 12
+				+ df.format(this.backInten)+"\t"			// column 13
+				+ df.format(this.numberOfPixels)+"\t"		// column 14
+				+ df.format(this.pK)+"\t"		// column 15
+				+ df.format(this.totalInt)+"\t"		// column 16
+				+ df.format(this.totalInt*this.pK)	+"\t"		// column 17
+				+ df.format(this.iterations);			// column 18
 		result= result.replace(",", ".");
 		return result;
 	}
