@@ -355,7 +355,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
   //  	optimizer.setInitialStep(0.001);
     	
     
-
+	    //  	SimplexOptimizer optimizer = new SimplexOptimizer();
 	//	optimizer.setSimplex(new   MultiDirectionalSimplex(startPoint.length));
 	//    optimizer.setSimplex(new   NelderMeadSimplex(startPoint.length));
 	    
@@ -366,6 +366,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
     //	optimizer.setConvergenceChecker(new myConvChecker());
     	
 		output= optimizer.optimize(10000000, b, GoalType.MAXIMIZE, startPoint).getPoint();
+			
 	//	}catch(Exception e){};
 		
 		b.newX=output[0];
@@ -495,7 +496,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		int akku=1;
 		
 		for(int i=0;i<img.numDimensions();i++ ){
-			akku*=((int)img.max(i)-(int)img.min(i));
+			akku*=(((int)img.max(i)-(int)img.min(i))+1);
 		}
 			
 		return akku;
@@ -552,8 +553,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		//			eTime +=eTime1-eTime0;
 					
 		//			System.out.println("change:" +change);		
-					Model.getInstance().depositMsg("change: "+change);
-					Model.getInstance().makeChangesPublic();
+		//			Model.getInstance().depositMsg("change: "+change);
+		//			Model.getInstance().makeChangesPublic();
 				
 					if(change<qualityT ||!Model.getInstance().isCurrentlyTracking()) break;
 					

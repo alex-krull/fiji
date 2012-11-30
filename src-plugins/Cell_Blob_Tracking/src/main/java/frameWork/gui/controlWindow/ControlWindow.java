@@ -1420,10 +1420,16 @@ public class AltTrackingListener implements ActionListener{
 	}
 
 	public void appendText(String arg){
+		
+		int diff=text.getText().length()-1000;
+		if(diff>0) text.setText(text.getText().substring(text.getText().length()-1000));
+		
 		if(arg.length()>0){
 		text.append(arg);
 		text.select(text.getText().length(), text.getText().length());
 		}
+		
+		
 	}
 	
 	public class ResetWindowsListener implements ActionListener{

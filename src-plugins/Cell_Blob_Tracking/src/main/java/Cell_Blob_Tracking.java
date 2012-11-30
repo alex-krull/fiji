@@ -13,6 +13,7 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import blobTracking.CompatiblePolicy;
 import blobTracking.EMCCDBlobPolicy;
+import blobTracking.EMCCDGPOBlobPolicy;
 import blobTracking.MaximumLikelihoodBlobPolicy;
 import frameWork.Controller;
 import frameWork.Model;
@@ -158,6 +159,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		cont.addPolicy(new MaximumLikelihoodBlobPolicy<IT>());
 		cont.addPolicy("Blob", new CompatiblePolicy<IT>());
 		cont.addPolicy(new EMCCDBlobPolicy<IT>());
+		cont.addPolicy(new EMCCDGPOBlobPolicy<IT>());
 		
 		System.out.println("creating ViewModel...");
 		ViewModel<IT> vm= new ViewModel<IT>( model,cont);

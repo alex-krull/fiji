@@ -26,6 +26,9 @@ import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.OpenMapRealMatrix;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.special.Erf;
+import org.apache.commons.math.linear.DecompositionSolver;
+import org.apache.commons.math.linear.LUDecompositionImpl;
+
 
 import tools.ErlangDist;
 import tools.HighQualityRandom;
@@ -113,7 +116,9 @@ public class Blob_Simulator implements PlugIn{
 		//imp.show();
 		
 		
-		
+		RealMatrix fi= getFischerMatrixEMCCD(image , xPos, yPos, sig, blobFlux, backFlux,gain);
+		DecompositionSolver solver = new LUDecompositionImpl(fi).getSolver();
+		System.out.println("inv:"+solver.getInverse().toString());
 		
 		
 	//	doErlangExperiment(2,300);
@@ -139,7 +144,7 @@ public class Blob_Simulator implements PlugIn{
 		Gamma g= new Gamma( 1.0,1.0, mT);
 	//	rand= new  HighQualityRandom(System.currentTimeMillis());
 	//	Random rand= new SecureRandom();
-		boolean erl=false;
+		boolean erl=true;
 		int satCount=0;
 		int i=0;
 		while(it.hasNext()){
@@ -159,7 +164,8 @@ public class Blob_Simulator implements PlugIn{
 			int sample=0;		
 			if(value>0){
 				
-				sample= (int)g.nextDouble((double) value,1.0/gain)+1;
+				while(sample==0)
+					sample= (int)g.nextDouble((double) value,1.0/gain);
 	/*			
 				try {
 					GammaDistributionImpl erl= new GammaDistributionImpl( value, gain);
@@ -233,7 +239,7 @@ public class Blob_Simulator implements PlugIn{
 		RandomAccess <UnsignedShortType> ra =image.randomAccess();
 		double sq= Math.sqrt(2);
 		
-		double nop=(int) image.dimension(0)*(int)image.dimension(1);
+		double nop=(int)(image.max(0)-image.min(0)+1)*(image.max(1)-image.min(1)+1);
 		
 		double pixelBackFlux=backFlux/nop;
 		double normBlobFlux		=flux/ImglibTools.gaussIntegral(image.min(0)-0.5,image.min(1)-0.5,image.max(0)+0.5,image.max(1)+0.5,posX,posY,sig );
@@ -495,10 +501,10 @@ public class Blob_Simulator implements PlugIn{
 			int sample=0;
 //			mean=Math.max(0.0000000000001, mean);		
 			
-//			sample=PoissonDraw( mean,  r);
+			sample=PoissonDraw( mean,  r);
 			
 			
-			sample= p.nextInt(mean);
+	//		sample= p.nextInt(mean);
 			sample= Math.min(sample, (int)Math.pow(2, 16)-1);
 			
 			it.get().set(sample);
