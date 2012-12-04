@@ -15,6 +15,7 @@ import blobTracking.CompatiblePolicy;
 import blobTracking.EMCCDBlobPolicy;
 import blobTracking.EMCCDGPOBlobPolicy;
 import blobTracking.MaximumLikelihoodBlobPolicy;
+import blobTracking.MultiStartBlobPolicy;
 import frameWork.Controller;
 import frameWork.Model;
 import frameWork.MyTool;
@@ -160,6 +161,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		cont.addPolicy("Blob", new CompatiblePolicy<IT>());
 		cont.addPolicy(new EMCCDBlobPolicy<IT>());
 		cont.addPolicy(new EMCCDGPOBlobPolicy<IT>());
+		cont.addPolicy(new MultiStartBlobPolicy<IT>(new MaximumLikelihoodBlobPolicy<IT>(), 2));
 		
 		System.out.println("creating ViewModel...");
 		ViewModel<IT> vm= new ViewModel<IT>( model,cont);

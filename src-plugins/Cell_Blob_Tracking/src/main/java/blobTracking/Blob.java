@@ -96,9 +96,9 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 			zmin=(int)img.min(2);
 		}
 		for(double i=zmin;i<=zmax;i++){
-	//		akku+=ImglibTools.gaussIntegral2dIn3d(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5, i*Model.getInstance().getXyToZ(),
-	//				px, py, pz, ps, psz);
-			akku+=ImglibTools.gaussIntegral(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5, px, py, ps);
+			akku+=ImglibTools.gaussIntegral2dIn3d(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5, i*Model.getInstance().getXyToZ(),
+					px, py, pz, ps, psz);
+//			akku+=ImglibTools.gaussIntegral(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5, px, py, ps);
 		
 		}
 		this.denom=akku;				
@@ -110,9 +110,9 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public double pXunderK(int x, int y, int z,
 			double px, double py, double pz, double ps, double psz,
 			double denominator, double xyToZ){
-		return ImglibTools.gaussPixelIntegral(x, y, px, py, sigma)/denominator;
-//		return ImglibTools.gaussPixelIntegral2dIn3d(x, y, z* xyToZ
-//				, px, py, pz, ps, psz)/denominator;
+		//return ImglibTools.gaussPixelIntegral(x, y, px, py, sigma)/denominator;
+		return ImglibTools.gaussPixelIntegral2dIn3d(x, y, z* xyToZ
+				, px, py, pz, ps, psz)/denominator;
 	}
 	
 	

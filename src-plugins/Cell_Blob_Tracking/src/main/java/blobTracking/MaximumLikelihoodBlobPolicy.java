@@ -366,7 +366,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
     //	optimizer.setConvergenceChecker(new myConvChecker());
     	
 		output= optimizer.optimize(10000000, b, GoalType.MAXIMIZE, startPoint).getPoint();
-			
+		
+		
 	//	}catch(Exception e){};
 		
 		b.newX=output[0];

@@ -35,7 +35,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 {
-	protected static double  GAIN=30;
+	protected static double  GAIN=300;
 //	private static double  PAG=12.17;
 //	private static double  PAG=11.3;
 	protected static double  PAG=1;
@@ -182,10 +182,10 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			}
 	*/		
 			
-			cursor.get().set((float)value);
+	//		cursor.get().set((float)value);
 			
 			
-	/*		
+			
 				int x= ra.getIntPosition(0);
 				int y= ra.getIntPosition(1);
 				int z= 0;
@@ -202,7 +202,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 					pZero=OtherTools.getErlangProp(0, value, GAIN);
 				}
 					
-		*/	
+		
 			
 			
 			
@@ -235,7 +235,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			newTotalInt+=expected;
 	*/
 				
-	/*
+	
 			double invGain=1.0/GAIN;
 			double temp=Math.sqrt(invGain*flux*(double)value);
 			double missingTerm=0;
@@ -275,7 +275,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 				cursor.get().set((0));
 				calcFlux(totalInten, blobs, x,  y, z);
 			}
-		*/
+		
 			
 		}
 		
@@ -290,6 +290,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 	protected double calcFlux(double totalInten, List<Blob> blobs, int x, int y, int z){
 		double numOfPixels=super.numOfPixelsUsed;
 		
+		
 		double backProb=1;
 		for(Blob b: blobs){
 			backProb-=b.pK;
@@ -301,11 +302,21 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		for(Blob b: blobs){		
 			akku+=b.pXandK(x, y, z, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ, b.denom);
+			
+			if(Double.isNaN(akku)||Double.isNaN(totalInten) || Double.isInfinite(akku*totalInten)){
+	/*			System.out.println("akku:"+akku+" totalInten:"+totalInten+ " x:"+x+ " y:"+y+ " b.denom:"+b.denom+ " b.pXandK:"+ b.pXandK(x, y, z, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ, b.denom));
+				
+				
+				try{ throw new Exception();}
+				catch(Exception e){
+				e.printStackTrace();
+				while(true);
+				}
+	*/			return 0;
+			}
+			
 		}
-		if(Double.isNaN(akku)||Double.isNaN(totalInten) || Double.isInfinite(akku*totalInten)){
-			System.out.println("akku:"+akku+" totalInten:"+totalInten+ " x:"+x+ " y:"+y);
-			return 0;
-		}
+		
 		return akku*totalInten+((totalInten*backProb)/numOfPixels);
 		//return 1;
 	}
@@ -372,6 +383,9 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		double akku=0;
 		int i=0;
 		double akkuCheck=0;
+		
+		
+		
     	while ( cursor.hasNext() )	{
     		cursor.fwd();
     		i++;

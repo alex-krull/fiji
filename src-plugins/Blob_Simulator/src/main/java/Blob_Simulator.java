@@ -144,7 +144,7 @@ public class Blob_Simulator implements PlugIn{
 		Gamma g= new Gamma( 1.0,1.0, mT);
 	//	rand= new  HighQualityRandom(System.currentTimeMillis());
 	//	Random rand= new SecureRandom();
-		boolean erl=true;
+		boolean erl=false;
 		int satCount=0;
 		int i=0;
 		while(it.hasNext()){
@@ -423,7 +423,7 @@ public class Blob_Simulator implements PlugIn{
 		double pixelBackFlux=backFlux/nop;
 		double normBlobFlux		=flux/ImglibTools.gaussIntegral(image.min(0)-0.5,image.min(1)-0.5,image.max(0)+0.5,image.max(1)+0.5,posX,posY,sig );
 		normBlobFlux=flux;
-		//Random r= new Random(1);
+	
 		
 		
 		double temp=flux/(Math.sqrt(2*Math.PI)*sig);
@@ -449,7 +449,7 @@ public class Blob_Simulator implements PlugIn{
 			double db=1;
 			
 	//		mean=Math.max(0.0000000000001, mean);
-			if(mean<0.00000001) continue;
+			if(mean!>0) continue;
 			
 			fischer.setEntry(0, 0, fischer.getEntry(0, 0)+(dx*dx/mean));	
 			fischer.setEntry(0, 1, fischer.getEntry(0, 1)+(dx*dy/mean));
