@@ -12,6 +12,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import net.imglib2.Cursor;
+
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
@@ -124,6 +125,7 @@ public class Blob_Simulator implements PlugIn{
 	//	doErlangExperiment(2,300);
 //		doErlangExperiment(3,300);
 //		doErlangExperiment(4,300);
+		
 	}
 	public Img <UnsignedShortType> makeImg(int xSize, int ySize, int frames, 
 			double xPos, double yPos, double sig,
@@ -449,7 +451,7 @@ public class Blob_Simulator implements PlugIn{
 			double db=1;
 			
 	//		mean=Math.max(0.0000000000001, mean);
-			if(mean!>0) continue;
+			if(mean<=0) continue;
 			
 			fischer.setEntry(0, 0, fischer.getEntry(0, 0)+(dx*dx/mean));	
 			fischer.setEntry(0, 1, fischer.getEntry(0, 1)+(dx*dy/mean));

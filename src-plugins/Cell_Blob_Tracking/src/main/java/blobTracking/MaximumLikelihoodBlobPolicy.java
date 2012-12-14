@@ -32,7 +32,7 @@ import frameWork.Session;
 
 public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends BlobPolicy<IT>{
 
-	private static double  BORDERSIZE=20;
+	private static double  BORDERSIZE=2;
 	protected long numOfPixelsUsed;
 
 
@@ -42,7 +42,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		return "M.L.GaussianTracking";
 	}
 
-	private IterableRandomAccessibleInterval<IT> makeIterableFrame(RandomAccessibleInterval <IT> movieFrame,  List <Blob> trackables){
+	protected IterableRandomAccessibleInterval<IT> makeIterableFrame(RandomAccessibleInterval <IT> movieFrame,  List <Blob> trackables){
 		boolean isVolume= movieFrame.numDimensions()>2;
 		long[] mins=  {Long.MAX_VALUE,Long.MAX_VALUE,0};	
 		int max2=1;
