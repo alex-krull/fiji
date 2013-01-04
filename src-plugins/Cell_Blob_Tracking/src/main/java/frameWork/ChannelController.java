@@ -70,7 +70,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 //	}
 	
 	public ChannelController( Model<IT> mod,Session<T,IT> tc, Policy<T,IT> pol ){
-		rand = new SecureRandom();
+		
 		selectedIdList=new ArrayList<Integer>();
 		model =mod;
 		trackingChannel=tc;
@@ -119,9 +119,13 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			//	Model.getInstance().rwLock.writeLock().lock();
 			// newTrackables=trackingChannel.getTrackablesForFrame(i);
 				
+	//			trackingCandidates=	getSelectedTrackables( i );
+				
+				
 			 if(i!=startingFrame){
 				 trackingCandidates.clear();
-				 List<T> newTrackables= trackingChannel.getFrame(i-1).cloneTrackablesForFrame(i);		
+				 List<T> newTrackables= trackingChannel.getFrame(i-1).cloneTrackablesForFrame(i);	
+				 
 				 for(T t: newTrackables){
 						
 					if(selectedIdList.contains( t.sequenceId))
@@ -130,6 +134,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			 }
 				
 			
+			 rand= new Random(i);
 				for(T t: trackingCandidates){
 					Blob b = (Blob)t;
 	//				b.xPos=0.5*rand.nextGaussian()+(double)(model.getFrame(0, 0).getFrameView().dimension(0)-1)/2.0;

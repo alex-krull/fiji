@@ -32,7 +32,7 @@ import frameWork.Session;
 
 public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends BlobPolicy<IT>{
 
-	private static double  BORDERSIZE=2;
+	private static double  BORDERSIZE=3;
 	protected long numOfPixelsUsed;
 
 

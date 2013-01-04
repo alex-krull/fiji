@@ -175,9 +175,19 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 			inten= Double.valueOf(values[9]);
 		}
 		
+	
+		
 		Blob nB=new Blob(sId, fNum, x, y, z, sigma, sessionId, !sigmaConst, sigmaZ, maxSigma);
 		nB.inten=inten;
 		nB.coupled=coupled;
+		
+		if(values.length>11){
+			nB.backInten=Double.valueOf(values[12]);
+			double temp=(Double.valueOf(values[13]));
+			nB.numberOfPixels=(int)temp;
+			nB.pK=Double.valueOf(values[14]);
+			nB.totalInt=Double.valueOf(values[15]);
+		}
 		
 		return nB;
 	}

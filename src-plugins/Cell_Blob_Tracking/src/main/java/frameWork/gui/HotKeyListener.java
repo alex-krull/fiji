@@ -75,6 +75,10 @@ public class HotKeyListener implements KeyListener {
 		  case KeyEvent.VK_W:
 			  viewModel.resetWindowsPositions();
 			  return;
+			  
+		  case KeyEvent.VK_Q:
+			  viewModel.getController().optimizeAllFrames(viewModel);
+			  return;
 	
 		  
 		        

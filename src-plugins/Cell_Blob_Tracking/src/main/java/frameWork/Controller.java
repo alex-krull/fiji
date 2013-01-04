@@ -19,6 +19,9 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import frameWork.Sequence;
+import frameWork.Trackable;
+
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -226,6 +229,54 @@ public void optimizeFrame(int frameNumber){
 	toggleTracking(frameNumber,false,frameNumber);
 }
 
+
+public void optimizeAllFrames(ViewModel<IT> vm){
+	
+	
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
+	
+	List<Sequence<? extends Trackable>> vs = vm.getVisibleSequences();
+	for(Sequence<? extends Trackable> t: vs){
+		
+	ArrayList<Integer> sids= new ArrayList<Integer>();
+	sids.add(new Integer(t.id));
+	this.setSelectionList(sids);
+	
+	
+		
+		
+			if(!Model.getInstance().isCurrentlyTracking()){
+						
+				cc.startTrackingSingleThread(0, false, autosave,model.getNumberOfFrames()-1);
+			}
+			
+		
+		model.makeStructuralChange();		
+		model.makeChangesPublic();
+	
+	
+	}
+}
+/*
+public void optimizeAllFrames(){
+	
+	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
+	
+	
+	for(int i=0;i<model.getNumberOfFrames();i++){
+		
+		
+			if(!Model.getInstance().isCurrentlyTracking()){
+						
+				cc.startTrackingSingleThread(i, false, autosave,i);
+			}
+			
+		
+		model.makeStructuralChange();
+		model.makeChangesPublic();
+	}
+}
+*/
 public ChannelController<? extends Trackable,IT> getCurrentSessionController(){
 	return channelControllers.get(selectedTCId);
 }
@@ -234,8 +285,7 @@ public void toggleTracking(int frameId, boolean multiscale, int lastFrame){
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(selectedTCId);	
 	if(cc!=null)
 		if(!Model.getInstance().isCurrentlyTracking()){
-			cc.startTracking(frameId, multiscale, autosave,lastFrame);
-			
+			cc.startTracking(frameId, multiscale, autosave,lastFrame);			
 			alternateMethodUsed=multiscale;
 		}
 		else cc.stopTracking();
