@@ -42,6 +42,7 @@ public class  Controller< IT extends  NumericType<IT> & NativeType<IT> & RealTyp
 	private int selectedTCId;
 	private volatile boolean alternateMethodUsed=false;
 	
+	
 	protected Model<IT> model;
 
 	private final SortedMap <Integer, ChannelController <? extends Trackable,IT> > channelControllers;

@@ -71,9 +71,10 @@ public class Blob_Simulator implements PlugIn{
 		gd.addNumericField("y-position", 3, 0);
 		gd.addNumericField("sigma", 1, 0);
 		gd.addNumericField("flux of blob", 100, 0);
-		gd.addNumericField("flux of background", 100, 0);
+		gd.addNumericField("flux of background per pixel", 1, 0);
 		gd.addNumericField("emccd gain", 100, 0);
 		gd.addNumericField("pre amp", 1, 5);
+		gd.addNumericField("read out noise std", 0, 5);
 		
 		gd.showDialog();
 		
@@ -92,9 +93,10 @@ public class Blob_Simulator implements PlugIn{
 		double yPos=gd.getNextNumber();
 		double sig=gd.getNextNumber();
 		double blobFlux=gd.getNextNumber();
-		double backFlux=gd.getNextNumber();
+		double backFlux=gd.getNextNumber()*(double)(xSize*ySize);
 		gain = gd.getNextNumber();
 		double pag=gd.getNextNumber();
+		double ron=gd.getNextNumber();
 
 	
 		Img <UnsignedShortType> image= makeImg( xSize,  ySize,  frames, 
@@ -106,7 +108,7 @@ public class Blob_Simulator implements PlugIn{
 		ImagePlus impTemp2 = impTemp.duplicate();
 		impTemp2.show();
 			
-		applyEMCCD(image, gain, new HighQualityRandom(1),pag);
+		applyEMCCD(image, gain, new HighQualityRandom(1),pag,ron);
 			
 		//ImagePlus imp2= new ImagePlus();
 		
@@ -135,12 +137,38 @@ public class Blob_Simulator implements PlugIn{
 		ImgFactory<UnsignedShortType> imgFactory = new ArrayImgFactory<UnsignedShortType>();
 		long[] dims = {xSize,ySize,frames};
 		Img <UnsignedShortType> image= imgFactory.create(dims, new UnsignedShortType());
-		fillImage(image,xPos,yPos,sig,blobFlux,backFlux,r);
+		
+//		fillImage(image,xPos+0,yPos+0,sig,blobFlux,backFlux,r);
+		
+		//fillImage(image,xPos-8,yPos-4,sig,blobFlux,0,r);
+		//fillImage(image,xPos-8,yPos+0,sig,blobFlux,0,r);
+		//fillImage(image,xPos-8,yPos+4,sig,blobFlux,0,r);
+/*		fillImage(image,xPos-4,yPos-4,sig,blobFlux,0,r);
+		fillImage(image,xPos-4,yPos+0,sig,blobFlux,0,r);
+		fillImage(image,xPos-4,yPos+4,sig,blobFlux,0,r);
+		fillImage(image,xPos-0,yPos-4,sig,blobFlux,0,r);
+		fillImage(image,xPos+0,yPos+0,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-0,yPos+4,sig,blobFlux,0,r);
+		fillImage(image,xPos+4,yPos-4,sig,blobFlux,0,r);
+		fillImage(image,xPos+4,yPos+0,sig,blobFlux,0,r);
+		fillImage(image,xPos+4,yPos+4,sig,blobFlux,0,r);
+*/		
+		
+
+		fillImage(image,xPos-2,yPos-2,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+2,yPos-2,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-2,yPos+2,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+2,yPos+2,sig,blobFlux,backFlux,r);
+		
 		if(emccd) applyEMCCD(image, gain, r,1);
 		return image;
 	}
 	
 	public void applyEMCCD(Img <UnsignedShortType> img, double gain, Random rand, double pag){
+		applyEMCCD( img,  gain,  rand,  pag, 0);
+	}
+	
+	public void applyEMCCD(Img <UnsignedShortType> img, double gain, Random rand, double pag, double ron){
 		
 		Cursor<UnsignedShortType> it=img.cursor();
 		Gamma g= new Gamma( 1.0,1.0, mT);
@@ -186,7 +214,8 @@ public class Blob_Simulator implements PlugIn{
 			System.out.println("SATCOUNT:"+satCount);
 		}
 		
-		sample/=pag;
+		
+		sample=(int)(((double)sample+rand.nextGaussian()*ron)/pag);
   		sample= Math.min(sample, (int)Math.pow(2, 16)-1);
 			it.get().set(sample);
 	}
@@ -503,8 +532,8 @@ public class Blob_Simulator implements PlugIn{
 			int sample=0;
 //			mean=Math.max(0.0000000000001, mean);		
 			
-			sample=PoissonDraw( mean,  r);
-			
+			sample=PoissonDraw( mean,  r)+ it.get().get();
+		
 			
 	//		sample= p.nextInt(mean);
 			sample= Math.min(sample, (int)Math.pow(2, 16)-1);
@@ -514,13 +543,15 @@ public class Blob_Simulator implements PlugIn{
 	}
 
 	public int PoissonDraw(double mean, Random r){
-		PoissonDistributionImpl poissonDist= new PoissonDistributionImpl(mean);				
-		poissonDist.reseedRandomGenerator(r.nextLong());
+		
 		
 		int sample=0;
 		if(0>=mean) sample=0;	
 		else{
 			try {
+				
+				PoissonDistributionImpl poissonDist= new PoissonDistributionImpl(mean);				
+				poissonDist.reseedRandomGenerator(r.nextLong());
 				
 				sample=poissonDist.sample();
 			} catch (MathException e) {

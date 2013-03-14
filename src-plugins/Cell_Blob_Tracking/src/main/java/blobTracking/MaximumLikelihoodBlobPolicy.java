@@ -300,6 +300,53 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 		System.out.println("b.yPos: "+ b.yPos);
 	*/	
 		b.expectedValuesRoi=new IterableRandomAccessibleInterval<FloatType>(Views.interval(b.expectedValues,mins,maxs ));
+		
+		
+		
+		
+		
+		
+		
+		double likeBefore=b.localLogLikelihood(b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
+		
+		double result=0;
+		Cursor<FloatType> cursor= b.expectedValuesRoi.cursor();	
+		double xyToZ= Model.getInstance().getXyToZ();
+		double xg=0;;
+		double yg=0;
+		double zg=0;
+		double akkug=0;
+    	while ( cursor.hasNext() )	{
+    		
+    		cursor.fwd();
+    		double e=(cursor.get().get());
+    		double xPos=cursor.getIntPosition(0);double yPos=cursor.getIntPosition(1);double zPos=0;
+    		if(isVolume) zPos=cursor.getIntPosition(2);
+    		
+    		xg+=e*xPos;
+    		yg+=e*yPos;
+    		zg+=e*zPos;
+    		akkug+=e;
+   
+    		
+    	}
+    	xg/=akkug; yg/=akkug; zg/=akkug;
+    	
+		
+    	double likeAfter=b.localLogLikelihood(xg, yg, zg, b.sigma, b.sigmaZ);
+		
+		
+		
+		if(likeBefore<likeAfter){
+			b.xPos=xg;
+			b.yPos=yg;
+			b.zPos=zg;
+		
+		}
+	
+		
+		
+		
 //		}catch(Exception e){
 	//	System.out.println("4");
 			

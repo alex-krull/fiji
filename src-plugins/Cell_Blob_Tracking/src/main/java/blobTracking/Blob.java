@@ -91,16 +91,21 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		double akku=0;
 		int zmax=0;
 		int zmin=0;
+		
+		
+		
 		if(img.numDimensions()>2 ){
 			zmax=(int)img.max(2);
 			zmin=(int)img.min(2);
 		}
+	
 		for(double i=zmin;i<=zmax;i++){
+		
 			akku+=ImglibTools.gaussIntegral2dIn3d(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5, i*Model.getInstance().getXyToZ(),
 					px, py, pz, ps, psz);
 //			akku+=ImglibTools.gaussIntegral(img.min(0)-0.5,img.min(1)-0.5,img.max(0)+0.5,img.max(1)+0.5, px, py, ps);
-		
 		}
+	
 		this.denom=akku;				
 		return akku;
 	}

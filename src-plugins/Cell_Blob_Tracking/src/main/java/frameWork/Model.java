@@ -48,6 +48,7 @@ private int intensityOffset=0;
 private double xyToZ=3.5;
 public ReentrantReadWriteLock rwLock;
 private boolean currentlyTracking=false;
+private long startedTrackingAt;
 
 private volatile StringBuffer msgBuffer=new StringBuffer();
 
@@ -58,6 +59,12 @@ public boolean isCurrentlyTracking() {
 
 public void setCurrentlyTracking(boolean currentlyTracking) {
 	this.currentlyTracking = currentlyTracking;
+	if(currentlyTracking)startedTrackingAt=System.currentTimeMillis();
+	else{
+		long ct=System.currentTimeMillis();
+		System.out.println("timeTaken:" +(ct-startedTrackingAt)/1000.0+"\n");
+	}
+	
 }
 
 public static Model<?> getInstance(){

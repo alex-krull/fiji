@@ -36,9 +36,9 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 
 {
 	protected static double  GAIN=300;
-	private static double  PAG=12.17;
+//	private static double  PAG=12.17;
 //	private static double  PAG=11.3;
-//	protected static double  PAG=1;
+	protected static double  PAG=1;
 
 	
 

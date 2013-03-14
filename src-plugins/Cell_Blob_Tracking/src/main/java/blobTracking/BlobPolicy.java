@@ -274,6 +274,8 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		Blob result=new Blob(toCopy.sequenceId, toCopy.frameId, toCopy.xPos, toCopy.yPos, toCopy.zPos,
 				toCopy.sigma, toCopy.channel, toCopy.autoSigma,toCopy.sigmaZ, toCopy.maxSigma);
 		result.pK=toCopy.pK;
+		result.inten=toCopy.inten;
+		result.backInten=toCopy.backInten;
 		result.sigma=toCopy.sigma;
 		result.sigmaZ=toCopy.sigmaZ;
 		result.minSigma=toCopy.minSigma;
