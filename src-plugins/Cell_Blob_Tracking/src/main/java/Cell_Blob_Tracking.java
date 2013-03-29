@@ -2,6 +2,7 @@
 
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.io.FileInfo;
 
@@ -184,6 +185,24 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		
 		
+		
+	}
+	
+	public static void main(String[] args) {
+		// set the plugins.dir property to make the plugin appear in the Plugins menu
+		Class<?> clazz = Cell_Blob_Tracking.class;
+		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
+		String pluginsDir = url.substring(5, url.length() - clazz.getName().length() - 6);
+		System.setProperty("plugins.dir", pluginsDir);
+
+		// start ImageJ
+		new ImageJ();
+
+		// open the Clown sample
+		ImagePlus image = IJ.openImage("http://imagej.net/images/clown.jpg");
+		image.show();
+
+		// run the plugin
 		
 	}
 
