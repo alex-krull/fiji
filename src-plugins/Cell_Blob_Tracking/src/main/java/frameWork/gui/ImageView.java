@@ -1,5 +1,5 @@
 /*******************************************************************************
- * This software implements the tracking method descibed in the following paper: 
+ * This software implements the tracking method described in the following paper: 
  * "A divide and conquer strategy for the maximum likelihood localization of ultra low intensity objects"
  *  By Alexander Krull et Al, 2013. (Enter final journal)
  *

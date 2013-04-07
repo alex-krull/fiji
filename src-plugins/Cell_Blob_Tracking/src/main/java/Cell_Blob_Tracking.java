@@ -1,5 +1,5 @@
 /*******************************************************************************
- * This software implements the tracking method descibed in the following paper: 
+ * This software implements the tracking method described in the following paper: 
  * "A divide and conquer strategy for the maximum likelihood localization of ultra low intensity objects"
  *  By Alexander Krull et Al, 2013. (Enter final journal)
  *
@@ -162,12 +162,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		long time0= System.nanoTime();
 		ImagePlus imp=IJ.getImage();
-//		Img <IT> img = ImagePlusAdapter.wrap(imp);
-//		ImageJFunctions.show(ImglibTools.differenceOfGaussians(img, 2.5, 1.5));
-//		ImageJFunctions.show(ImglibTools.differenceOfGaussians(img, 2.2, 1.8));
-	//	ImageJFunctions.show(ImglibTools.differenceOfGaussians(img, 2.1, 1.9));
-//		ImageJFunctions.show(ImglibTools.differenceOfGaussians(img, 2.05, 1.95));
-	//	ImglibTools.generatePyramid(img, 1,1,1);
+
 		
 		FileInfo fi= imp.getOriginalFileInfo();
 		
@@ -203,7 +198,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		this.addWindows(model, imp, vm);
 		
 		
-//		System.out.println("loading traces...");
+
 		
 	
 		
@@ -222,9 +217,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		// start ImageJ
 		new ImageJ();
 
-		// open the Clown sample
-		ImagePlus image = IJ.openImage("http://imagej.net/images/clown.jpg");
-		image.show();
+		
 
 		// run the plugin
 		

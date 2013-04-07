@@ -1,5 +1,5 @@
 /*******************************************************************************
- * This software implements the tracking method descibed in the following paper: 
+ * This software implements the tracking method described in the following paper: 
  * "A divide and conquer strategy for the maximum likelihood localization of ultra low intensity objects"
  *  By Alexander Krull et Al, 2013. (Enter final journal)
  *
@@ -170,11 +170,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 	//	System.out.println(s);
 	
 		String[] values=s.split("\t");
-	//	System.out.println(values.length);
-		
-	//	System.out.println(values[1]);
-	//	System.out.println(values[2]);
-	//	System.out.println(values[0]);
+	
 		
 		
 		int fNum= Integer.valueOf(values[0]); 
@@ -227,7 +223,8 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		if(e.getID()==MouseEvent.MOUSE_PRESSED && e.getButton()==MouseEvent.BUTTON1 && e.getClickCount()==1){
 			if(pos[0]>=0&&pos[1]>=0)pos[2]=-1;
 			selectedSequenceId=trackingChannel.selectAt((int)pos[0],(int) pos[1],(int) pos[2],(int) pos[3],(int) pos[4]);	 
-		//	System.out.println("        new selected Sequence ID:"+selectedSequenceId);
+		
+			
 			if(!e.isShiftDown()){
 				selectedIdList.clear();			
 			}
@@ -268,7 +265,7 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 				trackingChannel.addTrackable(nB);
 			}
 			
-			//if(e.getClickCount()>1) trackingChannel.optimizeFrame((int)pos[3], false, selectedIdList);
+			
 			model.makeStructuralChange();
 			
 		}
