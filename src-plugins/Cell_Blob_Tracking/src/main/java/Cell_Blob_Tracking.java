@@ -56,72 +56,69 @@ import frameWork.gui.controlWindow.GlobalOptionsDialog;
 
 public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>>extends MyTool{
 
-	
-	
+
+
 	private String ijTool;
 	private String trackingTool;
 	@Override
 	public String getToolName(){
 		return "Tracking Tool";
 	}
-	
-	
-		public void addWindows(Model<IT> model, ImagePlus imp, ViewModel<IT> viewModel) {
-			
-			try {
-	            // Set cross-platform Java L&F (also called "Metal")
-	        UIManager.setLookAndFeel(
-	            UIManager.getSystemLookAndFeelClassName());
-	    } 
-	    catch (UnsupportedLookAndFeelException e) {
-	       // handle exception
-	    }
-	    catch (ClassNotFoundException e) {
-	       // handle exception
-	    }
-	    catch (InstantiationException e) {
-	       // handle exception
-	    }
-	    catch (IllegalAccessException e) {
-	       // handle exception
-	    }
-			
-			//super.run();
-			
-			
-			double initZoom=imp.getCanvas().getMagnification();
-			
-			
-			
-			ControlWindow<IT> cw= new ControlWindow<IT>(model, "Control Window",viewModel);
-	        viewModel.addViewWindow(cw);
-	        
-	        MainWindow<IT> mw=new MainWindow<IT>(imp, model, viewModel);
-	        //viewModel.addViewWindow(mw,initZoom);
-	        viewModel.addMainWindow(mw);
-	        
-	        if(model.isVolume()){
-	        
-	        	
-	        System.out.println("adding projections");
-	      
-	        viewModel.addMaxZWindow(new MaxProjectionZ<IT>(model, viewModel));
+
+
+	public void addWindows(Model<IT> model, ImagePlus imp, ViewModel<IT> viewModel) {
+
+		try {
+			// Set cross-platform Java L&F (also called "Metal")
+			UIManager.setLookAndFeel(
+					UIManager.getSystemLookAndFeelClassName());
+		} 
+		catch (UnsupportedLookAndFeelException e) {
+			// handle exception
+		}
+		catch (ClassNotFoundException e) {
+			// handle exception
+		}
+		catch (InstantiationException e) {
+			// handle exception
+		}
+		catch (IllegalAccessException e) {
+			// handle exception
+		}
+
+		//super.run();
+
+
+		double initZoom=imp.getCanvas().getMagnification();
+
+
+
+		ControlWindow<IT> cw= new ControlWindow<IT>(model, "Control Window",viewModel);
+		viewModel.addViewWindow(cw);
+
+		MainWindow<IT> mw=new MainWindow<IT>(imp, model, viewModel);
+		viewModel.addMainWindow(mw);
+
+		if(model.isVolume()){
+
+
+			System.out.println("adding projections");
+
+			viewModel.addMaxZWindow(new MaxProjectionZ<IT>(model, viewModel));
 			viewModel.addViewWindow(new MaxProjectionX<IT>(model, viewModel));
 			viewModel.addViewWindow(new MaxProjectionY<IT>(model, viewModel));
-			
-	        }
-	        
-	
-			viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel,mw));		
-			viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel,mw));		
-			
-			viewModel.resetWindowsPositions();
-	        
-			
-	 //       viewModel.update(model, null);
-	    }
-	
-	
+
+		}
+
+
+		viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel,mw));		
+		viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel,mw));		
+
+		viewModel.resetWindowsPositions();
+
+	}
+
+
 	@Override
 	public String getToolIcon(){
 		return "CeffD60CbbbD70C9aaD80CdeeD90"
@@ -142,73 +139,73 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 				+ "CdddD5fCaabD6fC677L7f8fC899D9fCbbcDaf"
 
 ;
-		
+
 	}
 	@Override
-	
-	public void run(String arg0) {
-		
-			
-			ijTool= IJ.getToolName().toString();
-			trackingTool = getToolName().toString();
-			if (!ijTool.equals(trackingTool)){
-				super.run(arg0);;
-			
-				
-			}
-				
 
-		
-		
+	public void run(String arg0) {
+
+
+		ijTool= IJ.getToolName().toString();
+		trackingTool = getToolName().toString();
+		if (!ijTool.equals(trackingTool)){
+			super.run(arg0);;
+
+
+		}
+
+
+
+
 		long time0= System.nanoTime();
 		ImagePlus imp=IJ.getImage();
 
-		
+
 		FileInfo fi= imp.getOriginalFileInfo();
-		
-		
+
+
 		System.out.println(fi.directory);
 		System.out.println(fi.fileName);
-		
-		
+
+
 		System.out.println("creating Model...");
 		Model< IT> model= new Model<IT>(imp);
-				System.out.println("creating Controller...");
-					
-		
+		System.out.println("creating Controller...");
+
+
 		Controller<IT> cont= new Controller<IT>(model,this);
 		cont.addPolicy(new MaximumLikelihoodBlobPolicy<IT>());
 		cont.addPolicy("Blob", new CompatiblePolicy<IT>());
 		cont.addPolicy(new EMCCDBlobPolicy<IT>());
 		cont.addPolicy(new EMCCDGPOBlobPolicy<IT>());
 		cont.addPolicy(new MultiStartBlobPolicy<IT>(new MaximumLikelihoodBlobPolicy<IT>(), 2));
-		
+
 		System.out.println("creating ViewModel...");
 		ViewModel<IT> vm= new ViewModel<IT>( model,cont);
 		System.out.println("done!");
 		long time1= System.nanoTime();
 		model.addObserver(vm);
 		System.out.println("Time taken:"+((time1-time0)/1000000));
-		
+
 		cont.load(vm);
-		
+
 		new GlobalOptionsDialog(model);
-		
+
 		System.out.println("adding windows...");
 		this.addWindows(model, imp, vm);
-		
-		
 
-		
-	
-		
-		
-		
-		
+
+
+
+
+
+
+
+
 	}
-	
+
 	public static void main(String[] args) {
-		
+
 		// set the plugins.dir property to make the plugin appear in the Plugins menu
 		Class<?> clazz = Cell_Blob_Tracking.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
@@ -220,7 +217,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 
 
 		// run the plugin
-		
+
 	}
 
 }

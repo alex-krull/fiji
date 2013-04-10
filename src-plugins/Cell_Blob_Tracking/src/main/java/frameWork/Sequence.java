@@ -45,8 +45,8 @@ public class Sequence<T extends Trackable> {
 	protected Policy<T,?> policy;
 	private final Session<T,?> session;
 	private String path;
-	
-	
+
+
 	public String getLabel() {
 		return label;
 	}
@@ -55,7 +55,7 @@ public class Sequence<T extends Trackable> {
 		this.label = label;
 	}
 
-	
+
 	public Session<T, ?> getSession() {
 		return session;
 	}
@@ -63,11 +63,11 @@ public class Sequence<T extends Trackable> {
 	public int getFirstFrame(){
 		return trackables.firstKey();
 	}
-	
+
 	public int getLastFrame(){
 		return trackables.lastKey();
 	}
-	
+
 	public Color getColor() {
 		return color;
 	}
@@ -75,8 +75,8 @@ public class Sequence<T extends Trackable> {
 	public void setColor(Color color) {
 		this.color = color;
 	}
-	
-	
+
+
 
 	public Sequence(int ident, String lab, Policy<T,?> pol,Session<T,?> sess, String fileName){
 		session=sess;
@@ -97,40 +97,39 @@ public class Sequence<T extends Trackable> {
 			path=fileName;
 		}
 	}
-	
+
 	public void createFileName(){
 		DecimalFormat df = new DecimalFormat("00");
 		path= Model.getInstance().getImageFileNameNoEnding() + "_" +session.getLabel()+ "_" +
 				this.getLabel()	+ "_"+df.format(this.getId())+".trcT";
 	}
-	
+
 	public String getPath() {
 		return path;
 	}
 
 	public void addTrackable(T trackable){
 		trackables.put(trackable.frameId, trackable);
-	//	pieces= getPieces();
-		
+
 	}
-	
+
 	public T getTrackableForFrame(int frameNumber){
 		return trackables.get(frameNumber);
 	}
-	
-	
+
+
 	public  SortedMap <Integer,T> getTrackables(){
 		return trackables;
 	}
-	
+
 	public String getTypeName(){
 		return policy.getTypeName();
 	}
-	
+
 	public int getId(){
 		return id;
 	}
-	
+
 	public boolean writeToFile(FileWriter fileWriter) throws IOException{
 		fileWriter.write("%-sequence properties-\n");
 		OtherTools.writeProperties(fileWriter, getProperties());		
@@ -138,15 +137,15 @@ public class Sequence<T extends Trackable> {
 		for(T trackable: trackables.values()){
 			fileWriter.write(trackable.toSaveString()+"\n");
 		}
-		
+
 		fileWriter.flush();
-	
-	
-	
-	
-	return true;
+
+
+
+
+		return true;
 	}
-	
+
 	public void setProperties(Properties props){
 		String s;
 		int red=255; int green=0; int blue=0;
@@ -157,7 +156,7 @@ public class Sequence<T extends Trackable> {
 		s= props.getProperty("color-blue"); if(s!=null) blue=Integer.valueOf(s);
 		this.color=new Color(red,green,blue);
 	}
-	
+
 	public Properties getProperties(){
 		Properties props= new Properties();
 		props.setProperty("seqId",String.valueOf(getId()));
@@ -165,22 +164,22 @@ public class Sequence<T extends Trackable> {
 		props.setProperty("color-red",String.valueOf(color.getRed()));
 		props.setProperty("color-green",String.valueOf(color.getGreen()));
 		props.setProperty("color-blue",String.valueOf(color.getBlue()));
-		
+
 		return props;
 	}
-	
-	
-	
+
+
+
 	public void getKymoOverlayX(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected){	
 		policy.getKymoOverlayX(ov, scaleX, scaleY, transX, transY, selected, trackables, color);
-		
+
 	}
-	
+
 	public void getKymoOverlayY(Overlay ov, double scaleX, double scaleY, double transX, double transY, boolean selected){
 		policy.getKymoOverlayY(ov, scaleX, scaleY, transX, transY, selected, trackables, color);
 	}
-	
-	
-	
+
+
+
 
 }
