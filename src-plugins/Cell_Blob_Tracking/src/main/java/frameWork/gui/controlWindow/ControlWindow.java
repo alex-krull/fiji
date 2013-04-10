@@ -20,7 +20,7 @@
  *
  * Contributors:
  * 	Alexander Krull (Alexander.Krull@tu-dresden.de)
- *     Damien Ramunno-Johnson (GUI)
+ *  Damien Ramunno-Johnson (GUI: damienrj@gmail.com)
  *******************************************************************************/
 package frameWork.gui.controlWindow;
 
@@ -162,14 +162,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JButton optimizeFrame;
 	private JMenuItem resetWindows;
 	private JMenuItem optimizeFrameMenu;
-
-	/*
-	public static void main(String[] args) {
-		ControlWindow2 window = new ControlWindow2();
-		window.go();
-	}
-	 */
-
+	private JButton loadAllButton;
+	private JLabel frameLabel;
 
 
 	public void go(){
@@ -177,7 +171,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		frame = new JFrame("Control Panel");
 		frame.addWindowListener(new ControlWindowListener());
 
-		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
 		rightPanel = new JPanel();
@@ -196,7 +189,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		bottomPanel.setBackground(Color.LIGHT_GRAY);
 
 		text = new JTextArea(3,5);
-		//text.setMinimumSize(new Dimension(40,200));
 
 		text.setLineWrap(true);
 		text.setText("Ready to start tracking!");
@@ -209,199 +201,138 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		feedbackPanel.setPreferredSize(new Dimension(100,300));
 
 
-		//bottomPanel.add(scroller);
+		//Creating buttons for table
 
-
-
-
-
-
-
-
-
-		// The controls on the 
-
-
-		//This controls the left Panel
 		merge = new JButton("Merge");
 		merge.addActionListener(new MergeListener());
-
 
 		delete = new JButton("Delete");
 		delete.addActionListener(new DeleteListener());
 
-		//JButton jump = new JButton("Go to  ");
 		split = new JButton("Split");
 		split.addActionListener(new SplitListener());
-		//split.setAlignmentX(JButton.CENTER_ALIGNMENT);
+
 		trim = new JButton("Trim");
 		trim.addActionListener(new TrimListener());
 
-		//JButton saveTo = new JButton("Save To");
-		//saveTo.addActionListener(new SaveToListener());
 
-		//JButton loadTo = new JButton("Reload From");
-		//loadTo.addActionListener(new LoadFromListener());
-
+		//Creating Save and Reload buttons
 		saveAll = new JButton("Save");
 		saveAll.addActionListener(new SaveAllListener());
-		JButton loadAllButton = new JButton("Reload");
+		loadAllButton = new JButton("Reload");
 		loadAllButton.addActionListener(new LoadAllListener());
 
 
 
 
+		//Create Spinners and control for Frame #, ect. at the top
 
-
-
-
-		rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-		//rightPanel.setLayout(new GridLayout(16, 0));
+		//Frame Spinner
 		SpinnerModel model1 = new SpinnerNumberModel(1, 1, model.getNumberOfFrames(), 1);
 		frameSpinner = new JSpinner(model1);
 
-
-
-		JLabel frameLabel = new JLabel("Frame #");
+		frameLabel = new JLabel("Frame #");
 		frameLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-
-
-
 
 		frameSpinner.setPreferredSize(labelDim2);
 		frameSpinner.setMaximumSize(labelDim);
 
+		//Z Spinner
 		SpinnerModel zSpinnerModel = new SpinnerNumberModel(1, 1, model.getNumberOfSlices(), 1);
 		zSpinner = new JSpinner(zSpinnerModel);
 
 
 		zSpinner.setPreferredSize(labelDim2);
 		zSpinner.setMaximumSize(labelDim);
+
 		JLabel zLabel = new JLabel("Z #");
 		zLabel.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
 
-
+		//Channel Spinner
 		SpinnerModel cSpinnerModel = new SpinnerNumberModel(1, 1, model.getNumberOfChannels(), 1);
 		cSpinner = new JSpinner(cSpinnerModel);
-
-
 		cSpinner.setPreferredSize(labelDim2);
 		cSpinner.setMaximumSize(labelDim);
+
 		JLabel cLabel = new JLabel("Channel #");
 		cLabel.setAlignmentX(JLabel.RIGHT);
 
+		//Create Spinner Panel, and place spinners
 		spinnerPanel = new JPanel();
 		spinnerPanel.setLayout(new BoxLayout(spinnerPanel, BoxLayout.X_AXIS));
-
 		spinnerPanel.add(Box.createHorizontalGlue());
+		//Frame Spinner
 		spinnerPanel.add(frameLabel);
 		spinnerPanel.add(frameSpinner);
 		spinnerPanel.add(Box.createRigidArea(new Dimension(30, 0)));
-
+		//Z Spinner
 		spinnerPanel.add(zLabel);
 		spinnerPanel.add(zSpinner);
 		spinnerPanel.add(Box.createRigidArea(new Dimension(30, 0)));
-
+		//Channel Spinner
 		spinnerPanel.add(cLabel);
 		spinnerPanel.add(cSpinner);
 		spinnerPanel.add(Box.createRigidArea(new Dimension(20, 0)));
-		
+
+		//Autosave button
 		autoSaveButton = new JCheckBox("Auto Save", viewModel.getController().isAutoSave());
 		autoSaveButton.addItemListener(new AutoSaveListener());
-		
 		autoSaveButton.setBorderPainted(false);
 		autoSaveButton.setBorder(BorderFactory.createRaisedBevelBorder());
-		
 		spinnerPanel.add(autoSaveButton);
-		
 		spinnerPanel.add(Box.createHorizontalGlue());
-		//Create the tracking method pair.
 
+
+
+		//Create Right Panel and controls
+
+		rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+		
+		//Current method box label
 		JLabel label4 = new JLabel("Current Method");
 		label4.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		rightPanel.add(label4);
 
+		
+		//Current Method Box 
 		String currentM = "";
-
-
-
-
 		currentMethod = new JTextField();
 		currentMethod.setText(currentM);
 		currentMethod.setHorizontalAlignment(JTextField.CENTER);
 		currentMethod.setMaximumSize(new Dimension(1000, 30));
 		currentMethod.setEditable(false);
-
-
-
 		rightPanel.add(currentMethod);
 
 
-
+		//Session Label
+		JLabel changeLabel = new JLabel("Current Session");
+		changeLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		
+		//Box to select session
 		changeSession = new Choice();
 		changeSession.setMaximumSize(new Dimension(1000, 80));
 		changeSession.addItemListener(new ChangeSessionListener());
-		//	changeSession.addActionListener(new ChangeSessionListener());
-
-		JLabel changeLabel = new JLabel("Current Session");
-		changeLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		
 		rightPanel.add(changeLabel);
 		rightPanel.add(changeSession);
 
-		/*JLabel labelWhich = new JLabel("Pick Session ");
-		labelWhich.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-		rightPanel.add(labelWhich);
-
-		String[] whichSession = {"Session1", "Session2", "Session3"}; //get month names
-        SpinnerListModel trackMethodsModel = null;
-
-        SpinnerListModel whichSessionModel = new SpinnerListModel(whichSession);
-
-        JSpinner sessionSpinner = new JSpinner(whichSessionModel);
-        sessionSpinner.setPreferredSize(new Dimension(90, 25));
-        sessionSpinner.setMaximumSize(new Dimension(90, 25));
-
-
-
-        sessionSpinner.setAlignmentX(JSpinner.CENTER_ALIGNMENT);
-
-        JFormattedTextField ftf = getTextField(sessionSpinner);
-        ftf.setHorizontalAlignment(JTextField.CENTER);
-
-
-        rightPanel.add(sessionSpinner);*/
-
-
-
+		//Section creates Visible Session Box
 		JLabel label5 = new JLabel("Visible Sessions");
 		label5.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		rightPanel.add(label5);
 
 		String[] vis = {"No Sessions"};
-
-
-
 		selectSessionList = new JList(vis);
-		//visList.setVisibleRowCount(3);
-		//visList.setBorder(BorderFactory.createLineBorder(Color.black));
 		selectSessionList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		//Add Scroll Bar
+		//JScrollPane visScroller = new JScrollPane(selectSessionList);
+		//visScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		//visScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-		JScrollPane visScroller = new JScrollPane(selectSessionList);
-		visScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		visScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		//visScroller.setMaximumSize(new Dimension(1000, 100));
-
-		//rightPanel.add(visScroller);
 
 		checkPanel = new JPanel();
 		checkPanel.setLayout(new BoxLayout(checkPanel, BoxLayout.Y_AXIS));
-
-		//checkPanel.setPreferredSize(new Dimension(100, 100));
-
-
-
-
 
 		checkScroll = new JScrollPane(checkPanel);
 		checkScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -433,36 +364,36 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		changeSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		changeSession.addActionListener(new ChangeSessionListener());*/
 
-		 optimizeFrame = new JButton("Optimize");
+		optimizeFrame = new JButton("Optimize");
 		optimizeFrame.addActionListener(new OptimizeFrameListener());
 
 
 		rightButtonPanel.add(newSession);
 		rightButtonPanel.add(deleteSession);
 		//rightButtonPanel.add(new JLabel(""));
-		
+
 		altTracking = new JButton("M Tracking");
 		altTracking.addActionListener(new AltTrackingListener());
 		altTracking.setForeground(Color.blue);
 		altTracking.setVisible(false);
-		
+
 		rightButtonPanel.add(optimizeFrame);
 		rightButtonPanel.add(altTracking);
 		rightButtonPanel.add(start);
 		rightButtonPanel.setMaximumSize(new Dimension(1000, 300));
-				
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
+
 		//rightButtonPanel.add(changeSession);
 
 		rightPanel.add(rightButtonPanel);
 		rightPanel.revalidate();
 		rightPanel.repaint();
-		
+
 
 
 
@@ -496,7 +427,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		trackerTable = new TableSort(viewModel, model);
-	
+
 		trackerTable.setOpaque(true);
 		trackerTable.setPreferredSize(new Dimension(300, 300));
 		/*
@@ -567,10 +498,10 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		newSessionMenu = new JMenuItem("New Session");
 		newSessionMenu.addActionListener(new NewSessionListener());
 		newSessionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
-		
+
 		exportImagesMenu = new JMenuItem("Export images");
 		exportImagesMenu.addActionListener(new ExportImagesListener());
-	//	exportImagesMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+		//	exportImagesMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
 
 		startMenu = new JMenuItem("Start Tracking");
 		startMenu.addActionListener(new StartListener());
@@ -579,11 +510,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		altMenu = new JMenuItem("");
 		altMenu.addActionListener(new AltTrackingListener());
 		altMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
-		
+
 		altOptionMenu = new JMenuItem("");
 		altOptionMenu.addActionListener(new AltOptionListener());
 		altOptionMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ActionEvent.CTRL_MASK));
-		
+
 		deleteSeqMenu = new JMenuItem("Delete Sequence");
 		deleteSeqMenu.addActionListener(new DeleteListener());
 		deleteSeqMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK));
@@ -603,11 +534,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		toggleOverlay = new JMenuItem("Toggle Overlay");
 		toggleOverlay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
 		toggleOverlay.addActionListener(new ToggleListener());
-		
+
 		optimizeFrameMenu = new JMenuItem("Optimize");
 		optimizeFrameMenu.addActionListener(new OptimizeFrameListener());
 		optimizeFrameMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
-		
+
 
 		fileMenu.setBackground(Color.lightGray);
 		fileMenu.add(newSessionMenu);
@@ -616,7 +547,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		fileMenu.add(saveTo);
 		fileMenu.add(loadAll);
 		fileMenu.add(loadFrom);
-		
+
 		editMenu.setBackground(Color.lightGray);
 
 
@@ -624,7 +555,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		editMenu.add(this.splitSeqMenu);
 		editMenu.add(trimSeqMenu);
 		editMenu.add(mergeMenu);
-				editMenu.addSeparator();
+		editMenu.addSeparator();
 
 		editMenu.add(editBlob);
 		editMenu.add(editSession);
@@ -633,7 +564,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		editMenu.add(startMenu);
 		editMenu.add(optimizeFrameMenu);
 		editMenu.add(altMenu);
-		
+
 		windowMenu.setBackground(Color.lightGray);
 		helpMenu.setBackground(Color.lightGray);
 
@@ -643,7 +574,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		contrastMenu = new JMenuItem("Adjust Brightness/Contrast");
 		contrastMenu.addActionListener(new ContrastListener());
 		contrastMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
-		
+
 		toggleNumbers = new JCheckBoxMenuItem("Show Numbers");
 		toggleNumbers.addActionListener(new ToggleNumberListener());
 		toggleNumbers.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.CTRL_MASK));
@@ -651,8 +582,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		resetWindows = new JMenuItem("Arrange Windows");
 		resetWindows.addActionListener(new ResetWindowsListener());
 		resetWindows.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
-		
-		
+
+
 
 		viewMenu = new JMenu("View");
 		viewMenu.setBackground(Color.lightGray);
@@ -691,20 +622,20 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		// This puts everything in the frame
 		//frame.getContentPane().add(BorderLayout.SOUTH, feedbackPanel);
-		
+
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Dimension screen = toolkit.getScreenSize();
-		
-		
+
+
 		frame.setLocation(screen.width-650, 0);
-		
+
 		frame.getContentPane().add(BorderLayout.EAST, rightPanel);
 		frame.getContentPane().add(BorderLayout.CENTER, centerPanel);
 		frame.getContentPane().add(BorderLayout.WEST, leftPanel);
 		frame.setSize(650,380);
 		frame.setVisible(true);
 		frame.setMinimumSize(new Dimension(650, 380));
-		
+
 
 
 		//frame.setFocusable(true);
@@ -717,7 +648,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		zSpinner.addChangeListener(new ZSpinnerListener());
 		cSpinner.addChangeListener(new CSpinnerListener());
 
-		
+
 	}
 
 
@@ -773,13 +704,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			}
 			List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
 			Session<? extends Trackable, IT> session = tempSessionList.get(index);
-			
+
 			int tempChannelNumber = session.getChannelNumnber();
-			
+
 			viewModel.getController().setCurrentSession(session.getId(),viewModel);
 			viewModel.setPosition(4, tempChannelNumber);
 
-			
+
 
 
 
@@ -809,7 +740,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 
 	}
-	
+
 	public class ExportImagesListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent a) {
@@ -859,45 +790,45 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	@Override
 	public synchronized void reFresh(long[] position, boolean rePaintImage) {
-	
+
 		//System.out.println("position[3]+1: "+(position[3]+1));
-		
+
 		//This section puts frame number in console area
 		toggleNumbers.setState(viewModel.isDrawNumbers());
-		
+
 		appendText(model.getMsg());
-		
-/*		if(viewModel.isTracking()){
+
+		/*		if(viewModel.isTracking()){
 
 			int frameNumber = viewModel.getCurrentFrameNumber();
 
 			text.selectAll();
 			text.append("Tracking Frame " + frameNumber + "\n");
 		}*/
-		
+
 		int tempSessionSize = viewModel.getController().getSessions().size();
-		
+
 		if(tempSessionSize > 0){
 			currentMethod.setText(viewModel.getController().getCurrentSession().getTypeName());
 			if(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking()==null){
 				altTracking.setVisible(false);
 				altOptionMenu.setVisible(false);
 			}else{
-			altTracking.setText(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
-			altMenu.setText("Start " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
-			altOptionMenu.setText("Session " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking() + " Options");
-			//altTracking.setVisible(true);
-			//altOptionMenu.setVisible(true);
-			
+				altTracking.setText(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
+				altMenu.setText("Start " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
+				altOptionMenu.setText("Session " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking() + " Options");
+				//altTracking.setVisible(true);
+				//altOptionMenu.setVisible(true);
+
 			}
-			
+
 			if (viewModel.isTracking()){
 				start.setText("Stop Tracking");
 				start.setForeground(Color.red);
 				startMenu.setText("Stop Tracking");
 				altMenu.setVisible(false);
 				altOptionMenu.setVisible(false);
-				
+
 				altTracking.setVisible(false);
 				optimizeFrame.setVisible(false);
 			} else {
@@ -907,8 +838,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				altMenu.setVisible(true);
 				altOptionMenu.setVisible(true);
 				if(!(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking()==null)){
-				altTracking.setVisible(true);
-				optimizeFrame.setVisible(true);
+					altTracking.setVisible(true);
+					optimizeFrame.setVisible(true);
 				}
 			}
 		}else currentMethod.setText("");
@@ -983,55 +914,55 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 			//This makes the changeSession and Visible Session Lists not update during tracking
 			if(!(viewModel.isTracking())){
-			for(Session<? extends Trackable, IT> session : tempSessionList){
+				for(Session<? extends Trackable, IT> session : tempSessionList){
 
-				if(session.getId()==viewModel.getController().getCurrentSessionId())
-					index=count;
+					if(session.getId()==viewModel.getController().getCurrentSessionId())
+						index=count;
 
-				count++;
+					count++;
 
-			}
-			
-			//Takes care of the session list.
+				}
 
-			String[] sessionNamesList = new String[tempSessionList.size()];
-			//if(rePopulate){
-			cBoxes.clear();
-			checkPanel.removeAll();
-			changeSession.removeAll();
-			//}
+				//Takes care of the session list.
 
-			i=0;
-			for(Session<? extends Trackable, IT> session : tempSessionList){
-				sessionNamesList[i]=session.getLabel();
+				String[] sessionNamesList = new String[tempSessionList.size()];
+				//if(rePopulate){
+				cBoxes.clear();
+				checkPanel.removeAll();
+				changeSession.removeAll();
+				//}
 
-				int tempChannel = session.getChannelNumnber() + 1;
-				
-				changeSession.addItem(session.getLabel() + " Ch " + tempChannel);
+				i=0;
+				for(Session<? extends Trackable, IT> session : tempSessionList){
+					sessionNamesList[i]=session.getLabel();
 
-				
-				JCheckBox temps = new JCheckBox(sessionNamesList[i] + " Ch " + tempChannel);
-				checkPanel.add(temps);
-				cBoxes.add(temps);
+					int tempChannel = session.getChannelNumnber() + 1;
+
+					changeSession.addItem(session.getLabel() + " Ch " + tempChannel);
 
 
-				// check boxes if visible
-				JCheckBox currentCBox= cBoxes.get(i);
-				currentCBox.setSelected(viewModel.isSessionVisible(session.getId()));
-				currentCBox.addActionListener(new VisBoxListener(session));
-
-				i++;
-			}
-			checkPanel.revalidate();
-			checkPanel.repaint();
-			
-			//Change Session drop menu
-
-			if(index>0 && changeSession.getItemCount()>0 )
-				changeSession.select(index);
+					JCheckBox temps = new JCheckBox(sessionNamesList[i] + " Ch " + tempChannel);
+					checkPanel.add(temps);
+					cBoxes.add(temps);
 
 
-			selectSessionList.setListData(sessionNamesList);
+					// check boxes if visible
+					JCheckBox currentCBox= cBoxes.get(i);
+					currentCBox.setSelected(viewModel.isSessionVisible(session.getId()));
+					currentCBox.addActionListener(new VisBoxListener(session));
+
+					i++;
+				}
+				checkPanel.revalidate();
+				checkPanel.repaint();
+
+				//Change Session drop menu
+
+				if(index>0 && changeSession.getItemCount()>0 )
+					changeSession.select(index);
+
+
+				selectSessionList.setListData(sessionNamesList);
 			}
 			trackerTable.addListener();
 		}
@@ -1069,8 +1000,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			altMenu.setVisible(false);
 			altOptionMenu.setEnabled(false);
 			altOptionMenu.setVisible(false);
-			
-			
+
+
 			startMenu.setEnabled(false);
 			altTracking.setVisible(false);
 			this.optimizeFrame.setVisible(false);
@@ -1092,7 +1023,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			trim.setEnabled(false);
 			//this.saveAll.setEnabled(false);
 			editBlob.setEnabled(false);
-			
+
 		}else{
 			merge.setEnabled(true);
 			delete.setEnabled(true);
@@ -1344,16 +1275,16 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 
 	}
-	
-public class AltTrackingListener implements ActionListener{
 
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		viewModel.toggleTracking(true);
+	public class AltTrackingListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			viewModel.toggleTracking(true);
+		}
+
 	}
-	
-}
 
 	public class ContrastListener implements ActionListener{
 
@@ -1374,14 +1305,14 @@ public class AltTrackingListener implements ActionListener{
 		}
 
 	}
-	
-	
+
+
 	public class AltOptionListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			viewModel.getController().getCurrentSession().showAlternatePropertiesDialog();
-			
+
 		}
 
 	}
@@ -1407,17 +1338,17 @@ public class AltTrackingListener implements ActionListener{
 			viewModel.toggleDrawNumbers();
 			viewModel.update(null, null);
 		}
-		
+
 	}
-	
+
 	public class AutoSaveListener implements ItemListener{
 
 		@Override
 		public void itemStateChanged(ItemEvent arg0) {
 			viewModel.getController().toggleAutosave();
-			
+
 		}
-		
+
 	}
 
 	@Override
@@ -1432,9 +1363,9 @@ public class AltTrackingListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			viewModel.getController().optimizeFrame(viewModel.getCurrentFrameNumber());
-			
+
 		}
-		
+
 	}
 
 	@Override
@@ -1444,26 +1375,26 @@ public class AltTrackingListener implements ActionListener{
 	}
 
 	public void appendText(String arg){
-		
+
 		int diff=text.getText().length()-1000;
 		if(diff>0) text.setText(text.getText().substring(text.getText().length()-1000));
-		
+
 		if(arg.length()>0){
-		text.append(arg);
-		text.select(text.getText().length(), text.getText().length());
+			text.append(arg);
+			text.select(text.getText().length(), text.getText().length());
 		}
-		
-		
+
+
 	}
-	
+
 	public class ResetWindowsListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			 viewModel.resetWindowsPositions();
-			
+			viewModel.resetWindowsPositions();
+
 		}
-		
+
 	}
 
 	private class ControlWindowListener implements WindowListener{
@@ -1482,7 +1413,7 @@ public class AltTrackingListener implements ActionListener{
 
 		@Override
 		public void windowClosing(WindowEvent arg0) {
-			
+
 			viewModel.getController().shutdown(viewModel.getViewWindows());
 
 		}
@@ -1515,10 +1446,10 @@ public class AltTrackingListener implements ActionListener{
 
 	@Override
 	public void setWindowPosition(MainWindow<IT> mainWindow, MaxProjectionZ<IT> maxZWindow) {
-		
-		
-		
-		
+
+
+
+
 	}
 
 
