@@ -164,6 +164,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JMenuItem optimizeFrameMenu;
 	private JButton loadAllButton;
 	private JLabel frameLabel;
+	private JButton newSession;
 
 
 	public void go(){
@@ -200,20 +201,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		feedbackPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		feedbackPanel.setPreferredSize(new Dimension(100,300));
 
-
-		//Creating buttons for table
-
-		merge = new JButton("Merge");
-		merge.addActionListener(new MergeListener());
-
-		delete = new JButton("Delete");
-		delete.addActionListener(new DeleteListener());
-
-		split = new JButton("Split");
-		split.addActionListener(new SplitListener());
-
-		trim = new JButton("Trim");
-		trim.addActionListener(new TrimListener());
 
 
 		//Creating Save and Reload buttons
@@ -288,13 +275,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-		
+
 		//Current method box label
 		JLabel label4 = new JLabel("Current Method");
 		label4.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		rightPanel.add(label4);
 
-		
+
 		//Current Method Box 
 		String currentM = "";
 		currentMethod = new JTextField();
@@ -308,12 +295,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		//Session Label
 		JLabel changeLabel = new JLabel("Current Session");
 		changeLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-		
+
 		//Box to select session
 		changeSession = new Choice();
 		changeSession.setMaximumSize(new Dimension(1000, 80));
 		changeSession.addItemListener(new ChangeSessionListener());
-		
+
 		rightPanel.add(changeLabel);
 		rightPanel.add(changeSession);
 
@@ -325,52 +312,37 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		String[] vis = {"No Sessions"};
 		selectSessionList = new JList(vis);
 		selectSessionList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		//Add Scroll Bar
-		//JScrollPane visScroller = new JScrollPane(selectSessionList);
-		//visScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		//visScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
+		//Create CheckBox Panel
 
 		checkPanel = new JPanel();
 		checkPanel.setLayout(new BoxLayout(checkPanel, BoxLayout.Y_AXIS));
-
 		checkScroll = new JScrollPane(checkPanel);
 		checkScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		checkScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		checkScroll.setMinimumSize(new Dimension(50, 200));
 		rightPanel.add(checkScroll);
 
+		//Create sub-panel for tracking buttons
 		rightButtonPanel = new JPanel(new GridLayout(5,0));
 
 		start = new JButton("Start Tracking");
 		start.setAlignmentX(JButton.CENTER_ALIGNMENT);
 		start.addActionListener(new StartListener());
 
-
-
-
-		JButton newSession = new JButton("New Session");
+		newSession = new JButton("New Session");
 		newSession.addActionListener(new NewSessionListener());
 		newSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
-
 
 		deleteSession = new JButton("Delete Session");
 		deleteSession.addActionListener(new DeleteSessionListener());
 		deleteSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
 
-
-		/*JButton changeSession = new JButton("Change Session");
-		//deleteSession.addActionListener(new NewSessionListener());
-		changeSession.setAlignmentX(JButton.CENTER_ALIGNMENT);
-		changeSession.addActionListener(new ChangeSessionListener());*/
-
 		optimizeFrame = new JButton("Optimize");
 		optimizeFrame.addActionListener(new OptimizeFrameListener());
 
-
 		rightButtonPanel.add(newSession);
 		rightButtonPanel.add(deleteSession);
-		//rightButtonPanel.add(new JLabel(""));
 
 		altTracking = new JButton("M Tracking");
 		altTracking.addActionListener(new AltTrackingListener());
@@ -383,27 +355,14 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		rightButtonPanel.setMaximumSize(new Dimension(1000, 300));
 
 
-
-
-
-
-
-		//rightButtonPanel.add(changeSession);
-
 		rightPanel.add(rightButtonPanel);
 		rightPanel.revalidate();
 		rightPanel.repaint();
 
 
-
-
-
-
-
-
 		//This controls the center panel
 		JButton changeWorking = new JButton("Change Working Directory");
-		//changeWorking.addActionListener(new changeWorkspaceListener());
+
 
 
 		workingFolder = new JTextField();
@@ -412,33 +371,32 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		workingFolder.addMouseListener(new changeWorkspaceListener());
 
 
-
-
-
-
 		pathPanel.add(workingFolder);
-		//urlPanel.add(changeWorking);
-		//urlPanel.setBackground(Color.blue);
 
 		centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 
-
-
-
+		//Add the Table
 		trackerTable = new TableSort(viewModel, model);
-
 		trackerTable.setOpaque(true);
 		trackerTable.setPreferredSize(new Dimension(300, 300));
-		/*
-		tableScroll = new JScrollPane(trackerTable);
-		tableScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);*/
+
+		//Creating buttons for table
+
+		merge = new JButton("Merge");
+		merge.addActionListener(new MergeListener());
+
+		delete = new JButton("Delete");
+		delete.addActionListener(new DeleteListener());
+
+		split = new JButton("Split");
+		split.addActionListener(new SplitListener());
+
+		trim = new JButton("Trim");
+		trim.addActionListener(new TrimListener());
 
 
-		//urlPanel.setBackground(Color.blue);
-		//spinnerPanel.setBackground(Color.DARK_GRAY);
-
+		//Creates Panel for merge, split, trim, and delete buttons
 		JPanel traceButtonPanel = new JPanel();
 
 
@@ -451,10 +409,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		pathPanel.add(loadAllButton);
 
 		traceButtonPanel.setLayout(new GridLayout(0, 4));
-
 		traceButtonPanel.setMaximumSize(new Dimension(1000, 80));
+
 		spinnerPanel.setMaximumSize(new Dimension(1000, 80));
 		pathPanel.setMaximumSize(new Dimension(1000, 80));
+
+		//Put Panels into center panel
 		centerPanel.add(spinnerPanel);
 		centerPanel.add(pathPanel);
 		centerPanel.add(traceButtonPanel);
@@ -471,7 +431,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		JMenu editMenu = new JMenu("Edit");
 
 
-		//Edit items
+		//Menu items
 
 		editSession = new JMenuItem("Session Options");
 		editSession.addActionListener(new EditMenuListener());
@@ -539,7 +499,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		optimizeFrameMenu.addActionListener(new OptimizeFrameListener());
 		optimizeFrameMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
 
-
+		//Put things in file Menu
 		fileMenu.setBackground(Color.lightGray);
 		fileMenu.add(newSessionMenu);
 		fileMenu.add(saveAllMenu);
@@ -548,15 +508,14 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		fileMenu.add(loadAll);
 		fileMenu.add(loadFrom);
 
+
+		//Put things in Edit Menu
 		editMenu.setBackground(Color.lightGray);
-
-
 		editMenu.add(deleteSeqMenu);
 		editMenu.add(this.splitSeqMenu);
 		editMenu.add(trimSeqMenu);
 		editMenu.add(mergeMenu);
 		editMenu.addSeparator();
-
 		editMenu.add(editBlob);
 		editMenu.add(editSession);
 		editMenu.add(altOptionMenu);
@@ -565,12 +524,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		editMenu.add(optimizeFrameMenu);
 		editMenu.add(altMenu);
 
+		//Window Menu and help Menu Color Set.  Window menu contents controlled elsewhere. Is dynamic
 		windowMenu.setBackground(Color.lightGray);
 		helpMenu.setBackground(Color.lightGray);
 
 
 
-
+		//View Menu Items
 		contrastMenu = new JMenuItem("Adjust Brightness/Contrast");
 		contrastMenu.addActionListener(new ContrastListener());
 		contrastMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
@@ -584,7 +544,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		resetWindows.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
 
 
-
+		//Add Items to View Menu
 		viewMenu = new JMenu("View");
 		viewMenu.setBackground(Color.lightGray);
 		viewMenu.add(contrastMenu);
@@ -593,6 +553,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		viewMenu.addSeparator();
 		viewMenu.add(resetWindows);
 
+
+		//Place menus into menu bar
 		menuBar.add(fileMenu);
 		menuBar.add(editMenu);
 		menuBar.add(viewMenu);
@@ -601,10 +563,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		menuBar.setBackground(Color.lightGray);
 		menuBar.setForeground(Color.BLACK);
 
-
+		//Puts menu bar into frame
 		frame.setJMenuBar(menuBar);
 
-		// This makes the Dialog for tracking method
 
 		//Make Buttons grayed out from the start
 		editSession.setEnabled(false);
@@ -621,7 +582,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 		// This puts everything in the frame
-		//frame.getContentPane().add(BorderLayout.SOUTH, feedbackPanel);
+
 
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Dimension screen = toolkit.getScreenSize();
@@ -638,12 +599,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 
-		//frame.setFocusable(true);
-		//HotKeyListener keyListener = new HotKeyListener(viewModel);
-		//frame.addKeyListener(keyListener);
-		//trackerTable.addKeyListener(keyListener);
-		//trackerTable.setFocusable(true);
-
+		//Adds listeners to spinners
 		frameSpinner.addChangeListener(new FrameSpinnerListener());
 		zSpinner.addChangeListener(new ZSpinnerListener());
 		cSpinner.addChangeListener(new CSpinnerListener());
