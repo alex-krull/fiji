@@ -208,6 +208,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	}
 	
 	public static void main(String[] args) {
+		
 		// set the plugins.dir property to make the plugin appear in the Plugins menu
 		Class<?> clazz = Cell_Blob_Tracking.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
@@ -217,7 +218,6 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		// start ImageJ
 		new ImageJ();
 
-		
 
 		// run the plugin
 		
