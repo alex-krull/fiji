@@ -45,8 +45,6 @@ public class SessionOptionsDialog{
 	public SessionOptionsDialog(BlobSession<?> mod) {
 		GenericDialog gd = new GenericDialog("Session Options");
 
-		// gd.setPreferredSize(new Dimension(300,200));
-
 		gd.addCheckbox("Automatic \u03C3", mod.isAutoSigma());
 		gd.addNumericField("\u03C3:", mod.getDefaultSigma(), 2);
 		gd.addNumericField("Max \u03C3:", mod.getDefaultMaxSigma(), 2);
@@ -86,17 +84,15 @@ public class SessionOptionsDialog{
 
 			double qthreshold = gd.getNextNumber();
 			mod.setQualityThreshold(qthreshold);
-			
+
 			mod.setDefaultMaxSigma(max);
 			mod.setDefaultMinSigma(min);
 			mod.setDefaultSigma(init);
-			
+
 
 
 			mod.setAutoSigma(gd.getNextBoolean());
 		}
-
-
 
 	}
 

@@ -41,12 +41,10 @@ import ij.gui.GenericDialog;
 
 public class BlobOptionDialog{
 
-boolean isVolume;
+	boolean isVolume;
 
 	public BlobOptionDialog(Blob blobData, boolean isVolume) {
 		GenericDialog gd = new GenericDialog("Session Options");
-
-		// gd.setPreferredSize(new Dimension(300,200));
 
 		gd.addCheckbox("Automatic \u03C3", blobData.autoSigma);
 		gd.addNumericField("\u03C3:", blobData.sigma, 2);
@@ -82,22 +80,13 @@ boolean isVolume;
 				blobData.minSigmaZ=minz;
 			}
 
-
-			
 			blobData.maxSigma=max;
 			blobData.minSigma=min;
 			blobData.sigma=init;
-			
-
 
 			blobData.autoSigma=gd.getNextBoolean();
 		}
 
-
-
 	}
-
-
-
 
 }

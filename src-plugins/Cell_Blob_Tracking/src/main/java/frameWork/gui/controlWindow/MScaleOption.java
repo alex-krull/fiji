@@ -40,23 +40,12 @@ import ij.gui.GenericDialog;
 
 public class MScaleOption{
 
-
-
 	public MScaleOption(BlobSession<?> mod) {
 		GenericDialog gd = new GenericDialog("MultiScale Options");
-
-		// gd.setPreferredSize(new Dimension(300,200));
-
 
 		gd.addNumericField("Downscaling:", mod.getDownscaleFactor(), 2);
 		gd.addNumericField("Smoothing \u03C3:", mod.getMscaleSigma(), 2);
 		gd.addNumericField("Iterations ", mod.getMscaleIterations(), 2);
-
-
-
-
-
-
 
 		gd.showDialog();
 		if (gd.wasCanceled()) return;
@@ -72,14 +61,9 @@ public class MScaleOption{
 
 		}
 
-
-
 	}
-
-
 
 	public static void main(String[] args) {
 		MScaleOption test = new MScaleOption(null);
-
 	}
 }

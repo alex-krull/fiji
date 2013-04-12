@@ -39,11 +39,7 @@ import frameWork.Controller;
 public class NewSessionDialog < IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > {
 
 	private String methodChoice;
-
-
 	private Integer channelChoice;
-
-
 	private String userSessionName;
 
 	public NewSessionDialog(Controller<IT> controller, Model <IT> model, int startingChannelNumber){
@@ -70,13 +66,12 @@ public class NewSessionDialog < IT extends  NumericType<IT> & NativeType<IT> & R
 
 
 
-		 methodChoice = gd.getNextChoice();
-		 channelChoice =Integer.valueOf(gd.getNextChoice());
+		methodChoice = gd.getNextChoice();
+		channelChoice =Integer.valueOf(gd.getNextChoice());
 
 
 
-		
-		//viewModel.getController().addSession(methodChoice, userSessionName, channelChoice-1, viewModel);
+
 	}
 	public String getUserSessionName() {
 		return userSessionName;
