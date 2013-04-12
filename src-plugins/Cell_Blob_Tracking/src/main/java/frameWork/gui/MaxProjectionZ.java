@@ -55,7 +55,6 @@ public class MaxProjectionZ < IT extends  NumericType<IT> & NativeType<IT> & Rea
 		int frameNumber= (int)position[3];
 		RandomAccessibleInterval<IT> toDraw=model.getFrame(frameNumber, viewModel.getCurrentChannelNumber()).getZProjections();
 		reDraw( position ,rePaintImage, toDraw);
-		//super.rePaint(position, rePaintImage);
 	}
 
 	

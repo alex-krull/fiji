@@ -630,8 +630,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
 
-		//Object[] selectionValues = { "Session 1", "Session 2", "Session 3" };
-
 		Object[] selectionValues = new Object[sessionList.size()];
 		sessionList.toArray(selectionValues);
 		String initialSelection = "Cell Tracking";
@@ -639,9 +637,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				"Tracking Method", JOptionPane.PLAIN_MESSAGE, null, selectionValues, initialSelection);
 		currentSession.setText((String) selection);
 
-
-		//Object[] possibilities = {"ham", "spam", "yam"};
-		//String s = (String)JOptionPane.showInputDialog(frame);
 
 	} 
 
@@ -655,7 +650,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 			int index= changeSession.getSelectedIndex();
 			if(index<0){
-				//    	viewModel.getController().setCurrentSession(-1);
+
 				return;
 			}
 			List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
@@ -666,11 +661,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			viewModel.getController().setCurrentSession(session.getId(),viewModel);
 			viewModel.setPosition(4, tempChannelNumber);
 
-
-
-
-
-
 		}
 	}
 
@@ -680,8 +670,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		public void actionPerformed(ActionEvent a) {
 			viewModel.getController().deleteSession(viewModel);
 
-
-
 		}
 
 	}
@@ -689,10 +677,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	public class NewSessionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent a) {
-			//newSessionDialog();
 
 			viewModel.getController().newSession(viewModel);
-
 		}
 
 	}
@@ -700,7 +686,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	public class ExportImagesListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent a) {
-			//newSessionDialog();
 
 			viewModel.exportImages();
 
@@ -743,24 +728,15 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 	}
-
+	//This Section makes custom refresh method for better performance and syncing 
 	@Override
 	public synchronized void reFresh(long[] position, boolean rePaintImage) {
 
-		//System.out.println("position[3]+1: "+(position[3]+1));
 
 		//This section puts frame number in console area
 		toggleNumbers.setState(viewModel.isDrawNumbers());
 
 		appendText(model.getMsg());
-
-		/*		if(viewModel.isTracking()){
-
-			int frameNumber = viewModel.getCurrentFrameNumber();
-
-			text.selectAll();
-			text.append("Tracking Frame " + frameNumber + "\n");
-		}*/
 
 		int tempSessionSize = viewModel.getController().getSessions().size();
 
@@ -773,8 +749,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				altTracking.setText(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
 				altMenu.setText("Start " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
 				altOptionMenu.setText("Session " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking() + " Options");
-				//altTracking.setVisible(true);
-				//altOptionMenu.setVisible(true);
+
 
 			}
 
@@ -804,37 +779,25 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		workingFolder.setText(viewModel.getController().getWorkspace());
 
-		//if(((SpinnerNumberModel)zSpinner.getModel()).getNumber().intValue()-1 !=position[2]+1){
 		zSpinner.removeChangeListener(zSpinner.getChangeListeners()[0]);
 		zSpinner.setValue((int )(position[2]+1));
 		zSpinner.addChangeListener(new ZSpinnerListener());
-		//}
 
-		//if(((SpinnerNumberModel)frameSpinner.getModel()).getNumber().intValue()-1 !=position[3]+1){
 		frameSpinner.removeChangeListener(frameSpinner.getChangeListeners()[0]);
 		frameSpinner.setValue((int )(position[3]+1));
 		frameSpinner.addChangeListener(new FrameSpinnerListener());
-		//}
 
-		//if(((SpinnerNumberModel)cSpinner.getModel()).getNumber().intValue()-1 !=position[4]+1){
 		cSpinner.removeChangeListener(cSpinner.getChangeListeners()[0]);
 		cSpinner.setValue((int )(position[4]+1));
 		cSpinner.addChangeListener(new CSpinnerListener());
-		//}
+
 
 		if(model.isStruckturalChange()){
 
 
 			//This will get visible
 
-
-
-
-
 			List<Sequence<? extends Trackable>> test = viewModel.getVisibleSequences();
-
-
-
 
 			Object[][]trace = new Object[test.size()][8];
 			int i = 0;
@@ -856,19 +819,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			trackerTable.updateData(trace);
 
 
-
-
-
-
-
-			//		int i=0;
 			List<Session<? extends Trackable, IT>> tempSessionList = viewModel.getController().getSessions();
 
 
 			int index=0;
 			int count=0;
 
-			//This makes the changeSession and Visible Session Lists not update during tracking
 			if(!(viewModel.isTracking())){
 				for(Session<? extends Trackable, IT> session : tempSessionList){
 
@@ -882,11 +838,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				//Takes care of the session list.
 
 				String[] sessionNamesList = new String[tempSessionList.size()];
-				//if(rePopulate){
+
 				cBoxes.clear();
 				checkPanel.removeAll();
 				changeSession.removeAll();
-				//}
+
 
 				i=0;
 				for(Session<? extends Trackable, IT> session : tempSessionList){
@@ -977,7 +933,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			delete.setEnabled(false);
 			split.setEnabled(false);
 			trim.setEnabled(false);
-			//this.saveAll.setEnabled(false);
 			editBlob.setEnabled(false);
 
 		}else{
@@ -992,14 +947,11 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 
 
-
-
-
 	}
 
 
 
-
+	//Addes key listeners to all panels
 	@Override
 	public void addKeyListener(HotKeyListener keyListener) {
 		frame.addKeyListener(keyListener);
@@ -1038,7 +990,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// Deletes tace
+			// Deletes trace
 			viewModel.deleteSequence();
 
 		}
@@ -1058,8 +1010,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	}
 
 	public class changeWorkspaceListener implements MouseListener{
-
-
 
 
 		@Override
@@ -1105,7 +1055,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Saves all traces
+			//Saves all traces
 			JFileChooser saveLocation = new JFileChooser();
 			saveLocation.setCurrentDirectory(new java.io.File(viewModel.getController().getWorkspace()));
 			saveLocation.setDialogTitle("Pick Location to Save Files");
@@ -1123,7 +1073,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
 			viewModel.saveAll();
 		}
 
@@ -1132,7 +1081,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
 			viewModel.getController().load(viewModel);
 		}
 
@@ -1179,7 +1127,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	@Override
 	public void initWindow() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -1189,7 +1136,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
+
 
 	}
 
@@ -1213,7 +1160,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
 			if(viewWindow.isOpen()){
 				viewWindow.close();
 			}else{
@@ -1226,7 +1172,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
 			viewModel.toggleDrawOverlays();	
 		}
 
@@ -1236,7 +1181,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
 			viewModel.toggleTracking(true);
 		}
 
@@ -1246,7 +1190,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
 			IJ.doCommand("Brightness/Contrast...");
 		}
 
@@ -1256,7 +1199,6 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
 			viewModel.getController().mergeSequenences();
 		}
 
@@ -1326,8 +1268,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	@Override
 	public void open() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	public void appendText(String arg){
@@ -1357,14 +1298,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void windowActivated(WindowEvent arg0) {
-			// TODO Auto-generated method stub
-
+			
 		}
 
 		@Override
 		public void windowClosed(WindowEvent arg0) {
-			// TODO Auto-generated method stub
-
+			
 		}
 
 		@Override
@@ -1376,26 +1315,22 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void windowDeactivated(WindowEvent arg0) {
-			// TODO Auto-generated method stub
-
+			
 		}
 
 		@Override
 		public void windowDeiconified(WindowEvent arg0) {
-			// TODO Auto-generated method stub
-
+			
 		}
 
 		@Override
 		public void windowIconified(WindowEvent arg0) {
-			// TODO Auto-generated method stub
-
+			
 		}
 
 		@Override
 		public void windowOpened(WindowEvent arg0) {
-			// TODO Auto-generated method stub
-
+			
 		}
 
 	}
