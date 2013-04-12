@@ -25,6 +25,7 @@
 package frameWork.gui.controlWindow;
 
 import ij.IJ;
+import ij.gui.GenericDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Choice;
@@ -165,6 +166,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	private JButton loadAllButton;
 	private JLabel frameLabel;
 	private JButton newSession;
+	private JMenuItem onlineHelp;
+	private JMenuItem aboutSoftware;
 
 
 	public void go(){
@@ -544,6 +547,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		resetWindows.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
 
 
+
 		//Add Items to View Menu
 		viewMenu = new JMenu("View");
 		viewMenu.setBackground(Color.lightGray);
@@ -552,6 +556,16 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		viewMenu.add(toggleNumbers);
 		viewMenu.addSeparator();
 		viewMenu.add(resetWindows);
+
+		//Add Menu Items
+		onlineHelp = new JMenuItem("Online Manual");
+		onlineHelp.addActionListener(new OnlineHelpListener());
+
+		aboutSoftware = new JMenuItem("About Software");
+		aboutSoftware.addActionListener(new AboutSoftwareListener());
+		//Add Items to Help Menu
+		helpMenu.add(aboutSoftware);
+		helpMenu.add(onlineHelp);
 
 
 		//Place menus into menu bar
@@ -1215,6 +1229,45 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	}
 
+	public class AboutSoftwareListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+	
+			JOptionPane.showMessageDialog(frame,
+					"The current version of the software is X.XX."
+							+ "\n This software implements the tracking method described in the following paper:" +
+								  "\n \"A divide and conquer strategy for the maximum likelihood\n localization of ultra low intensity objects\""
+								 + " \nAlexander Krull et Al, 2013. (Enter final journal)"
+								  + "\nSoftware is under the GNU General Public License",
+							"About Software",
+							JOptionPane.PLAIN_MESSAGE);
+
+			
+			
+		}
+
+	}
+
+	public class OnlineHelpListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+
+			try {
+				//Set your page url in this string. For eg, I m using URL for Google Search engine
+				String url = "http://www.google.com";
+				java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
+			}
+			catch (java.io.IOException e) {
+				System.out.println(e.getMessage());
+			}
+
+		}
+
+	}
+
+
 	public class VisBoxListener implements ActionListener{
 		Session<? extends Trackable,IT> session;
 		VisBoxListener(Session<? extends Trackable,IT> ses){
@@ -1268,7 +1321,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	@Override
 	public void open() {
-		
+
 	}
 
 	public void appendText(String arg){
@@ -1298,12 +1351,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void windowActivated(WindowEvent arg0) {
-			
+
 		}
 
 		@Override
 		public void windowClosed(WindowEvent arg0) {
-			
+
 		}
 
 		@Override
@@ -1315,22 +1368,22 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		@Override
 		public void windowDeactivated(WindowEvent arg0) {
-			
+
 		}
 
 		@Override
 		public void windowDeiconified(WindowEvent arg0) {
-			
+
 		}
 
 		@Override
 		public void windowIconified(WindowEvent arg0) {
-			
+
 		}
 
 		@Override
 		public void windowOpened(WindowEvent arg0) {
-			
+
 		}
 
 	}
