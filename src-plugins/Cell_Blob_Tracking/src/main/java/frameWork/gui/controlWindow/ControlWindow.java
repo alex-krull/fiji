@@ -1256,7 +1256,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 			try {
 				//Set your page url in this string. For eg, I m using URL for Google Search engine
-				String url = "http://www.google.com";
+				String url = "http://fiji.sc/Blob_Tracker";
 				java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
 			}
 			catch (java.io.IOException e) {

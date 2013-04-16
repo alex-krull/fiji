@@ -44,7 +44,7 @@ public class BlobOptionDialog{
 	boolean isVolume;
 
 	public BlobOptionDialog(Blob blobData, boolean isVolume) {
-		GenericDialog gd = new GenericDialog("Session Options");
+		GenericDialog gd = new GenericDialog("Object Options");
 
 		gd.addCheckbox("Automatic \u03C3", blobData.autoSigma);
 		gd.addNumericField("\u03C3:", blobData.sigma, 2);
