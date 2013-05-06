@@ -36,7 +36,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public double zPos;
 	public double sigma;
 	public double sigmaZ;
-	public double pK=0.1;
+	public double pK=0.05;
 	public double pKAkku; 
 	public double inten=0;
 	public int counter=0;

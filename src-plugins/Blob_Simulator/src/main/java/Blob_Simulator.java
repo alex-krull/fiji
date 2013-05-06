@@ -63,13 +63,13 @@ public class Blob_Simulator implements PlugIn{
 		
 		
 		GenericDialog gd = new GenericDialog("blob simulator");
-		gd.addNumericField("x-Size", 15, 0);
+		gd.addNumericField("x-Size", 19, 0);
 		gd.addNumericField("y-Size", 19, 0);
-		gd.addNumericField("frames", 100, 0);
+		gd.addNumericField("frames", 10, 0);
 		
 		gd.addNumericField("x-position", 7, 0);
 		gd.addNumericField("y-position", 9, 0);
-		gd.addNumericField("sigma", 1.3, 0);
+		gd.addNumericField("sigma", 1.3, 4);
 		gd.addNumericField("flux of blob", 100, 0);
 		gd.addNumericField("flux of background per pixel", 0, 0);
 		gd.addNumericField("emccd gain", 300, 0);
@@ -139,6 +139,15 @@ public class Blob_Simulator implements PlugIn{
 		Img <UnsignedShortType> image= imgFactory.create(dims, new UnsignedShortType());
 		
 
+		fillImage(image, 0,0,sig,0,backFlux,r);
+		for(double x=2.5;x<xSize-2.5;x+=5)
+			for(double y=2.5;y<ySize-2.5;y+=5){
+				fillImage(image, x,y,sig,blobFlux,backFlux,r);
+
+			}
+
+
+		
 	
 		//1
 //		fillImage(image,xPos+0,yPos+0,sig,blobFlux,backFlux,r);
@@ -170,20 +179,20 @@ public class Blob_Simulator implements PlugIn{
 	
 	*/
 		
-/*				
+	/*			
 		// 9
-		fillImage(image,xPos-5,yPos-5,sig,blobFlux,backFlux,r);
-		fillImage(image,xPos-5,yPos+0,sig,blobFlux,backFlux,r);
-		fillImage(image,xPos-5,yPos+5,sig,blobFlux,backFlux,r);
-		fillImage(image,xPos-0,yPos-5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-4,yPos-4,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-4,yPos+0,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-4,yPos+4,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-0,yPos-4,sig,blobFlux,backFlux,r);
 		fillImage(image,xPos+0,yPos+0,sig,blobFlux,backFlux,r);
-		fillImage(image,xPos-0,yPos+5,sig,blobFlux,backFlux,r);
-		fillImage(image,xPos+5,yPos-5,sig,blobFlux,backFlux,r);
-		fillImage(image,xPos+5,yPos+0,sig,blobFlux,backFlux,r);
-		fillImage(image,xPos+5,yPos+5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-0,yPos+4,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+4,yPos-4,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+4,yPos+0,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+4,yPos+4,sig,blobFlux,backFlux,r);
 	*/
 		// 12
-		fillImage(image,xPos-5,yPos-7.5,sig,blobFlux,backFlux,r);
+	/*	fillImage(image,xPos-5,yPos-7.5,sig,blobFlux,backFlux,r);
 		fillImage(image,xPos-5,yPos-2.5,sig,blobFlux,backFlux,r);
 		fillImage(image,xPos-5,yPos+2.5,sig,blobFlux,backFlux,r);
 		fillImage(image,xPos-0,yPos-7.5,sig,blobFlux,backFlux,r);
@@ -196,7 +205,7 @@ public class Blob_Simulator implements PlugIn{
 		fillImage(image,xPos+5,yPos+7.5,sig,blobFlux,backFlux,r);
 		fillImage(image,xPos-0,yPos+7.5,sig,blobFlux,backFlux,r);
 		fillImage(image,xPos-5,yPos+7.5,sig,blobFlux,backFlux,r);
-		
+	*/	
 		if(emccd) applyEMCCD(image, gain, r,1);
 		return image;
 	}
