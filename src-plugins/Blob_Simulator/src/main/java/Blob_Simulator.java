@@ -140,8 +140,8 @@ public class Blob_Simulator implements PlugIn{
 		
 
 		fillImage(image, 0,0,sig,0,backFlux,r);
-		for(double x=2.5;x<xSize-2.5;x+=5)
-			for(double y=2.5;y<ySize-2.5;y+=5){
+		for(double x=5;x<xSize-5;x+=5)
+			for(double y=5;y<ySize-5;y+=5){
 				fillImage(image, x,y,sig,blobFlux,backFlux,r);
 
 			}

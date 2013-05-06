@@ -485,8 +485,8 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			
 			
 		}
+		*/
 		
-	*/	
 		
 		double couplePK=0;
 		double coupleCount=0;

@@ -31,7 +31,7 @@ implements MultivariateRealFunction
 	private class MyConvChecker implements ConvergenceChecker<RealPointValuePair>{
 		public boolean converged(int iteration ,RealPointValuePair a, RealPointValuePair b){
 			System.out.println("its:"+iteration);
-			return iteration>10;
+			return false;
 		}
 	}
 
@@ -139,9 +139,9 @@ implements MultivariateRealFunction
 	    	PowellOptimizer optimizer = new PowellOptimizer(1e-3, 1e-3);
 	    
 	    	
-		//   	SimplexOptimizer optimizer = new SimplexOptimizer();
-	  	//optimizer.setSimplex(new   NelderMeadSimplex(startPoint.length));
-	  //	optimizer.setConvergenceChecker(new MyConvChecker());
+		//  SimplexOptimizer optimizer = new SimplexOptimizer();
+	 // 	optimizer.setSimplex(new   NelderMeadSimplex(startPoint.length));
+	 // 	optimizer.setConvergenceChecker(new MyConvChecker());
 	  	
 	    	
 	    	
