@@ -48,7 +48,7 @@ private int intensityOffset=0;
 private double xyToZ=3.5;
 public ReentrantReadWriteLock rwLock;
 private boolean currentlyTracking=false;
-private long startedTrackingAt;
+public long startedTrackingAt;
 
 private volatile StringBuffer msgBuffer=new StringBuffer();
 

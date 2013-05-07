@@ -38,6 +38,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 	protected static double  GAIN=300;
 //	private static double  PAG=12.17;
 //	private static double  PAG=11.3;
+	private double bestLogLikelihoodSoFar=-1e30;
 	protected static double  PAG=1;
 
 	
@@ -93,6 +94,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		totalInten/=GAIN;
 		
 		
+		
 		super.numOfPixelsUsed=ImglibTools.getNumOfPixels(iFrame);
 		
 		
@@ -101,6 +103,17 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		double energyOld=1;
 		double energy=1;
 		double change=0;
+	//	IterableRandomAccessibleInterval<IT>tempImage=new IterableRandomAccessibleInterval<IT>( movieFrame.getFrameView());
+		double fullTI=0;
+
+		
+		
+		
+	//	System.out.println("xs:"+ iFrame.dimension(0));
+	//	System.out.println("energy: "+getLogLikelihood(totalInten, trackables, iFrame));
+	//	System.out.println("energyFULL: "+getLogLikelihood(fullTI, trackables, tempImage));
+	//	if(true) return;	
+		
 		for(int i=0;i<maxIterations;i++){
 			
 			iFrame= makeIterableFrame( movieFrame.getFrameView(),  trackables);
@@ -391,7 +404,11 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		double akku=0;
 		int i=0;
 		double akkuCheck=0;
-		
+	
+		for(Blob b:tempTrackables){
+		//	System.out.println("___________b.pk:"+b.pK+ " x:"+b.xPos+" y:"+b.yPos+"\n");
+		}
+	//	System.out.println("___________totalFlux:"+totalFlux+"\n");
 		
 		
     	while ( cursor.hasNext() )	{
@@ -399,7 +416,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
     		i++;
     		int x= cursor.getIntPosition(0);
     		int y= cursor.getIntPosition(1);
-    //		System.out.println("i:"+i+ " x:"+x+" y:"+y+"\n");
+    		
     		numOfPixelsUsed=(tempImage.dimension(0)*tempImage.dimension(1));
     		double flux=calcFlux(totalFlux, tempTrackables, x, y, 0);
     		int value= (int)cursor.get().getRealDouble();
@@ -414,8 +431,15 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
     		akkuCheck+=flux;
     		
     	}
-    	
-    //	System.out.println("akkuCheck:"+akkuCheck+ " totalFlux:"+totalFlux);
+ 
+   	
+    	if(akku>bestLogLikelihoodSoFar){
+    		bestLogLikelihoodSoFar=akku;
+    		long time = System.currentTimeMillis()-Model.getInstance().startedTrackingAt;
+    //	System.out.println("t:"+time+ " e:"+akku);
+   	Model.errorWriter.write(time + "\t"+ akku+"\n");
+    	Model.errorWriter.flush();
+ }
 		return akku;
 	}
 }

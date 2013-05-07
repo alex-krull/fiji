@@ -7,6 +7,7 @@ import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.direct.NelderMeadSimplex;
 import org.apache.commons.math.optimization.direct.PowellOptimizer;
 import org.apache.commons.math.optimization.direct.SimplexOptimizer;
+import org.apache.commons.math.optimization.direct.CMAESOptimizer;
 import org.apache.commons.math.optimization.ConvergenceChecker;
 import org.apache.commons.math.optimization.RealPointValuePair;
 
@@ -37,30 +38,42 @@ implements MultivariateRealFunction
 
 	private IterableRandomAccessibleInterval<IT> tempImage=null;
 	private List<Blob> tempTrackables;
+	private double totalFlux;
 	private int count;
 	
 	
 	@Override
 	public double value(double[] arg0) {
-		double totalFlux=Math.abs(arg0[arg0.length-1]);
 		
-		for(int i=2;i<arg0.length;i+=3){
-			totalFlux+=Math.abs(arg0[i]);
-		}
-		
+		double assumedTotalFlux=arg0[arg0.length-1]*(double)(tempImage.dimension(0)*tempImage.dimension(1));
 		//Blob b= tempTrackables.get(0);
+		
+		if(arg0[arg0.length-1]<0) return 1.0/0;
+		
+		int i=0;
+		for(Blob b:tempTrackables){
+			if(arg0[i+2]<0) return 1.0/0;
+			b.calcDenominator(tempImage, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
+			assumedTotalFlux+=arg0[i+2]*b.denom;
+			i+=3;
+		}			
+		
+	
 		int count=0;
 		for(Blob b:tempTrackables){
+		
 		b.xPos=arg0[0+count]; b.yPos=arg0[1+count];			
-		b.calcDenominator(tempImage, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
+		
+	
 	//	totalFlux= arg0[2+count]*b.denom+arg0[3+count]*(double)(tempImage.dimension(0)*tempImage.dimension(1));
-		b.pK=(Math.abs(arg0[2+count])*b.denom)/totalFlux;
-//	System.out.println("b.denom:"+b.denom+ " xpos:"+b.xPos+ " ypos:"+ b.yPos+ " b/p:"+ arg0[3+count]*10+ " int:"+b.inten+ " tf:"+ totalFlux);
+		b.pK=Math.abs((arg0[2+count]*b.denom)/assumedTotalFlux);
+//	System.out.println("b.denom:"+b.denom+ " xpos:"+b.xPos+ " ypos:"+ b.yPos+ " b/p:"+ arg0[3+count]*10+ " int:"+b.inten+ " tf:"+ assumedTotalFlux+ "\n");
 		count+=3;
+		if(b.pK<0) System.out.println("totalFlux<0");
 		}
 		
-		if(totalFlux<0) System.out.println("totalFlux<0");
-		double energy= getLogLikelihood(totalFlux, tempTrackables, tempImage);
+		
+		double energy= getLogLikelihood(assumedTotalFlux, tempTrackables, tempImage);
 //		System.out.println("e:"+ energy);
 		return -energy;
 	}
@@ -98,7 +111,7 @@ implements MultivariateRealFunction
 			
 			
 			
-			double totalFlux=0; 
+			totalFlux=0; 
 	    	while ( cursor.hasNext() )	{
 	    		cursor.fwd();
 	    		totalFlux+= (int)cursor.get().getRealDouble();
@@ -113,14 +126,15 @@ implements MultivariateRealFunction
 	    	
 	    	double[] startPoint=new double [3*trackables.size()+1];
 	    	for(Blob b:trackables){
-				
+	    		b.calcDenominator(tempImage, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
+			//	b.pK=(Math.abs(startPoint[2+count])*b.denom)/totalFlux;	
 			b.numberOfPixels=nop;
-	    	if(b.inten==0)
-	    		b.inten=totalFlux*b.pK;
+	    	//if(b.inten==0)
+	    	b.inten=totalFlux*b.pK/b.denom;
 	    	
 	    	
 	//    	b.backInten = totalFlux*(1-b.pK);
-	    	backFlux-=b.inten;
+	    	backFlux-=totalFlux*b.pK;
 	    	
 	    	startPoint[0+count]=b.xPos;
 	    	startPoint[1+count]=b.yPos;
@@ -128,19 +142,21 @@ implements MultivariateRealFunction
 	    	
 	    	
 	    	count+=3;
-	    	System.out.println("        b.inten:"+b.inten + " b.pk:"+ b.pK +" TF:"+totalFlux+" b.backInt/p:"+ b.backInten/(double)nop);
+	    	System.out.println("        b.inten:"+b.inten + " b.pk:"+ b.pK +" TF:"+totalFlux+" backFlux/p:"+ backFlux/(double)nop+ " bf:"+ backFlux+ "\n");
 	    	}
 	    	
 	    	startPoint[startPoint.length-1]=backFlux/(double)nop;//b.backInten/(double)b.numberOfPixels;				//BackgroundFlux per pixel
+	    	System.out.println("recalc:"+ (double)(tempImage.dimension(0)*tempImage.dimension(1))*startPoint[startPoint.length-1]+"\n");
 	    	
 	    	
 	    	double []output=null;
 
 	    	PowellOptimizer optimizer = new PowellOptimizer(1e-3, 1e-3);
 	    
+	//    	CMAESOptimizer optimizer= new CMAESOptimizer((int)(4+Math.floor(3*Math.log(startPoint.length))));
 	    	
-		//  SimplexOptimizer optimizer = new SimplexOptimizer();
-	 // 	optimizer.setSimplex(new   NelderMeadSimplex(startPoint.length));
+	//    	SimplexOptimizer optimizer = new SimplexOptimizer();
+	 // optimizer.setSimplex(new   NelderMeadSimplex(startPoint.length));
 	 // 	optimizer.setConvergenceChecker(new MyConvChecker());
 	  	
 	    	
@@ -149,8 +165,11 @@ implements MultivariateRealFunction
 	   // 	System.out.println("2ndTry:");
 	    	
 	  // 	startPoint= optimizer.optimize(10000000, this, GoalType.MAXIMIZE, startPoint).getPoint();
-	    	
-	    	
+	    	System.out.println("tf: "+ totalFlux+"\n");
+	   	System.out.println("energy: "+  value(startPoint)+"\n");
+	 //   			getLogLikelihood(totalFlux, trackables, tempImage) );
+	//	if(true) return;
+	    
 	    	for(int j=0;j<1;j++)
 	    	startPoint= optimizer.optimize(10000000, this, GoalType.MINIMIZE , startPoint).getPoint();
 	 
