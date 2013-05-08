@@ -65,22 +65,18 @@ implements MultivariateRealFunction
 		b.xPos=arg0[0+count]; b.yPos=arg0[1+count];			
 		
 	
-	//	totalFlux= arg0[2+count]*b.denom+arg0[3+count]*(double)(tempImage.dimension(0)*tempImage.dimension(1));
 		b.pK=Math.abs((arg0[2+count]*b.denom)/assumedTotalFlux);
-//	System.out.println("b.denom:"+b.denom+ " xpos:"+b.xPos+ " ypos:"+ b.yPos+ " b/p:"+ arg0[3+count]*10+ " int:"+b.inten+ " tf:"+ assumedTotalFlux+ "\n");
 		count+=3;
 		if(b.pK<0) System.out.println("totalFlux<0");
 		}
 		
 		
 		double energy= getLogLikelihood(assumedTotalFlux, tempTrackables, tempImage);
-//		System.out.println("e:"+ energy);
 		return -energy;
 	}
 
 	@Override
 	public String getTypeName() {
-		// TODO Auto-generated method stub
 		return "EMCCD-GPO";
 	}
 
@@ -88,8 +84,6 @@ implements MultivariateRealFunction
 	public void optimizeFrame(boolean alternateMethod, List<Blob> trackables,
 			MovieFrame<IT> movieFrame, double qualityT,
 			Session<Blob, IT> session) {
-	//	System.out.println("starting to optimize\n");
-
 			count=0;
 			tempImage=new IterableRandomAccessibleInterval<IT>( movieFrame.getFrameView());
 			tempTrackables=trackables;
@@ -127,13 +121,8 @@ implements MultivariateRealFunction
 	    	double[] startPoint=new double [3*trackables.size()+1];
 	    	for(Blob b:trackables){
 	    		b.calcDenominator(tempImage, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
-			//	b.pK=(Math.abs(startPoint[2+count])*b.denom)/totalFlux;	
 			b.numberOfPixels=nop;
-	    	//if(b.inten==0)
-	    	b.inten=totalFlux*b.pK/b.denom;
-	    	
-	    	
-	//    	b.backInten = totalFlux*(1-b.pK);
+	     	b.inten=totalFlux*b.pK/b.denom;    	
 	    	backFlux-=totalFlux*b.pK;
 	    	
 	    	startPoint[0+count]=b.xPos;
@@ -161,39 +150,44 @@ implements MultivariateRealFunction
 	  	
 	    	
 	    	
-	  //  	output= optimizer.optimize(10000000, this, GoalType.MAXIMIZE, startPoint).getPoint();
-	   // 	System.out.println("2ndTry:");
-	    	
-	  // 	startPoint= optimizer.optimize(10000000, this, GoalType.MAXIMIZE, startPoint).getPoint();
-	    	System.out.println("tf: "+ totalFlux+"\n");
-	   	System.out.println("energy: "+  value(startPoint)+"\n");
+	  //  System.out.println("tf: "+ totalFlux+"\n");
+	  //  System.out.println("energy: "+  value(startPoint)+"\n");
 	 //   			getLogLikelihood(totalFlux, trackables, tempImage) );
 	//	if(true) return;
 	    
-	    	for(int j=0;j<1;j++)
-	    	startPoint= optimizer.optimize(10000000, this, GoalType.MINIMIZE , startPoint).getPoint();
-	 
-	    	totalFlux=Math.abs(startPoint[startPoint.length-1]);	//add background
-			
-			for(int j=2;j<startPoint.length;j+=3){		//add other intensities
-				totalFlux+=Math.abs(startPoint[j]);
-			}
-			
-	    	
-	    	count=0;
-			for(Blob b:trackables){
-			System.out.println("count:"+count);
-	    	b.xPos=startPoint[0+count]; b.yPos=startPoint[1+count];		    
-	    	b.calcDenominator(tempImage, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
-			b.pK=(Math.abs(startPoint[2+count])*b.denom)/totalFlux;	
-			b.inten=Math.abs(totalFlux*b.pK/b.denom);
-	    	b.backInten = 	Math.abs(startPoint[startPoint.length-1])*(double)nop;    	
-	    	count+=3;
-	    	
-//	    	System.out.println("b.inten:"+b.inten + " b.pk:"+ b.pK + " b.backInt/p:"+ startPoint[startPoint.length-1]+ "TF:"+ totalFlux);
-			}
-//			System.out.println("Done:");
-			
+	//    	for(int j=0;j<1;j++)
+		startPoint = optimizer.optimize(10000000, this, GoalType.MINIMIZE,
+				startPoint).getPoint();
+
+		totalFlux = startPoint[startPoint.length - 1] * (double) nop; // initialize
+																		// with
+																		// background
+
+		count = 0;
+		for (Blob b : trackables) {										// calculate totalFlux in image
+			b.calcDenominator(tempImage, b.xPos, b.yPos, b.zPos, b.sigma,
+					b.sigmaZ);
+			totalFlux += startPoint[count + 2] * b.denom; // add flux from blobs, 
+															//multiply denom to consider only flux in image
+			count += 3;
+		}
+
+		count = 0;
+		for (Blob b : trackables) {
+			b.xPos = startPoint[0 + count];
+			b.yPos = startPoint[1 + count];
+			b.pK = (startPoint[2 + count]) * b.denom / totalFlux;
+			b.inten = startPoint[2 + count];
+			b.backInten = startPoint[startPoint.length - 1] * (double) nop;
+			count += 3;
+
+			// System.out.println("b.inten:"+b.inten + " b.pk:"+ b.pK +
+			// " b.backInt/p:"+ startPoint[startPoint.length-1]+ "TF:"+
+			// totalFlux);
+		}
+		//	System.out.println("energy:" +value(startPoint));
+			Model.errorWriter.write(value(startPoint)+ "\n");
+			Model.errorWriter.flush();
 	}
 
 }

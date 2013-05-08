@@ -171,7 +171,12 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 				break;
 			
 			
+			
+			
 		}
+		System.out.println(energy);
+		Model.errorWriter.write((-energy)+ "\n");
+		Model.errorWriter.flush();
 	//	ImageJFunctions.show (fluxValues, "ev");
 		
 	} 
@@ -431,7 +436,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
     		akkuCheck+=flux;
     		
     	}
- 
+ /*
    	
     	if(akku>bestLogLikelihoodSoFar){
     		bestLogLikelihoodSoFar=akku;
@@ -440,6 +445,6 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
    	Model.errorWriter.write(time + "\t"+ akku+"\n");
     	Model.errorWriter.flush();
  }
-		return akku;
+*/		return akku;
 	}
 }
