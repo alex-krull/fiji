@@ -137,11 +137,12 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			 rand= new Random(i);
 				for(T t: trackingCandidates){
 					Blob b = (Blob)t;
-	/*				b.xPos=2.0*b.sigma+0*rand.nextGaussian()+(double)(model.getFrame(0, 0).getFrameView().dimension(0)-1)/2.0;
+		//			b.pK-=1e-6;
+					b.xPos=2*rand.nextGaussian()+(double)(model.getFrame(0, 0).getFrameView().dimension(0)-1)/2.0;
 //		
-					b.yPos=0*rand.nextGaussian()+(double)(model.getFrame(0, 0).getFrameView().dimension(1)-1)/2.0;
+					b.yPos=2*rand.nextGaussian()+(double)(model.getFrame(0, 0).getFrameView().dimension(1)-1)/2.0;
 					b.pK=0.05;
-*/					
+					
 //					b.pK=rand.nextDouble();
 					
 				}

@@ -138,18 +138,18 @@ public class Blob_Simulator implements PlugIn{
 		long[] dims = {xSize,ySize,frames};
 		Img <UnsignedShortType> image= imgFactory.create(dims, new UnsignedShortType());
 		
-
+/*
 		fillImage(image, 0,backFlux,sig,0,backFlux,r);
 		for(double x=5;x<xSize-5;x+=5)
 			for(double y=5;y<ySize-5;y+=5){
 				fillImage(image, x,y,sig,blobFlux,0,r);
 
 			}
-
+*/
 		
 	
 		
-//		fillImage(image,xPos+0,yPos+0,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+0,yPos+0,sig,blobFlux,backFlux,r);
 		
 	
 		//2

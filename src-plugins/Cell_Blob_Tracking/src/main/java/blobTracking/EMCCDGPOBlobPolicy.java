@@ -186,8 +186,8 @@ implements MultivariateRealFunction
 			// totalFlux);
 		}
 		//	System.out.println("energy:" +value(startPoint));
-			Model.errorWriter.write(value(startPoint)+ "\n");
-			Model.errorWriter.flush();
+		//	Model.errorWriter.write(value(startPoint)+ "\n");
+		//	Model.errorWriter.flush();
 	}
 
 }
