@@ -167,22 +167,9 @@ implements MultivariateRealFunction
 	    	
 	    	double []output=null;
 
-	    	PowellOptimizer optimizer = new PowellOptimizer(1e-3, 1e-3);
+	    	PowellOptimizer optimizer = new PowellOptimizer(qualityT, qualityT);
 	    
-	//    	CMAESOptimizer optimizer= new CMAESOptimizer((int)(4+Math.floor(3*Math.log(startPoint.length))));
-	    	
-	//    	SimplexOptimizer optimizer = new SimplexOptimizer();
-	 // optimizer.setSimplex(new   NelderMeadSimplex(startPoint.length));
-	 // 	optimizer.setConvergenceChecker(new MyConvChecker());
-	  	
-	    	
-	    	
-	  //  System.out.println("tf: "+ totalFlux+"\n");
-	  //  System.out.println("energy: "+  value(startPoint)+"\n");
-	 //   			getLogLikelihood(totalFlux, trackables, tempImage) );
-	//	if(true) return;
-	    
-	//    	for(int j=0;j<1;j++)
+
 		startPoint = optimizer.optimize(10000000, this, GoalType.MINIMIZE,
 				startPoint).getPoint();
 
