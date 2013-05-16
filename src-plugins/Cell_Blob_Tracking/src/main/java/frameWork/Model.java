@@ -49,6 +49,7 @@ private double xyToZ=3.5;
 public ReentrantReadWriteLock rwLock;
 private boolean currentlyTracking=false;
 public long startedTrackingAt;
+public double randomInitOffset=-1;
 
 private volatile StringBuffer msgBuffer=new StringBuffer();
 

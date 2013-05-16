@@ -471,13 +471,13 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			MstepThread t= new MstepThread(b,totalInten, iFrame);
 			threads.add(t);
 			t.setPriority(Thread.MIN_PRIORITY);
-	//		t.start();
-			t.run();
+			t.start();
+//			t.run();
 	//	change=Math.max(change, this.doMstepForBlob(b, totalInten));	
 	//		totalBlobsInten+=b.inten;
     	}
 		
-	/*	
+		
 		for(MstepThread t:threads){
 			try{
 			t.join();
@@ -485,7 +485,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			
 			
 		}
-	*/	
+		
 		
 		
 		double couplePK=0;
