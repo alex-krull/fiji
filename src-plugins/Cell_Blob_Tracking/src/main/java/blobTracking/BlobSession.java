@@ -201,6 +201,12 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		s= props.getProperty("mscaleIterations"); if(s!=null) this.mscaleIterations=Integer.valueOf(s);
 		s= props.getProperty("mscaleSigma"); if(s!=null) this.mscaleSigma=Double.valueOf(s);
 		s= props.getProperty("downscaleFactor"); if(s!=null) this.downscaleFactor=Double.valueOf(s);
+		s= props.getProperty("defaultSigma"); if(s!=null) this.defaultSigma=Double.valueOf(s);
+		s= props.getProperty("defaultSigmaZ"); if(s!=null) this.defaultSigmaZ=Double.valueOf(s);
+		s= props.getProperty("defaultMaxSigma"); if(s!=null) this.defaultMaxSigma=Double.valueOf(s);
+		s= props.getProperty("defaultMinSigma"); if(s!=null) this.defaultMinSigma=Double.valueOf(s);
+		
+
 		
 		
 	}
@@ -212,7 +218,10 @@ public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealTyp
 		props.setProperty("mscaleIterations",String.valueOf(mscaleIterations));
 		props.setProperty("mscaleSigma", String.valueOf(mscaleSigma));
 		props.setProperty("downscaleFactor", String.valueOf(downscaleFactor));
-		
+		props.setProperty("defaultSigma", String.valueOf(defaultSigma));
+		props.setProperty("defaultSigmaZ", String.valueOf(defaultSigmaZ));
+		props.setProperty("defaultMaxSigma", String.valueOf(defaultMaxSigma));
+		props.setProperty("defaultMinSigma", String.valueOf(defaultMinSigma));
 	
 		return props;
 	}
