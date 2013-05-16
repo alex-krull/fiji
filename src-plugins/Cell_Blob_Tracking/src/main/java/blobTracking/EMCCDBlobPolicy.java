@@ -61,6 +61,10 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 {
 	protected static double  GAIN=300;
 
+//	private static double  PAG=12.17;
+//	private static double  PAG=11.3;
+	private double bestLogLikelihoodSoFar=-1e30;
+
 	protected static double  PAG=1;
 
 
@@ -86,7 +90,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			b.denom=b.calcDenominator(iFrame, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
 
 		}
-
+		System.out.println("1");
 
 
 
@@ -96,7 +100,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();
 		Img<FloatType> expectedValues=imgFactory.create(movieFrame.getFrameView(), new FloatType());
 
-
+		System.out.println("2");
 		int maxIterations=30;
 
 
@@ -109,16 +113,27 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 		totalInten/=GAIN;
 
-
 		super.numOfPixelsUsed=ImglibTools.getNumOfPixels(iFrame);
-
+		System.out.println("3");
 
 
 		List<Blob> refBlobs=new ArrayList<Blob>();
 		double energyOld=1;
 		double energy=1;
 		double change=0;
+	//	IterableRandomAccessibleInterval<IT>tempImage=new IterableRandomAccessibleInterval<IT>( movieFrame.getFrameView());
+		double fullTI=0;
+
+		
+		
+		
+	//	System.out.println("xs:"+ iFrame.dimension(0));
+	//	System.out.println("energy: "+getLogLikelihood(totalInten, trackables, iFrame));
+	//	System.out.println("energyFULL: "+getLogLikelihood(fullTI, trackables, tempImage));
+	//	if(true) return;	
+		
 		for(int i=0;i<maxIterations;i++){
+			
 
 			iFrame= makeIterableFrame( movieFrame.getFrameView(),  trackables);
 
@@ -128,16 +143,17 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 				refBlobs.add(cb);
 
 			}
-
+			
 			Model.getInstance().depositMsg("E-step");
+			System.out.println("4");
 			Model.getInstance().makeChangesPublic();
-
+			System.out.println("5");
 			totalInten= doEstep(expectedValues, iFrame, trackables, totalInten);
-
+			System.out.println("6");
 			Model.getInstance().depositMsg("M-step");
 			Model.getInstance().makeChangesPublic();
 
-
+			System.out.println("_7");
 			doMstep(alternateMethod, trackables, expectedValues, qualityT, session);
 			energyOld=energy;
 			energy=this.getLogLikelihood(totalInten, trackables, iFrame);
@@ -146,12 +162,14 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			int index=0;
 
 			change=Math.abs(energyOld-energy);
-
+			System.out.println("_8");
 			if(change<qualityT)
 				break;
 
 
+
 		}
+		
 
 
 	} 
@@ -170,14 +188,15 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		while(cursor.hasNext()){
 
 
-
+			System.out.println(".1");
 
 
 
 			ra.setPosition(cursor);
+			System.out.println(".2");
 			int value=(int) (((double)Math.max(0, (cursor.get()).getRealDouble()-offSet))*PAG);
 
-
+			System.out.println(".3");
 
 			int x= ra.getIntPosition(0);
 			int y= ra.getIntPosition(1);
@@ -198,7 +217,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 
-
+			
 
 
 
@@ -214,12 +233,13 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 
 			double besselExpected=0;
 
+			System.out.println(".4");
 			if(tempB!=0) besselExpected=tempA/tempB;
 			if(Double.isNaN(besselExpected) || Double.isInfinite(besselExpected)) 
 				besselExpected=(temp*Bessel.i0e(2*temp)) / (Bessel.i1e(2*temp)+missingTerm*Math.exp(-2*temp));
 
 
-
+			System.out.println(".5");
 
 			if(!Double.isNaN(besselExpected)){
 				ra.get().set((float)(besselExpected));		
@@ -239,6 +259,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 				calcFlux(totalInten, blobs, x,  y, z);
 			}
 
+			System.out.println(".6");
 
 		}
 
@@ -332,6 +353,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 
+
 		while ( cursor.hasNext() )	{
 			cursor.fwd();
 			i++;
@@ -353,5 +375,6 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 
 		return akku;
+
 	}
 }

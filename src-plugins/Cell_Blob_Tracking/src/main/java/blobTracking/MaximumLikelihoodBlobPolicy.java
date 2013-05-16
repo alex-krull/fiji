@@ -403,7 +403,13 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			threads.add(t);
 			t.setPriority(Thread.MIN_PRIORITY);
 			t.start();
+
 		}
+
+
+//			t.run();
+	//	change=Math.max(change, this.doMstepForBlob(b, totalInten));	
+	//		totalBlobsInten+=b.inten;
 
 		for(MstepThread t:threads){
 			try{

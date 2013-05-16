@@ -52,27 +52,31 @@ public class Model <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> 
 
 
 
-	private static Model<?> instance;
 
-	private boolean isVolume=false;
-	private boolean isTimeSequence=false;
-	private boolean isMultiChannel=false;
-	private boolean switchedDimensions=false;
-	private int numberOfChannels;
-	private int numberOfFrames;
-	private int numberOfSlices;
-	private	RandomAccessibleInterval<IT> image;
-	private SortedMap <Integer, MovieChannel <IT> > channels;
-	private SortedMap <Integer, Session <? extends Trackable,IT> > trackingChannels;
-	private String imageFileName;
-	private String imageDrirectory;
-	private String projectDirectory;
-	private boolean structuralChange=true;
-	private int intensityOffset=0;
-	private double xyToZ=3.5;
-	public ReentrantReadWriteLock rwLock;
-	private boolean currentlyTracking=false;
-	private long startedTrackingAt;
+private static Model<?> instance;
+
+private boolean isVolume=false;
+private boolean isTimeSequence=false;
+private boolean isMultiChannel=false;
+private boolean switchedDimensions=false;
+private int numberOfChannels;
+private int numberOfFrames;
+private int numberOfSlices;
+private	RandomAccessibleInterval<IT> image;
+private SortedMap <Integer, MovieChannel <IT> > channels;
+private SortedMap <Integer, Session <? extends Trackable,IT> > trackingChannels;
+private String imageFileName;
+private String imageDrirectory;
+private String projectDirectory;
+private boolean structuralChange=true;
+private int intensityOffset=0;
+private double xyToZ=3.5;
+public ReentrantReadWriteLock rwLock;
+private boolean currentlyTracking=false;
+public long startedTrackingAt;
+public double randomInitOffset=-1;
+
+	
 
 	private volatile StringBuffer msgBuffer=new StringBuffer();
 

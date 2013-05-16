@@ -63,16 +63,16 @@ public class Blob_Simulator implements PlugIn{
 		
 		
 		GenericDialog gd = new GenericDialog("blob simulator");
-		gd.addNumericField("x-Size", 7, 0);
-		gd.addNumericField("y-Size", 7, 0);
-		gd.addNumericField("frames", 1000, 0);
+		gd.addNumericField("x-Size", 19, 0);
+		gd.addNumericField("y-Size", 19, 0);
+		gd.addNumericField("frames", 10, 0);
 		
-		gd.addNumericField("x-position", 3, 0);
-		gd.addNumericField("y-position", 3, 0);
-		gd.addNumericField("sigma", 1, 0);
+		gd.addNumericField("x-position", 7, 0);
+		gd.addNumericField("y-position", 9, 0);
+		gd.addNumericField("sigma", 1.3, 4);
 		gd.addNumericField("flux of blob", 100, 0);
-		gd.addNumericField("flux of background per pixel", 1, 0);
-		gd.addNumericField("emccd gain", 100, 0);
+		gd.addNumericField("flux of background per pixel", 0, 0);
+		gd.addNumericField("emccd gain", 300, 0);
 		gd.addNumericField("pre amp", 1, 5);
 		gd.addNumericField("read out noise std", 0, 5);
 		
@@ -138,28 +138,73 @@ public class Blob_Simulator implements PlugIn{
 		long[] dims = {xSize,ySize,frames};
 		Img <UnsignedShortType> image= imgFactory.create(dims, new UnsignedShortType());
 		
-//		fillImage(image,xPos+0,yPos+0,sig,blobFlux,backFlux,r);
-		
-		//fillImage(image,xPos-8,yPos-4,sig,blobFlux,0,r);
-		//fillImage(image,xPos-8,yPos+0,sig,blobFlux,0,r);
-		//fillImage(image,xPos-8,yPos+4,sig,blobFlux,0,r);
-/*		fillImage(image,xPos-4,yPos-4,sig,blobFlux,0,r);
-		fillImage(image,xPos-4,yPos+0,sig,blobFlux,0,r);
-		fillImage(image,xPos-4,yPos+4,sig,blobFlux,0,r);
-		fillImage(image,xPos-0,yPos-4,sig,blobFlux,0,r);
-		fillImage(image,xPos+0,yPos+0,sig,blobFlux,backFlux,r);
-		fillImage(image,xPos-0,yPos+4,sig,blobFlux,0,r);
-		fillImage(image,xPos+4,yPos-4,sig,blobFlux,0,r);
-		fillImage(image,xPos+4,yPos+0,sig,blobFlux,0,r);
-		fillImage(image,xPos+4,yPos+4,sig,blobFlux,0,r);
-*/		
-		
+/*
+		fillImage(image, 0,backFlux,sig,0,backFlux,r);
+		for(double x=5;x<xSize-5;x+=5)
+			for(double y=5;y<ySize-5;y+=5){
+				fillImage(image, x,y,sig,blobFlux,0,r);
 
-		fillImage(image,xPos-2,yPos-2,sig,blobFlux,backFlux,r);
-		fillImage(image,xPos+2,yPos-2,sig,blobFlux,backFlux,r);
-		fillImage(image,xPos-2,yPos+2,sig,blobFlux,backFlux,r);
-		fillImage(image,xPos+2,yPos+2,sig,blobFlux,backFlux,r);
+			}
+*/
 		
+	
+		
+		fillImage(image,xPos+0,yPos+0,sig,blobFlux,backFlux,r);
+		
+	
+		//2
+	//	fillImage(image,xPos,yPos-2.5,sig,blobFlux,backFlux,r);
+	//	fillImage(image,xPos,yPos+2.5,sig,blobFlux,backFlux,r);
+
+		
+	/*	
+		// 4	
+		fillImage(image,xPos-2.5,yPos-2.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+2.5,yPos-2.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-2.5,yPos+2.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+2.5,yPos+2.5,sig,blobFlux,backFlux,r);
+	*/	
+		
+	/*		
+		// 6
+		fillImage(image,xPos-5,yPos-2.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-5,yPos+2.5,sig,blobFlux,backFlux,r);
+		
+		fillImage(image,xPos-0,yPos-2.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+0,yPos+2.5,sig,blobFlux,backFlux,r);
+	
+		fillImage(image,xPos+5,yPos-2.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+5,yPos+2.5,sig,blobFlux,backFlux,r);
+	
+	*/
+		
+	/*			
+		// 9
+		fillImage(image,xPos-4,yPos-4,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-4,yPos+0,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-4,yPos+4,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-0,yPos-4,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+0,yPos+0,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-0,yPos+4,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+4,yPos-4,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+4,yPos+0,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+4,yPos+4,sig,blobFlux,backFlux,r);
+	*/
+		// 12
+	/*	fillImage(image,xPos-5,yPos-7.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-5,yPos-2.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-5,yPos+2.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-0,yPos-7.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+0,yPos-2.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-0,yPos+2.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+5,yPos-7.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+5,yPos-2.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos+5,yPos+2.5,sig,blobFlux,backFlux,r);
+		
+		fillImage(image,xPos+5,yPos+7.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-0,yPos+7.5,sig,blobFlux,backFlux,r);
+		fillImage(image,xPos-5,yPos+7.5,sig,blobFlux,backFlux,r);
+	*/	
 		if(emccd) applyEMCCD(image, gain, r,1);
 		return image;
 	}
