@@ -302,6 +302,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	
 	public void mergeSequenences(){
 	
+		if( this.selectedIdList.size()<2) return;
 		int newSid=model.getNextSequqnceId();
 		for(Integer sid: this.selectedIdList){
 			Sequence<T> s=trackingChannel.getSequence(sid);

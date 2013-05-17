@@ -174,11 +174,12 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 
 
 		Controller<IT> cont= new Controller<IT>(model,this);
+		cont.addPolicy(new EMCCDGPOBlobPolicy<IT>());
+		cont.addPolicy(new EMCCDBlobPolicy<IT>());
 		cont.addPolicy(new MaximumLikelihoodBlobPolicy<IT>());
 		cont.addPolicy("Blob", new CompatiblePolicy<IT>());
-		cont.addPolicy(new EMCCDBlobPolicy<IT>());
-		cont.addPolicy(new EMCCDGPOBlobPolicy<IT>());
-		cont.addPolicy(new MultiStartBlobPolicy<IT>(new MaximumLikelihoodBlobPolicy<IT>(), 2));
+		
+	//	cont.addPolicy(new MultiStartBlobPolicy<IT>(new MaximumLikelihoodBlobPolicy<IT>(), 2));
 
 		System.out.println("creating ViewModel...");
 		ViewModel<IT> vm= new ViewModel<IT>( model,cont);
