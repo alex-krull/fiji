@@ -35,10 +35,10 @@ public class Adapter {
 		"ij-ui-swing-updater", "ij-updater-core", "ij-core", "eventbus", "sezpoz"
 	};
 	public final static String[] VERSIONS = {
-		"-2.0.0-SNAPSHOT", "-2.0.0-SNAPSHOT", "-2.0.0-SNAPSHOT", "-1.4", "-1.9"
+		"-2.0.0-beta5", "-2.0.0-beta5", "-2.0.0-beta5", "-1.4", "-1.9"
 	};
 	public final static String[] TIMESTAMPS = {
-		"20120817173023", "20120817173023", "20120824223209", "20120404210913", "20120404210913"
+		"20121020192927", "20121020192927", "20121020192927", "20120404210913", "20120404210913"
 	};
 	public final static String UPDATER_CLASS_NAME = "imagej.updater.gui.ImageJUpdater";
 	private final static String UPTODATE_CLASS_NAME = "imagej.updater.core.UpToDate";
@@ -155,12 +155,6 @@ public class Adapter {
 			}
 			Thread.currentThread().setContextClassLoader(updaterClass.getClassLoader());
 			updaterClass.newInstance().run();
-		} catch (InstantiationException e) {
-			ui.error("Could not instantiate the Updater: " + e.getMessage());
-			return;
-		} catch (IllegalAccessException e) {
-			ui.error("Could not access the Updater: " + e.getMessage());
-			return;
 		} catch (Throwable t) {
 			t.printStackTrace();
 			fallBackToRemoteUpdater(t);
@@ -236,7 +230,6 @@ public class Adapter {
 			invoke(files, "read");
 		} catch (Exception e) { /* ignore */ }
 		Object downloader = newInstance(DOWNLOADER_CLASS_NAME, files);
-		invoke(downloader, "addProgress", getProgress());
 		invoke(downloader, "start", false);
 		Object checksummer = newInstance(CHECKSUMMER_CLASS_NAME, files, getProgress());
 		invoke(checksummer, "updateFromLocal", filenames);
@@ -253,7 +246,7 @@ public class Adapter {
 		Iterable<Object> dependencies = invoke(guiFile, "getFileDependencies", files, true);
 		for (Object file : dependencies)
 			classPath.add(new File(ijDir, (String)invoke(file, "getLocalFilename", false)).toURI().toURL());
-		remoteClassLoader = new URLClassLoader(classPath.toArray(new URL[classPath.size()]));
+		remoteClassLoader = new URLClassLoader(classPath.toArray(new URL[classPath.size()]), String.class.getClassLoader());
 		progress = loadClass(progress.getClass().getName());
 
 		// Blow away ImageJ's class loader so we can pick up the newly downloaded classes
@@ -266,7 +259,7 @@ public class Adapter {
 	}
 
 	/**
-	 * Utility method for the quick up-to-date check in {@link fiji.Main}
+	 * Utility method for the quick up-to-date check in fiji.Main
 	 *
 	 * @return a tag describing whether we should run the Updater
 	 */
@@ -279,7 +272,7 @@ public class Adapter {
 	}
 
 	/**
-	 * Utility method for the {@link fiji.packaging.Package_Maker}
+	 * Utility method for the fiji.packaging.Package_Maker
 	 *
 	 * @return the list of files the Updater cares about
 	 * @throws Exception
@@ -306,10 +299,11 @@ public class Adapter {
 	}
 
 	/**
-	 * Utility method for the {@link Bug_Submitter.Bug_Submitter}
+	 * Utility method for the Bug_Submitter.Bug_Submitter
 	 *
 	 * @return the list of files known to the Updater, with versions, as a String
 	 */
+	@Deprecated
 	public String getInstalledVersions() {
 		try {
 			Map<String, Object> collection = newInstance(COLLECTION_CLASS_NAME, new File(System.getProperty("ij.dir")));
@@ -562,7 +556,7 @@ public class Adapter {
 	}
 
 	protected Class<?> loadClass(String name, boolean forceRemote) {
-		ClassLoader currentLoader = forceRemote ? null : Adapter.class.getClassLoader();
+		ClassLoader currentLoader = forceRemote ? null : (remoteClassLoader != null ? remoteClassLoader : Adapter.class.getClassLoader());
 		Class<?> result = null;
 		try {
 			result = currentLoader.loadClass(name);
@@ -577,7 +571,7 @@ public class Adapter {
 					ui.error("Invalid Updater URL: " + e.getMessage());
 					return null;
 				}
-				remoteClassLoader = new URLClassLoader(urls, currentLoader);
+				remoteClassLoader = new URLClassLoader(urls, String.class.getClassLoader());
 				// now we need to make sure that ij.dir is set properly because
 				// FileUtils.getBaseDirectory() will be quite lost
 				ensureIJDirIsSet();

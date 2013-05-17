@@ -1,5 +1,7 @@
 package mpicbg.spim;
 
+import ij.IJ;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -177,6 +179,19 @@ public class Reconstruction
 	        addExternalTransformation( currentViewStructure );
         	addExternalTransformation( reference );
 			
+
+    		//System.out.println( "conf.referenceTimePoint: " + conf.referenceTimePoint );
+    		//System.out.println( "conf.getTimePointIndex( conf.referenceTimePoint ): " + conf.getTimePointIndex( conf.referenceTimePoint ) );
+    		//System.out.println( "timePointIndex: " + timePointIndex );
+    		//System.out.println( "conf.fuseReferenceTimepoint: " + conf.fuseReferenceTimepoint );
+
+        	// if the reference timepoint was just added to compute the correct bounding box do not fuse it
+        	if ( conf.getTimePointIndex( conf.referenceTimePoint ) == timePointIndex && !conf.fuseReferenceTimepoint )
+        	{
+        		//System.out.println( "yes." );
+				continue;
+        	}
+        	
 			if (!conf.registerOnly)
 			{
 				IOFunctions.println("(" + new Date(System.currentTimeMillis()) + "): Starting Fusion for timepoint " + conf.timepoints[timePointIndex]);		
@@ -195,7 +210,7 @@ public class Reconstruction
 					view.closeImage();
 			}
 			else
-			{
+			{				
 				conf.instance.deconvolve( currentViewStructure, conf, currentViewStructure.getTimePoint() );
 			}
 		}		
@@ -236,7 +251,7 @@ public class Reconstruction
 			
 			if ( !segSuccess )
 				currentViewStructure.getBeadSegmentation().segment();
-
+			
 			/*
 			Image<FloatType> img = viewStructure.getBeadSegmentation().getFoundBeads( viewStructure.getViews().get( 0) );
 			img.getDisplay().setMinMax();
@@ -260,11 +275,33 @@ public class Reconstruction
 			if ( !regSuccess )
 				currentViewStructure.getBeadRegistration().registerViews();
 
+			// relocalize true correspondences?
+			if ( conf.doFit == 2 )
+			{
+				do 
+				{
+					currentViewStructure.getBeadSegmentation().reLocalizeTrueCorrespondences( true );
+
+					// reset the error statistics and correspondences
+					currentViewStructure.getGlobalErrorStatistics().reset();
+					for ( final ViewDataBeads view : currentViewStructure.getViews() )
+					{
+						view.initErrorStatistics();
+						view.getBeadStructure().clearAllRANSACCorrespondences();
+					}
+
+					currentViewStructure.getBeadRegistration().registerViews();
+				}
+				while ( currentViewStructure.getBeadSegmentation().reLocalizeTrueCorrespondences( false ) > 0 );
+				
+				for ( final ViewDataBeads view : currentViewStructure.getViews() )
+					view.closeImage();
+			}
+			
 			BeadRegistration.concatenateAxialScaling( currentViewStructure.getViews(), currentViewStructure.getDebugLevel() );
 	        
 	        if ( currentViewStructure.getDebugLevel() <= ViewStructure.DEBUG_MAIN )
-	        	IOFunctions.println("(" + new Date(System.currentTimeMillis()) + "): Finished Registration");
-					        
+	        	IOFunctions.println("(" + new Date(System.currentTimeMillis()) + "): Finished Registration");					        
 
 	        //
 	        // remove the beads

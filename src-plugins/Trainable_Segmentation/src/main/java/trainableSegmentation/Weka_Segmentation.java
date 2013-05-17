@@ -36,6 +36,7 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.Random;
 import java.util.zip.GZIPOutputStream;
 import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
@@ -112,8 +113,8 @@ import weka.gui.visualize.ThresholdVisualizePanel;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Authors: Ignacio Arganda-Carreras (iarganda@mit.edu), Verena Kaynig (verena.kaynig@inf.ethz.ch),
- *          Albert Cardona (acardona@ini.phys.ethz.ch)
+ * Authors: Ignacio Arganda-Carreras (iargandacarreras@gmail.com), Verena Kaynig,
+ *          Albert Cardona
  */
 
 
@@ -176,7 +177,7 @@ public class Weka_Segmentation implements PlugIn
 	RoiListOverlay [] roiOverlay;
 	
 	/** available colors for available classes */
-	final Color[] colors = new Color[]{Color.red, Color.green, Color.blue,
+	Color[] colors = new Color[]{Color.red, Color.green, Color.blue,
 			Color.cyan, Color.magenta};
 
 	/** Lookup table for the result overlay image */
@@ -253,6 +254,33 @@ public class Weka_Segmentation implements PlugIn
 		final byte[] green = new byte[256];
 		final byte[] blue = new byte[256];
 		final int shift = 255 / WekaSegmentation.MAX_NUM_CLASSES;
+		
+		// assign random colors if # of classes > 5		
+		if( WekaSegmentation.MAX_NUM_CLASSES > 5 )
+		{
+			colors = new Color[ WekaSegmentation.MAX_NUM_CLASSES ];
+			Random random = new Random();
+			
+			// hue for assigning new color ([0.0-1.0])
+		    float hue = 0f;
+		    // saturation for assigning new color ([0.5-1.0]) 
+		    float saturation = 0.5f;
+			
+			for(int i=0; i<WekaSegmentation.MAX_NUM_CLASSES; i++)
+			{
+				colors[ i ] = Color.getHSBColor(hue, saturation, 1);
+				
+				hue += 0.38197f; // golden angle
+		        if (hue > 1) 
+		            hue -= 1;
+		        saturation += 0.38197f; // golden angle
+		        if (saturation > 1)
+		            saturation -= 1;
+		        saturation = 0.5f * saturation + 0.5f;							
+			}
+		}
+			
+		
 		for(int i = 0 ; i < 256; i++)
 		{
 			final int colorIndex = i / (shift+1);
@@ -516,7 +544,7 @@ public class Weka_Segmentation implements PlugIn
 	}
 
 	/**
-	 * Custom window to define the Advanced Weka Segmentation GUI
+	 * Custom window to define the Trainable Weka Segmentation GUI
 	 */
 	private class CustomWindow extends StackWindow
 	{
@@ -577,7 +605,7 @@ public class Weka_Segmentation implements PlugIn
 			// Remove the canvas from the window, to add it later
 			removeAll();
 
-			setTitle("Advanced Weka Segmentation");
+			setTitle("Trainable Weka Segmentation");
 
 			// Annotations panel
 			annotationsConstraints.anchor = GridBagConstraints.NORTHWEST;
@@ -588,8 +616,6 @@ public class Weka_Segmentation implements PlugIn
 
 			annotationsPanel.setBorder(BorderFactory.createTitledBorder("Labels"));
 			annotationsPanel.setLayout(boxAnnotation);
-
-
 
 			for(int i = 0; i < wekaSegmentation.getNumOfClasses(); i++)
 			{
@@ -1191,7 +1217,7 @@ public class Weka_Segmentation implements PlugIn
 					"might take some time depending on your computer.\n");
 
 
-		//trainingImage.setProcessor("Advanced Weka Segmentation", trainingImage.getProcessor().duplicate().convertToByte(true));
+		//trainingImage.setProcessor("Trainable Weka Segmentation", trainingImage.getProcessor().duplicate().convertToByte(true));
 		//wekaSegmentation.loadNewImage(trainingImage);
 		/*
 		if(trainingImage.getImageStackSize() > 1)
@@ -1203,7 +1229,7 @@ public class Weka_Segmentation implements PlugIn
 		
 		// The display image is a copy of the training image (single image or stack)
 		displayImage = trainingImage.duplicate();
-		displayImage.setTitle("Advanced Weka Segmentation");
+		displayImage.setTitle("Trainable Weka Segmentation");
 
 		ij.gui.Toolbar.getInstance().setTool(ij.gui.Toolbar.FREELINE);
 
@@ -1473,7 +1499,14 @@ public class Weka_Segmentation implements PlugIn
 		IJ.showStatus("Calculating probability maps...");
 		IJ.log("Calculating probability maps...");
 		win.setButtonsEnabled(false);
-		wekaSegmentation.applyClassifier(true);
+		try{		
+			wekaSegmentation.applyClassifier(true);
+		}catch(Exception ex){
+			IJ.log("Error while applying classifier! (please send bug report)");
+			ex.printStackTrace(); 
+			win.updateButtonsEnabling();
+			return;
+		}
 		final ImagePlus probImage = wekaSegmentation.getClassifiedImage();
 		if(null != probImage)
 		{
@@ -1878,7 +1911,7 @@ public class Weka_Segmentation implements PlugIn
 
 		// Updating image
 		displayImage = new ImagePlus();
-		displayImage.setProcessor("Advanced Weka Segmentation", trainingImage.getProcessor().duplicate());
+		displayImage.setProcessor("Trainable Weka Segmentation", trainingImage.getProcessor().duplicate());
 
 		// Remove current classification result image
 		win.resultOverlay.setImage(null);
@@ -1925,8 +1958,12 @@ public class Weka_Segmentation implements PlugIn
 		String[] arg = new String[] { sd.getDirectory() + sd.getFileName() };
 		record(SAVE_DATA, arg);
 		
+		win.setButtonsEnabled(false);
+		
 		if(false == wekaSegmentation.saveData(sd.getDirectory() + sd.getFileName()))
 			IJ.showMessage("There is no data to save");
+		
+		win.updateButtonsEnabling();
 	}
 
 
@@ -1937,7 +1974,7 @@ public class Weka_Segmentation implements PlugIn
 	{
 		if(wekaSegmentation.getNumOfClasses() == WekaSegmentation.MAX_NUM_CLASSES)
 		{
-			IJ.showMessage("Advanced Weka Segmentation", "Sorry, maximum number of classes has been reached");
+			IJ.showMessage("Trainable Weka Segmentation", "Sorry, maximum number of classes has been reached");
 			return;
 		}
 

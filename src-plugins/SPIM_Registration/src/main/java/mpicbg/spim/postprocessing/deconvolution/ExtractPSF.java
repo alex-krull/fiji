@@ -1,5 +1,6 @@
 package mpicbg.spim.postprocessing.deconvolution;
 
+import fiji.plugin.Multi_View_Deconvolution;
 import ij.IJ;
 
 import java.util.ArrayList;
@@ -14,8 +15,10 @@ import mpicbg.imglib.image.display.imagej.ImageJFunctions;
 import mpicbg.imglib.interpolation.Interpolator;
 import mpicbg.imglib.interpolation.InterpolatorFactory;
 import mpicbg.imglib.interpolation.linear.LinearInterpolatorFactory;
+import mpicbg.imglib.io.LOCI;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyFactory;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyMirrorFactory;
+import mpicbg.imglib.outofbounds.OutOfBoundsStrategyPeriodicFactory;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyValueFactory;
 import mpicbg.imglib.type.numeric.real.FloatType;
 import mpicbg.imglib.util.Util;
@@ -33,12 +36,12 @@ public class ExtractPSF
 	final ViewStructure viewStructure;
 	final ArrayList<Image<FloatType>> pointSpreadFunctions;
 	Image<FloatType> avgPSF;
-	final boolean computeAveragePSF;
+	final SPIMConfiguration conf;
 	
-	int size = 19;
+	int size = 17;
 	boolean isotropic = false;
 	
-	public ExtractPSF( final SPIMConfiguration config, final boolean computeAveragePSF )
+	public ExtractPSF( final SPIMConfiguration config )
 	{
 		//
 		// load the files
@@ -56,14 +59,18 @@ public class ExtractPSF
 		
 		this.viewStructure = viewStructure;
 		this.pointSpreadFunctions = new ArrayList<Image<FloatType>>();
-		this.computeAveragePSF = computeAveragePSF;
+		this.conf = config;
+		
+		setPSFSize( Multi_View_Deconvolution.psfSize, Multi_View_Deconvolution.isotropic );
 	}
 	
-	public ExtractPSF( final ViewStructure viewStructure, final boolean computeAveragePSF )
+	public ExtractPSF( final ViewStructure viewStructure )
 	{		
 		this.viewStructure = viewStructure;
 		this.pointSpreadFunctions = new ArrayList<Image<FloatType>>();
-		this.computeAveragePSF = computeAveragePSF;
+		this.conf = viewStructure.getSPIMConfiguration();
+		
+		setPSFSize( Multi_View_Deconvolution.psfSize, Multi_View_Deconvolution.isotropic );
 	}
 	
 	/**
@@ -152,8 +159,8 @@ public class ExtractPSF
 		
 		return proj;
 	}
-	
-	public void extract()
+
+	public void extract( final int viewID, final int[] maxSize )
 	{
 		final ArrayList<ViewDataBeads > views = viewStructure.getViews();
 		final int numDimensions = 3;
@@ -161,12 +168,82 @@ public class ExtractPSF
 		final int[] size = Util.getArrayFromValue( this.size, numDimensions );
 		if ( !this.isotropic )
 		{
-			size[ numDimensions - 1 ] *= Math.max( 1, 4.0/views.get( 0 ).getZStretching() );
+			size[ numDimensions - 1 ] *= Math.max( 1, 5.0/views.get( 0 ).getZStretching() );
 			if ( size[ numDimensions - 1 ] % 2 == 0 )
 				size[ numDimensions - 1 ]++;
 		}
 		
-		//IJ.log ( Util.printCoordinates( size ) );
+		IJ.log ( "PSF size: " + Util.printCoordinates( size ) );
+		
+		final ViewDataBeads view = views.get( viewID );		
+			
+		final Image<FloatType> psf = getTransformedPSF(view, size); 
+		psf.setName( "PSF_" + view.getName() );
+		
+		for ( int d = 0; d < numDimensions; ++d )
+			if ( psf.getDimension( d ) > maxSize[ d ] )
+				maxSize[ d ] = psf.getDimension( d );
+		
+		pointSpreadFunctions.add( psf );
+		
+		psf.getDisplay().setMinMax();
+	}
+	
+	public void computeAveragePSF( final int[] maxSize )
+	{
+		final int numDimensions = maxSize.length;
+		
+		IJ.log( "maxSize: " + Util.printCoordinates( maxSize ) );
+		
+		avgPSF = pointSpreadFunctions.get( 0 ).createNewImage( maxSize );
+		
+		final int[] avgCenter = new int[ numDimensions ];		
+		for ( int d = 0; d < numDimensions; ++d )
+			avgCenter[ d ] = avgPSF.getDimension( d ) / 2;
+			
+		for ( final Image<FloatType> psf : pointSpreadFunctions )
+		{
+			final LocalizableByDimCursor<FloatType> avgCursor = avgPSF.createLocalizableByDimCursor();
+			final LocalizableCursor<FloatType> psfCursor = psf.createLocalizableCursor();
+			
+			final int[] loc = new int[ numDimensions ];
+			final int[] psfCenter = new int[ numDimensions ];		
+			for ( int d = 0; d < numDimensions; ++d )
+				psfCenter[ d ] = psf.getDimension( d ) / 2;
+			
+			while ( psfCursor.hasNext() )
+			{
+				psfCursor.fwd();
+				psfCursor.getPosition( loc );
+				
+				for ( int d = 0; d < numDimensions; ++d )
+					loc[ d ] = psfCenter[ d ] - loc[ d ] + avgCenter[ d ];
+				
+				avgCursor.moveTo( loc );
+				avgCursor.getType().add( psfCursor.getType() );				
+			}
+			
+			avgCursor.close();
+			psfCursor.close();
+		}
+		
+		avgPSF.getDisplay().setMinMax();		
+	}
+
+	public void extract( final boolean computeAveragePSF )
+	{
+		final ArrayList<ViewDataBeads > views = viewStructure.getViews();
+		final int numDimensions = 3;
+		
+		final int[] size = Util.getArrayFromValue( this.size, numDimensions );
+		if ( !this.isotropic )
+		{
+			size[ numDimensions - 1 ] *= Math.max( 1, 5.0/views.get( 0 ).getZStretching() );
+			if ( size[ numDimensions - 1 ] % 2 == 0 )
+				size[ numDimensions - 1 ]++;
+		}
+		
+		IJ.log ( "PSF size: " + Util.printCoordinates( size ) );
 		
 		final int[] maxSize = new int[ numDimensions ];
 		
@@ -174,7 +251,7 @@ public class ExtractPSF
 			maxSize[ d ] = 0;
 		
 		for ( final ViewDataBeads view : views )		
-		{			
+		{
 			final Image<FloatType> psf = getTransformedPSF(view, size); 
 			psf.setName( "PSF_" + view.getName() );
 			
@@ -187,43 +264,8 @@ public class ExtractPSF
 			psf.getDisplay().setMinMax();
 		}
 		
-		
 		if ( computeAveragePSF )
-		{
-			avgPSF = pointSpreadFunctions.get( 0 ).createNewImage( maxSize );
-			
-			final int[] avgCenter = new int[ numDimensions ];		
-			for ( int d = 0; d < numDimensions; ++d )
-				avgCenter[ d ] = avgPSF.getDimension( d ) / 2;
-				
-			for ( final Image<FloatType> psf : pointSpreadFunctions )
-			{
-				final LocalizableByDimCursor<FloatType> avgCursor = avgPSF.createLocalizableByDimCursor();
-				final LocalizableCursor<FloatType> psfCursor = psf.createLocalizableCursor();
-				
-				final int[] loc = new int[ numDimensions ];
-				final int[] psfCenter = new int[ numDimensions ];		
-				for ( int d = 0; d < numDimensions; ++d )
-					psfCenter[ d ] = psf.getDimension( d ) / 2;
-				
-				while ( psfCursor.hasNext() )
-				{
-					psfCursor.fwd();
-					psfCursor.getPosition( loc );
-					
-					for ( int d = 0; d < numDimensions; ++d )
-						loc[ d ] = psfCenter[ d ] - loc[ d ] + avgCenter[ d ];
-					
-					avgCursor.moveTo( loc );
-					avgCursor.getType().add( psfCursor.getType() );				
-				}
-				
-				avgCursor.close();
-				psfCursor.close();
-			}
-			
-			avgPSF.getDisplay().setMinMax();
-		}
+			computeAveragePSF( maxSize );
 	}
 	
 	public static Image<FloatType> getTransformedPSF( final ViewDataBeads view, final int[] size )
@@ -305,10 +347,11 @@ public class ExtractPSF
 	{
 		final int numDimensions = size.length;
 		
-		final OutOfBoundsStrategyFactory<FloatType> outside = new OutOfBoundsStrategyMirrorFactory<FloatType>();
+		// Mirror produces some artifacts ...
+		final OutOfBoundsStrategyFactory<FloatType> outside = new OutOfBoundsStrategyPeriodicFactory<FloatType>();
 		final InterpolatorFactory<FloatType> interpolatorFactory = new LinearInterpolatorFactory<FloatType>( outside );
 		
-		final ImageFactory<FloatType> imageFactory = new ImageFactory<FloatType>( new FloatType(), new ArrayContainerFactory() );
+		final ImageFactory<FloatType> imageFactory = new ImageFactory<FloatType>( new FloatType(), view.getViewStructure().getSPIMConfiguration().imageFactory );
 		final Image<FloatType> img = view.getImage();
 		final Image<FloatType> psf = imageFactory.createImage( size );
 		
@@ -408,5 +451,45 @@ public class ExtractPSF
 		}
 		
 		return minMaxDim;
-	}		
+	}
+	
+	public static ExtractPSF loadAndTransformPSF( final String fileName, final boolean computeAveragePSF, final ViewStructure viewStructure )
+	{
+		ExtractPSF extractPSF = new ExtractPSF( viewStructure );
+		
+		final ArrayList<ViewDataBeads > views = viewStructure.getViews();
+		final int numDimensions = 3;
+		
+		final Image< FloatType > psfImage = LOCI.openLOCIFloatType( fileName, viewStructure.getSPIMConfiguration().imageFactory );
+		
+		if ( psfImage == null )
+		{
+			IJ.log( "Could not find PSF file '" + fileName + "' - quitting." );
+			return null;
+		}
+		
+		final int[] maxSize = new int[ numDimensions ];
+		
+		for ( int d = 0; d < numDimensions; ++d )
+			maxSize[ d ] = 0;
+		
+		for ( final ViewDataBeads view : views )		
+		{
+			final Image<FloatType> psf = transformPSF( psfImage, (AbstractAffineModel3D<?>)view.getTile().getModel() ); 
+			psf.setName( "PSF_" + view.getName() );
+			
+			for ( int d = 0; d < numDimensions; ++d )
+				if ( psf.getDimension( d ) > maxSize[ d ] )
+					maxSize[ d ] = psf.getDimension( d );
+			
+			extractPSF.pointSpreadFunctions.add( psf );
+			
+			psf.getDisplay().setMinMax();
+		}
+		
+		if ( computeAveragePSF )
+			extractPSF.computeAveragePSF( maxSize );
+		
+		return extractPSF;
+	}
 }

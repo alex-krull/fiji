@@ -337,6 +337,8 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 			return tryPlugIn("Clojure.Refresh_Clojure_Scripts", path);
 		if (name.endsWith(".bs") || name.endsWith(".bsh"))
 			return tryPlugIn("BSH.Refresh_BSH_Scripts", path);
+
+        // Larry Lindsey: Convert a Reconstruct .ser file into a TrakEM2 .xml file and open
 		if (name.endsWith(".ser"))
 			return tryPlugIn("reconstructreader.reconstruct.Reconstruct_Reader", path);
 
@@ -349,6 +351,43 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 		if (name.endsWith(".obj") || name.endsWith(".dxf") || name.endsWith(".stl"))
 			return tryPlugIn("ImageJ_3D_Viewer", path);
 
+		// Christopher Bruns: Read V3DRAW files from Vaa3D application
+		try {
+			String vaa3dCookie = new String(buf, 0, 24);
+			if ( vaa3dCookie.equals("raw_image_stack_by_hpeng") // Peng uncompressed format 
+			  || vaa3dCookie.equals("v3d_volume_pkbitdf_encod") // Murphy pack-bits/difference compressed format
+			  // NOTE Myers variant not supported yet in this reader
+			  // || name.endsWith(".v3draw") // uncompressed format 
+			  // || name.endsWith(".v3dpbd") // pack-bits/difference compressed format
+					) 
+			{
+				return tryPlugIn("org.janelia.vaa3d.reader.Vaa3d_Reader", path);
+			}
+		} catch (Exception exc) {}
+
+		//Michael Doube: read Scanco ISQ files
+		//File name is ADDDDDDD.ISQ;D where D is a decimal and A is a letter
+		try {
+			String isqMagic=new String(buf,0,16,"UTF-8");
+			if (name.matches("[a-z]\\d{7}.isq;\\d+")
+			  || isqMagic.equals("CTDATA-HEADER_V1"))
+				return tryPlugIn("org.bonej.io.ISQReader", path);
+		} catch (Exception e){}
+		
+        
+        //Larry Lindsey: open Archipelago cluster configuration file        
+        if (name.endsWith(".cluster"))
+        {
+            return tryPlugIn("edu.utexas.clm.archipelago.Fiji_Archipelago", path);
+        }
+
+        //Samuel Inverso: open raw files with raw file plugin 
+        if (name.endsWith(".raw"))
+        {
+            return tryPlugIn("ij.plugin.Raw", path);
+        }
+       
+       
 		// ****************** MODIFY HERE ******************
 		// do what ever you have to do to recognise your own file type
 		// and then call appropriate plugin using the above as models

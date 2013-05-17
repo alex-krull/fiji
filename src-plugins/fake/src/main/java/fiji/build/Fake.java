@@ -1,6 +1,10 @@
 /* -*- mode: java; c-basic-offset: 8; indent-tabs-mode: t; tab-width: 8 -*- */
 package fiji.build;
 
+import imagej.build.minimaven.JarClassLoader;
+import imagej.build.minimaven.JavaCompiler;
+import imagej.build.minimaven.JavaCompiler.CompileError;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -42,10 +46,6 @@ import java.util.regex.Pattern;
 
 import java.util.zip.ZipException;
 
-import fiji.build.minimaven.JarClassLoader;
-import fiji.build.minimaven.JavaCompiler;
-import fiji.build.minimaven.JavaCompiler.CompileError;
-
 public class Fake {
 	protected static String fijiBuildJar;
 	protected static long mtimeFijiBuild;
@@ -53,7 +53,6 @@ public class Fake {
 	protected JavaCompiler javac;
 
 	public static void main(String[] args) {
-		MiniMaven.ensureIJDirIsSet();
 		if (runPrecompiledFakeIfNewer(args))
 			return;
 		try {
@@ -202,6 +201,24 @@ public class Fake {
 
 	public static Matcher matchVersionedFilename(String filename) {
 		return versionPattern.matcher(filename);
+	}
+
+	public static File[] getAllVersions(final File directory, final String filename) {
+		final Matcher matcher = matchVersionedFilename(filename);
+		if (!matcher.matches()) {
+			final File file = new File(directory, filename);
+			return file.exists() ? new File[] { file } : null;
+		}
+		final String baseName = matcher.group(1);
+		return directory.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(final File dir, final String name) {
+				if (!name.startsWith(baseName))
+					return false;
+				final Matcher matcher2 = matchVersionedFilename(name);
+				return matcher2.matches() && baseName.equals(matcher2.group(1));
+			}
+		});
 	}
 
 	/* input defaults to reading the Fakefile, cwd to "." */

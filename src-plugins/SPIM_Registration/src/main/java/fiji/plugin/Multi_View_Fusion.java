@@ -30,8 +30,9 @@ public class Multi_View_Fusion implements PlugIn
 	final private String paperURL = "http://www.nature.com/nmeth/journal/v7/n6/full/nmeth0610-418.html";
 
 	final static String fusionType[] = new String[] { "Single-channel", "Multi-channel" };
-	static int defaultFusionType = 0;
-
+	final static String outputType[] = new String[] { "Display only", "Save 2d-slices, all in one directory", "Save 2d-slices, one directory per time-point" };
+	public static int defaultFusionType = 0;
+	
 	@Override
 	public void run(String arg0) 
 	{
@@ -78,8 +79,10 @@ public class Multi_View_Fusion implements PlugIn
 	public static int defaultParalellViews = 0;
 	public static boolean fusionUseBlendingStatic = true;
 	public static boolean fusionUseContentBasedStatic = false;
-	public static boolean displayFusedImageStatic = true;
-	public static boolean saveFusedImageStatic = true;
+	public static boolean fusionUseContentBasedIntegralStatic = false;
+	//public static boolean displayFusedImageStatic = true;
+	//public static boolean saveFusedImageStatic = true;
+	public static int defaultOutputType = 1;
 	public static int outputImageScalingStatic = 1;
 	public static int cropOffsetXStatic = 0;
 	public static int cropOffsetYStatic = 0;
@@ -100,10 +103,16 @@ public class Multi_View_Fusion implements PlugIn
 		final TextField tfTimepoints = (TextField) gd.getStringFields().lastElement();
 		gd.addStringField( "Angles to process", Bead_Registration.angles );
 		final TextField tfAngles = (TextField) gd.getStringFields().lastElement();
-		
+
+		final TextField tfChannels;
 		if ( multichannel )
+		{
 			gd.addStringField( "Channels to process", allChannels );
-		
+			tfChannels = (TextField) gd.getStringFields().lastElement();
+		}
+		else
+			tfChannels = null;
+
 		gd.addMessage("");
 		gd.addMessage("This Plugin is developed by Stephan Preibisch\n" + myURL);
 
@@ -145,6 +154,20 @@ public class Multi_View_Fusion implements PlugIn
 							expAngles += a;
 						}
 						tfAngles.setText( expAngles );
+
+						if ( multichannel )
+						{
+							// set channels string
+							String expChannels = "";
+							for ( final String channel : exp.channels )
+							{
+								final int c = Integer.parseInt( channel.substring( 1, channel.length() ) );
+								if ( !expChannels.equals( "" ) )
+									expChannels += ",";
+								expChannels += c;
+							}
+							tfChannels.setText( expChannels );
+						}
 					}
 					else
 					{
@@ -160,6 +183,20 @@ public class Multi_View_Fusion implements PlugIn
 		{
 			// disable file pattern field
 			tfFilePattern.setEnabled( false );
+			if ( multichannel )
+			{
+				// set channels string
+				final SPIMExperiment exp = new SPIMExperiment( f.getAbsolutePath() );
+				String expChannels = "";
+				for ( final String channel : exp.channels )
+				{
+					final int c = Integer.parseInt( channel.substring( 1, channel.length() ) );
+					if ( !expChannels.equals( "" ) )
+						expChannels += ",";
+					expChannels += c;
+				}
+				tfChannels.setText( expChannels );
+			}
 		}
 		gd.showDialog();
 		
@@ -247,6 +284,7 @@ public class Multi_View_Fusion implements PlugIn
 		}
 		
 		// get filenames and so on...
+		conf.fuseOnly = true;
 		if ( !Bead_Registration.init( conf ) )
 			return null;
 		
@@ -296,7 +334,7 @@ public class Multi_View_Fusion implements PlugIn
 						numChoices++;
 					}
 				}
-				else
+				else if ( s.contains( ".registration.to_" ) )
 				{
 					final int timepoint = Integer.parseInt( s.substring( s.indexOf( ".registration.to_" ) + 17, s.length() ) );
 					
@@ -376,8 +414,9 @@ public class Multi_View_Fusion implements PlugIn
 		gd2.addChoice( "Process_views_in_paralell", views, views[ defaultParalellViews ] );
 		
 		gd2.addMessage( "" );
-		gd2.addCheckbox( "Apply_blending", fusionUseBlendingStatic );
-		gd2.addCheckbox( "Apply_content_based_weightening", fusionUseContentBasedStatic );
+		gd2.addCheckbox( "Blending", fusionUseBlendingStatic );
+		gd2.addCheckbox( "Content_based weights", fusionUseContentBasedStatic );
+		gd2.addCheckbox( "Content_based_weights_(fast, approximate)", fusionUseContentBasedIntegralStatic );
 		gd2.addMessage( "" );
 		gd2.addNumericField( "Downsample_output image n-times", outputImageScalingStatic, 0 );
 		gd2.addNumericField( "Crop_output_image_offset_x", cropOffsetXStatic, 0 );
@@ -387,8 +426,9 @@ public class Multi_View_Fusion implements PlugIn
 		gd2.addNumericField( "Crop_output_image_size_y", cropSizeYStatic, 0 );
 		gd2.addNumericField( "Crop_output_image_size_z", cropSizeZStatic, 0 );
 		gd2.addMessage( "" );
-		gd2.addCheckbox( "Display_fused_image", displayFusedImageStatic );
-		gd2.addCheckbox( "Save_fused_image", saveFusedImageStatic );
+		//gd2.addCheckbox( "Display_fused_image", displayFusedImageStatic );
+		//gd2.addCheckbox( "Save_fused_image", saveFusedImageStatic );
+		gd2.addChoice( "Fused_image_output", outputType, outputType[ defaultOutputType ] );
 
 		gd2.addMessage("");
 		gd2.addMessage("This Plugin is developed by Stephan Preibisch\n" + myURL);
@@ -448,6 +488,34 @@ public class Multi_View_Fusion implements PlugIn
 		{
 			conf.timeLapseRegistration = true;
 			conf.referenceTimePoint = tp;
+			
+			// if the reference is not part of the time series, add it but do not fuse it
+			ArrayList< Integer > tpList = null;
+			try 
+			{
+				tpList = SPIMConfiguration.parseIntegerString( conf.timepointPattern );
+			} 
+			catch (ConfigurationParserException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				IJ.log( "Cannot parse time-point pattern: " + conf.timepointPattern );
+				return null;
+			}
+			
+			if ( !tpList.contains( tp ) )
+			{
+				conf.timepointPattern += ", " + tp;
+				conf.fuseReferenceTimepoint = false;
+				
+				//System.out.println( "new tp: '" + conf.timepointPattern + "'" );
+				
+				if ( !Bead_Registration.init( conf ) )
+					return null;
+			}
+			else
+			{
+				//System.out.println( "old tp: '" + conf.timepointPattern + "'" );
+			}
 		}
 		
 		IOFunctions.println( "tp " + tp );
@@ -456,6 +524,7 @@ public class Multi_View_Fusion implements PlugIn
 		defaultParalellViews = gd2.getNextChoiceIndex(); // 0 = all
 		fusionUseBlendingStatic = gd2.getNextBoolean();
 		fusionUseContentBasedStatic = gd2.getNextBoolean();
+		fusionUseContentBasedIntegralStatic = gd2.getNextBoolean();
 		outputImageScalingStatic = (int)Math.round( gd2.getNextNumber() );
 		cropOffsetXStatic = (int)Math.round( gd2.getNextNumber() );
 		cropOffsetYStatic = (int)Math.round( gd2.getNextNumber() );
@@ -463,8 +532,9 @@ public class Multi_View_Fusion implements PlugIn
 		cropSizeXStatic  = (int)Math.round( gd2.getNextNumber() );
 		cropSizeYStatic = (int)Math.round( gd2.getNextNumber() );
 		cropSizeZStatic = (int)Math.round( gd2.getNextNumber() );
-		displayFusedImageStatic = gd2.getNextBoolean(); 
-		saveFusedImageStatic = gd2.getNextBoolean(); 		
+		defaultOutputType = gd2.getNextChoiceIndex();
+		//displayFusedImageStatic = gd2.getNextBoolean(); 
+		//saveFusedImageStatic = gd2.getNextBoolean(); 		
 
 		conf.paralellFusion = false;
 		conf.sequentialFusion = false;
@@ -484,18 +554,15 @@ public class Multi_View_Fusion implements PlugIn
 			conf.multipleImageFusion = true;
 		}
 		
-		if ( displayFusedImageStatic  )
+		if ( defaultOutputType == 0 )
 			conf.showOutputImage = true;
 		else
 			conf.showOutputImage = false;
-		
-		if ( saveFusedImageStatic )
-			conf.writeOutputImage = true;
-		else
-			conf.writeOutputImage = false;
+		conf.writeOutputImage = defaultOutputType;
 		
 		conf.useLinearBlening = fusionUseBlendingStatic;
-		conf.useGauss = fusionUseContentBasedStatic;
+		conf.useGaussContentBased = fusionUseContentBasedStatic;
+		conf.useIntegralContentBased = fusionUseContentBasedIntegralStatic;
 		conf.scale = outputImageScalingStatic;
 		conf.cropOffsetX = cropOffsetXStatic;
 		conf.cropOffsetY = cropOffsetYStatic;
