@@ -82,6 +82,8 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			MovieFrame<IT> movieFrame, double qualityT,
 			Session<Blob, IT> session) {
 		
+		if(alternateMethod) return;
+		
 		IterableRandomAccessibleInterval<IT> iFrame= makeIterableFrame( movieFrame.getFrameView(),  trackables);
 		
 		for(Blob b: trackables){
@@ -456,5 +458,10 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
     	Model.errorWriter.flush();
  }
 */		return akku;
+	}
+	
+	
+	public String getLabelForAlternateTracking(){
+		return null;
 	}
 }

@@ -225,6 +225,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	
 
 	public void startTracking(int frameId, boolean multiscale, boolean autosave, int lastFrame){
+		if(policy.getLabelForAlternateTracking()==null && multiscale) return;
 		Thread thread= new TrackingThread(frameId, multiscale, autosave, lastFrame);
 		thread.setPriority(Thread.MIN_PRIORITY);
 		thread.start();

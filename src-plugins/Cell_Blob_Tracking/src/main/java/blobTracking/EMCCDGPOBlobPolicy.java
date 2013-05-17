@@ -111,6 +111,8 @@ implements MultivariateRealFunction
 			MovieFrame<IT> movieFrame, double qualityT,
 			Session<Blob, IT> session) {
 
+			if(alternateMethod) return;
+		
 			count=0;
 			tempImage=new IterableRandomAccessibleInterval<IT>( movieFrame.getFrameView());
 			tempTrackables=trackables;
@@ -203,6 +205,10 @@ implements MultivariateRealFunction
 		//	Model.errorWriter.write(value(startPoint)+ "\n");
 		//	Model.errorWriter.flush();
 
+	}
+	
+	public String getLabelForAlternateTracking(){
+		return null;
 	}
 
 }
