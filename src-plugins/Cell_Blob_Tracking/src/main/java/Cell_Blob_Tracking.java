@@ -189,7 +189,8 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 
 		cont.load(vm);
 
-		new GlobalOptionsDialog(model);
+		GlobalOptionsDialog god =new GlobalOptionsDialog(model);
+		if(!god.wasOked()) return;
 
 		System.out.println("adding windows...");
 		this.addWindows(model, imp, vm);

@@ -31,6 +31,7 @@ public class GlobalOptionsDialog {
 
 	private double deltaZ;
 	private int intensityOffset;
+	private boolean oked;
 
 	public GlobalOptionsDialog(Model<?> mod) {
 		GenericDialog gd = new GenericDialog("Global Options");
@@ -42,7 +43,7 @@ public class GlobalOptionsDialog {
 		intensityOffset = (int)gd.getNextNumber();
 		deltaZ = gd.getNextNumber();
 
-
+		oked=gd.wasOKed();
 		if (gd.wasOKed()){
 			mod.setIntensityOffset(intensityOffset);
 			mod.setXyToZ(deltaZ);
@@ -50,6 +51,10 @@ public class GlobalOptionsDialog {
 		}
 	}
 
+	public boolean wasOked(){
+		return oked;
+	}
+	
 	public double getDeltaZ(){
 		return deltaZ;
 
