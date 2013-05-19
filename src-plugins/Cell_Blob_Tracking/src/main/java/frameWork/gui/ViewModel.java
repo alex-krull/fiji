@@ -94,6 +94,7 @@ public class ViewModel < IT extends  NumericType<IT> & NativeType<IT> & RealType
 		GenericDialog gd = new GenericDialog("export images");
 		gd.addNumericField("magnification:", 4.0, 2);
 		gd.showDialog();
+		if(gd.wasCanceled()) return;
 		double mag= gd.getNextNumber();
 		
 		for(int i=0;i<model.getNumberOfFrames();i++){
