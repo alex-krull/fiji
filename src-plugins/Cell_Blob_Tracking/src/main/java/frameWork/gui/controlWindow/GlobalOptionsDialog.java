@@ -36,12 +36,14 @@ public class GlobalOptionsDialog {
 	public GlobalOptionsDialog(Model<?> mod) {
 		GenericDialog gd = new GenericDialog("Global Options");
 		gd.addNumericField("Intensity Offset: ", mod.getIntensityOffset(), 0);
-		gd.addNumericField("\u0394 Z (in pixels): ", mod.getXyToZ(), 3);
+		if(mod.isVolume()) gd.addNumericField("\u0394 Z (in pixels): ", mod.getXyToZ(), 3);
+		
 		gd.showDialog();
 		if (gd.wasCanceled()) return;
 
 		intensityOffset = (int)gd.getNextNumber();
-		deltaZ = gd.getNextNumber();
+		if(mod.isVolume()) deltaZ = gd.getNextNumber();
+		else deltaZ = mod.getXyToZ();
 
 		oked=gd.wasOKed();
 		if (gd.wasOKed()){
