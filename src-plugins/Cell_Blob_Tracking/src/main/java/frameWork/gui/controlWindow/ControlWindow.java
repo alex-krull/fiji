@@ -173,6 +173,13 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 	public void go(){
 		cBoxes= new ArrayList<JCheckBox>();
 		frame = new JFrame("Control Panel");
+		
+		
+		
+		
+		frame.setMinimumSize(new Dimension(650, 380));
+		frame.setSize(650,380);
+		
 		frame.addWindowListener(new ControlWindowListener());
 
 
@@ -602,23 +609,25 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		Dimension screen = toolkit.getScreenSize();
 
 
-		frame.setLocation(screen.width-650, 0);
-
+		
+		
 		frame.getContentPane().add(BorderLayout.EAST, rightPanel);
 		frame.getContentPane().add(BorderLayout.CENTER, centerPanel);
 		frame.getContentPane().add(BorderLayout.WEST, leftPanel);
-		frame.setVisible(true);
-		
-		frame.setMinimumSize(new Dimension(650, 380));
-		frame.setSize(650,380);
 
+
+		
+		
+		
+		
 
 		//Adds listeners to spinners
 		frameSpinner.addChangeListener(new FrameSpinnerListener());
 		zSpinner.addChangeListener(new ZSpinnerListener());
 		cSpinner.addChangeListener(new CSpinnerListener());
 
-
+		frame.setLocation(screen.width-650, 0);
+		frame.setVisible(true);	
 	}
 
 
