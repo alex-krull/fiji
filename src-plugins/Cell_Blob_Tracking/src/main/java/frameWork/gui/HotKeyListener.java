@@ -83,6 +83,10 @@ public class HotKeyListener implements KeyListener {
 		  case KeyEvent.VK_O:
 			  viewModel.getController().showOjectOptions(viewModel.getCurrentFrameNumber());
 			  return;
+			  
+		  case KeyEvent.VK_E:
+			  viewModel.getController().getCurrentSession().showPropertiesDialog();
+			  return;
 		           
 		  case KeyEvent.VK_N:
 			  viewModel.getController().newSession(viewModel);
