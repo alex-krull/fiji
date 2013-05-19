@@ -56,10 +56,17 @@ import frameWork.Session;
 
 public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends BlobPolicy<IT>{
 
+
+	protected double  PAG=-1;
+	protected double  GAIN=-1;
 	private static double  BORDERSIZE=3;
 	protected long numOfPixelsUsed;
 
-
+	
+	public MaximumLikelihoodBlobPolicy(){
+	}
+	
+	
 
 	@Override
 	public String getTypeName() {
@@ -519,7 +526,9 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	@Override
 	public void optimizeFrame(boolean multiscale, List<Blob> trackables,
 			MovieFrame<IT> movieFrame,  double qualityT, Session<Blob,IT> session) {
-
+		GAIN=Model.getInstance().getEMCCDGain();
+		PAG=Model.getInstance().getADUperE();
+		
 		BlobSession<IT> blobS= (BlobSession<IT>) session;
 
 		if(multiscale){

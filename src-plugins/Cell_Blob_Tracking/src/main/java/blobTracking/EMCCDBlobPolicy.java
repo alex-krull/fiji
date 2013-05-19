@@ -60,17 +60,16 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 {
-	protected double  GAIN;
+	
 //	private static double  PAG=12.17;
 //	private static double  PAG=11.3;
 	private double bestLogLikelihoodSoFar=-1e30;
-	protected double  PAG;
+	
 
 	
 
 	public EMCCDBlobPolicy(){
-		GAIN=Model.getInstance().getEMCCDGain();
-		PAG=Model.getInstance().getADUperE();
+
 	}
 	
 	@Override
@@ -82,6 +81,8 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 	public void optimizeFrame(boolean alternateMethod, List<Blob> trackables,
 			MovieFrame<IT> movieFrame, double qualityT,
 			Session<Blob, IT> session) {
+		GAIN=Model.getInstance().getEMCCDGain();
+		PAG=Model.getInstance().getADUperE();
 		
 		if(alternateMethod) return;
 		
