@@ -608,9 +608,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		frame.getContentPane().add(BorderLayout.CENTER, centerPanel);
 		frame.getContentPane().add(BorderLayout.WEST, leftPanel);
 		frame.setVisible(true);
-		frame.setSize(650,380);
+		
 		frame.setMinimumSize(new Dimension(650, 380));
-
+		frame.setSize(650,380);
 
 
 		//Adds listeners to spinners
