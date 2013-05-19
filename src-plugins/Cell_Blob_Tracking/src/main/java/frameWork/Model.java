@@ -71,6 +71,8 @@ private String projectDirectory;
 private boolean structuralChange=true;
 private int intensityOffset=0;
 private double xyToZ=3.5;
+private double eMCCDGain=300.0;
+private double aDUperE=1;
 public ReentrantReadWriteLock rwLock;
 private boolean currentlyTracking=false;
 public long startedTrackingAt;
@@ -80,6 +82,21 @@ public double randomInitOffset=-1;
 
 	private volatile StringBuffer msgBuffer=new StringBuffer();
 
+	public double getEMCCDGain() {
+		return eMCCDGain;
+	}
+
+	public void setEMCCDGain(double eMCCDGain) {
+		this.eMCCDGain = eMCCDGain;
+	}
+	
+	public double getADUperE() {
+		return aDUperE;
+	}
+
+	public void setADUperE(double aDUperE) {
+		this.aDUperE = aDUperE;
+	}
 
 	public boolean isCurrentlyTracking() {
 		return currentlyTracking;
@@ -442,6 +459,11 @@ public double randomInitOffset=-1;
 		}
 		s= props.getProperty("intensityOffset"); if(s!=null)this.setIntensityOffset(Integer.valueOf(s) );
 		s= props.getProperty("xyToZ");if(s!=null)this.setXyToZ(Double.valueOf(s) );
+	
+		
+		s= props.getProperty("eMCCDGain"); if(s!=null)this.setEMCCDGain(Double.valueOf(s) );
+		s= props.getProperty("aDUperE"); if(s!=null)this.setADUperE(Double.valueOf(s) );
+		s= props.getProperty("xyToZ");if(s!=null)this.setXyToZ(Double.valueOf(s) );
 		return true;
 	}
 
@@ -451,6 +473,8 @@ public double randomInitOffset=-1;
 		props.setProperty("imageName",this.getImageFileName());
 		props.setProperty("intensityOffset",String.valueOf(this.getIntensityOffset()));
 		props.setProperty("xyToZ",String.valueOf(this.getXyToZ()));
+		props.setProperty("eMCCDGain",String.valueOf(this.getEMCCDGain()));
+		props.setProperty("aDUperE",String.valueOf(this.getADUperE()));
 
 
 		return props;

@@ -28,28 +28,26 @@ import ij.gui.GenericDialog;
 import frameWork.Model;
 
 public class GlobalOptionsDialog {
-
-	private double deltaZ;
-	private int intensityOffset;
+	
 	private boolean oked;
 
 	public GlobalOptionsDialog(Model<?> mod) {
 		GenericDialog gd = new GenericDialog("Global Options");
 		gd.addNumericField("Intensity Offset: ", mod.getIntensityOffset(), 0);
+		gd.addNumericField("EMCCD gain: ", mod.getEMCCDGain(), 3);
+		gd.addNumericField("Counts per electron: ", mod.getADUperE(), 3);		
 		if(mod.isVolume()) gd.addNumericField("\u0394 Z (in pixels): ", mod.getXyToZ(), 3);
 		
 		gd.showDialog();
 		if (gd.wasCanceled()) return;
 
-		intensityOffset = (int)gd.getNextNumber();
-		if(mod.isVolume()) deltaZ = gd.getNextNumber();
-		else deltaZ = mod.getXyToZ();
-
+		
 		oked=gd.wasOKed();
 		if (gd.wasOKed()){
-			mod.setIntensityOffset(intensityOffset);
-			mod.setXyToZ(deltaZ);
-
+			mod.setIntensityOffset( (int)gd.getNextNumber());
+			mod.setEMCCDGain(gd.getNextNumber());
+			mod.setADUperE(gd.getNextNumber());
+			if(mod.isVolume()) mod.setXyToZ( gd.getNextNumber() );
 		}
 	}
 
@@ -57,15 +55,9 @@ public class GlobalOptionsDialog {
 		return oked;
 	}
 	
-	public double getDeltaZ(){
-		return deltaZ;
 
-	}
 
-	public double getInensityOffest(){
-		return intensityOffset;
-	}
-
+	
 
 	public static void main(String[] args) {
 		GlobalOptionsDialog test = new GlobalOptionsDialog(null);

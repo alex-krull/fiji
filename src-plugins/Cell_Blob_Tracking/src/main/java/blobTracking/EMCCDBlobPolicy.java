@@ -60,16 +60,17 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 
 
 {
-	protected static double  GAIN=300;
+	protected double  GAIN;
 //	private static double  PAG=12.17;
 //	private static double  PAG=11.3;
 	private double bestLogLikelihoodSoFar=-1e30;
-	protected static double  PAG=1;
+	protected double  PAG;
 
 	
 
 	public EMCCDBlobPolicy(){
-	
+		GAIN=Model.getInstance().getEMCCDGain();
+		PAG=Model.getInstance().getADUperE();
 	}
 	
 	@Override
