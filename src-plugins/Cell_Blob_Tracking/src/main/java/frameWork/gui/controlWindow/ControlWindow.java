@@ -607,8 +607,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		frame.getContentPane().add(BorderLayout.EAST, rightPanel);
 		frame.getContentPane().add(BorderLayout.CENTER, centerPanel);
 		frame.getContentPane().add(BorderLayout.WEST, leftPanel);
-		frame.setSize(650,380);
 		frame.setVisible(true);
+		frame.setSize(650,380);
 		frame.setMinimumSize(new Dimension(650, 380));
 
 
@@ -960,7 +960,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		}
 
-		// Todo do this more cleanly
+		// Todo do: this more cleanly
 		if(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking()==null){
 			altMenu.setEnabled(false);
 			altOptionMenu.setEnabled(false);
