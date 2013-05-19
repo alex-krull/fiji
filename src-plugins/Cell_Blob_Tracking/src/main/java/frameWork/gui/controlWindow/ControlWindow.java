@@ -763,7 +763,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				altTracking.setText(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
 				altMenu.setText("Start " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking());
 				altOptionMenu.setText("Session " + viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking() + " Options");
-
+				
 
 			}
 
@@ -960,7 +960,12 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 		}
 
-
+		// Todo do this more cleanly
+		if(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking()==null){
+			altMenu.setEnabled(false);
+			altOptionMenu.setEnabled(false);
+		}
+			
 	}
 
 
