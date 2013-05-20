@@ -119,7 +119,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		viewModel.resetWindowsPositions();
 		
 		cw.go();
-		IJ.wait(10);	//workaround to get window initialized correctly
+		IJ.wait(100);	//workaround to get window initialized correctly
 		viewModel.addViewWindow(cw);
 		
 		
