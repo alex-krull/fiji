@@ -54,7 +54,7 @@ import frameWork.gui.ViewModel;
 import frameWork.gui.controlWindow.ControlWindow;
 import frameWork.gui.controlWindow.GlobalOptionsDialog;
 
-public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>>extends MyTool{
+public class Low_Light_Tracking_Tool <IT extends  NumericType<IT> & NativeType<IT> & RealType<IT>>extends MyTool{
 
 
 
@@ -217,7 +217,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 	public static void main(String[] args) {
 
 		// set the plugins.dir property to make the plugin appear in the Plugins menu
-		Class<?> clazz = Cell_Blob_Tracking.class;
+		Class<?> clazz = Low_Light_Tracking_Tool.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
 		String pluginsDir = url.substring(5, url.length() - clazz.getName().length() - 6);
 		System.setProperty("plugins.dir", pluginsDir);

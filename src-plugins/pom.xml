@@ -79,6 +79,7 @@
 		<module>Lasso_and_Blow_Tool</module>
 		<module>Linear_Kuwahara</module>
 		<module>LocalThickness_</module>
+		<module>Low_Light_Tracking_Tool</module>
 		<module>MTrack2_</module>
 		<module>MTrackJ_</module>
 		<module>M_I_P</module>

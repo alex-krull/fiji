@@ -52,7 +52,7 @@
 
 		<dependency>
 			<groupId>cbGId</groupId>
-			<artifactId>Cell_Blob_Tracking</artifactId>
+			<artifactId>Low_Light_Tracking_Tool</artifactId>
 			<version>0.1</version>
 		</dependency>
 		
