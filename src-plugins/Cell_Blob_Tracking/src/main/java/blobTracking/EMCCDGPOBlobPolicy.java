@@ -110,8 +110,10 @@ implements MultivariateRealFunction
 	public void optimizeFrame(boolean alternateMethod, List<Blob> trackables,
 			MovieFrame<IT> movieFrame, double qualityT,
 			Session<Blob, IT> session) {
-
+		
 			if(alternateMethod) return;
+			GAIN=Model.getInstance().getEMCCDGain();
+			PAG=Model.getInstance().getADUperE();
 		
 			count=0;
 			tempImage=new IterableRandomAccessibleInterval<IT>( movieFrame.getFrameView());
