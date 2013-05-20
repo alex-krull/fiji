@@ -983,7 +983,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 
 		// Todo do: this more cleanly
-		if(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking()==null){
+		if(viewModel.getController().getCurrentSession()==null||viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking()==null){
 			altMenu.setEnabled(false);
 			altOptionMenu.setEnabled(false);
 		}
