@@ -176,7 +176,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		*/
 			change=Math.abs(energyOld-energy);
 			
-			if(change<qualityT)
+			if(change<qualityT||!Model.getInstance().isCurrentlyTracking())
 				break;
 			
 			

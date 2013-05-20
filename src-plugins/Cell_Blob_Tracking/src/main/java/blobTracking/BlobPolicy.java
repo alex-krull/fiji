@@ -74,10 +74,14 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		
 	Blob b=null;
 	Blob lastB=null;
-	for(double i=trackables.firstKey();i<=trackables.lastKey();i++){
+	double stepSize=1;
+	for(double i=(transX/scaleX);i<=((301+transX)/scaleX);i+=stepSize){
+	//	if((i+0.5)*scaleX-transX<0 || (i+0.5)*scaleX-transX>501) continue;
+		
 		lastB=b;
 		b=trackables.get((int)i);
 		if(b==null) continue;
+		
 		if(lastB!=null&&b!=null){
 			Line l=new Line((i-1+0.5)*scaleX-transX,(lastB.yPos+0.5)*scaleY-transY,(i+0.5)*scaleX-transX,(b.yPos+0.5)*scaleY-transY);
 			l.setStrokeColor(color);
@@ -119,8 +123,9 @@ public abstract class BlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & 
 		
 		Blob b=null;
 		Blob lastB=null;
-		
-		for(double i=trackables.firstKey();i<=trackables.lastKey();i++){
+		double stepSize=1;
+		for(double i=(transY/scaleY);i<=((301+transY)/scaleY);i+=stepSize){
+	//		if((i+0.5)*scaleY-transX<0 || (i+0.5)*scaleY-transX>501) continue;
 			lastB=b;
 			b=trackables.get((int)i);
 			if(b==null) continue;

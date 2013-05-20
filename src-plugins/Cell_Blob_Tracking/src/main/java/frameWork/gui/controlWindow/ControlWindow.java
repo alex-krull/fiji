@@ -177,8 +177,8 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		
 		
-		frame.setMinimumSize(new Dimension(650, 380));
-		frame.setSize(650,380);
+		frame.setMinimumSize(new Dimension(650, 480));
+		frame.setSize(650,480);
 		
 		frame.addWindowListener(new ControlWindowListener());
 
@@ -768,7 +768,10 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		//This section puts frame number in console area
 		toggleNumbers.setState(viewModel.isDrawNumbers());
 
+	//	frame.setVisible(false);
 		appendText(model.getMsg());
+		
+	//	frame.setVisible(true);	
 
 		int tempSessionSize = viewModel.getController().getSessions().size();
 
@@ -805,6 +808,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 					optimizeFrame.setVisible(true);
 				}
 			}
+			
 		}else currentMethod.setText("");
 		trackerTable.removeListener();
 
@@ -984,6 +988,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 			altOptionMenu.setEnabled(false);
 		}
 			
+	
 	}
 
 

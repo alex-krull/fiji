@@ -56,6 +56,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	protected Policy <T,IT> policy;
 	protected ControlWindow<IT> controllWindow;
 	private Random rand;
+	protected TrackingThread thread=null;
 	
 	public String getLabel(){
 		return trackingChannel.getLabel();
@@ -133,10 +134,9 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 			
 				List<T> trackingCandidates=	getSelectedTrackables( startingFrame );
 				if(trackingCandidates.isEmpty()) return;
-				
-				Model.getInstance().setCurrentlyTracking(true);
-					
+						
 			
+				
 			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames()&& i<=stoppingFrame;i++){
 				
 				
@@ -221,25 +221,31 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		}
 		
 	}
+		
+		
 	}
 	
 
-	public void startTracking(int frameId, boolean multiscale, boolean autosave, int lastFrame){
-		if(policy.getLabelForAlternateTracking()==null && multiscale) return;
-		Thread thread= new TrackingThread(frameId, multiscale, autosave, lastFrame);
+	public synchronized void startTracking(int frameId, boolean multiscale, boolean autosave, int lastFrame){
+		if((policy.getLabelForAlternateTracking()==null && multiscale)
+			|| Model.getInstance().isCurrentlyTracking() || 
+			(thread!=null && thread.isAlive())
+			)  return;
+		thread= new TrackingThread(frameId, multiscale, autosave, lastFrame);
 		thread.setPriority(Thread.MIN_PRIORITY);
+		Model.getInstance().setCurrentlyTracking(true);
 		thread.start();
 	}
 	
 	public void startTrackingSingleThread(int frameId, boolean multiscale, boolean autosave, int lastFrame){
 		Thread thread= new TrackingThread(frameId, multiscale, autosave, lastFrame);
+		Model.getInstance().setCurrentlyTracking(true);
 		thread.run();
 	}
 	
-	public void stopTracking(){
+	public synchronized void stopTracking(){
 	
-		Model.getInstance().setCurrentlyTracking(false);
-		
+		Model.getInstance().setCurrentlyTracking(false);	
 	}
 	
 
