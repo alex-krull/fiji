@@ -97,7 +97,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	public ControlWindow(Model <IT> mod, String title, ViewModel <IT> vm) {
 		super(mod, title, vm);
-		go();
+	//	go();
 		startThread();
 	}
 
@@ -626,12 +626,21 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		zSpinner.addChangeListener(new ZSpinnerListener());
 		cSpinner.addChangeListener(new CSpinnerListener());
 
-		frame.setLocation(screen.width-650, 0);
-		frame.setVisible(true);	
+
+		initFramePosition();
 	}
 
 
 
+	public void initFramePosition(){
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Dimension screen = toolkit.getScreenSize();
+		frame.setLocation(frame.getLocation());
+		frame.setMinimumSize(new Dimension(650, 380));
+		frame.setSize(650,380);
+		frame.setVisible(true);	
+		frame.setLocation(screen.width-650, 0);
+	}
 
 
 	public JFormattedTextField getTextField(JSpinner spinner) {

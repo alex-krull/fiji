@@ -94,7 +94,7 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 
 
 		ControlWindow<IT> cw= new ControlWindow<IT>(model, "Control Window",viewModel);
-		viewModel.addViewWindow(cw);
+		
 
 		MainWindow<IT> mw=new MainWindow<IT>(imp, model, viewModel);
 		viewModel.addMainWindow(mw);
@@ -114,8 +114,16 @@ public class Cell_Blob_Tracking <IT extends  NumericType<IT> & NativeType<IT> & 
 		viewModel.addViewWindow(new KymographY<IT>(model, null,viewModel,mw));		
 		viewModel.addViewWindow(new KymographX<IT>(model, null,viewModel,mw));		
 
+		
+		
 		viewModel.resetWindowsPositions();
-
+		
+		cw.go();
+		IJ.wait(10);	//workaround to get window initialized correctly
+		viewModel.addViewWindow(cw);
+		
+		
+		
 	}
 
 
