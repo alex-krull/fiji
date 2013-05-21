@@ -272,9 +272,9 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		System.out.println("z:"+zn+ "  zPos:"+ zPos+"  "+ (zn-zPos)*(zn-zPos)
 				);
 		
-		return (xn-xPos)*(xn-xPos)+
+		return Math.abs(Math.sqrt((xn-xPos)*(xn-xPos)+
 				(yn-yPos)*(yn-yPos)+
-				(zn-zPos)*(zn-zPos);
+				(zn-zPos)*(zn-zPos) ) -this.sigma*2);
 	}
 	
 	@Override
@@ -339,9 +339,8 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 				+ df.format(this.backInten)+"\t"			// column 13
 				+ df.format(this.numberOfPixels)+"\t"		// column 14
 				+ df.format(this.pK)+"\t"		// column 15
-				+ df.format(this.totalInt)+"\t"		// column 16
-				+ df.format(this.totalInt*this.pK)	+"\t"		// column 17
-				+ df.format(this.iterations);			// column 18
+				+ df.format(this.totalInt);		// column 16
+
 		result= result.replace(",", ".");
 		return result;
 	}
