@@ -206,7 +206,13 @@ private <T extends Trackable> ChannelController<? extends Trackable,IT> findOrCr
 	ChannelController<? extends Trackable,IT> cc= channelControllers.get(id);
 	if(cc==null){
 		Policy<?, IT> policy= policies.get(sessionProps.getProperty("typeName"));
-	//	Policy<?, IT> policy= policies.get("Blob");
+		
+	
+		if(policy==null){
+			policy= policies.get("GaussianML");	// interpret unknown session as GaussianML
+			
+		}
+		
 		cc=policy.produceControllerAndChannel(sessionProps, model);
 		
 		this.channelControllers.put(cc.trackingChannel.getId(), cc); 

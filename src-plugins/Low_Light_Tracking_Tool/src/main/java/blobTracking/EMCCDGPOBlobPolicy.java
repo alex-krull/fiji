@@ -204,8 +204,15 @@ implements MultivariateRealFunction
 
 	}
 	
+	
+	
 	public String getLabelForAlternateTracking(){
 		return null;
+		
+	}
+	
+	public boolean isHidden(){
+		return true;
 	}
 
 }

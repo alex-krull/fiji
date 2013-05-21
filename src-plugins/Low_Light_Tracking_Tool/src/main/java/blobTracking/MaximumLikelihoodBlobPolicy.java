@@ -70,7 +70,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 
 	@Override
 	public String getTypeName() {
-		return "M.L.GaussianTracking";
+		return "GaussianML";
 	}
 
 	protected IterableRandomAccessibleInterval<IT> makeIterableFrame(RandomAccessibleInterval <IT> movieFrame,  List <Blob> trackables){
