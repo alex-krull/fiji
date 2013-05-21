@@ -35,7 +35,7 @@ public class GlobalOptionsDialog {
 		GenericDialog gd = new GenericDialog("Global Options");
 		gd.addNumericField("Intensity Offset: ", mod.getIntensityOffset(), 0);
 		gd.addNumericField("EMCCD gain: ", mod.getEMCCDGain(), 3);
-		gd.addNumericField("Counts per electron: ", mod.getADUperE(), 3);		
+		gd.addNumericField("Electrons per A/D count: ", mod.getADUperE(), 3);		
 		if(mod.isVolume()) gd.addNumericField("\u0394 Z (in pixels): ", mod.getXyToZ(), 3);
 		
 		gd.showDialog();
