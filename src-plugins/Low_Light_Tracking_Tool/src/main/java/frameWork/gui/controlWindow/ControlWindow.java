@@ -803,9 +803,9 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 				start.setForeground(Color.blue);
 				altMenu.setVisible(true);
 				altOptionMenu.setVisible(true);
+				optimizeFrame.setVisible(true);
 				if(!(viewModel.getController().getCurrentSession().getPolicy().getLabelForAlternateTracking()==null)){
 					altTracking.setVisible(true);
-					optimizeFrame.setVisible(true);
 				}
 			}
 			
