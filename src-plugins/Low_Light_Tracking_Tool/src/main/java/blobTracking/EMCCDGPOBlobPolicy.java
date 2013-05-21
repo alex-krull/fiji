@@ -117,9 +117,11 @@ implements MultivariateRealFunction
 		
 			count=0;
 			tempImage=new IterableRandomAccessibleInterval<IT>( movieFrame.getFrameView());
+			//tempImage=makeIterableFrame( movieFrame.getFrameView(), trackables);
 			tempTrackables=trackables;
 			
 			int count=0;
+			
 			
 			int nop=calcNumberOfPixels(tempImage);
 			
@@ -128,10 +130,7 @@ implements MultivariateRealFunction
 			
 			
 			Cursor<IT> cursor= tempImage.cursor();	
-			double akku=0;
-			int i=0;
-			double akkuCheck=0;
-			
+		
 			
 			
 			
@@ -144,11 +143,7 @@ implements MultivariateRealFunction
 	    	totalFlux=(totalFlux/GAIN)*PAG;
 	    	double backFlux=totalFlux;
 	    	
-	    	
-	    		
 	
-			
-	    	
 	    	double[] startPoint=new double [3*trackables.size()+1];
 	    	for(Blob b:trackables){
 	    		b.calcDenominator(tempImage, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
