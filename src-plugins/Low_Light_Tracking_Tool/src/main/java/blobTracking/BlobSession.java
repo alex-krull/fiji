@@ -1,0 +1,231 @@
+/*******************************************************************************
+ * This software implements the tracking method described in the following paper: 
+ * "A divide and conquer strategy for the maximum likelihood localization of ultra low intensity objects"
+ *  By Alexander Krull et Al, 2013. (Enter final journal)
+ *
+ * Copyright (c) 2012, 2013 Alexandar Krull
+ *  
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
+ * Contributors:
+ * 	Alexander Krull (Alexander.Krull@tu-dresden.de)
+ *     Damien Ramunno-Johnson (GUI)
+ *******************************************************************************/
+package blobTracking;
+
+import java.util.Properties;
+
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.RealType;
+import frameWork.MovieChannel;
+import frameWork.Policy;
+import frameWork.Session;
+import frameWork.gui.controlWindow.BlobOptionDialog;
+import frameWork.gui.controlWindow.MScaleOption;
+import frameWork.gui.controlWindow.SessionOptionsDialog;
+
+public class BlobSession  <IT extends NumericType<IT> & NativeType<IT> & RealType<IT>> extends Session<Blob,IT>{
+
+	private double defaultSigma=1;
+	private double defaultMaxSigma=2;
+	private double defaultMinSigma=0.5;
+	private boolean autoSigma=false;
+	private double defaultSigmaZ=2;
+	private double defaultMaxSigmaZ=2;
+	private double defaultMinSigmaZ=0.5;
+	private boolean autoSigmaZ=false;
+	private double downscaleFactor = .5;
+	private double mscaleSigma = 1;
+	private int mscaleIterations = 5;
+	
+	private double changeFactorSigma=1;
+	private double changeFactorPK=1;
+	
+	public void setChangeFactorSigma(double changeFactorSigma) {
+		this.changeFactorSigma = changeFactorSigma;
+	}
+
+
+	public void setChangeFactorPK(double changeFactorPK) {
+		this.changeFactorPK = changeFactorPK;
+	}
+
+
+	
+	
+	public double getChangeFactorSigma() {
+		return changeFactorSigma;
+	}
+
+
+	public double getChangeFactorPK() {
+		return changeFactorPK;
+	}
+
+
+	public BlobSession(int newID, Policy<Blob, IT> pol, MovieChannel<IT> mc) {
+		super(newID, pol, mc);
+	}
+	
+	
+	public double getDefaultSigma() {
+		return defaultSigma;
+	}
+
+	public void setDefaultSigma(double defaultSigma) {
+		this.defaultSigma = defaultSigma;
+	}
+
+	public double getDefaultMaxSigma() {
+		return defaultMaxSigma;
+	}
+
+	public void setDefaultMaxSigma(double defaultMaxSigma) {
+		this.defaultMaxSigma = defaultMaxSigma;
+	}
+
+	public double getDefaultMinSigma() {
+		return defaultMinSigma;
+	}
+
+	public void setDefaultMinSigma(double defaultMinSigma) {
+		this.defaultMinSigma = defaultMinSigma;
+	}
+
+	public boolean isAutoSigma() {
+		return autoSigma;
+	}
+
+	public void setAutoSigma(boolean autoSigma) {
+		this.autoSigma = autoSigma;
+	}
+
+	public double getDefaultSigmaZ() {
+		return defaultSigmaZ;
+	}
+
+	public void setDefaultSigmaZ(double defaultSigmaZ) {
+		this.defaultSigmaZ = defaultSigmaZ;
+	}
+
+	public double getDefaultMaxSigmaZ() {
+		return defaultMaxSigmaZ;
+	}
+
+	public void setDefaultMaxSigmaZ(double defaultMaxSigmaZ) {
+		this.defaultMaxSigmaZ = defaultMaxSigmaZ;
+	}
+
+	public double getDefaultMinSigmaZ() {
+		return defaultMinSigmaZ;
+	}
+
+	public void setDefaultMinSigmaZ(double defaultMinSigmaZ) {
+		this.defaultMinSigmaZ = defaultMinSigmaZ;
+	}
+
+	public boolean isAutoSigmaZ() {
+		return autoSigmaZ;
+	}
+
+	public void setAutoSigmaZ(boolean autoSigmaZ) {
+		this.autoSigmaZ = autoSigmaZ;
+	}
+
+	
+	@Override
+	public void showPropertiesDialog() {
+		  new SessionOptionsDialog(this);
+	}
+	
+	@Override
+	public void showObjectPropertiesDialog(Blob b) {
+		 new BlobOptionDialog(b,this.isVolune());
+	}
+	
+	@Override
+	public void showAlternatePropertiesDialog() {
+
+		new MScaleOption(this);
+	}
+	
+	
+
+
+	public int getMscaleIterations() {
+		return mscaleIterations;
+	}
+
+
+	public void setMscaleIterations(int mscaleIterations) {
+		this.mscaleIterations = mscaleIterations;
+	}
+
+
+	public double getDownscaleFactor() {
+		return downscaleFactor;
+	}
+
+
+	public void setDownscaleFactor(double downscaleFactor) {
+		this.downscaleFactor = downscaleFactor;
+	}
+
+
+	public double getMscaleSigma() {
+		return mscaleSigma;
+	}
+
+
+	public void setMscaleSigma(double mscaleSigma) {
+		this.mscaleSigma = mscaleSigma;
+	}
+
+
+	@Override
+	public void setProperties(Properties props){
+		super.setProperties(props);
+		String s;
+		s= props.getProperty("mscaleIterations"); if(s!=null) this.mscaleIterations=Integer.valueOf(s);
+		s= props.getProperty("mscaleSigma"); if(s!=null) this.mscaleSigma=Double.valueOf(s);
+		s= props.getProperty("downscaleFactor"); if(s!=null) this.downscaleFactor=Double.valueOf(s);
+		s= props.getProperty("defaultSigma"); if(s!=null) this.defaultSigma=Double.valueOf(s);
+		s= props.getProperty("defaultSigmaZ"); if(s!=null) this.defaultSigmaZ=Double.valueOf(s);
+		s= props.getProperty("defaultMaxSigma"); if(s!=null) this.defaultMaxSigma=Double.valueOf(s);
+		s= props.getProperty("defaultMinSigma"); if(s!=null) this.defaultMinSigma=Double.valueOf(s);
+		
+
+		
+		
+	}
+	
+	@Override
+	public Properties getProperties(){
+		Properties props= super.getProperties();
+		
+		props.setProperty("mscaleIterations",String.valueOf(mscaleIterations));
+		props.setProperty("mscaleSigma", String.valueOf(mscaleSigma));
+		props.setProperty("downscaleFactor", String.valueOf(downscaleFactor));
+		props.setProperty("defaultSigma", String.valueOf(defaultSigma));
+		props.setProperty("defaultSigmaZ", String.valueOf(defaultSigmaZ));
+		props.setProperty("defaultMaxSigma", String.valueOf(defaultMaxSigma));
+		props.setProperty("defaultMinSigma", String.valueOf(defaultMinSigma));
+	
+		return props;
+	}
+	
+	
+
+}

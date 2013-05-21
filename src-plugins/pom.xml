@@ -72,6 +72,7 @@
 		<module>Lasso_and_Blow_Tool</module>
 		<module>Linear_Kuwahara</module>
 		<module>LocalThickness_</module>
+		<module>Low_Light_Tracking_Tool</module>
 		<module>MTrack2_</module>
 		<module>MTrackJ_</module>
 		<module>M_I_P</module>
@@ -139,6 +140,11 @@
 		<module>registration_3d</module>
 		<module>wavelets</module>
 		<module>weave_jy2java</module>
+		
+<!-- 	
+<module>Cell_Blob_Tracking</module>		
+<module>Blob_Simulator</module>
+ -->
 	</modules>
 
 	<!-- NB: for project parent -->

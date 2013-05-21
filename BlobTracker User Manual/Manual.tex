@@ -1,0 +1,36 @@
+\documentclass[10pt,letterpaper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[english]{isodate}
+\usepackage[parfill]{parskip}
+\usepackage{fncychap}
+\usepackage{graphicx}  
+
+
+\title{User Manual}
+\date{\today}
+\author{Damien Ramunno-Johnson \& Alexander Krull}
+
+\begin{document}
+
+\maketitle
+\newpage
+\pagenumbering{Roman}i
+
+\tableofcontents
+\newpage
+\listoffigures
+\newpage
+\listoftables
+\newpage
+\pagenumbering{arabic}
+
+\graphicspath{{./figures/}}
+
+\chapter{Tracking}
+\input{chapter1.tex}
+
+
+
+\end{document}
