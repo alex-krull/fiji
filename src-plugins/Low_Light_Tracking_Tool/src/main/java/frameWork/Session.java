@@ -177,7 +177,7 @@ public abstract class Session<T extends Trackable, IT extends NumericType<IT> & 
 
 
 		if(s!=null){
-			if(frameNumber<=s.getFirstFrame()|| frameNumber>=s.getLastFrame() ) return;
+			if(frameNumber<=s.getFirstFrame()|| frameNumber>s.getLastFrame() ) return;
 			this.deleteSequence(SequenceId);
 
 			for(Integer i: s.getTrackables().keySet()){

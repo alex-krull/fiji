@@ -297,6 +297,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 	}
 	
 	public void trimSequence(int frameNumber){
+		if(frameNumber<=1) return; 
 		for(Integer seqId: this.selectedIdList){
 			
 			trackingChannel.splitSequenence(seqId, -1, frameNumber);
