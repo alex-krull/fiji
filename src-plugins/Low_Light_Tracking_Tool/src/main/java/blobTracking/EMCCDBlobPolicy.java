@@ -88,12 +88,16 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 		IterableRandomAccessibleInterval<IT> iFrame= makeIterableFrame( movieFrame.getFrameView(),  trackables);
 		
+		boolean isAutosigam=false;
 		for(Blob b: trackables){
 	
 			b.denom=b.calcDenominator(iFrame, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ);
-			
+			isAutosigam=isAutosigam||b.autoSigma||b.autoSigmaZ;
+				
 		}
-		
+
+		if(isAutosigam) super.optimizeFrame( alternateMethod,trackables,
+				 movieFrame,  qualityT,	 session); //Things are more stable when normal ml is applied firstin this case 
 
 		
 		BlobSession<IT> bSession=(BlobSession<IT>) session;
