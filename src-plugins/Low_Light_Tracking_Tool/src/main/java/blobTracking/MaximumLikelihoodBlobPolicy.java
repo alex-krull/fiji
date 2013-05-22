@@ -57,8 +57,8 @@ import frameWork.Session;
 public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & RealType<IT> > extends BlobPolicy<IT>{
 
 
-	protected double  PAG=-1;
-	protected double  GAIN=-1;
+//	protected double  PAG=-1;
+//	protected double  GAIN=-1;
 	private static double  BORDERSIZE=3;
 	protected long numOfPixelsUsed;
 
@@ -400,7 +400,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 	}
 
 	private double doMstep(double totalInten,  List <Blob> trackables, Double backProb, 
-			IterableRandomAccessibleInterval<IT> iFrame, BlobSession<?> session){
+			IterableRandomAccessibleInterval<IT> iFrame, BlobSession<?> session, double GAIN, double PAG){
 
 
 		double change=0;
@@ -458,14 +458,14 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			b.yPos=b.newY;
 			b.zPos=b.newZ;
 			b.sigma=b.newSig;
-			b.inten=b.newInten;
 			b.pK=b.newPK;
 			b.denom=b.calcDenominator(iFrame, b.xPos, b.yPos, b.zPos, b.sigma, b.sigmaZ); // important for EMCCD
+			b.inten=b.newInten*b.denom*PAG/GAIN;	//account for blobs partially outside of window
 		}
 
 		for(Blob b:trackables){
-			b.backInten=totalInten*backProb;
-			b.totalInt=totalInten;
+			b.backInten=totalInten*backProb*PAG/GAIN;
+			b.totalInt=totalInten*PAG/GAIN;
 		}
 
 
@@ -485,7 +485,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 
 	protected double doOptimizationSingleScale( List<Blob> trackables,
 			RandomAccessibleInterval <IT> movieFrame,  double qualityT, int constBackGround,
-			int maxIterations, BlobSession<?> session){
+			int maxIterations, BlobSession<?> session, double GAIN, double PAG){
 		ImgFactory<FloatType> imgFactory = new ArrayImgFactory<FloatType>();	
 		double backProb=1.0;
 
@@ -515,7 +515,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			ti = doEStep(trackables,backProb,iFrame,  constBackGround);
 			double change=0;
 
-			change=this.doMstep(ti, trackables,backProb, iFrame, session);
+			change=this.doMstep(ti, trackables,backProb, iFrame, session, GAIN,PAG);
 			if(change<qualityT ||!Model.getInstance().isCurrentlyTracking()) break;
 
 
@@ -525,9 +525,9 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 
 	@Override
 	public void optimizeFrame(boolean multiscale, List<Blob> trackables,
-			MovieFrame<IT> movieFrame,  double qualityT, Session<Blob,IT> session) {
-		GAIN=Model.getInstance().getEMCCDGain();
-		PAG=Model.getInstance().getADUperE();
+			MovieFrame<IT> movieFrame,  double qualityT, Session<Blob,IT> session, double GAIN, double PAG) {
+	//	GAIN=Model.getInstance().getEMCCDGain();
+	//	PAG=Model.getInstance().getADUperE();
 		
 		BlobSession<IT> blobS= (BlobSession<IT>) session;
 
@@ -594,7 +594,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 					tb.yPos=Math.min(Math.max(0,tb.yPos),currentScale.max(1));
 				}
 
-				bp.doOptimizationSingleScale(tempBlobs, currentScale, 0.01, 0, 100, (BlobSession<?>)session);
+				bp.doOptimizationSingleScale(tempBlobs, currentScale, 0.01, 0, 100, (BlobSession<?>)session, GAIN, PAG);
 				//			IJ.error("done with optimization");
 				for(int i=0;i<tempBlobs.size();i++){
 					Blob tb= tempBlobs.get(i);
@@ -642,7 +642,7 @@ public class MaximumLikelihoodBlobPolicy<IT extends  NumericType<IT> & NativeTyp
 			}
 		}
 		doOptimizationSingleScale(trackables, movieFrame.getFrameView(),qualityT,
-				Model.getInstance().getIntensityOffset(),1000, (BlobSession<IT>)session);
+				Model.getInstance().getIntensityOffset(),1000, (BlobSession<IT>)session, GAIN,PAG);
 	}
 
 

@@ -64,6 +64,7 @@ implements MultivariateRealFunction
 	private List<Blob> tempTrackables;
 	private double totalFlux;
 	private int count;
+	private double GAIN_;
 
 
 	@Override
@@ -96,7 +97,7 @@ implements MultivariateRealFunction
 		}
 		
 		
-		double energy= getLogLikelihood(assumedTotalFlux, tempTrackables, tempImage);
+		double energy= getLogLikelihood(assumedTotalFlux, tempTrackables, tempImage, GAIN_);
 		return -energy;
 
 	}
@@ -108,12 +109,12 @@ implements MultivariateRealFunction
 
 	@Override
 	public void optimizeFrame(boolean alternateMethod, List<Blob> trackables,
-			MovieFrame<IT> movieFrame, double qualityT,
-			Session<Blob, IT> session) {
+			MovieFrame<IT> movieFrame,  double qualityT, Session<Blob,IT> session, double GAIN, double PAG) {
+		
 		
 			if(alternateMethod) return;
-			GAIN=Model.getInstance().getEMCCDGain();
-			PAG=Model.getInstance().getADUperE();
+			GAIN_=GAIN;
+
 		
 			count=0;
 			tempImage=new IterableRandomAccessibleInterval<IT>( movieFrame.getFrameView());

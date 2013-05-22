@@ -40,7 +40,6 @@ import blobTracking.CompatiblePolicy;
 import blobTracking.EMCCDBlobPolicy;
 import blobTracking.EMCCDGPOBlobPolicy;
 import blobTracking.MaximumLikelihoodBlobPolicy;
-import blobTracking.MultiStartBlobPolicy;
 import frameWork.Controller;
 import frameWork.Model;
 import frameWork.MyTool;

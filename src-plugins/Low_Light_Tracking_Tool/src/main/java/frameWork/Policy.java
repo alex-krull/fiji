@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.SortedMap;
 
+import blobTracking.Blob;
+
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
@@ -56,8 +58,8 @@ public abstract class Policy<T extends Trackable, IT extends  NumericType<IT> & 
 
 	public abstract T copy(T toCopy);
 
-	public abstract void  optimizeFrame(boolean alternateMethod, List<T> trackables,
-			MovieFrame<IT> movieFrame, double qualityT, Session<T,IT> session);
+	public abstract void optimizeFrame(boolean multiscale, List<T> trackingCandidates,
+			MovieFrame<IT> movieFrame,  double qualityT, Session<T, IT> trackingChannel, double GAIN, double PAG);
 	public Sequence<T> produceSequence(int ident, String lab,
 			Session<T, IT> session, String filePath) {
 		// TODO Auto-generated method stub

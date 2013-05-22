@@ -79,10 +79,9 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 
 	@Override
 	public void optimizeFrame(boolean alternateMethod, List<Blob> trackables,
-			MovieFrame<IT> movieFrame, double qualityT,
-			Session<Blob, IT> session) {
-		GAIN=Model.getInstance().getEMCCDGain();
-		PAG=Model.getInstance().getADUperE();
+			MovieFrame<IT> movieFrame,  double qualityT, Session<Blob,IT> session, double GAIN, double PAG) {
+	//	GAIN=Model.getInstance().getEMCCDGain();
+	//	PAG=Model.getInstance().getADUperE();
 		
 		if(alternateMethod) return;
 		
@@ -97,7 +96,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		}
 
 		if(isAutosigam) super.optimizeFrame( alternateMethod,trackables,
-				 movieFrame,  qualityT,	 session); //Things are more stable when normal ml is applied firstin this case 
+				 movieFrame,  qualityT,	 session, 1.0, 1.0); //Things are more stable when normal ml is applied firstin this case 
 
 		
 		BlobSession<IT> bSession=(BlobSession<IT>) session;
@@ -147,7 +146,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			Model.getInstance().depositMsg("E-step");
 			Model.getInstance().makeChangesPublic();
 			
-			totalInten= doEstep(expectedValues, iFrame, trackables, totalInten);
+			totalInten= doEstep(expectedValues, iFrame, trackables, totalInten,GAIN, PAG);
 			
 			Model.getInstance().depositMsg("M-step");
 			Model.getInstance().makeChangesPublic();
@@ -155,7 +154,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			
 			doMstep(alternateMethod, trackables, expectedValues, qualityT, session);
 			energyOld=energy;
-			energy=this.getLogLikelihood(totalInten, trackables, iFrame);
+			energy=this.getLogLikelihood(totalInten, trackables, iFrame, GAIN);
 		
 			change=0;
 			int index=0;
@@ -200,7 +199,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 	} 
 	
 	private double doEstep(Img<FloatType> expectedValues, IterableRandomAccessibleInterval<IT> image,
-			List<Blob> blobs, double totalInten){
+			List<Blob> blobs, double totalInten, double GAIN, double PAG){
 	
 		double newTotalInt=0;
 		Cursor<IT> cursor =image.cursor();
@@ -370,7 +369,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 			Session<Blob, IT> session){
 		MaximumLikelihoodBlobPolicy<FloatType> bp= new MaximumLikelihoodBlobPolicy<FloatType>();
 		
-		return bp.doOptimizationSingleScale(trackables, expectedValues, qualityT, 0, 1000,(BlobSession<IT>) session);
+		return bp.doOptimizationSingleScale(trackables, expectedValues, qualityT, 0, 1000,(BlobSession<IT>) session,1.0,1.0);
 		
 	}
 	
@@ -383,7 +382,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 */
 
 
-	public double getLogLikelihood(double totalFlux,  List<Blob> tempTrackables, IterableRandomAccessibleInterval<IT> tempImage){
+	public double getLogLikelihood(double totalFlux,  List<Blob> tempTrackables, IterableRandomAccessibleInterval<IT> tempImage, double GAIN){
 		
 		double inverseGain=1.0/GAIN;
 		

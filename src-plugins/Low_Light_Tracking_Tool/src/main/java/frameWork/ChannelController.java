@@ -176,7 +176,9 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 		//			Model.getInstance().rwLock.writeLock().unlock();
 			 if(i%1==0)System.out.println("frame:"+i);
 				policy.optimizeFrame(multiscale, trackingCandidates, trackingChannel.getFrame(i).getMovieFrame(),
-						trackingChannel.qualityThreshold, trackingChannel);
+						trackingChannel.qualityThreshold, trackingChannel,
+						model.getEMCCDGain(),
+						model.getADUperE());
 			
 				Model.getInstance().rwLock.writeLock().lock();
 				
