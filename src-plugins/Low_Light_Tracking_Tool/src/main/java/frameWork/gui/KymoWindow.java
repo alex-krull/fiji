@@ -3,7 +3,7 @@
  * "A divide and conquer strategy for the maximum likelihood localization of ultra low intensity objects"
  *  By Alexander Krull et Al, 2013. (Enter final journal)
  *
- * Copyright (c) 2012, 2013 Alexandar Krull
+ * Copyright (c) 2012, 2013 Alexander Krull
  *  
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
