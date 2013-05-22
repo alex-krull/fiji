@@ -374,43 +374,7 @@ public class EMCCDBlobPolicy<IT extends  NumericType<IT> & NativeType<IT> & Real
 		
 	}
 	
-	public class ErlangSet{
-		private final TreeMap<Integer,ErlangDist> dists;
-		private final double gain;
-		
-		public ErlangSet( double g){
-			dists=new TreeMap<Integer,ErlangDist>();
-			gain = g;
-		}
-		
-		public synchronized double getErlangProb( int input, int output){		
-			ErlangDist e= dists.get(input);
-			if(e==null){
-				
-				e=new ErlangDist(input, gain, 0.01);
-				synchronized (this){
-				dists.put(input, e);
-				}
-			}		
-			return e.getProb(output);
-			
-		}
-		
-		public synchronized double draw(int input, double rv){
-			ErlangDist e= dists.get(input);
-			if(e==null){
-				e=new ErlangDist(input, gain, 0.01);
-				synchronized (this){
-				dists.put(input, e);
-				}
-			}
-			return e.drawOutput(rv);
-			
-		}
-		
-		
-		
-	}
+
 /*	
 	@Override
 	public boolean isHidden(){
