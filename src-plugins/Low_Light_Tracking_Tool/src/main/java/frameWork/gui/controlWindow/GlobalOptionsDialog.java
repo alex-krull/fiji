@@ -24,6 +24,7 @@
  *******************************************************************************/
 package frameWork.gui.controlWindow;
 
+import ij.IJ;
 import ij.gui.GenericDialog;
 import frameWork.Model;
 
@@ -35,9 +36,9 @@ public class GlobalOptionsDialog {
 		GenericDialog gd = new GenericDialog("Global Options");
 		gd.addNumericField("Intensity Offset: ", mod.getIntensityOffset(), 0);
 		gd.addNumericField("EMCCD gain: ", mod.getEMCCDGain(), 3);
-		gd.addNumericField("Electrons per A/D count: ", mod.getADUperE(), 3);		
+		gd.addNumericField("Electrons per A/D count: ", mod.getEperADU(), 3);		
 		if(mod.isVolume()) gd.addNumericField("\u0394 Z (in pixels): ", mod.getXyToZ(), 3);
-		
+	
 		gd.showDialog();
 		if (gd.wasCanceled()) return;
 
@@ -46,9 +47,10 @@ public class GlobalOptionsDialog {
 		if (gd.wasOKed()){
 			mod.setIntensityOffset( (int)gd.getNextNumber());
 			mod.setEMCCDGain(gd.getNextNumber());
-			mod.setADUperE(gd.getNextNumber());
+			mod.setEperADU(gd.getNextNumber());
 			if(mod.isVolume()) mod.setXyToZ( gd.getNextNumber() );
 		}
+	
 	}
 
 	public boolean wasOked(){

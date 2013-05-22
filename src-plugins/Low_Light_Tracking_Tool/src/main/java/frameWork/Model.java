@@ -25,6 +25,7 @@
 package frameWork;
 
 
+import ij.IJ;
 import ij.ImagePlus;
 
 import java.io.File;
@@ -72,7 +73,7 @@ private boolean structuralChange=true;
 private int intensityOffset=0;
 private double xyToZ=3.5;
 private double eMCCDGain=300.0;
-private double aDUperE=1;
+private double EPerADU=1;
 public ReentrantReadWriteLock rwLock;
 private boolean currentlyTracking=false;
 public long startedTrackingAt;
@@ -90,12 +91,12 @@ public double randomInitOffset=-1;
 		this.eMCCDGain = eMCCDGain;
 	}
 	
-	public double getADUperE() {
-		return aDUperE;
+	public double getEperADU() {
+		return EPerADU;
 	}
 
-	public void setADUperE(double aDUperE) {
-		this.aDUperE = aDUperE;
+	public void setEperADU(double aDUperE) {
+		this.EPerADU = aDUperE;
 	}
 
 	public boolean isCurrentlyTracking() {
@@ -462,19 +463,21 @@ public double randomInitOffset=-1;
 	
 		
 		s= props.getProperty("eMCCDGain"); if(s!=null)this.setEMCCDGain(Double.valueOf(s) );
-		s= props.getProperty("aDUperE"); if(s!=null)this.setADUperE(Double.valueOf(s) );
+		
+		s= props.getProperty("ePerADU"); if(s!=null)this.setEperADU(Double.valueOf(s) );
 		s= props.getProperty("xyToZ");if(s!=null)this.setXyToZ(Double.valueOf(s) );
 		return true;
 	}
 
 	public Properties getProperties(){
 		Properties props= new Properties();
-		props.setProperty("projectDirectory",this.getProjectDirectory());
+		props.setProperty("projectDirectory",this.getProjectDirectory()+ " "); // Add whitespace for For windows
 		props.setProperty("imageName",this.getImageFileName());
 		props.setProperty("intensityOffset",String.valueOf(this.getIntensityOffset()));
+		props.setProperty("ePerADU",String.valueOf(this.getEperADU()));
 		props.setProperty("xyToZ",String.valueOf(this.getXyToZ()));
 		props.setProperty("eMCCDGain",String.valueOf(this.getEMCCDGain()));
-		props.setProperty("aDUperE",String.valueOf(this.getADUperE()));
+		
 
 
 		return props;

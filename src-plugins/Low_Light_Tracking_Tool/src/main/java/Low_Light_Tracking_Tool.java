@@ -197,6 +197,7 @@ public class Low_Light_Tracking_Tool <IT extends  NumericType<IT> & NativeType<I
 
 		cont.load(vm);
 
+		IJ.wait(100);
 		GlobalOptionsDialog god =new GlobalOptionsDialog(model);
 		if(!god.wasOked()) return;
 
