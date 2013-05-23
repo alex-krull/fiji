@@ -25,6 +25,7 @@
 package blobTracking;
 
 
+import ij.IJ;
 import ij.gui.EllipseRoi;
 import ij.gui.Overlay;
 import ij.gui.Roi;
@@ -32,6 +33,8 @@ import ij.gui.TextRoi;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
 import net.imglib2.Cursor;
@@ -87,6 +90,7 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	public Img<FloatType> expectedValues=null;
 	public IterableRandomAccessibleInterval <FloatType> expectedValuesRoi;
 
+	
 	/**
 	 * Creates a new Blob
 	 * 
@@ -184,17 +188,44 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 	}
 	
 	
+	
+	public class BlobRoi extends EllipseRoi{
+		// Thjis is necessary, because we dont want the handle functionality
+		private static final long serialVersionUID = 1L;
+
+
+		public BlobRoi(double x1, double y1, double x2, double y2,
+				double aspectRatio) {
+			super(x1, y1, x2, y2, aspectRatio);
+		}
+		
+		@Override
+		public void draw(Graphics g) {
+			if (!overlay) return;	//if we are a handle->dont draw 
+			super.draw(g);	
+		}
+		
+		
+		
+		
+	}
+
+	
 	@Override
 	public void addShapeZ(Overlay ov, boolean selected, Color c, boolean drawNumbers, double mag){
 		Font f=new Font(null,Font.PLAIN,8);
-			
-		Roi roi = new EllipseRoi((0.5+xPos + sigma * 2)*mag,(0.5+ yPos)*mag,(0.5+ xPos - sigma * 2)*mag,
+		
+		BlobRoi roi = new BlobRoi((0.5+xPos + sigma * 2)*mag,(0.5+ yPos)*mag,(0.5+ xPos - sigma * 2)*mag,
 				(0.5+yPos)*mag, 1);
+		
 		
 		roi.setStrokeColor(c);
 		roi.setStrokeWidth(1);
 		if(selected) roi.setStrokeWidth(4);
+		roi.setNonScalable(true);
+		
 		ov.add(roi);
+		
 		
 	if(drawNumbers){	
 		TextRoi troi = new TextRoi((int)xPos*mag,(int)yPos*mag,Integer.toString(this.sequenceId));
@@ -215,12 +246,12 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		
 		Roi roi;
 		if(sigma / sigmaZ<1)
-			roi=new EllipseRoi(
+			roi=new BlobRoi(
 				(0.5+ xPos)*mag ,(0.5*Model.getInstance().getXyToZ()+ zPos-2*sigmaZ)*mag,
 				(0.5+ xPos)*mag ,	(0.5*Model.getInstance().getXyToZ()+zPos+2*sigmaZ)*mag
 				, sigma / sigmaZ);
 		
-		else roi=new EllipseRoi(
+		else roi=new BlobRoi(
 				(0.5+ xPos -2*sigma)*mag,(0.5*Model.getInstance().getXyToZ()+ zPos)*mag,
 				(0.5+ xPos +2*sigma)*mag,(0.5*Model.getInstance().getXyToZ()+zPos)*mag
 				, sigmaZ / sigma);
@@ -238,11 +269,11 @@ public class Blob extends Trackable implements MultivariateRealFunction {
 		
 		
 		Roi roi;
-		if(sigma / sigmaZ<1) roi= new EllipseRoi(
+		if(sigma / sigmaZ<1) roi= new BlobRoi(
 				(0.5*Model.getInstance().getXyToZ()+zPos + sigmaZ * 2)*mag,(0.5+ yPos)*mag,
 				(0.5*Model.getInstance().getXyToZ()+ zPos - sigmaZ * 2)*mag,
 				(0.5+yPos)*mag, sigma / sigmaZ);
-		else  roi= new EllipseRoi(
+		else  roi= new BlobRoi(
 				(0.5*Model.getInstance().getXyToZ()+zPos)*mag ,(0.5+ yPos+ sigma * 2)*mag,
 				(0.5*Model.getInstance().getXyToZ()+ zPos)*mag ,
 				(0.5+yPos- sigma * 2)*mag, sigmaZ / sigma);
