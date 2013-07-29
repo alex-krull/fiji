@@ -47,12 +47,12 @@ public class HotKeyListener implements KeyListener {
 		  IJ.doCommand("Brightness/Contrast...");
 		  return;
 		      
-		  case KeyEvent.VK_G:			  
-			  viewModel.toggleTracking(false);		 
+		  case KeyEvent.VK_G:	
+			  viewModel.toggleTracking(false, keyEvent.isShiftDown());		 
 		      return;
 		      
 		  case KeyEvent.VK_L:			  
-			  viewModel.toggleTracking(true);		 
+			  viewModel.toggleTracking(true, keyEvent.isShiftDown());		 
 		      return;
 		      
 		  case KeyEvent.VK_T:			  

@@ -136,8 +136,9 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 				if(trackingCandidates.isEmpty()) return;
 						
 			
-				
-			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames()&& i<=stoppingFrame;i++){
+			int direction=1;
+			if(stoppingFrame<startingFrame) direction=-1;
+			for(int i= startingFrame; i<trackingChannel.getNumberOfFrames()&& i>=0;i+=direction){
 				
 				
 			//	Model.getInstance().rwLock.writeLock().lock();
@@ -148,7 +149,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 				
 			 if(i!=startingFrame){
 				 trackingCandidates.clear();
-				 List<T> newTrackables= trackingChannel.getFrame(i-1).cloneTrackablesForFrame(i);	
+				 List<T> newTrackables= trackingChannel.getFrame(i-direction).cloneTrackablesForFrame(i);	
 				 
 				 for(T t: newTrackables){
 						
@@ -188,7 +189,8 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 				}
 				
 				Model.getInstance().makeStructuralChange();
-				Model.getInstance().makeChangesPublic(Math.max(i,startingFrame));
+				if(direction>0)Model.getInstance().makeChangesPublic(Math.max(i,startingFrame));
+				else Model.getInstance().makeChangesPublic(Math.min(i,startingFrame));
 				Model.getInstance().rwLock.writeLock().unlock();
 				
 		//		optimizeFrame( i, multiscale);
@@ -198,7 +200,7 @@ public class ChannelController<T extends Trackable,  IT extends  NumericType<IT>
 				
 				if(autoS) saveAll();
 				
-				if(!Model.getInstance().isCurrentlyTracking()){			
+				if(!Model.getInstance().isCurrentlyTracking()||i==stoppingFrame){			
 					break;
 				}
 				

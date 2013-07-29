@@ -319,6 +319,11 @@ public void toggleTracking(boolean multiscale){
 	controller.toggleTracking(currentFrameNumber, multiscale, model.getNumberOfFrames());
 }
 
+public void toggleTracking(boolean multiscale, boolean direction){
+	if(!direction) controller.toggleTracking(currentFrameNumber, multiscale, model.getNumberOfFrames());
+	else controller.toggleTracking(currentFrameNumber, multiscale, 0);
+}
+
 public void deleteSequence(){
 	controller.deleteSequence();
 }

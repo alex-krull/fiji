@@ -1263,7 +1263,7 @@ public class ControlWindow < IT extends  NumericType<IT> & NativeType<IT> & Real
 		public void actionPerformed(ActionEvent arg0) {
 	
 			JOptionPane.showMessageDialog(frame,
-					"The current version of the software is 1.00"
+					"The current version of the software is 0.10"
 							+ "\n This software implements the tracking method described in the following paper:" +
 								  "\n \"A divide and conquer strategy for the maximum likelihood\n localization of ultra low intensity objects\""
 								 + " \nAlexander Krull et Al, 2013. (Enter final journal)"
